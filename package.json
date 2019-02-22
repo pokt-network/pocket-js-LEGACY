@@ -1,0 +1,38 @@
+{
+    "name": "pocket-js",
+    "version": "0.0.1",
+    "description": "Pocket-js package with a default set of plugins ",
+    "license": "MIT",
+    "main": "./src/index.js",
+    "directories": {
+        "packages": "./packages"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pokt-network/pocket-js.git"
+    },
+    "homepage": "https://github.com/pokt-network/pocket-js",
+    "bugs": {
+        "url": "https://github.com/pokt-network/pocket-js/issues"
+    },
+    "keywords": [
+        "Pocket",
+        "Network",
+        "SDK",
+        "Plugin",
+        "JavaScript"
+    ],
+    "author": "Pocket Network",
+    "authors": [
+        {
+            "name": "Pabel Nunez Landestoy",
+            "email": "pabelnunezl@gmail.com",
+            "homepage": "https://github.com/pabelnl"
+        }
+    ],
+    "dependencies": {
+        "pocket-js-core": "0.0.1",
+        "pocket-js-aion": "0.0.1",
+        "pocket-js-eth": "0.0.1",
+    }
+}

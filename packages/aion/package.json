@@ -1,0 +1,37 @@
+{
+    "name": "pocket-js-aion",
+    "version": "0.0.1",
+    "description": "Pocket-js Aion package with every functionalities to interact with the Aion network.",
+    "license": "MIT",
+    "main": "./src/aion.js",
+    "directories": {
+        "tests": "./tests"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pokt-network/pocket-js/packages/aion"
+    },
+    "homepage": "https://github.com/pokt-network/pocket-js",
+    "bugs": {
+        "url": "https://github.com/pokt-network/pocket-js/issues"
+    },
+    "keywords": [
+        "Pocket",
+        "Network",
+        "SDK",
+        "Aion",
+        "Plugin",
+        "JavaScript"
+    ],
+    "author": "Pocket Network",
+    "authors": [
+        {
+            "name": "Pabel Nunez Landestoy",
+            "email": "pabelnunezl@gmail.com",
+            "homepage": "https://github.com/pabelnl"
+        }
+    ],
+    "dependencies": {
+        "pocket-js-core": "0.0.1"
+    }
+}
