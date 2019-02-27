@@ -7,10 +7,7 @@
     "directories": {
         "tests": "./tests"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pokt-network/pocket-js/packages/eth"
-    },
+    "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/eth",
     "homepage": "https://github.com/pokt-network/pocket-js",
     "bugs": {
         "url": "https://github.com/pokt-network/pocket-js/issues"
@@ -20,6 +17,7 @@
         "Network",
         "SDK",
         "Eth",
+        "Ethereum",
         "Plugin",
         "JavaScript"
     ],
@@ -32,6 +30,6 @@
         }
     ],
     "dependencies": {
-        "pocket-js-core": "0.0.1"
+        "pocket-js": "../core/"
     }
 }
