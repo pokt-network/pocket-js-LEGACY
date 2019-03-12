@@ -21,14 +21,14 @@
         "JavaScript"
     ],
     "author": "Pocket Network",
-    "authors": [{
-        "name": "Pabel Nunez Landestoy",
-        "email": "pabelnunezl@gmail.com",
-        "homepage": "https://github.com/pabelnl"
-    }],
+    "authors": [
+        {
+            "name": "Pabel Nunez Landestoy",
+            "email": "pabelnunezl@gmail.com",
+            "homepage": "https://github.com/pabelnl"
+        }
+    ],
     "dependencies": {
-        "objectmodel": "3.7.7",
-        "jscryptor": "0.0.12",
-        "implement-js": "0.0.25"
+        "axios": "^0.18.0"
     }
 }

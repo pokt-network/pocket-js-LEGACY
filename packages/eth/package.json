@@ -7,7 +7,7 @@
     "directories": {
         "tests": "./tests"
     },
-    "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/eth",
+    "repository": "https://github.com/pokt-network/pocket-js/tree/pocket-js-core-0.0.1/master/packages/eth",
     "homepage": "https://github.com/pokt-network/pocket-js",
     "bugs": {
         "url": "https://github.com/pokt-network/pocket-js/issues"
