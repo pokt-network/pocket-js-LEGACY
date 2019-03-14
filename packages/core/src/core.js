@@ -4,20 +4,31 @@ const Wallet = require("./models/wallet.js").Wallet;
 const Relay = require("./models/relay.js").Relay;
 
 class Configuration {
+  /**
+   * Configuration stores settings.
+   * @constructor
+   * @param {string} devID - Unique developer ID.
+   * @param {string} blockchains - Blockchain class type list.
+   * @param {string} maxNodes - (optional) Maximun amount of nodes to store in instance, default 5.
+   * @param {string} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
+   */
   constructor(devID, blockchains, maxNodes, requestTimeOut) {
-    // Url's and Paths
-    this.dispatchNodeURL = "http://dispatch.staging.pokt.network";
-    this.dispatchPath = "/v1/dispatch";
-    this.reportPath = "/v1/report";
-    this.relayPath = "/v1/relay";
     // Settings and variables
     this.devID = devID;
     this.blockchains = blockchains;
     this.maxNodes = maxNodes || 5;
     this.nodes = [];
-    this.requestTimeOut = requestTimeOut;
+    this.requestTimeOut = requestTimeOut || 10000;
     this.dispatch = null;
     this.relay = null;
+  }
+
+  nodesIsEmpty(){
+    if (this.nodes == null || this.nodes.length == 0) {
+      return true;
+    }else{
+      return false;
+    }
   }
 }
 
@@ -26,21 +37,21 @@ class Pocket {
   constructor(opts) {
     var blockchains = [];
 
-    if (opts["devID"] == null || opts["networkName"] == null || opts["netIDs"] == null || opts["version"] == null) {
+    if (opts.devID == null || opts.networkName == null || opts.netIDs == null || opts.version == null) {
       throw new Error("Invalid number of arguments");
     }
 
-    if (Array.isArray(opts["netIDs"])) {
-      opts["netIDs"].forEach(element => {
-        var blockchain = new Blockchain(opts["networkName"], element, opts["version"]);
+    if (Array.isArray(opts.netIDs)) {
+      opts.netIDs.forEach(element => {
+        var blockchain = new Blockchain(opts.networkName , element, opts.version);
         blockchains.push(blockchain.toJSON());
       });
     } else {
-      var blockchain = new Blockchain(opts["networkName"], opts["netIDs"], opts["version"]);
+      var blockchain = new Blockchain(opts.networkName, opts.netIDs, opts.version);
       blockchains.push(blockchain.toJSON());
     }
 
-    this.configuration = new Configuration(opts["devID"], blockchains, opts["maxNodes"] || 5, opts["requestTimeOut"] || 10000);
+    this.configuration = new Configuration(opts.devID, blockchains, opts.maxNodes || 5, opts.requestTimeOut || 10000);
 
   }
 
@@ -54,7 +65,7 @@ class Pocket {
   // Create a Relay instance
   createRelay(blockchain, netID, version, data, devID) {
     try {
-      this.configuration.relay = new Relay(blockchain, netID, version, data, devID, this.configuration);
+      return new Relay(blockchain, netID, version, data, devID, this.configuration);
     } catch (error) {
       throw error;
     }
@@ -71,9 +82,10 @@ class Pocket {
   // Filter nodes by netID and blockchain name
   getNode(netID, network, version) {
     try {
-      if (this.configuration.nodes == null || this.configuration.nodes.length == 0) {
-        throw new Error("Failed to filter nodes. List is empty or null ");
+      if (this.configuration.nodesIsEmpty()) {
+        throw new Error("Failed to filter nodes. List is empty.");
       }
+
       var nodes = []
       this.configuration.nodes.forEach(element => {
         if (element.netID == netID && element.network == network && element.version == version) {
@@ -81,11 +93,7 @@ class Pocket {
         }
       });
       if (nodes.length <= 0) {
-        throw new Error("No nodes are available for required specifications: " +
-            this.relay.blockchain + ", " +
-            this.relay.netID + ", " +
-            this.relay.version) + " " +
-          nodes;
+        return null
       }
       return nodes[Math.floor(Math.random() * nodes.length)];
     } catch (error) {
@@ -94,27 +102,29 @@ class Pocket {
   }
 
   // Send an already created Relay
-  async sendRelay(callback) {
+  async sendRelay(relay, callback) {
     try {
       // Check for relay
-      if (this.configuration.relay == null) {
-        return new Error("Relay is null or data field is missing");
+      if (relay == null || relay.data == null) {
+        throw new Error("Relay is null or data field is missing");
       }
       // Verify all relay properties are set
-      for (var property in this.configuration.relay) {
-        if (!this.configuration.relay.hasOwnProperty(property)) {
-          return new Error("Relay is missing a property: " + property);
-        }
+      if (!relay.isValid()) {
+        throw new Error("Relay is missing a property: " + property);
       }
-      // Filter nodes for specified blockchain
-      var node = this.getNode(this.configuration.relay.netID, 
-        this.configuration.relay.blockchain, 
-        this.configuration.relay.version);
-      // Set node relay property
-      node.relay = this.configuration.relay;
-      // Send relay
-      var response = await node.sendRelay();
 
+      // Filter nodes for specified blockchain
+      var node = this.getNode(relay.netID,
+        relay.blockchain,
+        relay.version);
+
+        if (node instanceof Error || node == null) {
+          throw new Error("Node is empty;");
+        }
+
+      // Send relay
+      var response = await node.sendRelay(relay);
+      // Response
       if (response instanceof Error == false) {
         if (callback) {
           callback(response, null);
@@ -130,7 +140,7 @@ class Pocket {
       }
 
     } catch (error) {
-      return new Error("Failed to send relay with error: " + error)
+      throw new Error("Failed to send relay with error: " + error)
     }
 
   }
@@ -152,9 +162,9 @@ class Pocket {
       } else {
         // Return false if the node response is an Error;
         if (callback) {
-          callback(false);
+          callback(new Error("Failed to retrieve Nodes with error: "+nodes));
         } else {
-          return false;
+          return new Error("Failed to retrieve Nodes with error: "+nodes);
         }
       }
 
