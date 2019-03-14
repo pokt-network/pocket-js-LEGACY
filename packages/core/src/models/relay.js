@@ -20,8 +20,8 @@ class Relay {
 	}
 
 	isValid(){
-		for (var property in this.configuration.relay) {
-			if (!relay.hasOwnProperty(property)) {
+		for (var property in this) {
+			if (!this.hasOwnProperty(property)) {
 				return false;
 			}
 		}
