@@ -89,9 +89,9 @@ class Pocket {
       }
 
       var nodes = []
-      this.configuration.nodes.forEach(element => {
-        if (element.netID == netID && element.network == network && element.version == version) {
-          nodes.push(element);
+      this.configuration.nodes.forEach(node => {
+        if (node.isEqual(netID, network, version)) {
+          nodes.push(node);
         }
       });
       if (nodes.length <= 0) {
@@ -119,19 +119,25 @@ class Pocket {
       if (response instanceof Error == false) {
         if (callback) {
           callback(response, null);
+          return;
         } else {
           return response;
         }
       } else {
         if (callback) {
           callback(null, response);
+          return;
         } else {
           return response;
         }
       }
-
     } catch (error) {
-      throw new Error("Failed to send report with error: " + error);
+      if (callback) {
+        callback(null, error);
+        return;
+      } else {
+        return error;
+      }
     }
   }
   // Send an already created Relay
@@ -141,6 +147,7 @@ class Pocket {
       if (relay == null || relay.data == null) {
         if (callback) {
           callback(null, new Error("Relay is null or data field is missing"));
+          return;
         } else {
           return new Error("Relay is null or data field is missing");
         }
@@ -149,6 +156,7 @@ class Pocket {
       if (!relay.isValid()) {
         if (callback) {
           callback(null, new Error("Relay is missing a property, please verify all properties."));
+          return;
         } else {
           return new Error("Relay is missing a property, please verify all properties.");
         }
@@ -162,6 +170,7 @@ class Pocket {
       if (node == null) {
         if (callback) {
           callback(null, new Error("Node is empty;"));
+          return;
         } else {
           return new Error("Node is empty;");
         }
@@ -173,12 +182,14 @@ class Pocket {
       if (response instanceof Error == false) {
         if (callback) {
           callback(response, null);
+          return;
         } else {
           return response;
         }
       } else {
         if (callback) {
           callback(null, response);
+          return;
         } else {
           return response;
         }
@@ -187,6 +198,7 @@ class Pocket {
     } catch (error) {
       if (callback) {
         callback(null, response.data);
+        return;
       } else {
         return new Error("Failed to send relay with error: " + error);
       }
@@ -205,6 +217,7 @@ class Pocket {
         this.configuration.nodes = nodes;
         if (callback) {
           callback(true);
+          return;
         } else {
           return true;
         }
@@ -212,13 +225,19 @@ class Pocket {
         // Return false if the node response is an Error;
         if (callback) {
           callback(new Error("Failed to retrieve Nodes with error: " + nodes));
+          return;
         } else {
           return new Error("Failed to retrieve Nodes with error: " + nodes);
         }
       }
 
     } catch (error) {
-      return new Error("Failed to retrieve service nodes with error: " + error);
+      if (callback) {
+        callback(null, new Error("Failed to retrieve service nodes with error: " + error));
+        return;
+      } else {
+        return new Error("Failed to retrieve service nodes with error: " + error);
+      }
     }
   }
 

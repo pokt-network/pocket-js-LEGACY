@@ -39,19 +39,22 @@ class Dispatch {
 
         if (callback) {
           callback(nodes, null);
+          return;
         } else {
           return nodes;
         }
       } else {
         if (callback) {
           callback(null, new Error("Failed to retrieve service nodes with error: " + response.data));
+          return;
         } else {
           return new Error("Failed to retrieve service nodes with error: " + response.data);
         }
       }
     } catch (err) {
       if (callback) {
-        callback(null, err);
+        callback(null, new Error("Failed to retrieve service nodes with error: " + err));
+        return;
       } else {
         return new Error("Failed to retrieve service nodes with error: " + err);
       }
