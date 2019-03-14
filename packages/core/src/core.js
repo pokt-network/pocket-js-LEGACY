@@ -2,6 +2,7 @@ const Blockchain = require("./models/blockchain.js").Blockchain;
 const Dispatch = require("./models/dispatch.js").Dispatch;
 const Wallet = require("./models/wallet.js").Wallet;
 const Relay = require("./models/relay.js").Relay;
+const Report = require("./models/report.js").Report;
 
 class Configuration {
   /**
@@ -23,10 +24,10 @@ class Configuration {
     this.relay = null;
   }
 
-  nodesIsEmpty(){
+  nodesIsEmpty() {
     if (this.nodes == null || this.nodes.length == 0) {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
@@ -43,7 +44,7 @@ class Pocket {
 
     if (Array.isArray(opts.netIDs)) {
       opts.netIDs.forEach(element => {
-        var blockchain = new Blockchain(opts.networkName , element, opts.version);
+        var blockchain = new Blockchain(opts.networkName, element, opts.version);
         blockchains.push(blockchain.toJSON());
       });
     } else {
@@ -66,6 +67,15 @@ class Pocket {
   createRelay(blockchain, netID, version, data, devID) {
     try {
       return new Relay(blockchain, netID, version, data, devID, this.configuration);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Create a Report instance
+  createReport(ip, message) {
+    try {
+      return new Report(ip, message, this.configuration);
     } catch (error) {
       throw error;
     }
@@ -100,7 +110,38 @@ class Pocket {
       throw new Error("Failed to filter nodes with error: " + error);
     }
   }
+  // Send a report
+  async sendReport(report, callback) {
+    try {
+      // Check for report
+      if (report == null) {
+        throw new Error("Report is null");
+      }
+      // Verify all report properties are set
+      if (!report.isValid()) {
+        throw new Error("Report is missing a property: " + property);
+      }
+      // Send Report
+      var response = await report.send();
+      // Response
+      if (response instanceof Error == false) {
+        if (callback) {
+          callback(response, null);
+        } else {
+          return response;
+        }
+      } else {
+        if (callback) {
+          callback(null, response);
+        } else {
+          return response;
+        }
+      }
 
+    } catch (error) {
+      throw new Error("Failed to send report with error: " + error);
+    }
+  }
   // Send an already created Relay
   async sendRelay(relay, callback) {
     try {
@@ -118,9 +159,9 @@ class Pocket {
         relay.blockchain,
         relay.version);
 
-        if (node instanceof Error || node == null) {
-          throw new Error("Node is empty;");
-        }
+      if (node instanceof Error || node == null) {
+        throw new Error("Node is empty;");
+      }
 
       // Send relay
       var response = await node.sendRelay(relay);
@@ -162,9 +203,9 @@ class Pocket {
       } else {
         // Return false if the node response is an Error;
         if (callback) {
-          callback(new Error("Failed to retrieve Nodes with error: "+nodes));
+          callback(new Error("Failed to retrieve Nodes with error: " + nodes));
         } else {
-          return new Error("Failed to retrieve Nodes with error: "+nodes);
+          return new Error("Failed to retrieve Nodes with error: " + nodes);
         }
       }
 
