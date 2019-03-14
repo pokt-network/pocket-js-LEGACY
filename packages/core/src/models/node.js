@@ -42,7 +42,7 @@ class Node {
                 if (callback) {
                   callback(null, new Error("Failed to send relay with error: " + response.data));
                 } else {
-                  throw new Error("Failed to send relay with error: " + response.data);
+                  return new Error("Failed to send relay with error: " + response.data);
                 }
               }
         } catch (error) {

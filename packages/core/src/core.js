@@ -65,20 +65,12 @@ class Pocket {
 
   // Create a Relay instance
   createRelay(blockchain, netID, version, data, devID) {
-    try {
-      return new Relay(blockchain, netID, version, data, devID, this.configuration);
-    } catch (error) {
-      throw error;
-    }
+    return new Relay(blockchain, netID, version, data, devID, this.configuration);
   }
 
   // Create a Report instance
   createReport(ip, message) {
-    try {
-      return new Report(ip, message, this.configuration);
-    } catch (error) {
-      throw error;
-    }
+    return new Report(ip, message, this.configuration);
   }
 
   // Get a Dispatch instance or create one
@@ -93,7 +85,7 @@ class Pocket {
   getNode(netID, network, version) {
     try {
       if (this.configuration.nodesIsEmpty()) {
-        throw new Error("Failed to filter nodes. List is empty.");
+        return null;
       }
 
       var nodes = []
@@ -107,7 +99,7 @@ class Pocket {
       }
       return nodes[Math.floor(Math.random() * nodes.length)];
     } catch (error) {
-      throw new Error("Failed to filter nodes with error: " + error);
+      return null;
     }
   }
   // Send a report
@@ -147,11 +139,19 @@ class Pocket {
     try {
       // Check for relay
       if (relay == null || relay.data == null) {
-        throw new Error("Relay is null or data field is missing");
+        if (callback) {
+          callback(null, new Error("Relay is null or data field is missing"));
+        } else {
+          return new Error("Relay is null or data field is missing");
+        }
       }
       // Verify all relay properties are set
       if (!relay.isValid()) {
-        throw new Error("Relay is missing a property: " + property);
+        if (callback) {
+          callback(null, new Error("Relay is missing a property, please verify all properties."));
+        } else {
+          return new Error("Relay is missing a property, please verify all properties.");
+        }
       }
 
       // Filter nodes for specified blockchain
@@ -159,8 +159,12 @@ class Pocket {
         relay.blockchain,
         relay.version);
 
-      if (node instanceof Error || node == null) {
-        throw new Error("Node is empty;");
+      if (node == null) {
+        if (callback) {
+          callback(null, new Error("Node is empty;"));
+        } else {
+          return new Error("Node is empty;");
+        }
       }
 
       // Send relay
@@ -181,7 +185,11 @@ class Pocket {
       }
 
     } catch (error) {
-      throw new Error("Failed to send relay with error: " + error)
+      if (callback) {
+        callback(null, response.data);
+      } else {
+        return new Error("Failed to send relay with error: " + error);
+      }
     }
 
   }

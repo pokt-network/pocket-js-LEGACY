@@ -37,10 +37,6 @@ class Dispatch {
       if (response != null && response.status == 200 && response.data != null) {
         var nodes = this.parseDispatchResponse(response.data);
 
-        if (nodes instanceof Error) {
-          return nodes;
-        }
-
         if (callback) {
           callback(nodes, null);
         } else {
@@ -48,13 +44,17 @@ class Dispatch {
         }
       } else {
         if (callback) {
-          callback(null, response.data);
+          callback(null, new Error("Failed to retrieve service nodes with error: " + response.data));
         } else {
           return new Error("Failed to retrieve service nodes with error: " + response.data);
         }
       }
     } catch (err) {
-      return new Error("Failed to retrieve service nodes with error: " + err);
+      if (callback) {
+        callback(null, err);
+      } else {
+        return new Error("Failed to retrieve service nodes with error: " + err);
+      }
     }
   }
 
@@ -90,14 +90,14 @@ class Dispatch {
 
         // Retrieve primary object
         if (!keys[0]) {
-          new Error("Failed to parse Node object")
+          throw new Error("Failed to parse Node object")
         }
         // Retrieve network, version and netID
         var dataKey = keys[0];
         var keysArr = dataKey.split("|");
 
         if (keysArr.length != 3) {
-          return new Error("Failed to parsed service nodes with error: Node information is missing 1 or more params: "+ JSON.stringify(keysArr));
+          throw new Error("Failed to parsed service nodes with error: Node information is missing 1 or more params: "+ JSON.stringify(keysArr));
         }
 
         // Create a Node object for each item inside the dataKey object, IP:PORT
