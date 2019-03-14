@@ -1,4 +1,3 @@
-
 // Relay
 class Relay {
 	constructor(blockchain, netID, version, data, devID, configuration) {
@@ -8,6 +7,25 @@ class Relay {
 		this.data = data;
 		this.devID = devID;
 		this.configuration = configuration;
+	}
+
+	toJSON(){
+		return {
+			"Blockchain": this.blockchain,
+			"NetID": this.netID,
+			"Version": this.version,
+			"Data": this.data,
+			"DevID": this.devID
+		}
+	}
+
+	isValid(){
+		for (var property in this.configuration.relay) {
+			if (!relay.hasOwnProperty(property)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
 

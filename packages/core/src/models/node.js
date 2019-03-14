@@ -1,5 +1,6 @@
 const axios = require('axios');
-
+const constants = require("../utils/constants.js");
+const requestProtocolStr = "http://";
 // Dispatch
 class Node {
     constructor(network, version, netID, ip, port, ipPort) {
@@ -8,27 +9,25 @@ class Node {
         this.netID = netID;
         this.ip = ip;
         this.port = port;
-        this.ipPort = "http://"+ipPort;
-        this.relay = null;
+        if (ipPort.includes("http://") || ipPort.includes("https://")) {
+            this.ipPort = ipPort;
+        }else{
+            this.ipPort = requestProtocolStr + ipPort;
+        }  
     }
 
-    async sendRelay(callback) {
+    async sendRelay(relay,callback) {
         try {
             const axiosInstance = axios.create({
                 baseURL: this.ipPort,
-                timeout: this.relay.configuration.requestTimeOut,
+                timeout: relay.configuration.requestTimeOut,
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             
-            var response = await axiosInstance.post(this.relay.configuration.relayPath, {
-                "Blockchain": this.network,
-                "NetID": this.netID,
-                "Version": this.version,
-                "Data": this.relay.data,
-                "DevID": this.relay.configuration.devID
-              }
+            var response = await axiosInstance.post(constants.relayPath, 
+                relay.toJSON()
             );
             
             if (response.status == 200 && response.data != null) {
