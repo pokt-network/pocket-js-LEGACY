@@ -7,6 +7,9 @@
     "directories": {
         "tests": "./tests"
     },
+    "scripts": {
+        "test": "mocha tests/coreTest.js"
+    },
     "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/core",
     "homepage": "https://github.com/pokt-network/pocket-js",
     "bugs": {
@@ -30,5 +33,9 @@
     ],
     "dependencies": {
         "axios": "^0.18.0"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "mocha": "^6.0.2"
     }
 }

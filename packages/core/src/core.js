@@ -39,7 +39,7 @@ class Pocket {
     var blockchains = [];
 
     if (opts.devID == null || opts.networkName == null || opts.netIDs == null || opts.version == null) {
-      throw new Error("Invalid number of arguments");
+      return new Error("Invalid number of arguments");
     }
 
     if (Array.isArray(opts.netIDs)) {
@@ -212,7 +212,7 @@ class Pocket {
       var dispatch = this.getDispatch();
       var nodes = await dispatch.retrieveServiceNodes();
       // Return true if the node response is successful
-      if (nodes instanceof Error == false) {
+      if (nodes instanceof Error == false && nodes.length != 0) {
         // Store the nodes in the Pocket instance configuration
         this.configuration.nodes = nodes;
         if (callback) {
@@ -224,19 +224,19 @@ class Pocket {
       } else {
         // Return false if the node response is an Error;
         if (callback) {
-          callback(new Error("Failed to retrieve Nodes with error: " + nodes));
+          callback(false);
           return;
         } else {
-          return new Error("Failed to retrieve Nodes with error: " + nodes);
+          return false;
         }
       }
 
     } catch (error) {
       if (callback) {
-        callback(null, new Error("Failed to retrieve service nodes with error: " + error));
+        callback(false);
         return;
       } else {
-        return new Error("Failed to retrieve service nodes with error: " + error);
+        return false;
       }
     }
   }

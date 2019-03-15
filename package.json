@@ -30,5 +30,8 @@
     "pocket-js-eth": "./packages/eth",
     "pocket-js-core": "./packages/core",
     "pocket-js-aion": "./packages/aion"
+  },
+  "devDependencies": {
+    "mocha": "^6.0.2"
   }
 }
