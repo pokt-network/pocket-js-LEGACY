@@ -21,7 +21,7 @@ class Relay {
 
 	isValid(){
 		for (var property in this) {
-			if (!this.hasOwnProperty(property)) {
+			if (!this.hasOwnProperty(property) || this[property] == "") {
 				return false;
 			}
 		}
