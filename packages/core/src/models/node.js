@@ -26,7 +26,7 @@ class Node {
     }
 
     isEqual(netID, network, version) {
-        if (this.netID == netID && this.network == network && this.version == version) {
+        if (this.netID == netID.toString() && this.network == network.toString() && this.version == version.toString()) {
             return true;
         }
         return false;

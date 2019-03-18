@@ -7,9 +7,9 @@ class Blockchain {
   }
 
   toJSON() {
-    return JSON.parse('{ "Name":"' + 
-    this.name + '", "NetID":"' + 
-    this.netID + '", "Version":"' + 
+    return JSON.parse('{ "name":"' + 
+    this.name + '", "netID":"' + 
+    this.netID + '", "version":"' + 
     this.version + '" }')
   }
 }
