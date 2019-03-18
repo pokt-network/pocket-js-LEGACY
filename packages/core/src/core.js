@@ -64,8 +64,8 @@ class Pocket {
   }
 
   // Create a Relay instance
-  createRelay(blockchain, netID, version, data, devID) {
-    return new Relay(blockchain, netID, version, data, devID, this.configuration);
+  createRelay(blockchain, netID, version, data) {
+    return new Relay(blockchain, netID, version, data, this.configuration);
   }
 
   // Create a Report instance
