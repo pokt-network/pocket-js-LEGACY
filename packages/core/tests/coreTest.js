@@ -168,7 +168,6 @@ describe('Pocket Class tests', function () {
         // Send report
         var response = await pocket.sendReport(report);
 
-        expect(response).to.not.be.an.instanceof(Error);
-        expect(response).to.be.a('string');
+        expect(response).to.be.an.instanceof(Error);
     });
 });
