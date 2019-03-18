@@ -111,7 +111,7 @@ class Pocket {
       }
       // Verify all report properties are set
       if (!report.isValid()) {
-        throw new Error("Report is missing a property: " + property);
+        throw new Error("One or more Report properties are empty.");
       }
       // Send Report
       var response = await report.send();
