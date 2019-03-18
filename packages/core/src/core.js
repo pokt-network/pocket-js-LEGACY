@@ -82,21 +82,31 @@ class Pocket {
   }
 
   // Filter nodes by netID and blockchain name
-  getNode(netID, network, version) {
+  async getNode(netID, network, version) {
     try {
-      if (this.configuration.nodesIsEmpty()) {
-        return null;
-      }
+      var nodes = [];
 
-      var nodes = []
+      if (this.configuration.nodesIsEmpty()) {
+        var response = await this.retrieveNodes();
+
+        if (response instanceof Error == true) {
+          throw response;
+        }else {
+          // Save the nodes to the configuration.
+          this.configuration.nodes = response;
+        }
+      }
+      
       this.configuration.nodes.forEach(node => {
         if (node.isEqual(netID, network, version)) {
           nodes.push(node);
         }
       });
+
       if (nodes.length <= 0) {
         return null
       }
+
       return nodes[Math.floor(Math.random() * nodes.length)];
     } catch (error) {
       return null;
@@ -163,7 +173,7 @@ class Pocket {
       }
 
       // Filter nodes for specified blockchain
-      var node = this.getNode(relay.netID,
+      var node = await this.getNode(relay.netID,
         relay.blockchain,
         relay.version);
 
@@ -211,32 +221,33 @@ class Pocket {
     try {
       var dispatch = this.getDispatch();
       var nodes = await dispatch.retrieveServiceNodes();
-      // Return true if the node response is successful
+      
       if (nodes instanceof Error == false && nodes.length != 0) {
-        // Store the nodes in the Pocket instance configuration
+        // Save the nodes to the configuration.
         this.configuration.nodes = nodes;
+        // Return a list of nodes
         if (callback) {
-          callback(true);
+          callback(null, nodes);
           return;
         } else {
-          return true;
+          return nodes;
         }
       } else {
-        // Return false if the node response is an Error;
+        // Returns an Error;
         if (callback) {
-          callback(false);
+          callback(new Error("Failed to retrieve a list of nodes."), null);
           return;
         } else {
-          return false;
+          return new Error("Failed to retrieve a list of nodes.");
         }
       }
 
     } catch (error) {
       if (callback) {
-        callback(false);
+        callback(new Error("Failed to retrieve a list of nodes with error: "+error), null);
         return;
       } else {
-        return false;
+        return new Error("Failed to retrieve a list of nodes with error: "+error);
       }
     }
   }
