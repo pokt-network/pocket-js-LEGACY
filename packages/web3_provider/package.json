@@ -1,0 +1,42 @@
+{
+    "name": "pocket-web3-provider",
+    "version": "0.0.1",
+    "description": "Pocket web3 provider that allows the interaction with the Pocket Network.",
+    "license": "MIT",
+    "main": "./src/pocket_provider.js",
+    "directories": {
+        "tests": "./tests"
+    },
+    "scripts": {
+        "test": "mocha tests/providerTest.js"
+    },
+    "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/web3_provider",
+    "homepage": "https://github.com/pokt-network/pocket-js",
+    "bugs": {
+        "url": "https://github.com/pokt-network/pocket-js/issues"
+    },
+    "keywords": [
+        "Pocket",
+        "Network",
+        "Provider",
+        "Core",
+        "Web3",
+        "JavaScript"
+    ],
+    "author": "Pocket Network",
+    "authors": [
+        {
+            "name": "Pabel Nunez Landestoy",
+            "email": "pabelnunezl@gmail.com",
+            "homepage": "https://github.com/pabelnl"
+        }
+    ],
+    "dependencies": {
+        "axios": "^0.18.0",
+        "pocket-js-core": "../core/"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "mocha": "^6.0.2"
+    }
+}
