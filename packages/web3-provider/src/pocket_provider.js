@@ -13,14 +13,15 @@ const TRANSACTION_METHODS = ['eth_sendTransaction', 'eth_sendRawTransaction'];
  * Pocket Web3 Provider
  * Sends Relays to a service node in the Pocket Network
  */
-var PocketProvider = function PocketProvider(networkID, devID, options) {
+var PocketProvider = function PocketProvider(blockchainName, networkID, devID, options) {
     options = options || {};
+    this.blockchainName = blockchainName;
+    this.networkID = networkID;
+    this.devID = devID;
     this.transactionSigner = opts.transactionSigner;
     this.timeout = options.timeout || 10000;
     this.maxNodes = options.maxNodes || 5;
     this.connected = false;
-    this.networkID = networkID;
-    this.devID = devID;
     // Make sure networkID is a string
     this.networkID = this.networkID.toString();
 };
