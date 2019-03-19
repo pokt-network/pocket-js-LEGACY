@@ -3,6 +3,6 @@
  */
 
 //  Dependencies
-const Pocket = require("pocket-js-core").Blockchain;
+const Pocket = require("pocket-js-core").Pocket;
 const axios = require('axios');
 
