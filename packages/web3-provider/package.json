@@ -1,7 +1,7 @@
 {
-    "name": "pocket-web3-provider",
+    "name": "pocket-js-web3-provider",
     "version": "0.0.1",
-    "description": "Pocket web3 provider that allows the interaction with the Pocket Network.",
+    "description": "Pocket javascript web3 provider that allows the interaction with the Pocket Network.",
     "license": "MIT",
     "main": "./src/pocket_provider.js",
     "directories": {
