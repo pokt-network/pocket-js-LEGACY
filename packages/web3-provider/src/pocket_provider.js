@@ -17,10 +17,9 @@ const TRANSACTION_METHODS = ['eth_sendTransaction', 'eth_sendRawTransaction'];
  * @param {string} networkID - Subnetwork ID.
  * @param {string} devID - Unique developer ID.
  * @param {object} options - (optional) Object containing the transactionSigner, maxNodes and requestTimeOut.
- * @param {string} transactionSigner - (optional) Object containing the TransactionSigner interface methods.
- * @param {number} maxNodes - (optional) Maximun amount of nodes to store in instance, default 5.
- * @param {number} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
- * @param {boolean} connected - Provider status.
+ * @param {string} options.transactionSigner - (optional) Object containing the TransactionSigner interface methods.
+ * @param {number} options.maxNodes - (optional) Maximun amount of nodes to store in instance, default 5.
+ * @param {number} options.requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
  */
 class PocketProvider {
     constructor(blockchainName, networkID, devID, options) {
