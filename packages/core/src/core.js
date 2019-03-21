@@ -38,17 +38,17 @@ class Pocket {
   constructor(opts) {
     var blockchains = [];
 
-    if (opts.devID == null || opts.networkName == null || opts.netIDs == null || opts.version == null) {
+    if (opts.devID == null || opts.networkName == null || opts.netIDs == null) {
       return new Error("Invalid number of arguments");
     }
 
     if (Array.isArray(opts.netIDs)) {
       opts.netIDs.forEach(element => {
-        var blockchain = new Blockchain(opts.networkName, element, opts.version);
+        var blockchain = new Blockchain(opts.networkName, element);
         blockchains.push(blockchain.toJSON());
       });
     } else {
-      var blockchain = new Blockchain(opts.networkName, opts.netIDs, opts.version);
+      var blockchain = new Blockchain(opts.networkName, opts.netIDs);
       blockchains.push(blockchain.toJSON());
     }
 
@@ -64,8 +64,8 @@ class Pocket {
   }
 
   // Create a Relay instance
-  createRelay(blockchain, netID, version, data) {
-    return new Relay(blockchain, netID, version, data, this.configuration);
+  createRelay(blockchain, netID, data) {
+    return new Relay(blockchain, netID, data, this.configuration);
   }
 
   // Create a Report instance
@@ -82,7 +82,7 @@ class Pocket {
   }
 
   // Filter nodes by netID and blockchain name
-  async getNode(netID, network, version) {
+  async getNode(netID, network) {
     try {
       var nodes = [];
 
@@ -98,7 +98,7 @@ class Pocket {
       }
       
       this.configuration.nodes.forEach(node => {
-        if (node.isEqual(netID, network, version)) {
+        if (node.isEqual(netID, network)) {
           nodes.push(node);
         }
       });
@@ -174,8 +174,7 @@ class Pocket {
 
       // Filter nodes for specified blockchain
       var node = await this.getNode(relay.netID,
-        relay.blockchain,
-        relay.version);
+        relay.blockchain);
 
       if (node == null) {
         if (callback) {
