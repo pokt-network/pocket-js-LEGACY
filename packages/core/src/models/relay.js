@@ -1,9 +1,8 @@
 // Relay
 class Relay {
-	constructor(blockchain, netID, version, data, configuration) {
+	constructor(blockchain, netID, data, configuration) {
 		this.blockchain = blockchain;
 		this.netID = netID;
-		this.version = version;
 		this.data = data;
 		this.configuration = configuration;
 	}
@@ -12,7 +11,6 @@ class Relay {
 		return {
 			"Blockchain": this.blockchain,
 			"NetID": this.netID,
-			"Version": this.version,
 			"Data": this.data,
 			"DevID": this.configuration.devID
 		}

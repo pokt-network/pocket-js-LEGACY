@@ -11,8 +11,7 @@ describe('Pocket Class tests', function () {
         var opts = {
             devID: "DEVID1",
             networkName: "ETH",
-            netIDs: [4],
-            version: "0"
+            netIDs: [4]
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
@@ -25,8 +24,7 @@ describe('Pocket Class tests', function () {
         // Pocket options object
         var opts = {
             networkName: "ETH",
-            netIDs: [4],
-            version: "0"
+            netIDs: [4]
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
@@ -40,8 +38,7 @@ describe('Pocket Class tests', function () {
         var opts = {
             devID: "DEVID1",
             networkName: "ETH",
-            netIDs: [4],
-            version: "0"
+            netIDs: [4]
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
@@ -57,8 +54,7 @@ describe('Pocket Class tests', function () {
         var opts = {
             devID: "DEVID1",
             networkName: "ETH2",// Wrong network name for intentional error scenario
-            netIDs: [40],
-            version: "100"
+            netIDs: [40]
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
@@ -73,13 +69,11 @@ describe('Pocket Class tests', function () {
         var opts = {
             devID: "DEVID1",
             networkName: "ETH",
-            netIDs: [4],
-            version: "0"
+            netIDs: [4]
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
         // Properties for the relay class
-        var version = pocket.configuration.blockchains[0].version;
         var address = "0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f";
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":["' + address + '","latest"],\"id\":67}';
         // Retrieve nodes first
@@ -87,7 +81,7 @@ describe('Pocket Class tests', function () {
         // Should return a list of nodes
         expect(nodes).to.be.a('array');
         // Create a relay
-        var relay = pocket.createRelay("ETH", pocket.configuration.blockchains[0].netID, version, data);
+        var relay = pocket.createRelay("ETH", pocket.configuration.blockchains[0].netID, data);
         // Send relay
         var response = await pocket.sendRelay(relay);
 
@@ -100,13 +94,11 @@ describe('Pocket Class tests', function () {
         var opts = {
             devID: "DEVID1",
             networkName: "ETH",
-            netIDs: [4],
-            version: "0"
+            netIDs: [4]
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
         // Properties for the relay class
-        var version = pocket.configuration.blockchains[0].Version;
         var address = "0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f";
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":["' + address + '","latest"],\"id\":67}';
         // Retrieve nodes first
@@ -115,7 +107,7 @@ describe('Pocket Class tests', function () {
         expect(nodes).to.be.a('array');
         // Create a relay
         // We are passing a bad netID as second parameter "10" for intentional error scenario
-        var relay = pocket.createRelay("ETH", 10, version, data);
+        var relay = pocket.createRelay("ETH", 10, data);
         // Send relay
         var response = await pocket.sendRelay(relay);
 
@@ -127,8 +119,7 @@ describe('Pocket Class tests', function () {
         var opts = {
             devID: "DEVID1",
             networkName: "ETH",
-            netIDs: [4],
-            version: "0"
+            netIDs: [4]
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
@@ -156,7 +147,6 @@ describe('Pocket Class tests', function () {
             devID: "DEVID1",
             networkName: "ETH",
             netIDs: [4],
-            version: "0"
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
