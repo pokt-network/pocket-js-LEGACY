@@ -69,47 +69,30 @@ class Dispatch {
       if (Array.isArray(response)) {
         // Iterate through the array for different networks results
         response.forEach(element => {
-          var keys = Object.keys(element);
-          // Retrieve primary object
-          if (keys[0]) {
-            // Retrieve network, version and netID
-            var dataKey = keys[0];
-            var keysArr = dataKey.split("|");
+          
+          var network = element.name;
+          var netID = element.netid;
 
-            if (keysArr.length == 3) {
-              this.network = keysArr[0];
-              this.version = keysArr[1];
-              this.netID = keysArr[2];
-            }
+          if (element.ips) {
             // Create a Node object for each item inside the dataKey object, IP:PORT
-            element[dataKey].forEach(ipPort => {
-              var node = new Node(this.network, this.version, this.netID, ipPort);
+            element.ips.forEach(ipPort => {
+              var node = new Node(network, netID, ipPort);
               nodes.push(node);
             });
           }
         });
       } else {
-        var keys = Object.keys(response);
 
-        // Retrieve primary object
-        if (!keys[0]) {
-          throw new Error("Failed to parse Node object")
+        var network = response.name;
+        var netID = response.netid;
+
+        if (response.ips) {
+          // Create a Node object for each item inside the dataKey object, IP:PORT
+          response.ips.forEach(ipPort => {
+            var node = new Node(network, netID, ipPort);
+            nodes.push(node);
+          });
         }
-        // Retrieve network, version and netID
-        var dataKey = keys[0];
-        var keysArr = dataKey.split("|");
-
-        if (keysArr.length != 3) {
-          throw new Error("Failed to parsed service nodes with error: Node information is missing 1 or more params: "+ JSON.stringify(keysArr));
-        }
-
-        // Create a Node object for each item inside the dataKey object, IP:PORT
-        response[dataKey].forEach(ipPort => {
-          // We split each element inside the array to retrieve the ip address and port separately
-          var ipPortArr = ipPort.split(":");
-          var node = new Node(keysArr[0], keysArr[1], keysArr[2], ipPortArr[0], ipPortArr[1], ipPort);
-          nodes.push(node);
-        });
 
       }
       return nodes;

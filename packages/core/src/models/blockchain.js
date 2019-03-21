@@ -1,16 +1,14 @@
 // Blockchain
 class Blockchain {
-  constructor(name, netID, version) {
+  constructor(name, netID) {
     this.name = name;
     this.netID = netID;
-    this.version = version;
   }
 
   toJSON() {
     return JSON.parse('{ "name":"' + 
     this.name + '", "netID":"' + 
-    this.netID + '", "version":"' + 
-    this.version + '" }')
+    this.netID + '"}')
   }
 }
 
