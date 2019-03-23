@@ -1,31 +1,31 @@
 {
-    "name": "pocket-js-aion",
-    "version": "0.0.1",
-    "description": "Pocket-js Aion package with every functionalities to interact with the Aion network.",
-    "main": "aion.js",
-    "directories": {
-      "test": "tests"
-    },
-    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/aion",
-    "keywords": [
-      "pocket",
-      "sdk",
-      "plugin",
-      "aion",
-      "tool",
-      "blockchain"
-    ],
-    "author": "Pabel Nunez Landestoy",
-    "license": "MIT",
-    "bugs": {
-      "url": "https://github.com/pokt-network/pocket-js/issues"
-    },
-    "homepage": "https://github.com/pokt-network/pocket-js/tree/master/packages/aion#readme",
-    "dependencies": {
-      "pocket-js-core": "../core"
-    }
+  "name": "pocket-js-aion",
+  "version": "0.0.1",
+  "description": "Pocket-js Aion package with every functionalities to interact with the Aion network.",
+  "main": "aion.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/aion",
+  "keywords": [
+    "pocket",
+    "sdk",
+    "plugin",
+    "aion",
+    "tool",
+    "blockchain"
+  ],
+  "author": "Pabel Nunez Landestoy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pokt-network/pocket-js/issues"
+  },
+  "homepage": "https://github.com/pokt-network/pocket-js/tree/master/packages/aion#readme",
+  "dependencies": {
+    "aion-web3": "^1.1.6",
+    "pocket-js-core": "../core"
   }
-  
+}
