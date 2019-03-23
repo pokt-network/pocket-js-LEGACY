@@ -8,10 +8,10 @@ const AionWeb3 = require('aion-web3');
 
 // Constants
 const networkName = "AION";
-const networks = Object.freeze({"mainnet":"256", "mastery":"32"})
+const Networks = Object.freeze({"MAINNET":"256", "MASTERY":"32"})
 
 class PocketAion extends Pocket {
-    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = networks.mastery) {
+    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.MASTERY) {
         if (devID == null || netIDs == null) {
             throw new Error("Invalid number of arguments");
         }
@@ -27,18 +27,36 @@ class PocketAion extends Pocket {
         super(opts);
         // Create Aion instance
         this.aionInstance = new AionWeb3();
+        // Network list
+        this.networks = {}
+
         // Check for mainNet and testNet IDs
-        if (netIDs.includes(256) || netIDs.includes(networks.mainnet)) {
-            this.mainnet = new Network(networks.mainnet, this);
+        if (netIDs.includes(256) || netIDs.includes(Networks.MAINNET)) {
+            this.mainnet = new Network(Networks.MAINNET, this);
+            this.networks[Networks.MAINNET] = this.mainnet;
         }
 
-        if (netIDs.includes(32) || netIDs.includes(networks.mastery)) {
-            this.testnet = new Network(networks.mastery, this);
+        if (netIDs.includes(32) || netIDs.includes(Networks.MASTERY)) {
+            this.mastery = new Network(Networks.MASTERY, this);
+            this.networks[Networks.MASTERY] = this.mastery;
         }
+        
         // Set default network, use default mastery if not set
-        this.default = new Network(defaultNet.toString(), this);
+        if (this.networks[defaultNet.toString()]) {
+            this.default = this.networks[defaultNet];
+        } else {
+            this.default = new Network(defaultNet, this);
+            this.networks[defaultNet] = this.default;
+        }
     }
-
+    network(netID) {
+        var result = this.networks[netID];
+        if (!result) {
+            result = new Network(netID, this);
+            this.networks[netID] = result;
+        }
+        return result;
+    }
     createWallet(netID) {
         throw new Error("Must implement Create Wallet")
     }
@@ -69,5 +87,6 @@ class NetRpc {
 }
 
 module.exports = {
-    PocketAion
+    PocketAion,
+    Networks
 }
