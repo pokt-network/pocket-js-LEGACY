@@ -33,12 +33,14 @@
     ],
     "dependencies": {
         "axios": "^0.18.0",
-        "pocket-js-core": "../core/",
-        "web3-utils": "^1.0.0-beta.36"
+        "pocket-js-core": "../core/"
     },
     "devDependencies": {
+        "aion-web3-eth-accounts": "^1.1.6",
         "chai": "^4.2.0",
+        "ethereumjs-tx": "^1.3.7",
         "mocha": "^6.0.2",
-        "ethereumjs-tx": "^1.3.7"
+        "node-zip": "^1.1.1",
+        "web3-utils": "^1.0.0-beta.36"
     }
 }

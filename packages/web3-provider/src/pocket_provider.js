@@ -4,7 +4,6 @@
 
 //  Dependencies
 const Pocket = require("pocket-js-core").Pocket;
-var web3Utils = require('web3-utils');
 
 // Constants
 const TRANSACTION_METHODS = ['eth_sendTransaction', 'eth_sendRawTransaction'];
@@ -16,19 +15,17 @@ const TRANSACTION_METHODS = ['eth_sendTransaction', 'eth_sendRawTransaction'];
  * @param {String} networkName - Short Blockchain name (ETH, AION).
  * @param {String} networkID - Subnetwork ID.
  * @param {String} devID - Unique developer ID.
- * @param {String} version - Client version.
  * @param {Object} options - (optional) Object containing the transactionSigner, maxNodes and requestTimeOut.
  * @param {String} options.transactionSigner - (optional) Object containing the TransactionSigner interface methods.
  * @param {Number} options.maxNodes - (optional) Maximun amount of nodes to store in instance, default 5.
  * @param {Number} options.requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
  */
 class PocketProvider {
-    constructor(networkName, networkID, devID, version, options) {
+    constructor(networkName, networkID, devID, options) {
         options = options || {};
         this.networkName = networkName;
         this.networkID = networkID;
         this.devID = devID;
-        this.version = version;
         this.transactionSigner = options.transactionSigner;
         this.maxNodes = options.maxNodes || 5;
         this.timeout = options.timeout || 10000;
@@ -40,7 +37,6 @@ class PocketProvider {
             devID: this.devID,
             networkName: this.networkName,
             netIDs: [this.networkID],
-            version: this.version,
             maxNodes: this.maxNodes,
             requestTimeOut: this.timeout
         })
@@ -53,28 +49,29 @@ class PocketProvider {
      * @param {Function} callback
      */
     async _getNonce(sender, callback) {
-        this.send({
+        var payload = {
             jsonrpc: '2.0',
             method: 'eth_getTransactionCount',
             params: [sender, "latest"],
             id: (new Date()).getTime()
-        }, function (err, response) {
-            if (err != null) {
-                if (callback) {
-                    callback(err);
-                    return;
-                }
-                return err;
-            } else {
-                var nonce = web3Utils.toDecimal(response.result);
-                if (callback) {
-                    callback(null, nonce);
-                    return;
-                } else {
-                    return nonce;
-                }
+        };
+        
+        var response = await this.send(payload);
+        if (response instanceof Error) {
+            if (callback) {
+                callback(response);
+                return;
             }
-        });
+            return response;
+        } else {
+            var nonce = JSON.parse(response).result;
+
+            if (callback) {
+                callback(null, nonce);
+                return;
+            }
+            return nonce;
+        }
     }
 
     /**
@@ -84,22 +81,35 @@ class PocketProvider {
      * @param {Function} callback
      */
     async _generateRelayData(payload, callback) {
+        // Check if payload is a json tring
+        if (typeof payload == 'string') {
+            payload = JSON.parse(payload);
+        }
+        // Retrieve method from payload
         var method = payload.method;
-
+        // Check rpc method
         if (method === 'eth_sendTransaction') {
-            this._parseRelayParams(payload, callback);
-        } else {
-            var relayData = {
-                "jsonrpc": 2.0,
-                "method": method,
-                "params": payload.params[0],
-                "id": (new Date()).getTime()
+            var relayData = await this._parseRelayParams(payload, callback);
+            if (relayData instanceof Error) {
+                if (callback) {
+                    callback(relayData);
+                    return;
+                }
+                return relayData;
             }
             if (callback) {
                 callback(null, relayData);
                 return;
+            } else {
+                return relayData;
             }
-            return relayData;
+        } else {
+            payload = JSON.stringify(payload);
+            if (callback) {
+                callback(null, payload);
+                return;
+            }
+            return payload;
         }
     }
 
@@ -114,75 +124,99 @@ class PocketProvider {
         var _this = this;
 
         // Verify address exists in the TransactionSigner
-        _this.transactionSigner.hasAddress(sender, function (err, hasAddress) {
-            if (err !== null || hasAddress === false) {
-                if (callback) {
-                    return callback(err);
-                } else {
-                    return err;
-                }
+        const hasAddress = await _this.transactionSigner.hasAddress(sender);
+        // Handle errors
+        if (hasAddress === false || hasAddress instanceof Error) {
+            if (callback) {
+                callback(hasAddress);
+                return;
             }
+            return hasAddress;
+        }
+        // Get the nonce for the sender
+        const nonce = await _this._getNonce(sender);
+        // Handle errors
+        if (nonce instanceof Error) {
+            if (callback) {
+                callback(nonce);
+                return;
+            }
+            return nonce;
+        }
+        // Assign the nonce value to the tx params
+        txParams.nonce = nonce;
 
-            // Get the nonce for the sender
-            _this._getNonce(sender, function (err, nonce) {
-                if (err !== null) {
-                    if (callback) {
-                        return callback(err);
-                    } else {
-                        return err;
-                    }
-                }
-                txParams.nonce = web3Utils.toHex(nonce);
-
-                // Signs the transaction with the updated nonce
-                _this.transactionSigner.signTransaction(txParams, function (err, rawTx) {
-                    if (err !== null) {
-                        if (callback) {
-                            return callback(err);
-                        } else {
-                            return err;
-                        }
-                    }
-                    var transactionBody = {
-                        "network": ETH_NETWORK,
-                        "subnetwork": _this.networkId,
-                        "serialized_tx": rawTx,
-                        "tx_metadata": {}
-                    }
-                    if (callback) {
-                        callback(null, transactionBody);
-                        return;
-                    } else {
-                        return transactionBody;
-                    }
-                });
-            });
-        });
+        // Signs the transaction with the updated nonce
+        const signedTx = await _this.transactionSigner.signTransaction(txParams);
+        if (signedTx instanceof Error) {
+            if (callback) {
+                callback(signedTx);
+                return;
+            }
+            return signedTx;
+        }
+        // Create relay data object
+        var relayData = JSON.stringify({
+            "jsonrpc": '2.0',
+            "method": 'eth_sendRawTransaction',
+            "params": [signedTx],
+            "id": (new Date()).getTime()
+        })
+        if (callback) {
+            callback(null, relayData);
+            return;
+        }
+        return relayData;
     }
 
     async send(payload, callback) {
-
+        // Check for the pocket instance
         if (this.pocket instanceof Error) {
             var error = this.pocket;
             throw error;
         }
-
-        var relay = pocket.createRelay(this.networkName, this.networkID, this.version, payload);
-
-        var result = await pocket.sendRelay(relay);
-        if (result instanceof Error) {
+        var _this = this;
+        // Generate relay data using the payload
+        var relayData = await _this._generateRelayData(payload);
+        // Handle errors
+        if (relayData instanceof Error) {
             if (callback) {
-                callback(result);
+                callback(err);
                 return;
             } else {
-                return result;
+                return err;
             }
-        }else{
+        }
+        // Continue to the relay creation and sent
+        try {
+            // Create a relay instance
+            var relay = _this.pocket.createRelay(_this.networkName, _this.networkID, relayData);
+            // Send relay to the network
+            var result = await _this.pocket.sendRelay(relay);
+            // Handle the result
+            if (result instanceof Error) {
+                if (callback) {
+                    callback(result);
+                    return;
+                } else {
+                    return result;
+                }
+            } else {
+                if (callback) {
+                    callback(null, result);
+                    return;
+                } else {
+                    return result;
+                }
+            }
+
+        } catch (error) {
+            _this.connected = false;
             if (callback) {
-                callback(null, result);
+                callback(error);
                 return;
             } else {
-                return result;
+                return error;
             }
         }
     };
