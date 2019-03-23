@@ -4,13 +4,14 @@
  */
 // Dependencies
 const Pocket = require('pocket-js-core').Pocket;
-const AionWeb3 = require('aion-web3').AionWeb3;
+const AionWeb3 = require('aion-web3');
 
 // Constants
 const networkName = "AION";
+const networks = Object.freeze({"mainnet":"256", "mastery":"32"})
 
 class PocketAion extends Pocket {
-    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = 32) {
+    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = networks.mastery) {
         if (devID == null || netIDs == null) {
             throw new Error("Invalid number of arguments");
         }
@@ -27,20 +28,15 @@ class PocketAion extends Pocket {
         // Create Aion instance
         this.aionInstance = new AionWeb3();
         // Check for mainNet and testNet IDs
-        if (netIDs.includes(256) || netIDs.includes("256")) {
-            this.mainnet = new RPCMethod("256", this);
-            defaultNet = new RPCMethod("256", this);
+        if (netIDs.includes(256) || netIDs.includes(networks.mainnet)) {
+            this.mainnet = new Network(networks.mainnet, this);
         }
 
-        if (netIDs.includes(32) || netIDs.includes("32")) {
-            this.testnet = new RPCMethod("32", this);
-            defaultNet = new RPCMethod("32", this);
+        if (netIDs.includes(32) || netIDs.includes(networks.mastery)) {
+            this.testnet = new Network(networks.mastery, this);
         }
-
-        if (defaultNet) {
-            this.eth = defaultNet.eth;
-            this.net = defaultNet.net;
-        }
+        // Set default network, use default mastery if not set
+        this.default = new Network(defaultNet.toString(), this);
     }
 
     createWallet(netID) {
@@ -52,7 +48,7 @@ class PocketAion extends Pocket {
 
 }
 
-class RPCMethod {
+class Network {
     constructor(netID, pocketAion) {
         this.eth = new EthRpc(netID, pocketAion);
         this.net = new NetRpc(netID, pocketAion);
