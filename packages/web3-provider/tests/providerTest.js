@@ -2,64 +2,158 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Web3 Provider
  */
-var assert = require('assert');
+var expect = require('chai').expect;
 var PocketProvider = require('../src/pocket_provider.js').PocketProvider;
 var EthereumTx = require('ethereumjs-tx');
+var web3Utils = require('web3-utils');
+var aionAccount = require('aion-web3-eth-accounts');
 
-var TestOptions = {
-    networkName: "ETH",
-    networkID: "4",
-    devID: "DEVID1",
-    version: "0"
-}
-
-var TestTransactionSigner = {
-    hasAddress: function (address, callback) {
-        console.log(TestTransactionSigner.accounts);
-        callback(null, TestTransactionSigner.accounts.includes(address));
+// Ethereum data setup for test
+const EthTransactionSigner = {
+    hasAddress: async function (address) {
+        return EthTransactionSigner.accounts.includes(address);
     },
-    signTransaction: function (txParams, callback) {
-        var pkString = Object.values(TestTransactionSigner.privateKeys)[0];
+    signTransaction: async function (txParams) {
+        var pkString = Object.values(EthTransactionSigner.privateKeys)[0];
         var privateKeyBuffer = Buffer.from(pkString, 'hex');
         var tx = new EthereumTx(txParams);
         tx.sign(privateKeyBuffer);
-        callback(null, '0x' + tx.serialize().toString('hex'));
+        return '0x' + tx.serialize().toString('hex');
     },
     // Needs at least 2 accounts in the node to run all tests
-    accounts: ["0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f"],
+    accounts: ["0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", "0xF0BE394Fb2Def90824D11C7Ea189E75a8e868fA6"],
     // TODO: Improve this
     // Update this object with the address - private keys for each account in the same order they are declared
     privateKeys: {
         "value": "330D1AD67A9E44E15F5B7EBD20514865CBCE363B2E95FFC9D9C95198EF2893F3"
     }
 }
+// Network information
+var ethOpts = { networkName: "ETH", networkID: "4", devID: "DEVID1" };
 
-describe('PocketProvider', function () {
+describe('Ethereum PocketProvider', function () {
     var opts = {
-        transactionSigner: TestTransactionSigner
+        transactionSigner: EthTransactionSigner
     }
-    var provider = new PocketProvider(TestOptions.networkName, TestOptions.networkID, TestOptions.devID, TestOptions.version, opts)
+    var provider = new PocketProvider(ethOpts.networkName, ethOpts.networkID, ethOpts.devID, opts);
 
-    describe('#send', function () {
-        // Fetch accounts from the service node if the accounts array is empty
-        before(function (done) {
-            if(TestTransactionSigner.accounts.length === 0) {
-                var payload = {
-                    "jsonrpc": "2.0",
-                    "method": "eth_accounts",
-                    "params": [],
-                    "id": 1
-                };
-                provider.send(payload, function (err, result) {
-                    if (err != null) {
-                        throw err;
-                    }
-                    TestTransactionSigner.accounts = result;
-                    done();
-                });
-            }else {
-                done();
-            }
-        });
+    it('should create a new instance of the PocketProvider', function () {
+        var pocketProvider = new PocketProvider(ethOpts.networkName, ethOpts.networkID,
+            ethOpts.devID, ethOpts.version, opts);
+
+        expect(pocketProvider).to.not.be.an.instanceof(Error);
+        expect(pocketProvider).to.be.an.instanceof(PocketProvider);
+        expect(pocketProvider).to.have.property('transactionSigner');
+
+    });
+
+    it('should send a new request', async () => {
+        var payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_getBalance",
+            "params": [EthTransactionSigner.accounts[0], "latest"],
+            "id": (new Date()).getTime()
+        };
+        var response = await provider.send(payload);
+        expect(response).to.not.be.an.instanceof(Error);
+        expect(response).to.be.a('string');
+    });
+
+    it('should submit transactions using eth_sendTransaction', async () => {
+        // Transfers eth from accounts[0] to accounts[1]
+        var tx = {
+            "from": EthTransactionSigner.accounts[0],
+            "to": EthTransactionSigner.accounts[1],
+            "value": web3Utils.numberToHex(10000), // Change value for the amount being sent
+            "gas": "0x5208",
+            "gasPrice": "0x3B9ACA00"
+        }
+
+        var payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_sendTransaction",
+            "params": [tx],
+            "id": (new Date()).getTime()
+        };
+        
+        var response = await provider.send(payload);
+        expect(response).to.not.be.an.instanceof(Error);
+        expect(response).to.be.a('string');
+    });
+});
+
+// Aion data setup for test
+const AionTransactionSigner = {
+    hasAddress: async function (address) {
+        return AionTransactionSigner.accounts.includes(address);
+    },
+    signTransaction: async function (txParams) {
+        // Retrieve the private key
+        var pkString = Object.values(AionTransactionSigner.privateKeys)[0];
+        // Sign transaction
+        var result = await aionAccount.prototype.signTransaction(txParams, pkString);
+        var signedTx = result.rawTransaction;
+        return signedTx;
+    },
+    // Needs at least 2 accounts in the node to run all tests
+    accounts: ["0xa0510dd236472e90f0ff4f6b7b4f70b1d8c5206cf303839f9a4e8fa6af0dd420", "0xa0d969df9232b45239b577c3790887081b5a22ffd5a46a8d82584ee560485624"],
+    // TODO: Improve this
+    // Update this object with the address - private keys for each account in the same order they are declared
+    privateKeys: {
+        "value": "0xd0c6208eb958998dcdac23bedf7d58d863c5abe64e250e4e379a4efd3966cd99e5cab1be5be1655abc987ff7321a438581778919b859370cf1faa22346b201fc"
+    }
+}
+// Network information
+var aionOpts = { networkName: "AION", networkID: "32", devID: "DEVID1" };
+
+// Aion network tests
+describe('Aion PocketProvider', function () {
+    var opts = {
+        transactionSigner: AionTransactionSigner
+    }
+    var provider = new PocketProvider(aionOpts.networkName, aionOpts.networkID, aionOpts.devID, opts);
+
+    it('should create a new instance of the PocketProvider', function () {
+        var pocketProvider = new PocketProvider(aionOpts.networkName, aionOpts.networkID,
+            aionOpts.devID, aionOpts.version, opts);
+
+        expect(pocketProvider).to.not.be.an.instanceof(Error);
+        expect(pocketProvider).to.be.an.instanceof(PocketProvider);
+        expect(pocketProvider).to.have.property('transactionSigner');
+    });
+
+    it('should send a new request', async () => {
+        var payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_getBalance",
+            "params": [AionTransactionSigner.accounts[0], "latest"],
+            "id": (new Date()).getTime()
+        };
+
+        var response = await provider.send(payload);
+        expect(response).to.not.be.an.instanceof(Error);
+        expect(response).to.be.a('string');
+    });
+
+    it('should submit transactions using eth_sendTransaction', async () => {
+        // Transfers aion from accounts[0] to accounts[1]
+        var tx = {
+            "from": AionTransactionSigner.accounts[0],
+            "to": AionTransactionSigner.accounts[1],
+            "value": "0x2540be400",
+            "gas": "0x5208",
+            "gasPrice": "0x2540be400"
+        }
+        
+        var payload = {
+            "jsonrpc": "2.0",
+            "method": "eth_sendTransaction",
+            "params": [tx],
+            "id": (new Date()).getTime()
+        };
+        
+        var response = await provider.send(payload);
+        expect(response).to.not.be.an.instanceof(Error);
+        expect(response).to.be.a('string');
     });
 });
