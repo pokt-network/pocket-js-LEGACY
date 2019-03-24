@@ -21,7 +21,6 @@ class Configuration {
     this.nodes = [];
     this.requestTimeOut = requestTimeOut || 10000;
     this.dispatch = null;
-    this.relay = null;
   }
 
   nodesIsEmpty() {
@@ -65,6 +64,12 @@ class Pocket {
 
   // Create a Relay instance
   createRelay(blockchain, netID, data) {
+    // Check if data is a json tring
+    if (typeof data == 'string') {
+      return new Relay(blockchain, netID, data, this.configuration);
+      
+    }
+    data = JSON.stringify(data);
     return new Relay(blockchain, netID, data, this.configuration);
   }
 
@@ -128,14 +133,14 @@ class Pocket {
       // Response
       if (response instanceof Error == false) {
         if (callback) {
-          callback(response, null);
+          callback(null, response);
           return;
         } else {
           return response;
         }
       } else {
         if (callback) {
-          callback(null, response);
+          callback(response);
           return;
         } else {
           return response;
@@ -143,7 +148,7 @@ class Pocket {
       }
     } catch (error) {
       if (callback) {
-        callback(null, error);
+        callback(error);
         return;
       } else {
         return error;
@@ -156,7 +161,7 @@ class Pocket {
       // Check for relay
       if (relay == null || relay.data == null) {
         if (callback) {
-          callback(null, new Error("Relay is null or data field is missing"));
+          callback(new Error("Relay is null or data field is missing"));
           return;
         } else {
           return new Error("Relay is null or data field is missing");
@@ -165,7 +170,7 @@ class Pocket {
       // Verify all relay properties are set
       if (!relay.isValid()) {
         if (callback) {
-          callback(null, new Error("Relay is missing a property, please verify all properties."));
+          callback(new Error("Relay is missing a property, please verify all properties."));
           return;
         } else {
           return new Error("Relay is missing a property, please verify all properties.");
@@ -178,7 +183,7 @@ class Pocket {
 
       if (node == null) {
         if (callback) {
-          callback(null, new Error("Node is empty;"));
+          callback(new Error("Node is empty;"));
           return;
         } else {
           return new Error("Node is empty;");
@@ -190,14 +195,14 @@ class Pocket {
       // Response
       if (response instanceof Error == false) {
         if (callback) {
-          callback(response, null);
+          callback(null, response);
           return;
         } else {
           return response;
         }
       } else {
         if (callback) {
-          callback(null, response);
+          callback(response);
           return;
         } else {
           return response;
@@ -206,7 +211,7 @@ class Pocket {
 
     } catch (error) {
       if (callback) {
-        callback(null, response.data);
+        callback(new Error("Failed to send relay with error: " + error));
         return;
       } else {
         return new Error("Failed to send relay with error: " + error);

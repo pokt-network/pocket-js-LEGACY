@@ -25,7 +25,7 @@ class Report {
 		return true;
     }
 
-    async send(){
+    async send(callback){
         const axiosInstance = axios.create({
             baseURL: constants.dispatchNodeURL,
             timeout: this.configuration.requestTimeOut,
@@ -39,9 +39,17 @@ class Report {
           );
     
           if (response.status == 200 && response.data != null) {
+            if (callback) {
+              callback(null, response.data);
+              return;
+            }
             return response.data;
           } else {
-            throw new Error("Failed to send report with error: " + response.data);
+            if (callback) {
+              callback(new Error("Failed to send report with error: " + response.data));
+              return;
+            }
+            return new Error("Failed to send report with error: " + response.data);
           }
     }
 }
