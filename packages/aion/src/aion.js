@@ -68,16 +68,11 @@ class PocketAion extends Pocket {
             throw new Error("Failed to create Wallet, netID param is missing.")
         }
     }
-    importWallet(address, privateKey, netID) {
+    importWallet(privateKey, netID) {
         // Check mandatory params
-        if (address != null || privateKey != null || netID != null) {
+        if (privateKey != null || netID != null) {
             var account = this.aionInstance.eth.accounts.privateKeyToAccount(privateKey);
-
-            if (account.address != address) {
-                throw new Error("Failed to import Wallet, invalid address provided.")
-            }else{
-                return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
-            }
+            return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
         }else{
             throw new Error("Failed to import Wallet, some params are missing.")
         }
