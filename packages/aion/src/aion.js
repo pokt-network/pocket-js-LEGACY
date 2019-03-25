@@ -10,7 +10,10 @@ const AionWeb3 = require('aion-web3');
 
 // Constants
 const NETWORK_NAME = "AION";
-const Networks = Object.freeze({"MAINNET":"256", "MASTERY":"32"})
+const Networks = Object.freeze({
+    "MAINNET": "256",
+    "MASTERY": "32"
+})
 
 class PocketAion extends Pocket {
     constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.MASTERY) {
@@ -42,7 +45,7 @@ class PocketAion extends Pocket {
             this.mastery = new Network(Networks.MASTERY, this);
             this.networks[Networks.MASTERY] = this.mastery;
         }
-        
+
         // Set default network, use default mastery if not set
         if (this.networks[defaultNet.toString()]) {
             this.default = this.networks[defaultNet];
@@ -64,17 +67,21 @@ class PocketAion extends Pocket {
         if (netID != null) {
             var account = this.aionInstance.eth.accounts.create();
             return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
-        }else{
+        } else {
             throw new Error("Failed to create Wallet, netID param is missing.")
         }
     }
     importWallet(privateKey, netID) {
-        // Check mandatory params
-        if (privateKey != null || netID != null) {
-            var account = this.aionInstance.eth.accounts.privateKeyToAccount(privateKey);
-            return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
-        }else{
-            throw new Error("Failed to import Wallet, some params are missing.")
+        try {
+            // Check mandatory params
+            if (privateKey != null || netID != null) {
+                var account = this.aionInstance.eth.accounts.privateKeyToAccount(privateKey);
+                return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
+            } else {
+                throw new Error("Failed to import Wallet, some params are missing.");
+            }
+        } catch (error) {
+            throw new Error("Failed to import Wallet: " + error);
         }
     }
 
