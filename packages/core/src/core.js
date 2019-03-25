@@ -66,11 +66,9 @@ class Pocket {
   createRelay(blockchain, netID, data) {
     // Check if data is a json tring
     if (typeof data == 'string') {
-      return new Relay(blockchain, netID, data, this.configuration);
-      
+      return new Relay(blockchain, netID, data, this.configuration); 
     }
-    data = JSON.stringify(data);
-    return new Relay(blockchain, netID, data, this.configuration);
+    return new Relay(blockchain, netID, JSON.stringify(data), this.configuration);
   }
 
   // Create a Report instance
@@ -183,10 +181,10 @@ class Pocket {
 
       if (node == null) {
         if (callback) {
-          callback(new Error("Node is empty;"));
+          callback(new Error("Node is empty."));
           return;
         } else {
-          return new Error("Node is empty;");
+          return new Error("Node is empty.");
         }
       }
 

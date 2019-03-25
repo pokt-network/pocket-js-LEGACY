@@ -4,7 +4,7 @@ class Wallet {
 		this.address = address;
 		this.privateKey = privateKey;
 		this.network = network;
-		this.subnetwork = subnetwork;
+		this.networkID = networkID;
 		this.data = data;
 	}
 }
