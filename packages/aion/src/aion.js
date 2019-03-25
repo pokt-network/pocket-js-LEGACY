@@ -3,7 +3,9 @@
  * @description Pocket javascript plugin to interact with the Aion network.
  */
 // Dependencies
-const Pocket = require('pocket-js-core').Pocket;
+const Core = require('pocket-js-core');
+const Pocket = Core.Pocket;
+const Wallet = Core.Wallet;
 const AionWeb3 = require('aion-web3');
 
 // Constants
@@ -58,7 +60,13 @@ class PocketAion extends Pocket {
         return result;
     }
     createWallet(netID) {
-        throw new Error("Must implement Create Wallet")
+        // Check for the aion instance
+        if (netID != null) {
+            var account = this.aionInstance.eth.accounts.create();
+            return new Wallet(account.address, account.privateKey, networkName, netID, null);
+        }else{
+            throw new Error("Failed to create Wallet, netID param is missing.")
+        }
     }
     importWallet(address, privateKey, subnetwork, data) {
         throw new Error("Must implement Import Wallet")
