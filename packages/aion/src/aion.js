@@ -3,13 +3,13 @@
  * @description Pocket javascript plugin to interact with the Aion network.
  */
 // Dependencies
-const Core = require('pocket-js-core');
-const Pocket = Core.Pocket;
-const Wallet = Core.Wallet;
+const PocketJSCore = require('pocket-js-core');
+const Pocket = PocketJSCore.Pocket;
+const Wallet = PocketJSCore.Wallet;
 const AionWeb3 = require('aion-web3');
 
 // Constants
-const networkName = "AION";
+const NETWORKNAME = "AION";
 const Networks = Object.freeze({"MAINNET":"256", "MASTERY":"32"})
 
 class PocketAion extends Pocket {
@@ -20,7 +20,7 @@ class PocketAion extends Pocket {
         // Options object
         var opts = {
             "devID": devID,
-            "networkName": networkName,
+            "networkName": NETWORKNAME,
             "netIDs": netIDs,
             "requestTimeOut": requestTimeOut,
             "maxNodes": maxNodes
@@ -63,7 +63,7 @@ class PocketAion extends Pocket {
         // Check for the aion instance
         if (netID != null) {
             var account = this.aionInstance.eth.accounts.create();
-            return new Wallet(account.address, account.privateKey, networkName, netID, null);
+            return new Wallet(account.address, account.privateKey, NETWORKNAME, netID, null);
         }else{
             throw new Error("Failed to create Wallet, netID param is missing.")
         }
