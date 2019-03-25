@@ -9,7 +9,7 @@ const Wallet = PocketJSCore.Wallet;
 const AionWeb3 = require('aion-web3');
 
 // Constants
-const NETWORKNAME = "AION";
+const NETWORK_NAME = "AION";
 const Networks = Object.freeze({"MAINNET":"256", "MASTERY":"32"})
 
 class PocketAion extends Pocket {
@@ -20,7 +20,7 @@ class PocketAion extends Pocket {
         // Options object
         var opts = {
             "devID": devID,
-            "networkName": NETWORKNAME,
+            "networkName": NETWORK_NAME,
             "netIDs": netIDs,
             "requestTimeOut": requestTimeOut,
             "maxNodes": maxNodes
@@ -63,7 +63,7 @@ class PocketAion extends Pocket {
         // Check for the aion instance
         if (netID != null) {
             var account = this.aionInstance.eth.accounts.create();
-            return new Wallet(account.address, account.privateKey, NETWORKNAME, netID, null);
+            return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
         }else{
             throw new Error("Failed to create Wallet, netID param is missing.")
         }
