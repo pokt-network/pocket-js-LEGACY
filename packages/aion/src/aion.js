@@ -7,6 +7,7 @@ const PocketJSCore = require('pocket-js-core');
 const Pocket = PocketJSCore.Pocket;
 const Wallet = PocketJSCore.Wallet;
 const AionWeb3 = require('aion-web3');
+const BlockTag = require('../models/blocktag.js').BlockTag;
 
 // Constants
 const NETWORK_NAME = "AION";
