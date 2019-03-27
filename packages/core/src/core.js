@@ -3,6 +3,7 @@ const Dispatch = require("./models/dispatch.js").Dispatch;
 const Wallet = require("./models/wallet.js").Wallet;
 const Relay = require("./models/relay.js").Relay;
 const Report = require("./models/report.js").Report;
+const BlockTag = require("./models/blocktag.js").BlockTag;
 
 class Configuration {
   /**
@@ -261,5 +262,6 @@ module.exports = {
   Blockchain,
   Dispatch,
   Wallet,
-  Relay
+  Relay,
+  BlockTag
 }
