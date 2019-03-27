@@ -20,7 +20,7 @@ class BlockTag {
             }
         } catch (error) {
             this.blockHeight = BLOCK_TAG.LATEST;
-            console.log(error);
+            console.error(error);
         }
 
     }
