@@ -19,7 +19,8 @@ class BlockTag {
                 this.blockHeight = this.prependZeroX(BigInt(block).toString(16));
             }
         } catch (error) {
-            throw error;
+            this.blockHeight = BLOCK_TAG.LATEST;
+            console.log(error);
         }
 
     }
