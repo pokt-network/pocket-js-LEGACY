@@ -8,7 +8,7 @@
         "tests": "./tests"
     },
     "scripts": {
-        "test": "mocha tests/coreTest.js"
+        "test": "mocha tests/*.js"
     },
     "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/core",
     "homepage": "https://github.com/pokt-network/pocket-js",

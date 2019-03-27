@@ -3,8 +3,13 @@
   "version": "0.0.1",
   "description": "Pocket-js package with a set of plugins that allows you to connect to the Eth and Aion Networks.",
   "main": "index.js",
+  "subPackages": [
+    "packages/core",
+    "packages/web3-provider"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "subpkg install",
+    "test": "subpkg test"
   },
   "repository": {
     "type": "git",
@@ -27,11 +32,13 @@
   "homepage": "https://github.com/pokt-network/pocket-js#readme",
   "dependencies": {
     "commonjs": "0.0.1",
+    "pocket-js-aion": "./packages/aion",
+    "pocket-js-core": "file:packages/core",
     "pocket-js-eth": "./packages/eth",
-    "pocket-js-core": "./packages/core",
-    "pocket-js-aion": "./packages/aion"
+    "pocket-js-web3-provider": "file:packages/web3-provider"
   },
   "devDependencies": {
-    "mocha": "^6.0.2"
+    "mocha": "^6.0.2",
+    "subpackage": "^1.1.0"
   }
 }
