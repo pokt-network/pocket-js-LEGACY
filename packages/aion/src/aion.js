@@ -7,7 +7,7 @@ const PocketJSCore = require('pocket-js-core');
 const Pocket = PocketJSCore.Pocket;
 const Wallet = PocketJSCore.Wallet;
 const EthRpc = require('./ethRpc.js').EthRpc;
-const Accounts = require('aion-web3-eth-accounts');
+const AionAccounts = require('aion-web3-eth-accounts');
 
 // Constants
 const NETWORK_NAME = "AION";
@@ -63,7 +63,7 @@ class PocketAion extends Pocket {
     createWallet(netID) {
         // Check for the aion instance
         if (netID != null) {
-            var account = new Accounts().create();
+            var account = new AionAccounts().create();
             return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
         } else {
             throw new Error("Failed to create Wallet, netID param is missing.")
@@ -73,7 +73,7 @@ class PocketAion extends Pocket {
         try {
             // Check mandatory params
             if (privateKey != null || netID != null) {
-                var account = new Accounts().privateKeyToAccount(privateKey);
+                var account = new AionAccounts().privateKeyToAccount(privateKey);
                 return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
             } else {
                 throw new Error("Failed to import Wallet, some params are missing.");
