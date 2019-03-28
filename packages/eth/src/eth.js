@@ -8,18 +8,21 @@ const Pocket = PocketJSCore.Pocket;
 const Wallet = PocketJSCore.Wallet;
 const EthRpc = require('../rpc/ethRpc.js').EthRpc;
 const NetRpc = require('../rpc/netRpc.js').NetRpc;
-const EthAccounts = require('web3-eth-accounts');
+const EthAccounts = require('web3-eth-accounts').Accounts;
+const PocketProvider = require('pocket-js-web3-provider').PocketProvider;
 
 // Constants
-const ethAccounts = new EthAccounts();
 const NETWORK_NAME = "ETH";
 const Networks = Object.freeze({
-    "MAINNET": "1",
-    "TESTNET": "4"
+    "ROPSTEN": "3",
+    "RINKEBY": "4",
+    "GOERLI": "5",
+    "KOVAN": "42",
+    "MAINNET": "1"
 })
 
 class PocketEth extends Pocket {
-    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.TESTNET) {
+    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.RINKEBY) {
         if (devID == null || netIDs == null) {
             throw new Error("Invalid number of arguments");
         }
@@ -35,18 +38,33 @@ class PocketEth extends Pocket {
         super(opts);
         // Network list
         this.networks = {}
-        // Check for mainNet and testNet IDs
+        // Check for mainnet netID
         if (netIDs.includes(1) || netIDs.includes(Networks.MAINNET)) {
             this.mainnet = new Network(Networks.MAINNET, this);
             this.networks[Networks.MAINNET] = this.mainnet;
         }
-
-        if (netIDs.includes(4) || netIDs.includes(Networks.TESTNET)) {
-            this.testnet = new Network(Networks.TESTNET, this);
-            this.networks[Networks.TESTNET] = this.testnet;
+        // Check for rinkeby netID
+        if (netIDs.includes(4) || netIDs.includes(Networks.RINKEBY)) {
+            this.rinkeby = new Network(Networks.RINKEBY, this);
+            this.networks[Networks.RINKEBY] = this.rinkeby;
+        }
+        // Check for ropsten netID
+        if (netIDs.includes(3) || netIDs.includes(Networks.ROPSTEN)) {
+            this.ropsten = new Network(Networks.ROPSTEN, this);
+            this.networks[Networks.ROPSTEN] = this.ropsten;
+        }
+        // Check for goerli netID
+        if (netIDs.includes(5) || netIDs.includes(Networks.GOERLI)) {
+            this.goerli = new Network(Networks.GOERLI, this);
+            this.networks[Networks.GOERLI] = this.goerli;
+        }
+        // Check for kovan netID
+        if (netIDs.includes(42) || netIDs.includes(Networks.KOVAN)) {
+            this.kovan = new Network(Networks.KOVAN, this);
+            this.networks[Networks.KOVAN] = this.kovan;
         }
 
-        // Set default network, use default testnet if not set
+        // Set default network, use default rinkeby if not set
         if (this.networks[defaultNet.toString()]) {
             this.default = this.networks[defaultNet];
         } else {
@@ -64,6 +82,9 @@ class PocketEth extends Pocket {
     }
     createWallet(netID) {
         if (netID != null) {
+            // Instantiate provider
+            var pocketProvider = new PocketProvider(NETWORK_NAME, netID, this.configuration.devID);
+            var ethAccounts = new EthAccounts(pocketProvider);
             var account = ethAccounts.create();
             return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
         } else {
@@ -74,6 +95,9 @@ class PocketEth extends Pocket {
         try {
             // Check mandatory params
             if (privateKey != null || netID != null) {
+                // Instantiate provider
+                var pocketProvider = new PocketProvider(NETWORK_NAME, netID, this.configuration.devID);
+                var ethAccounts = new EthAccounts(pocketProvider);
                 var account = ethAccounts.privateKeyToAccount(privateKey);
                 return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
             } else {
