@@ -5,6 +5,9 @@
     "license": "MIT",
     "main": "./src/eth.js",
     "directories": {
+        "test": "tests"
+    },
+    "scripts": {
         "test": "mocha tests/*.js"
     },
     "repository": "https://github.com/pokt-network/pocket-js/tree/pocket-js-core-0.0.1/master/packages/eth",
