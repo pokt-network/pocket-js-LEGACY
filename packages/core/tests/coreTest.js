@@ -1,3 +1,8 @@
+/**
+ * @author Pabel Nunez Landestoy <pabel@pokt.network>
+ * @description Unit test for the Pocket Core
+ */
+
 var assert = require('assert');
 var expect = require('chai').expect;
 var should = require('chai').should();

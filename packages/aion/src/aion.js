@@ -8,7 +8,6 @@ const Pocket = PocketJSCore.Pocket;
 const Wallet = PocketJSCore.Wallet;
 const EthRpc = require('./ethRpc.js').EthRpc;
 const AionWeb3 = require('aion-web3');
-const BlockTag = require('../models/blocktag.js').BlockTag;
 
 // Constants
 const NETWORK_NAME = "AION";
@@ -26,7 +25,7 @@ class PocketAion extends Pocket {
         var opts = {
             "devID": devID,
             "networkName": NETWORK_NAME,
-            "netIDs": netIDs,
+            "netIDs": netIDs.toString(),
             "requestTimeOut": requestTimeOut,
             "maxNodes": maxNodes
         }
