@@ -255,14 +255,14 @@ describe('PocketAion ETH Namespace RPC Calls', function () {
     });
 
     it('should retrieve the estimate gas value for a transaction', async () => {
-        var code = await pocketAion.mastery.eth.estimateGas(null,ESTIMATE_GAS_TO,null,null,null,ESTIMATE_GAS_DATA,"latest");
+        var code = await pocketAion.mastery.eth.estimateGas(null,ESTIMATE_GAS_TO,null,null,null,ESTIMATE_GAS_DATA);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('number');
     });
 
     it('should fail to retrieve the estimate gas value for a transaction', async () => {
-        var code = await pocketAion.mastery.eth.estimateGas(null,null,null,null,null,ESTIMATE_GAS_DATA,"latest");
+        var code = await pocketAion.mastery.eth.estimateGas(null,null,null,null,null,ESTIMATE_GAS_DATA);
         
         expect(code).to.be.an.instanceof(Error);
     });

@@ -36,7 +36,7 @@ async function send(params, method, pocketAion, netID, callback) {
         // Parse response
         var responseJSON = JSON.parse(response);
         if (responseJSON.error) {
-            var error = new Error("Failed to send request with message: " + responseJSON.error);
+            var error = new Error("Failed to send request with message: " + responseJSON.error.message);
             if (callback) {
                 callback(error);
             }

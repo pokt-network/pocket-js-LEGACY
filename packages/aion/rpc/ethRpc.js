@@ -254,16 +254,17 @@ class EthRpc {
 
     async call(from, to, nrg, nrgPrice, value, data, block, callback) {
         try {
-            if (to == null) {
-                var error = Error("Destination address (to) param is missing");
+            if (to == null || data == null) {
+                var error = Error("One or more params are missing");
                 if (callback) {
                     callback(error);
                 }
                 return error;
             }
             // Create params
-            var txParams = {};
+            var txParams = {to: to, data: data};
             var blocktag = new BlockTag(block).toString();
+
             if (from) {
                 txParams.from = from;
             }
@@ -276,10 +277,6 @@ class EthRpc {
             if (value) {
                 txParams.value = new BlockTag(value).toString();
             }
-            if (data) {
-                txParams.data = data;
-            }
-
             // Send request
             var response = await this.send([txParams, blocktag], ETH_RPC_METHODS.call);
             if (response instanceof Error) {
@@ -529,23 +526,19 @@ class EthRpc {
             return error;
         }
     }
-    async estimateGas(from, to, nrg, nrgPrice, value, data, block, callback) {
+    async estimateGas(from, to, nrg, nrgPrice, value, data, callback) {
         try {
-            if (to == null) {
-                var error = Error("Destination address (to) param is missing");
+            if (to == null || data == null) {
+                var error = Error("One or more params are missing");
                 if (callback) {
                     callback(error);
                 }
                 return error;
             }
             // Create params
-            var blocktag = new BlockTag(block).toString();
-            var txParams = {};
+            var txParams = {to: to, data: data};
             if (from) {
                 txParams.from = from;
-            }
-            if (data) {
-                txParams.data = data;
             }
             if (nrg) {
                 txParams.nrg = new BlockTag(nrg).toString();
@@ -558,7 +551,7 @@ class EthRpc {
             }
 
             // Send request
-            var response = await this.send([txParams, blocktag], ETH_RPC_METHODS.estimateGas);
+            var response = await this.send([txParams], ETH_RPC_METHODS.estimateGas);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -579,9 +572,6 @@ class EthRpc {
             return error;
         }
     }
-
-
-
 }
 
 
