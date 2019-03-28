@@ -76,7 +76,7 @@ describe('Pocket Aion Class tests', function () {
     });
 });
 
-describe('Pocket Aion Class tests', function () {
+describe('PocketAion ETH Namespace RPC Calls', function () {
 
     it('should retrieve an account balance', async () => {
         var balance = await pocketAion.mastery.eth.getBalance(ADDRESS,"latest");

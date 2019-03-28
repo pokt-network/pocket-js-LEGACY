@@ -3,7 +3,8 @@
  * @description ETH RPC methods for the Aion Network.
  */
 const BlockTag = require('../models/blocktag.js').BlockTag;
-const ethRPCMethodType = Object.freeze({
+const Web3Utils = require('aion-web3-utils');
+const ETH_RPC_METHODS = Object.freeze({
     "getBalance": "eth_getBalance",
     "getStorageAt": "eth_getStorageAt",
     "getTransactionCount": "eth_getTransactionCount",
@@ -91,7 +92,7 @@ class EthRpc {
             // Create params
             var params = [address, blocktag.toString()]
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getBalance);
+            var response = await this.send(params, ETH_RPC_METHODS.getBalance);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -99,7 +100,7 @@ class EthRpc {
                 return response;
             }
             // Parse response
-            var value = this.pocketAion.aionInstance.utils.fromNAmp(response);
+            var value = Web3Utils.fromNAmp(response);
             // Return balance
             if (callback) {
                 callback(null, value);
@@ -127,7 +128,7 @@ class EthRpc {
             // Create params
             var params = [address, blocktag.toString()]
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getTransactionCount);
+            var response = await this.send(params, ETH_RPC_METHODS.getTransactionCount);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -135,7 +136,7 @@ class EthRpc {
                 return response;
             }
             // Parse response
-            var value = this.pocketAion.aionInstance.utils.hexToNumber(response);
+            var value = Web3Utils.hexToNumber(response);
             if (callback) {
                 callback(null, value);
             }
@@ -164,7 +165,7 @@ class EthRpc {
             // Create params
             var params = [address, pos0, blocktag]
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getStorageAt);
+            var response = await this.send(params, ETH_RPC_METHODS.getStorageAt);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -195,7 +196,7 @@ class EthRpc {
             // Create params
             var params = [blockHash]
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getBlockTransactionCountByHash);
+            var response = await this.send(params, ETH_RPC_METHODS.getBlockTransactionCountByHash);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -203,7 +204,7 @@ class EthRpc {
                 return response;
             }
             // Parse response
-            var value = this.pocketAion.aionInstance.utils.hexToNumber(response);
+            var value = Web3Utils.hexToNumber(response);
             if (callback) {
                 callback(null, value);
             }
@@ -230,7 +231,7 @@ class EthRpc {
             var blocktag = new BlockTag(block).toString();
             var params = [blocktag];
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getBlockTransactionCountByNumber);
+            var response = await this.send(params, ETH_RPC_METHODS.getBlockTransactionCountByNumber);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -238,7 +239,7 @@ class EthRpc {
                 return response;
             }
             // Parse response
-            var value = this.pocketAion.aionInstance.utils.hexToNumber(response);
+            var value = Web3Utils.hexToNumber(response);
             if (callback) {
                 callback(null, value);
             }
@@ -265,7 +266,7 @@ class EthRpc {
             var blocktag = new BlockTag(block).toString();
             var params = [address, blocktag];
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getCode);
+            var response = await this.send(params, ETH_RPC_METHODS.getCode);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -314,7 +315,7 @@ class EthRpc {
             }
 
             // Send request
-            var response = await this.send([txParams, blocktag], ethRPCMethodType.call);
+            var response = await this.send([txParams, blocktag], ETH_RPC_METHODS.call);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -345,7 +346,7 @@ class EthRpc {
             // Create params
             var params = [blockHash, bool]
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getBlockByHash);
+            var response = await this.send(params, ETH_RPC_METHODS.getBlockByHash);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -377,7 +378,7 @@ class EthRpc {
             var blocktag = new BlockTag(block).toString();
             var params = [blocktag, bool];
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getBlockByNumber);
+            var response = await this.send(params, ETH_RPC_METHODS.getBlockByNumber);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -408,7 +409,7 @@ class EthRpc {
             // Create params
             var params = [txHash]
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getTransactionByHash);
+            var response = await this.send(params, ETH_RPC_METHODS.getTransactionByHash);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -441,7 +442,7 @@ class EthRpc {
             var indexHex = new BlockTag(index).toString();
             var params = [blockHash, indexHex];
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getTransactionByBlockHashAndIndex);
+            var response = await this.send(params, ETH_RPC_METHODS.getTransactionByBlockHashAndIndex);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -474,7 +475,7 @@ class EthRpc {
             var indexHex = new BlockTag(index).toString();
             var params = [blocktag, indexHex];
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getTransactionByBlockNumberAndIndex);
+            var response = await this.send(params, ETH_RPC_METHODS.getTransactionByBlockNumberAndIndex);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -506,7 +507,7 @@ class EthRpc {
             // Create params
             var params = [txHash];
             // Send request
-            var response = await this.send(params, ethRPCMethodType.getTransactionReceipt);
+            var response = await this.send(params, ETH_RPC_METHODS.getTransactionReceipt);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -543,7 +544,7 @@ class EthRpc {
                 txParams.toBlock = new BlockTag(toBlock).toString();
             }
             // Send request
-            var response = await this.send([txParams], ethRPCMethodType.getLogs);
+            var response = await this.send([txParams], ETH_RPC_METHODS.getLogs);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -591,7 +592,7 @@ class EthRpc {
             }
 
             // Send request
-            var response = await this.send([txParams, blocktag], ethRPCMethodType.estimateGas);
+            var response = await this.send([txParams, blocktag], ETH_RPC_METHODS.estimateGas);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
@@ -599,7 +600,7 @@ class EthRpc {
                 return response;
             }
             // Parse response
-            var value = this.pocketAion.aionInstance.utils.hexToNumber(response);
+            var value = Web3Utils.hexToNumber(response);
             if (callback) {
                 callback(null, value);
             }
