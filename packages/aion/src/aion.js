@@ -63,7 +63,6 @@ class PocketAion extends Pocket {
         return result;
     }
     createWallet(netID) {
-        // Check for the aion instance
         if (netID != null) {
             var account = aionAccounts.create();
             return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
