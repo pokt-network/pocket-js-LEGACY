@@ -10,6 +10,7 @@ const EthRpc = require('./ethRpc.js').EthRpc;
 const AionAccounts = require('aion-web3-eth-accounts');
 
 // Constants
+const aionAccounts = new AionAccounts();
 const NETWORK_NAME = "AION";
 const Networks = Object.freeze({
     "MAINNET": "256",
@@ -63,7 +64,7 @@ class PocketAion extends Pocket {
     createWallet(netID) {
         // Check for the aion instance
         if (netID != null) {
-            var account = new AionAccounts().create();
+            var account = aionAccounts.create();
             return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
         } else {
             throw new Error("Failed to create Wallet, netID param is missing.")
@@ -73,7 +74,7 @@ class PocketAion extends Pocket {
         try {
             // Check mandatory params
             if (privateKey != null || netID != null) {
-                var account = new AionAccounts().privateKeyToAccount(privateKey);
+                var account = aionAccounts.privateKeyToAccount(privateKey);
                 return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
             } else {
                 throw new Error("Failed to import Wallet, some params are missing.");
