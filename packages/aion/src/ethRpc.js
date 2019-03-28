@@ -2,6 +2,7 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description ETH RPC methods for the Aion Network.
  */
+// Constants
 const BlockTag = require('../models/blocktag.js').BlockTag;
 const Web3Utils = require('aion-web3-utils');
 const ETH_RPC_METHODS = Object.freeze({

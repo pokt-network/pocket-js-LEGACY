@@ -267,4 +267,24 @@ describe('PocketAion ETH Namespace RPC Calls', function () {
         expect(code).to.be.an.instanceof(Error);
     });
 
+    describe('PocketAion NET Namespace RPC Calls', function () {
+        it('should retrieve the current network id', async () => {
+            var result = await pocketAion.mastery.net.version();
+    
+            expect(result).to.not.be.an.instanceof(Error);
+            expect(result).to.be.a('string');
+        });
+        it('should retrieve the listening status of the node', async () => {
+            var result = await pocketAion.mastery.net.listening();
+    
+            expect(result).to.not.be.an.instanceof(Error);
+            expect(result).to.be.a('boolean');
+        });
+        it('should retrieve the number of peers currently connected', async () => {
+            var result = await pocketAion.mastery.net.peerCount();
+    
+            expect(result).to.not.be.an.instanceof(Error);
+            expect(result).to.be.a('number');
+        });
+    });
 });

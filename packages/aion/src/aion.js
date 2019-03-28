@@ -7,6 +7,7 @@ const PocketJSCore = require('pocket-js-core');
 const Pocket = PocketJSCore.Pocket;
 const Wallet = PocketJSCore.Wallet;
 const EthRpc = require('./ethRpc.js').EthRpc;
+const NetRpc = require('./netRpc.js').NetRpc;
 const AionAccounts = require('aion-web3-eth-accounts');
 
 // Constants
@@ -90,12 +91,6 @@ class Network {
     constructor(netID, pocketAion) {
         this.eth = new EthRpc(netID, pocketAion);
         this.net = new NetRpc(netID, pocketAion);
-    }
-}
-
-class NetRpc {
-    constructor(netID) {
-        this.netID = netID
     }
 }
 
