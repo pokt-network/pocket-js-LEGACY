@@ -5,6 +5,7 @@
 // Constants
 const BlockTag = require('../models/blocktag.js').BlockTag;
 const Web3Utils = require('aion-web3-utils');
+const RpcUtils = require('./rpcUtils.js');
 const ETH_RPC_METHODS = Object.freeze({
     "getBalance": "eth_getBalance",
     "getStorageAt": "eth_getStorageAt",
@@ -30,53 +31,17 @@ class EthRpc {
     }
     // Send a relay with the rpc method params
     async send(params, method, callback) {
-        try {
-            // Create data
-            var data = {
-                "jsonrpc": "2.0",
-                "method": method,
-                "params": params,
-                "id": (new Date()).getTime()
-            };
-
-            data = JSON.stringify(data);
-            // Create relay
-            var relay = this.pocketAion.createRelay(this.networkName, this.netID, data);
-            // Check for errors after creating the relay
-            if (relay instanceof Error) {
-                if (callback) {
-                    callback(relay);
-                }
-                return relay;
-            }
-            var response = await this.pocketAion.sendRelay(relay);
-            // Check for errors after sending the relay
-            if (response instanceof Error) {
-                if (callback) {
-                    callback(response);
-                }
-                return response;
-            }
-            // Parse response
-            var responseJSON = JSON.parse(response);
-            if (responseJSON.error) {
-                var error = new Error("Failed to send request with message: " + responseJSON.error);
-                if (callback) {
-                    callback(error);
-                }
-                return error;
-            } else {
-                if (callback) {
-                    callback(null, responseJSON.result);
-                }
-                return responseJSON.result;
-            }
-        } catch (error) {
+        var result = await RpcUtils.send(params,method,this.pocketAion,this.netID);
+        if (result instanceof Error) {
             if (callback) {
-                callback(error);
+                callback(result);
             }
-            return error;
+            return result;
         }
+        if (callback) {
+            callback(null, result);
+        }
+        return result;
     }
 
     async getBalance(address, block, callback) {
