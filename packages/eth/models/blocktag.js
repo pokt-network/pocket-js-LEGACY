@@ -1,3 +1,8 @@
+/**
+ * @author Pabel Nunez Landestoy <pabel@pokt.network>
+ * @description BlockTag class handles the default supported block tags
+ * and format the block number if passed.
+ */
 const BLOCK_TAG = {
     EARLIEST: "earliest",
     LATEST: "latest",

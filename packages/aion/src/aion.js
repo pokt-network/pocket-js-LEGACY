@@ -6,8 +6,8 @@
 const PocketJSCore = require('pocket-js-core');
 const Pocket = PocketJSCore.Pocket;
 const Wallet = PocketJSCore.Wallet;
-const EthRpc = require('../rpc/ethRpc.js').EthRpc;
-const NetRpc = require('../rpc/netRpc.js').NetRpc;
+const EthRpc = require('./rpc/ethRpc.js').EthRpc;
+const NetRpc = require('./rpc/netRpc.js').NetRpc;
 const AionAccounts = require('aion-web3-eth-accounts');
 
 // Constants
