@@ -4,11 +4,11 @@
  */
 // Constants
 const BlockTag = require('../models/blocktag.js').BlockTag;
-const Web3Utils = require('web3-utils');
 const RpcUtils = require('./rpcUtils.js');
 const EthAccounts = require('web3-eth-accounts').Accounts;
 const PocketProvider = require('pocket-js-web3-provider').PocketProvider;
 const Web3 = require('web3');
+const Web3Utils = require('web3-utils');
 const ETH_RPC_METHODS = Object.freeze({
     "getBalance": "eth_getBalance",
     "getStorageAt": "eth_getStorageAt",
