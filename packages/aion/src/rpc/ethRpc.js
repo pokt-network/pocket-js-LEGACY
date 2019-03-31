@@ -300,7 +300,7 @@ class EthRpc {
             return error;
         }
     }
-    async sendTransaction(wallet, nonce, to, gas, gasPrice, value, data, callback) {
+    async sendTransaction(wallet, nonce, to, nrg, nrgPrice, value, data, callback) {
         try {
             if (to == null || wallet == null || nonce == null) {
                 var error = Error("One or more params are missing");
@@ -312,11 +312,11 @@ class EthRpc {
             // Mandatory params
             var txParams = {to: to, from: wallet.address, nonce: new BlockTag(nonce).toString()};
             // Optional params
-            if (gas) {
-                txParams.gas = new BlockTag(gas).toString();
+            if (nrg) {
+                txParams.gas = new BlockTag(nrg).toString();
             }
-            if (gasPrice) {
-                txParams.gasPrice = new BlockTag(gasPrice).toString();
+            if (nrgPrice) {
+                txParams.gasPrice = new BlockTag(nrgPrice).toString();
             }
             if (value) {
                 txParams.value = new BlockTag(value).toString();
