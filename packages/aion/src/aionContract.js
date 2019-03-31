@@ -113,12 +113,8 @@ class AionContract {
     }
 
     _encodeFunctionCall(functionJSON, params) {
-        // Convert parameters to string
-        var functionJSONStr = JSON.stringify(functionJSON);
-        var functionParamsStr = RpcUtils.formatFunctionParams(params);
         // Encode function call
-        var encodedFunction = Abi.encodeFunctionCall(functionJSON, functionParamsStr)
-
+        var encodedFunction = Abi.encodeFunctionCall(functionJSON, params)
         return encodedFunction;
     }
 
