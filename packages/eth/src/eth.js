@@ -122,5 +122,6 @@ class Network {
 
 module.exports = {
     PocketEth,
-    Networks
+    Networks,
+    Network
 }
