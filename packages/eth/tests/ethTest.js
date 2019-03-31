@@ -7,7 +7,7 @@ var should = require('chai').should();
 const PocketEth = require("../src/eth.js").PocketEth;
 const PocketJSCore = require('pocket-js-core');
 const Wallet = PocketJSCore.Wallet;
-
+const Web3Utils = require('web3-utils');
 // Test data
 const DEV_ID = "DEVID1";
 const RINKEBY_NETWORK = 4;
@@ -24,9 +24,14 @@ const ESTIMATE_GAS_TO = "0xd480083db34e8c87987652ee90f41ddb311f37ff";
 const ESTIMATE_GAS_DATA = "0xc9be04d500000000000000000000000075ff16d15dfe4c3a92c97f11ff41644d790035a2000000000000000000000000000000000000000000000000000000000000008a";
 const TX_HASH = "0x2f56ad1e1e62a07aded5ed60d0a475fe74d55bf6fb79b7014b9b436598083c7e";
 const BLOCK_HASH_LOGS = "0x4eeb0bff9670c8b7ffc08e8380b164ef835e1496844adeaf2c5fb4f5cfa36d67";
+// Send Transaction
+const ADDRESS2 = "0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f";
+const PRIVATE_KEY = "330D1AD67A9E44E15F5B7EBD20514865CBCE363B2E95FFC9D9C95198EF2893F3";
+const ADDRESS_TO = "0x6ED0fA4aD4E2B87b7E1eE932d068fdAa80A9D80c";
 // Setup
 var pocketEth = new PocketEth(DEV_ID, [RINKEBY_NETWORK], MAX_NODES, TIMEOUT);
 var walletToImport = pocketEth.createWallet(RINKEBY_NETWORK);
+var importedWallet = pocketEth.importWallet(PRIVATE_KEY, RINKEBY_NETWORK);
 
 describe('Pocket Eth Class tests', function () {
 
@@ -62,10 +67,10 @@ describe('Pocket Eth Class tests', function () {
 
     it('should import a wallet', function () {
         // Import Wallet
-        var importedWallet = pocketEth.importWallet(walletToImport.privateKey, RINKEBY_NETWORK);
+        var wallet = pocketEth.importWallet(walletToImport.privateKey, RINKEBY_NETWORK);
 
-        expect(importedWallet).to.not.be.an.instanceof(Error);
-        expect(importedWallet).to.be.an.instanceof(Wallet);
+        expect(wallet).to.not.be.an.instanceof(Error);
+        expect(wallet).to.be.an.instanceof(Wallet);
     });
 
     it('should fail to import a wallet', function () {
@@ -267,24 +272,37 @@ describe('PocketEth ETH Namespace RPC Calls', function () {
         expect(code).to.be.an.instanceof(Error);
     });
 
-    describe('PocketEth NET Namespace RPC Calls', function () {
-        it('should retrieve the current network id', async () => {
-            var result = await pocketEth.rinkeby.net.version();
+    it('should send a transaction getting the nonce using getTransactionCount', async () => {
+        var nonce = await pocketEth.rinkeby.eth.getTransactionCount(importedWallet.address);
+        var result = await pocketEth.rinkeby.eth.sendTransaction(importedWallet, nonce, ADDRESS_TO, 21000, 10000000000, 1000000000, null)
 
-            expect(result).to.not.be.an.instanceof(Error);
-            expect(result).to.be.a('string');
-        });
-        it('should retrieve the listening status of the node', async () => {
-            var result = await pocketEth.rinkeby.net.listening();
+        expect(result).to.not.be.an.instanceof(Error);
+        expect(result).to.be.a('string');
+    });
 
-            expect(result).to.not.be.an.instanceof(Error);
-            expect(result).to.be.a('boolean');
-        });
-        it('should retrieve the number of peers currently connected', async () => {
-            var result = await pocketEth.rinkeby.net.peerCount();
+    it('should fail to send a transaction without nonce', async () => {
+        var result = await pocketEth.rinkeby.eth.sendTransaction(importedWallet, null, ADDRESS, 50000, 20000000000, 20000000000, null)
 
-            expect(result).to.not.be.an.instanceof(Error);
-            expect(result).to.be.a('number');
-        });
+        expect(result).to.be.an.instanceof(Error);
+    });
+});
+describe('PocketEth NET Namespace RPC Calls', function () {
+    it('should retrieve the current network id', async () => {
+        var result = await pocketEth.rinkeby.net.version();
+
+        expect(result).to.not.be.an.instanceof(Error);
+        expect(result).to.be.a('string');
+    });
+    it('should retrieve the listening status of the node', async () => {
+        var result = await pocketEth.rinkeby.net.listening();
+
+        expect(result).to.not.be.an.instanceof(Error);
+        expect(result).to.be.a('boolean');
+    });
+    it('should retrieve the number of peers currently connected', async () => {
+        var result = await pocketEth.rinkeby.net.peerCount();
+
+        expect(result).to.not.be.an.instanceof(Error);
+        expect(result).to.be.a('number');
     });
 });
