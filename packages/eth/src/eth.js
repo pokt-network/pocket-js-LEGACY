@@ -95,6 +95,9 @@ class PocketEth extends Pocket {
         try {
             // Check mandatory params
             if (privateKey != null || netID != null) {
+                if (privateKey.substring(0, 2) != "0x") {
+                    privateKey = "0x"+privateKey;
+                }
                 // Instantiate provider
                 var pocketProvider = new PocketProvider(NETWORK_NAME, netID, this.configuration.devID);
                 var ethAccounts = new EthAccounts(pocketProvider);

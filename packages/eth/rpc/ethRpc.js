@@ -6,6 +6,9 @@
 const BlockTag = require('../models/blocktag.js').BlockTag;
 const Web3Utils = require('web3-utils');
 const RpcUtils = require('./rpcUtils.js');
+const EthAccounts = require('web3-eth-accounts').Accounts;
+const PocketProvider = require('pocket-js-web3-provider').PocketProvider;
+const Web3 = require('web3');
 const ETH_RPC_METHODS = Object.freeze({
     "getBalance": "eth_getBalance",
     "getStorageAt": "eth_getStorageAt",
@@ -14,6 +17,7 @@ const ETH_RPC_METHODS = Object.freeze({
     "getBlockTransactionCountByNumber": "eth_getBlockTransactionCountByNumber",
     "getCode": "eth_getCode",
     "call": "eth_call",
+    "sendRawTransaction": "eth_sendRawTransaction",
     "getBlockByHash": "eth_getBlockByHash",
     "getBlockByNumber": "eth_getBlockByNumber",
     "getTransactionByHash": "eth_getTransactionByHash",
@@ -23,12 +27,14 @@ const ETH_RPC_METHODS = Object.freeze({
     "getLogs": "eth_getLogs",
     "estimateGas": "eth_estimateGas"
 })
+
 class EthRpc {
     constructor(netID, pocketEth) {
         this.networkName = "ETH";
         this.netID = netID;
         this.pocketEth = pocketEth;
     }
+
     // Send a relay with the rpc method params
     async send(params, method, callback) {
         var result = await RpcUtils.send(params,method,this.pocketEth,this.netID);
@@ -279,6 +285,57 @@ class EthRpc {
             }
             // Send request
             var response = await this.send([txParams, blocktag], ETH_RPC_METHODS.call);
+            if (response instanceof Error) {
+                if (callback) {
+                    callback(response);
+                }
+                return response;
+            }
+            if (callback) {
+                callback(null, response);
+            }
+            return response;
+
+        } catch (error) {
+            if (callback) {
+                callback(error);
+            }
+            return error;
+        }
+    }
+    async sendTransaction(wallet, nonce, to, gas, gasPrice, value, data, callback) {
+        try {
+            if (to == null || wallet == null || nonce == null) {
+                var error = Error("One or more params are missing");
+                if (callback) {
+                    callback(error);
+                }
+                return error;
+            }
+            // Mandatory params
+            var txParams = {to: to, from: wallet.address, nonce: new BlockTag(nonce).toString(), chainId: Number(this.netID)};
+            // Optional params
+            if (gas) {
+                txParams.gas = new BlockTag(gas).toString();
+            }
+            if (gasPrice) {
+                txParams.gasPrice = new BlockTag(gasPrice).toString();
+            }
+            if (value) {
+                txParams.value = new BlockTag(value).toString();
+            }
+            // Transaction Data
+            txParams.data = data;
+
+            // Sign transaction
+            var provider = new PocketProvider(this.networkName, this.netID, this.pocketEth.configuration.devID);
+            var web3 = new Web3(provider);
+            var signedTx = await web3.eth.accounts.signTransaction(txParams, wallet.privateKey)
+            var txData = signedTx.rawTransaction;
+
+            // Send request
+            var response = await this.send([txData], ETH_RPC_METHODS.sendRawTransaction);
+            
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);
