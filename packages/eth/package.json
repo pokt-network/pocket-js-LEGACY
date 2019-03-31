@@ -34,11 +34,12 @@
     ],
     "dependencies": {
         "pocket-js": "../core/",
+        "pocket-js-web3-provider": "../web3-provider/",
         "rxjs": "^6.4.0",
+        "web3": "^1.0.0-beta.51",
         "web3-core-subscriptions": "^1.0.0-beta.50",
         "web3-eth-accounts": "^1.0.0-beta.50",
-        "web3-utils": "^1.0.0-beta.50",
-        "pocket-js-web3-provider": "../web3-provider/"
+        "web3-utils": "^1.0.0-beta.50"
     },
     "devDependencies": {
         "chai": "^4.2.0",
