@@ -64,13 +64,12 @@ class PocketProvider {
             }
             return response;
         } else {
-            var nonce = JSON.parse(response).result;
 
             if (callback) {
-                callback(null, nonce);
+                callback(null, response.result);
                 return;
             }
-            return nonce;
+            return response.result;
         }
     }
 
@@ -202,6 +201,7 @@ class PocketProvider {
                     return result;
                 }
             } else {
+                result = JSON.parse(result);
                 if (callback) {
                     callback(null, result);
                     return;
