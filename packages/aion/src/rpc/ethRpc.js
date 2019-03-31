@@ -6,6 +6,7 @@
 const BlockTag = require('../models/blocktag.js').BlockTag;
 const Web3Utils = require('aion-web3-utils');
 const RpcUtils = require('./rpcUtils.js');
+const AionAccounts = require('aion-web3-eth-accounts');
 const ETH_RPC_METHODS = Object.freeze({
     "getBalance": "eth_getBalance",
     "getStorageAt": "eth_getStorageAt",
@@ -14,6 +15,7 @@ const ETH_RPC_METHODS = Object.freeze({
     "getBlockTransactionCountByNumber": "eth_getBlockTransactionCountByNumber",
     "getCode": "eth_getCode",
     "call": "eth_call",
+    "sendRawTransaction": "eth_sendRawTransaction",
     "getBlockByHash": "eth_getBlockByHash",
     "getBlockByNumber": "eth_getBlockByNumber",
     "getTransactionByHash": "eth_getTransactionByHash",
@@ -23,6 +25,7 @@ const ETH_RPC_METHODS = Object.freeze({
     "getLogs": "eth_getLogs",
     "estimateGas": "eth_estimateGas"
 })
+const aionAccounts = new AionAccounts();
 class EthRpc {
     constructor(netID, pocketAion) {
         this.networkName = "AION";
@@ -279,6 +282,54 @@ class EthRpc {
             }
             // Send request
             var response = await this.send([txParams, blocktag], ETH_RPC_METHODS.call);
+            if (response instanceof Error) {
+                if (callback) {
+                    callback(response);
+                }
+                return response;
+            }
+            if (callback) {
+                callback(null, response);
+            }
+            return response;
+
+        } catch (error) {
+            if (callback) {
+                callback(error);
+            }
+            return error;
+        }
+    }
+    async sendTransaction(wallet, nonce, to, gas, gasPrice, value, data, callback) {
+        try {
+            if (to == null || wallet == null || nonce == null) {
+                var error = Error("One or more params are missing");
+                if (callback) {
+                    callback(error);
+                }
+                return error;
+            }
+            // Mandatory params
+            var txParams = {to: to, from: wallet.address, nonce: new BlockTag(nonce).toString()};
+            // Optional params
+            if (gas) {
+                txParams.gas = new BlockTag(gas).toString();
+            }
+            if (gasPrice) {
+                txParams.gasPrice = new BlockTag(gasPrice).toString();
+            }
+            if (value) {
+                txParams.value = new BlockTag(value).toString();
+            }
+            // Transaction Data
+            txParams.data = data;
+
+            // Sign transaction
+            var signedTx = await aionAccounts.signTransaction(txParams,wallet.privateKey);
+            var txData = signedTx.rawTransaction;
+
+            // Send request
+            var response = await this.send([txData], ETH_RPC_METHODS.sendRawTransaction);
             if (response instanceof Error) {
                 if (callback) {
                     callback(response);

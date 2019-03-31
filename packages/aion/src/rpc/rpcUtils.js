@@ -55,6 +55,66 @@ async function send(params, method, pocketAion, netID, callback) {
     }
 }
 
+function formatFunctionParams(params) {
+    var results = [];
+    var resultStrArray = [];
+    
+    params.forEach(objParam => {
+        var currStr = "";
+        var objParamArray = [];
+        if(typeof objParam == "array"){
+            var objStrings = _objectsAsRpcParams(objParamArray);
+            var result = objStrings.join(",");
+            if (result != null) {
+                currStr = "[\(result)]";
+            }
+        }else{
+            currStr = _objectAsRpcParam(objParam);
+        }
+        results.push(currStr);
+    });
+    results.forEach(item => {
+        resultStrArray.push(item.toString());
+    });
+
+    return resultStrArray;
+}
+
+function _objectsAsRpcParams(objParams) {
+    var result = [];
+
+    objParams.forEach(objParam => {
+        var objParamStr = "";
+        if (objParamStr = _objectAsRpcParam(objParam)) {
+            result.push(objParamStr);
+        }
+    });
+
+    return result;
+}
+
+function _objectAsRpcParam(objParam) {
+    if (typeof objParam == "number" ){
+        var strValue = (BigInt(objParam)).toString(16);
+        if (strValue == null) {
+            return null;
+        }
+        return strValue;
+    }else if(typeof objParam == "bool") {
+        var boolValue = (stringValue =="true");
+        if (boolValue == null) {
+            return null;
+        }
+        return objParam;
+    }else if(typeof objParam == "string"){
+        var ojbParamStr = JSON.stringify(objParam);
+        return JSON.stringify(ojbParamStr);
+    }
+
+    return null;
+}
+
 module.exports = {
-    send
+    send,
+    formatFunctionParams
 }

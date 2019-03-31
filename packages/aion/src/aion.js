@@ -83,7 +83,6 @@ class PocketAion extends Pocket {
             throw new Error("Failed to import Wallet: " + error);
         }
     }
-
 }
 
 class Network {
@@ -95,5 +94,6 @@ class Network {
 
 module.exports = {
     PocketAion,
-    Networks
+    Networks,
+    Network
 }
