@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/pokt-network/pocket-js/tree/master/packages/aion#readme",
   "dependencies": {
+    "aion-web3-eth-abi": "^1.1.6",
     "aion-web3-eth-accounts": "^1.1.6",
     "aion-web3-utils": "^1.1.6",
     "node-zip": "^1.1.1",
