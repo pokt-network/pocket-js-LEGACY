@@ -56,7 +56,7 @@ describe('Aion PocketProvider', function () {
 
         var response = await provider.send(payload);
         expect(response).to.not.be.an.instanceof(Error);
-        expect(response).to.be.a('string');
+        expect(response).to.be.a('object');
     });
 
     it('should submit transactions using eth_sendTransaction', async () => {
@@ -78,6 +78,6 @@ describe('Aion PocketProvider', function () {
         
         var response = await provider.send(payload);
         expect(response).to.not.be.an.instanceof(Error);
-        expect(response).to.be.a('string');
+        expect(response).to.be.a('object');
     });
 });
