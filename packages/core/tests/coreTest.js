@@ -90,6 +90,7 @@ describe('Pocket Class tests', function () {
         // Send relay
         var response = await pocket.sendRelay(relay);
 
+        console.log(response);
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
     });
