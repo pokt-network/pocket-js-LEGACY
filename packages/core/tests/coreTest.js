@@ -79,8 +79,7 @@ describe('Pocket Class tests', function () {
         // New Pocket instance
         var pocket = new Pocket(opts);
         // Properties for the relay class
-        var address = "0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f";
-        var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":["' + address + '","latest"],\"id\":67}';
+        var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
         // Retrieve nodes first
         var nodes = await pocket.retrieveNodes();
         // Should return a list of nodes
@@ -90,7 +89,6 @@ describe('Pocket Class tests', function () {
         // Send relay
         var response = await pocket.sendRelay(relay);
 
-        console.log(response);
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
     });
