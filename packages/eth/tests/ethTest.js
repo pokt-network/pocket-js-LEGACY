@@ -3,6 +3,7 @@
  * @description Unit test for the Pocket Eth plugin
  */
 var expect = require('chai').expect;
+var should = require('chai').should();
 const PocketEth = require("../src/eth.js").PocketEth;
 const PocketJSCore = require('pocket-js-core');
 const Wallet = PocketJSCore.Wallet;
@@ -37,9 +38,9 @@ const PRIVATE_KEY2 = "92C0AF53DC2EAB91BC98A1C5B5F4E14DC3C5DCD7BF53549B208867F8BF
 // Setup
 var pocketEth = new PocketEth(DEV_ID, [RINKEBY_NETWORK], MAX_NODES, TIMEOUT);
 var ethContract = new EthContract(pocketEth.rinkeby, CONTRACT_ADDRESS, CONTRACT_ABI);
-var walletToImport = pocketEth.createWallet(RINKEBY_NETWORK);
-var importedWallet = pocketEth.importWallet(PRIVATE_KEY, RINKEBY_NETWORK);
-var importedWallet2 = pocketEth.importWallet(PRIVATE_KEY2, RINKEBY_NETWORK);
+var walletToImport = pocketEth.rinkeby.createWallet();
+var importedWallet = pocketEth.rinkeby.importWallet(PRIVATE_KEY);
+var importedWallet2 = pocketEth.rinkeby.importWallet(PRIVATE_KEY2);
 
 describe('Pocket Eth Class tests', function () {
 
@@ -60,32 +61,23 @@ describe('Pocket Eth Class tests', function () {
 
     it('should create a new Eth wallet', function () {
         // New Wallet
-        var wallet = pocketEth.createWallet(RINKEBY_NETWORK);
+        var wallet = pocketEth.rinkeby.createWallet();
 
         expect(wallet).to.not.be.an.instanceof(Error);
         expect(wallet).to.be.an.instanceof(Wallet);
     });
 
-    it('should fail to create a new Eth wallet', function () {
-        (function () {
-            // New Wallet
-            var wallet = pocketEth.createWallet();
-        }).should.throw(Error);
-    });
-
     it('should import a wallet', function () {
         // Import Wallet
-        var wallet = pocketEth.importWallet(walletToImport.privateKey, RINKEBY_NETWORK);
+        var wallet = pocketEth.rinkeby.importWallet(walletToImport.privateKey);
 
         expect(wallet).to.not.be.an.instanceof(Error);
         expect(wallet).to.be.an.instanceof(Wallet);
     });
 
     it('should fail to import a wallet', function () {
-        (function () {
-            // Import Wallet
-            var importedWallet = pocketEth.importWallet(null, RINKEBY_NETWORK);
-        }).should.throw(Error);
+        var importedWallet = pocketEth.rinkeby.importWallet(null);
+        expect(importedWallet).to.be.an.instanceof(Error);
     });
 });
 
@@ -317,10 +309,10 @@ describe('PocketEth NET Namespace RPC Calls', function () {
 
 describe('PocketEth smart contract interface', function () {
     it('should return the result of multiply 5 by 10', async () => {
-        var result = await ethContract.executeConstantFunction(FUNCTION_NAME,FUNCTION_PARAMS,null, 100000,10000000000, 0)
+        var result = await ethContract.executeConstantFunction(FUNCTION_NAME,FUNCTION_PARAMS,null, 100000,10000000000, null)
 
         expect(result).to.not.be.an.instanceof(Error);
-        expect(result).to.be.a('object');
+        expect(result).to.be.a('array');
     });
 
     it('should add 1 value to the test smart contract state', async () => {

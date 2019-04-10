@@ -41,9 +41,9 @@ const ADDRESS2 = "0xa002effbab4142413333c7e231a71b4fe20f0e730a1d9a8dd107a8c43408
 // Setup
 const pocketAion = new PocketAion(DEV_ID, [MASTERY_NETWORK], MAX_NODES, TIMEOUT);
 const aionContract = new AionContract(pocketAion.mastery, CONTRACT_ADDRESS, CONTRACT_ABI);
-const walletToImport = pocketAion.createWallet(MASTERY_NETWORK);
-const importedWallet = pocketAion.importWallet(PRIVATE_KEY, MASTERY_NETWORK);
-const importedWallet2 = pocketAion.importWallet(PRIVATE_KEY2, MASTERY_NETWORK);
+const walletToImport = pocketAion.mastery.createWallet();
+const importedWallet = pocketAion.mastery.importWallet(PRIVATE_KEY);
+const importedWallet2 = pocketAion.mastery.importWallet(PRIVATE_KEY2);
 
 describe('Pocket Aion Class tests', function () {
 
@@ -64,32 +64,23 @@ describe('Pocket Aion Class tests', function () {
 
     it('should create a new Aion wallet', function () {
         // New Wallet
-        var wallet = pocketAion.createWallet(MASTERY_NETWORK);
+        var wallet = pocketAion.mastery.createWallet();
 
         expect(wallet).to.not.be.an.instanceof(Error);
         expect(wallet).to.be.an.instanceof(Wallet);
     });
 
-    it('should fail to create a new Aion wallet', function () {
-        (function () {
-            // New Wallet
-            var wallet = pocketAion.createWallet();
-        }).should.throw(Error);
-    });
-
     it('should import a wallet', function () {
         // Import Wallet
-        var importedWallet = pocketAion.importWallet(walletToImport.privateKey, MASTERY_NETWORK);
+        var importedWallet = pocketAion.mastery.importWallet(walletToImport.privateKey, MASTERY_NETWORK);
 
         expect(importedWallet).to.not.be.an.instanceof(Error);
         expect(importedWallet).to.be.an.instanceof(Wallet);
     });
 
     it('should fail to import a wallet', function () {
-        (function () {
-            // Import Wallet
-            var importedWallet = pocketAion.importWallet(null, MASTERY_NETWORK);
-        }).should.throw(Error);
+        var importedWallet = pocketAion.mastery.importWallet(null);
+        expect(importedWallet).to.be.an.instanceof(Error);
     });
 });
 

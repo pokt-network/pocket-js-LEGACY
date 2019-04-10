@@ -62,33 +62,26 @@ class PocketAion extends Pocket {
         }
         return result;
     }
-    createWallet(netID) {
-        if (netID != null) {
-            var account = aionAccounts.create();
-            return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
-        } else {
-            throw new Error("Failed to create Wallet, netID param is missing.")
-        }
-    }
-    importWallet(privateKey, netID) {
-        try {
-            // Check mandatory params
-            if (privateKey != null || netID != null) {
-                var account = aionAccounts.privateKeyToAccount(privateKey);
-                return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
-            } else {
-                throw new Error("Failed to import Wallet, some params are missing.");
-            }
-        } catch (error) {
-            throw new Error("Failed to import Wallet: " + error);
-        }
-    }
+
 }
 
 class Network {
     constructor(netID, pocketAion) {
         this.eth = new EthRpc(netID, pocketAion);
         this.net = new NetRpc(netID, pocketAion);
+    }
+    createWallet() {
+        var account = aionAccounts.create();
+        return new Wallet(account.address, account.privateKey, NETWORK_NAME, this.eth.netID, null);
+    }
+    importWallet(privateKey) {
+        // Check mandatory params
+        if (privateKey != null) {
+            var account = aionAccounts.privateKeyToAccount(privateKey);
+            return new Wallet(account.address, account.privateKey, NETWORK_NAME, this.eth.netID, null);
+        } else {
+            return new Error("Failed to import Wallet, private key is missing.");
+        }
     }
 }
 
