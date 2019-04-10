@@ -1,6 +1,6 @@
 const axios = require('axios');
 const constants = require("../utils/constants.js");
-const requestProtocol = "http://";
+const requestProtocol = "https://";
 // Dispatch
 class Node {
     constructor(network, netID, ipPort) {

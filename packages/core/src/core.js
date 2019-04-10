@@ -55,13 +55,6 @@ class Pocket {
 
   }
 
-  createWallet(subnetwork, data) {
-    throw new Error("Must implement Create Wallet")
-  }
-  importWallet(address, privateKey, subnetwork, data) {
-    throw new Error("Must implement Import Wallet")
-  }
-
   // Create a Relay instance
   createRelay(blockchain, netID, data) {
     // Check if data is a json tring

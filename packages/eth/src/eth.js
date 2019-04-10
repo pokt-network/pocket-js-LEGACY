@@ -80,36 +80,6 @@ class PocketEth extends Pocket {
         }
         return result;
     }
-    createWallet(netID) {
-        if (netID != null) {
-            // Instantiate provider
-            var pocketProvider = new PocketProvider(NETWORK_NAME, netID, this.configuration.devID);
-            var ethAccounts = new EthAccounts(pocketProvider);
-            var account = ethAccounts.create();
-            return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
-        } else {
-            throw new Error("Failed to create Wallet, netID param is missing.")
-        }
-    }
-    importWallet(privateKey, netID) {
-        try {
-            // Check mandatory params
-            if (privateKey != null || netID != null) {
-                if (privateKey.substring(0, 2) != "0x") {
-                    privateKey = "0x"+privateKey;
-                }
-                // Instantiate provider
-                var pocketProvider = new PocketProvider(NETWORK_NAME, netID, this.configuration.devID);
-                var ethAccounts = new EthAccounts(pocketProvider);
-                var account = ethAccounts.privateKeyToAccount(privateKey);
-                return new Wallet(account.address, account.privateKey, NETWORK_NAME, netID, null);
-            } else {
-                throw new Error("Failed to import Wallet, some params are missing.");
-            }
-        } catch (error) {
-            throw new Error("Failed to import Wallet: " + error);
-        }
-    }
 
 }
 
@@ -117,6 +87,29 @@ class Network {
     constructor(netID, pocketEth) {
         this.eth = new EthRpc(netID, pocketEth);
         this.net = new NetRpc(netID, pocketEth);
+    }
+
+    createWallet() {
+        // Instantiate provider
+        var pocketProvider = new PocketProvider(NETWORK_NAME, this.eth.netID, this.eth.pocketEth.configuration.devID);
+        var ethAccounts = new EthAccounts(pocketProvider);
+        var account = ethAccounts.create();
+        return new Wallet(account.address, account.privateKey, NETWORK_NAME, this.eth.netID, null);
+    }
+    importWallet(privateKey) {
+        // Check mandatory params
+        if (privateKey != null) {
+            if (privateKey.substring(0, 2) != "0x") {
+                privateKey = "0x" + privateKey;
+            }
+            // Instantiate provider
+            var pocketProvider = new PocketProvider(NETWORK_NAME, this.eth.netID, this.eth.pocketEth.configuration.devID);
+            var ethAccounts = new EthAccounts(pocketProvider);
+            var account = ethAccounts.privateKeyToAccount(privateKey);
+            return new Wallet(account.address, account.privateKey, NETWORK_NAME, this.eth.netID, null);
+        } else {
+            return new Error("Failed to import Wallet, private key param is missing.");
+        }
     }
 }
 
