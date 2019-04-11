@@ -3,10 +3,9 @@
  * @description Unit test for the Pocket Web3 Provider
  */
 var expect = require('chai').expect;
-var PocketProvider = require('../src/pocket_provider.js').PocketProvider;
+var PocketProvider = require('../src/index.js');
 var EthereumTx = require('ethereumjs-tx');
 var web3Utils = require('web3-utils');
-var aionAccount = require('aion-web3-eth-accounts');
 
 // Ethereum data setup for test
 const EthTransactionSigner = {

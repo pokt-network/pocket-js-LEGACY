@@ -5,9 +5,6 @@
 //  Dependencies
 const Pocket = require("pocket-js-core").Pocket;
 
-// Constants
-const TRANSACTION_METHODS = ['eth_sendTransaction', 'eth_sendRawTransaction'];
-
 /**
  * Pocket Web3 Provider
  *  Sends Relays to a service node in the Pocket Network
@@ -222,6 +219,4 @@ class PocketProvider {
     };
 }
 
-module.exports = {
-    PocketProvider
-}
+module.exports = PocketProvider;

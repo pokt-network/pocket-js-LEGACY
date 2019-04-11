@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "Pocket javascript web3 provider that allows the interaction with the Pocket Network.",
     "license": "MIT",
-    "main": "./src/pocket_provider.js",
+    "main": "./src/index.js",
     "directories": {
         "tests": "./tests"
     },

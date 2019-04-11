@@ -3,7 +3,7 @@
  * @description Unit test for the Pocket Web3 Provider
  */
 var expect = require('chai').expect;
-var PocketProvider = require('../src/pocket_provider.js').PocketProvider;
+var PocketProvider = require('../src/index.js');
 var aionAccount = require('aion-web3-eth-accounts');
 
 // Aion data setup for test
