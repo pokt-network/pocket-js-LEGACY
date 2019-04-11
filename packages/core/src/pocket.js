@@ -1,8 +1,8 @@
-const Blockchain = require("./models/blockchain.js").Blockchain;
-const Dispatch = require("./models/dispatch.js").Dispatch;
-const Wallet = require("./models/wallet.js").Wallet;
-const Relay = require("./models/relay.js").Relay;
-const Report = require("./models/report.js").Report;
+const Models = require("./models/index");
+const Blockchain = Models.Blockchain;
+const Dispatch = Models.Dispatch;
+const Relay = Models.Relay;
+const Report = Models.Report;
 
 class Configuration {
   /**
@@ -249,10 +249,4 @@ class Pocket {
 
 }
 
-module.exports = {
-  Pocket,
-  Blockchain,
-  Dispatch,
-  Wallet,
-  Relay
-}
+module.exports = Pocket;
