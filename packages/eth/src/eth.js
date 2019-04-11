@@ -6,10 +6,10 @@
 const PocketJSCore = require('pocket-js-core');
 const Pocket = PocketJSCore.Pocket;
 const Wallet = PocketJSCore.Wallet;
-const EthRpc = require('../rpc/ethRpc.js').EthRpc;
-const NetRpc = require('../rpc/netRpc.js').NetRpc;
+const EthRpc = require('./rpc/eth.js').EthRpc;
+const NetRpc = require('./rpc/net.js').NetRpc;
 const EthAccounts = require('web3-eth-accounts').Accounts;
-const PocketProvider = require('pocket-js-web3-provider').PocketProvider;
+const PocketProvider = require('pocket-js-web3-provider');
 
 // Constants
 const NETWORK_NAME = "ETH";
@@ -115,6 +115,5 @@ class Network {
 
 module.exports = {
     PocketEth,
-    Networks,
-    Network
+    Networks
 }
