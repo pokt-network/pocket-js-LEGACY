@@ -1,6 +1,9 @@
 {
   "name": "pocket-js",
   "version": "0.0.1",
+  "engine": {
+    "node": ">= 11.6.0"
+  },
   "description": "Pocket-js package with a set of plugins that allows you to connect to the Eth and Aion Networks.",
   "main": "index.js",
   "subPackages": [

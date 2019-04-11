@@ -1,6 +1,9 @@
 {
     "name": "pocket-js-core",
     "version": "0.0.1",
+    "engine": {
+        "node": ">= 11.6.0"
+    },
     "description": "Pocket-js core package with the main functionalities to create your own plugin.",
     "license": "MIT",
     "main": "./src/index.js",
