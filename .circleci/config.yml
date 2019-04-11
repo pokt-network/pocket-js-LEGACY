@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:7.10
+      - image: circleci/node:11.6
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -26,7 +26,10 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: npm install
+      - run: cd packages/aion && npm install
+      - run: cd packages/core && npm install
+      - run: cd packages/eth && npm install
+      - run: cd packages/web3-provider && npm install
 
       - save_cache:
           paths:
@@ -34,4 +37,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: npm test
+      - run: cd packages/aion && npm test
+      - run: cd packages/core && npm test
+      - run: cd packages/eth && npm test
+      - run: cd packages/web3-provider && npm test
