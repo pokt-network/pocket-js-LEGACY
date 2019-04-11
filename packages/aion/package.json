@@ -2,7 +2,7 @@
   "name": "pocket-js-aion",
   "version": "0.0.1",
   "description": "Pocket-js Aion package with every functionalities to interact with the Aion network.",
-  "main": "aion.js",
+  "main": "./src/index.js",
   "directories": {
     "test": "tests"
   },

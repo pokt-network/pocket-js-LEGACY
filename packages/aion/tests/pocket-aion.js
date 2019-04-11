@@ -3,12 +3,12 @@
  * @description Unit test for the Pocket Aion plugin
  */
 var expect = require('chai').expect;
-var should = require('chai').should();
 // Constants
-const PocketAion = require("../src/aion.js").PocketAion;
 const PocketJSCore = require('pocket-js-core');
 const Wallet = PocketJSCore.Wallet;
-const AionContract = require("../src/aionContract.js").AionContract;
+const PocketJSAion = require('../src/index');
+const PocketAion = PocketJSAion.PocketAion;
+const AionContract = PocketJSAion.AionContract;
 
 // Test data
 const DEV_ID = "DEVID1";
@@ -56,10 +56,9 @@ describe('Pocket Aion Class tests', function () {
     });
 
     it('should fail to instantiate a Pocket Aion instance', function () {
-        (function () {
-            // New Pocket Aion instance
+        expect(function(){
             new PocketAion(null, [MASTERY_NETWORK], MAX_NODES, TIMEOUT);
-        }).should.throw(Error);
+        }).to.throw(Error);
     });
 
     it('should create a new Aion wallet', function () {

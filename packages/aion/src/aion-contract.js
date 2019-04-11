@@ -3,7 +3,6 @@
  * @description Aion Network Smart Contract interaction logic.
  */
 const Abi = require('aion-web3-eth-abi');
-const RpcUtils = require('./rpc/rpcUtils.js');
 
 // Variables
 var functions = {};
