@@ -5,7 +5,9 @@
   "main": "index.js",
   "subPackages": [
     "packages/core",
-    "packages/web3-provider"
+    "packages/web3-provider",
+    "packages/aion",
+    "packages/eth"
   ],
   "scripts": {
     "install": "subpkg install",
@@ -30,13 +32,7 @@
     "url": "https://github.com/pokt-network/pocket-js/issues"
   },
   "homepage": "https://github.com/pokt-network/pocket-js#readme",
-  "dependencies": {
-    "commonjs": "0.0.1",
-    "pocket-js-aion": "./packages/aion",
-    "pocket-js-core": "file:packages/core",
-    "pocket-js-eth": "./packages/eth",
-    "pocket-js-web3-provider": "file:packages/web3-provider"
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "^6.0.2",
     "subpackage": "^1.1.0"
