@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "description": "Pocket-js core package with the main functionalities to create your own plugin.",
     "license": "MIT",
-    "main": "./src/core.js",
+    "main": "./src/index.js",
     "directories": {
         "tests": "./tests"
     },

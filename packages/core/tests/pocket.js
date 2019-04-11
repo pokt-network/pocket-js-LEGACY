@@ -2,12 +2,8 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Core
  */
-
-var assert = require('assert');
-var expect = require('chai').expect;
-var should = require('chai').should();
-const Package = require("pocket-js-core");
-const Pocket = Package.Pocket;
+const expect = require('chai').expect;
+const Pocket = require("../src/index.js").Pocket;
 
 describe('Pocket Class tests', function () {
 
