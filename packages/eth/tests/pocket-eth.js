@@ -3,11 +3,11 @@
  * @description Unit test for the Pocket Eth plugin
  */
 var expect = require('chai').expect;
-var should = require('chai').should();
-const PocketEth = require("../src/eth.js").PocketEth;
 const PocketJSCore = require('pocket-js-core');
 const Wallet = PocketJSCore.Wallet;
-const EthContract = require("../src/ethContract.js").EthContract;
+const PocketJSEth = require('../src/index');
+const PocketEth = PocketJSEth.PocketEth;
+const EthContract = PocketJSEth.EthContract;
 // Test data
 const DEV_ID = "DEVID1";
 const RINKEBY_NETWORK = 4;
@@ -53,10 +53,9 @@ describe('Pocket Eth Class tests', function () {
     });
 
     it('should fail to instantiate a Pocket Eth instance', function () {
-        (function () {
-            // New Pocket Eth instance
+        expect(function(){
             new PocketEth(null, [RINKEBY_NETWORK], MAX_NODES, TIMEOUT);
-        }).should.throw(Error);
+        }).to.throw(Error);
     });
 
     it('should create a new Eth wallet', function () {

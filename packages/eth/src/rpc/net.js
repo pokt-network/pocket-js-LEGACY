@@ -4,7 +4,7 @@
  */
 // Constants
 const Web3Utils = require('web3-utils');
-const RpcUtils = require('./rpcUtils.js');
+const RpcUtils = require('./utils');
 const NET_RPC_METHODS = Object.freeze({
     "version": "net_version",
     "listening": "net_listening",
