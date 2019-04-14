@@ -87,6 +87,5 @@ class Network {
 
 module.exports = {
     PocketAion,
-    Networks,
-    Network
+    Networks
 }
