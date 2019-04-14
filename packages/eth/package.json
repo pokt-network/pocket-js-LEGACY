@@ -36,7 +36,7 @@
         }
     ],
     "dependencies": {
-        "pocket-js-core": "0.0.1",
+        "pocket-js-core": "0.0.2",
         "pocket-js-web3-provider": "../web3-provider",
         "rxjs": "^6.4.0",
         "web3": "^1.0.0-beta.51",
