@@ -36,11 +36,7 @@
         }
     ],
     "dependencies": {
-<<<<<<< HEAD
         "pocket-js-core": "0.0.2",
-=======
-        "pocket-js-core": "../core",
->>>>>>> 2bf3afb... Re-added relative dependencies
         "pocket-js-web3-provider": "../web3-provider",
         "rxjs": "^6.4.0",
         "web3": "^1.0.0-beta.51",
