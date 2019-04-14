@@ -1,6 +1,6 @@
 {
   "name": "@pokt-network/pocket-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engine": {
     "node": ">= 11.6.0"
   },
@@ -13,8 +13,8 @@
     "packages/eth"
   ],
   "scripts": {
-    "install": "subpkg install",
-    "test": "subpkg test"
+    "subpkg-install": "subpkg install",
+    "subpkg-test": "subpkg test"
   },
   "repository": {
     "type": "git",
