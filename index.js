@@ -1,7 +1,15 @@
 module.exports = Object.assign(
                                 module.exports, 
-                                require('./packages/core'),
-                                require('./packages/eth'),
-                                require('./packages/aion'),
-                                require('./packages/web3-provider'),
+                                {
+                                    PocketJSCore: require('./packages/core')
+                                },
+                                {
+                                    PocketJSEth: require('./packages/eth')
+                                },
+                                {
+                                    PocketJSAion: require('./packages/aion')
+                                },
+                                {
+                                    PocketJSWeb3Provider: require('./packages/web3-provider')
+                                }
                             );
