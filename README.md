@@ -63,7 +63,7 @@ The PocketJS packages are hosted in [NPM](https://npmjs.com), see below how to i
 
 `npm install --save pocket-js-core`
 
-`npm install --save pocket-js`
+`npm install --save @pokt-network/pocket-js`
 
 <h1 align="left">Usage</h1>
 
