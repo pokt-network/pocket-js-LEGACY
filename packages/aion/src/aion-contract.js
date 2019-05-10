@@ -2,12 +2,23 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Aion Network Smart Contract interaction logic.
  */
+// Constants
 const Abi = require('aion-web3-eth-abi');
-
 // Variables
 var functions = {};
-
+/**
+ *
+ *
+ * @class AionContract
+ */
 class AionContract {
+    /**
+     * Creates an instance of AionContract.
+     * @param {Network} network - Network instance.
+     * @param {String} contractAddress - Smart contract address in the blockchain.
+     * @param {Object} abiDefinition - ABI Definition.
+     * @memberof AionContract
+     */
     constructor(network, contractAddress, abiDefinition) {
         this.aionNetwork = network;
         this.contractAddress = contractAddress;
@@ -20,6 +31,19 @@ class AionContract {
         // Parse functions from ABI
         this._parseContractFunctions();
     }
+    /**
+     *
+     * Executes calls to a constant function.
+     * @param {String} functionName - Function name.
+     * @param {Array} functionParams - Function parameters.
+     * @param {String} fromAddress - Recipient address.
+     * @param {Number} nrg - NRG Value.
+     * @param {Number} nrgPrice - NRG Price value.
+     * @param {Number} value - Value to send.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Response object.
+     * @memberof AionContract
+     */
     async executeConstantFunction(functionName, functionParams, fromAddress, nrg, nrgPrice, value, callback) {
         // Retrieve function from the functions array
         var functionJSON = functions[functionName];
@@ -63,6 +87,20 @@ class AionContract {
         });
     }
 
+    /**
+     *
+     * Executes a non-constant function.
+     * @param {String} functionName - Function name.
+     * @param {Wallet} wallet - Recipient's wallet.
+     * @param {Array} functionParams - Function parameters.
+     * @param {Number} nonce - Recipient's Transaction count.
+     * @param {Number} nrg - NRG Value.
+     * @param {Number} nrgPrice - NRG Price.
+     * @param {Number} value - Value to send.
+     * @param {callback} callback
+     * @returns {String} - Transaction hash.
+     * @memberof AionContract
+     */
     async executeFunction(functionName, wallet, functionParams, nonce, nrg, nrgPrice, value, callback) {
         // Retrieve function from the functions array
         var functionJSON = functions[functionName];

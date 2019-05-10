@@ -2,9 +2,19 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description RPC Utils for the ETH and Net methods.
  */
+
 // Constants
 const NETWORK_NAME = "AION";
-// Send a relay with the rpc method params
+/**
+ *
+ * Send a relay with the rpc method params
+ * @param {Array} params - RPC params.
+ * @param {String} method - RPC Method name.
+ * @param {PocketAion} pocketAion - PocketAion instance.
+ * @param {String} netID - Network identifier.
+ * @param {callback} callback - callback handler.
+ * @returns {Object} - Response object.
+ */
 async function send(params, method, pocketAion, netID, callback) {
     try {
         // Create data
