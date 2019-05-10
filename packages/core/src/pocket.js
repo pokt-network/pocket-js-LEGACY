@@ -4,6 +4,11 @@ const Dispatch = Models.Dispatch;
 const Relay = Models.Relay;
 const Report = Models.Report;
 
+/**
+ *
+ *
+ * @class Configuration
+ */
 class Configuration {
   /**
    * Configuration stores settings.
@@ -14,7 +19,6 @@ class Configuration {
    * @param {string} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
    */
   constructor(devID, blockchains, maxNodes, requestTimeOut) {
-    // Settings and variables
     this.devID = devID;
     this.blockchains = blockchains;
     this.maxNodes = maxNodes || 5;
@@ -22,7 +26,12 @@ class Configuration {
     this.requestTimeOut = requestTimeOut || 10000;
     this.dispatch = null;
   }
-
+  /**
+   * Verify if the nodes list is empty
+   *
+   * @returns {Boolean}
+   * @memberof Configuration
+   */
   nodesIsEmpty() {
     if (this.nodes == null || this.nodes.length == 0) {
       return true;
@@ -31,9 +40,17 @@ class Configuration {
     }
   }
 }
-
+/**
+ *
+ *
+ * @class Pocket
+ */
 class Pocket {
-
+  /**
+   * Creates an instance of Pocket.
+   * @param {Object} opts - Options for the initializer, devID, networkName, netIDs, maxNodes, requestTimeOut.
+   * @memberof Pocket
+   */
   constructor(opts) {
     var blockchains = [];
 
@@ -54,8 +71,15 @@ class Pocket {
     this.configuration = new Configuration(opts.devID, blockchains, opts.maxNodes || 5, opts.requestTimeOut || 10000);
 
   }
-
-  // Create a Relay instance
+  /**
+   *
+   * Create a Relay instance
+   * @param {Blockchain} blockchain - Blockchain object.
+   * @param {String} netID - Network Idenfifier.
+   * @param {String} data - String holding the json rpc call.
+   * @returns {Relay} - New Relay instance.
+   * @memberof Pocket
+   */
   createRelay(blockchain, netID, data) {
     // Check if data is a json tring
     if (typeof data == 'string') {
@@ -63,21 +87,37 @@ class Pocket {
     }
     return new Relay(blockchain, netID, JSON.stringify(data), this.configuration);
   }
-
-  // Create a Report instance
+  /**
+   *
+   * Create a Report instance
+   * @param {String} ip - Internet protocol address.
+   * @param {String} message - Brief description for the report.
+   * @returns {Report} - New Report instance.
+   * @memberof Pocket
+   */
   createReport(ip, message) {
     return new Report(ip, message, this.configuration);
   }
-
-  // Get a Dispatch instance or create one
+  /**
+   *
+   * Get a Dispatch instance or creates one
+   * @returns {Dispatch} - New or existing Dispatch instance.
+   * @memberof Pocket
+   */
   getDispatch() {
     if (this.dispatch == null) {
       this.dispatch = new Dispatch(this.configuration);
     }
     return this.dispatch;
   }
-
-  // Filter nodes by netID and blockchain name
+  /**
+   *
+   * Filter nodes by netID and blockchain name
+   * @param {String} netID - Network Idenfifier.
+   * @param {String} network - Network Name.
+   * @returns {Node} - New Node instance.
+   * @memberof Pocket
+   */
   async getNode(netID, network) {
     try {
       var nodes = [];
@@ -108,7 +148,14 @@ class Pocket {
       return null;
     }
   }
-  // Send a report
+  /**
+   *
+   * Send a report
+   * @param {Report} report - Report instance with the information.
+   * @param {callback} callback - callback handler.
+   * @returns {String} - A String with the response.
+   * @memberof Pocket
+   */
   async sendReport(report, callback) {
     try {
       // Check for report
@@ -146,7 +193,14 @@ class Pocket {
       }
     }
   }
-  // Send an already created Relay
+  /**
+   *
+   * Send an already created Relay
+   * @param {Relay} relay - Relay instance with the information.
+   * @param {callback} callback - callback handler.
+   * @returns {String} - A String with the response.
+   * @memberof Pocket
+   */
   async sendRelay(relay, callback) {
     try {
       // Check for relay
@@ -210,8 +264,13 @@ class Pocket {
     }
 
   }
-
-  // Retrieve a list of service nodes from the Node Dispatcher
+  /**
+   *
+   * Retrieve a list of service nodes from the Node Dispatcher
+   * @param {callback} callback
+   * @returns {Node} - A list of Nodes.
+   * @memberof Pocket
+   */
   async retrieveNodes(callback) {
     try {
       var dispatch = this.getDispatch();

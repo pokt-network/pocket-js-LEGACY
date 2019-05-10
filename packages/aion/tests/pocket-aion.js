@@ -9,12 +9,11 @@ const Wallet = PocketJSCore.Wallet;
 const PocketJSAion = require('../src/index');
 const PocketAion = PocketJSAion.PocketAion;
 const AionContract = PocketJSAion.AionContract;
-
 // Test data
-const DEV_ID = "DEVID1";
+const DEV_ID = "DEVx0rUzoU9jykzEyjuafsr";
 const MASTERY_NETWORK = 32;
 const MAX_NODES = 10;
-const TIMEOUT = 10000;
+const TIMEOUT = 20000;
 const STORAGE_ADDRESS = "0xa061d41a9de8b2f317073cc331e616276c7fc37a80b0e05a7d0774c9cf956107";
 const BLOCK_HASH = "0xa9316ee7207cf2ac1fd886673d5c14835a86cda97eae8f0d382b95678932c8d0";
 const BLOCK_NUMBER = 1329667;
@@ -36,8 +35,6 @@ const ADDRESS_TO = "0xa07743f4170ded07da3ccd2ad926f9e684a5f61e90d018a3c5d8ea60a8
 const FUNCTION_PARAMS2 = [1];
 const FUNCTION_NAME2 = "addToState";
 const PRIVATE_KEY2 = "ab6f38ace08e94d29dd50eccdeedee39d468de42890564d63eb39b8e31450207257602da2f0d5318e811794500b144af16fb71d3978bdc05f16c94036da0ead2";
-const ADDRESS2 = "0xa002effbab4142413333c7e231a71b4fe20f0e730a1d9a8dd107a8c434087b46";
-
 // Setup
 const pocketAion = new PocketAion(DEV_ID, [MASTERY_NETWORK], MAX_NODES, TIMEOUT);
 const aionContract = new AionContract(pocketAion.mastery, CONTRACT_ADDRESS, CONTRACT_ABI);
@@ -312,7 +309,7 @@ describe('PocketAion NET Namespace RPC Calls', function () {
 describe('PocketAion smart contract interface', function () {
     it('should return the result of multiply 2 by 10', async () => {
         var result = await aionContract.executeConstantFunction(FUNCTION_NAME,FUNCTION_PARAMS,null, 50000,20000000000, null)
-        
+
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('object');
     });

@@ -10,7 +10,6 @@ const EthRpc = require('./rpc/eth.js').EthRpc;
 const NetRpc = require('./rpc/net.js').NetRpc;
 const EthAccounts = require('web3-eth-accounts').Accounts;
 const PocketProvider = require('pocket-js-web3-provider');
-
 // Constants
 const NETWORK_NAME = "ETH";
 const Networks = Object.freeze({
@@ -20,8 +19,22 @@ const Networks = Object.freeze({
     "KOVAN": "42",
     "MAINNET": "1"
 })
-
+/**
+ *
+ *
+ * @class PocketEth
+ * @extends {Pocket}
+ */
 class PocketEth extends Pocket {
+    /**
+     * Creates an instance of PocketEth.
+     * @param {String} devID - Developer Identifier.
+     * @param {Array} netIDs - Network identifier list.
+     * @param {number} [maxNodes=5] - (Optional) Maximum amount of nodes to store in the instance.
+     * @param {number} [requestTimeOut=10000] - (Optional) Request timeout limit.
+     * @param {String} [defaultNet=Networks.RINKEBY] - (Optional) Default network identifier.
+     * @memberof PocketEth
+     */
     constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.RINKEBY) {
         if (devID == null || netIDs == null) {
             throw new Error("Invalid number of arguments");
@@ -72,6 +85,13 @@ class PocketEth extends Pocket {
             this.networks[defaultNet] = this.default;
         }
     }
+    /**
+     *
+     * Returns a Network instance with the specified netID
+     * @param {String} netID - Network identifier.
+     * @returns {Network} - Returns a Network instance.
+     * @memberof PocketEth
+     */
     network(netID) {
         var result = this.networks[netID];
         if (!result) {
@@ -80,15 +100,29 @@ class PocketEth extends Pocket {
         }
         return result;
     }
-
 }
-
+/**
+ *
+ *
+ * @class Network
+ */
 class Network {
+    /**
+     *Creates an instance of Network.
+     * @param {String} netID - Network identifier.
+     * @param {PocketEth} pocketEth - PocketEth instance.
+     * @memberof Network
+     */
     constructor(netID, pocketEth) {
         this.eth = new EthRpc(netID, pocketEth);
         this.net = new NetRpc(netID, pocketEth);
     }
-
+    /**
+     *
+     * Creates a new wallet.
+     * @returns {Wallet} - New Wallet.
+     * @memberof Network
+     */
     createWallet() {
         // Instantiate provider
         var pocketProvider = new PocketProvider(NETWORK_NAME, this.eth.netID, this.eth.pocketEth.configuration.devID);
@@ -96,6 +130,13 @@ class Network {
         var account = ethAccounts.create();
         return new Wallet(account.address, account.privateKey, NETWORK_NAME, this.eth.netID, null);
     }
+    /**
+     *
+     * Imports an existing wallet using a private key.
+     * @param {String} privateKey
+     * @returns {Wallet} - Wallet object.
+     * @memberof Network
+     */
     importWallet(privateKey) {
         // Check mandatory params
         if (privateKey != null) {

@@ -27,14 +27,32 @@ const ETH_RPC_METHODS = Object.freeze({
     "estimateGas": "eth_estimateGas"
 })
 
+/**
+ *
+ *
+ * @class EthRpc
+ */
 class EthRpc {
+    /**
+     *Creates an instance of EthRpc.
+     * @param {String} netID - Network identifier.
+     * @param {PocketEth} pocketEth - PocketEth instance.
+     * @memberof EthRpc
+     */
     constructor(netID, pocketEth) {
         this.networkName = "ETH";
         this.netID = netID;
         this.pocketEth = pocketEth;
     }
-
-    // Send a relay with the rpc method params
+    /**
+     *
+     * Send a relay with the rpc method params
+     * @param {Array} params - RPC params.
+     * @param {String} method - RPC Method name.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Response object.
+     * @memberof EthRpc
+     */
     async send(params, method, callback) {
         var result = await RpcUtils.send(params,method,this.pocketEth,this.netID);
         if (result instanceof Error) {
@@ -49,6 +67,15 @@ class EthRpc {
         return result;
     }
 
+    /**
+     *
+     * Retrieves address balance.
+     * @param {String} address - Wallet address.
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {callback} callback - callback handler.
+     * @returns {String} - Returns the wallet balance.
+     * @memberof EthRpc
+     */
     async getBalance(address, block, callback) {
         try {
             if (address == null) {
@@ -84,7 +111,15 @@ class EthRpc {
             return error;
         }
     }
-
+    /**
+     *
+     * Retrieves an address transaction count.
+     * @param {String} address - Address String.
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {callback} callback - callback handler.
+     * @returns {Number} - Returns the transaction count.
+     * @memberof EthRpc
+     */
     async getTransactionCount(address, block, callback) {
         try {
             if (address == null) {
@@ -120,6 +155,16 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Returns the storage data at an address.
+     * @param {String} address - Storage address.
+     * @param {Number} position - Position in the storage 
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {callback} callback - callback handler.
+     * @returns {String} - The string value at this storage position.
+     * @memberof EthRpc
+     */
     async getStorageAt(address, position, block, callback) {
         try {
             if (address == null) {
@@ -155,6 +200,14 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Retrieve the block transaction count using the block hash.
+     * @param {String} blockHash - Block hash.
+     * @param {callback} callback - callback handler.
+     * @returns {Number} - Block transaction count.
+     * @memberof EthRpc
+     */
     async getBlockTransactionCountByHash(blockHash, callback) {
         try {
             if (blockHash == null) {
@@ -188,7 +241,14 @@ class EthRpc {
             return error;
         }
     }
-
+    /**
+     *
+     * Retrieve the block transaction count using the block number.
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {callback} callback - callback handler.
+     * @returns {Number} - Block transaction count.
+     * @memberof EthRpc
+     */
     async getBlockTransactionCountByNumber(block, callback) {
         try {
             if (block == null) {
@@ -223,7 +283,15 @@ class EthRpc {
             return error;
         }
     }
-
+    /**
+     *
+     * Retrieves the code at a given address.
+     * @param {String} address - Address string.
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {callback} callback - callback handler.
+     * @returns {String} - Code from the given address.
+     * @memberof EthRpc
+     */
     async getCode(address, block, callback) {
         try {
             if (address == null) {
@@ -256,7 +324,20 @@ class EthRpc {
             return error;
         }
     }
-
+    /**
+     *
+     * Executes a new message call immediately without creating a transaction on the blockchain.
+     * @param {String} from - Recipient address.
+     * @param {String} to - Destination address.
+     * @param {Number} gas - Gas Value.
+     * @param {Number} gasPrice - Gas Price.
+     * @param {Number} value - Value.
+     * @param {String} data - Serialized data string.
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {callback} callback - callback handler.
+     * @returns {String} - Value of executed contract.
+     * @memberof EthRpc
+     */
     async call(from, to, gas, gasPrice, value, data, block, callback) {
         try {
             if (to == null || data == null) {
@@ -302,6 +383,20 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Sends a transaction to the blockchain.
+     * @param {Wallet} wallet - Wallet object of the recipient.
+     * @param {String} nonce - Nonce value, can be String or Number.
+     * @param {String} to - Destination address.
+     * @param {Number} gas - Gas Value.
+     * @param {Number} gasPrice - Gas Price.
+     * @param {Number} value - Value.
+     * @param {String} data - Serialized data string.
+     * @param {callback} callback - callback handler.
+     * @returns {String} - Transaction hash.
+     * @memberof EthRpc
+     */
     async sendTransaction(wallet, nonce, to, gas, gasPrice, value, data, callback) {
         try {
             if (to == null || wallet == null || nonce == null) {
@@ -353,6 +448,15 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Retrieves the block information using the block hash.
+     * @param {String} blockHash - Block hash.
+     * @param {boolean} [bool=false] - If true it returns the full transaction objects, if false only the hashes of the transactions.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Block information.
+     * @memberof EthRpc
+     */
     async getBlockByHash(blockHash, bool = false, callback) {
         try {
             if (blockHash == null) {
@@ -384,6 +488,15 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Retrieves the block information using the block number.
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {boolean} [bool=false] - If true it returns the full transaction objects, if false only the hashes of the transactions.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Block information.
+     * @memberof EthRpc
+     */
     async getBlockByNumber(block, bool = false, callback) {
         try {
             if (block == null) {
@@ -416,6 +529,14 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Retrieves a transaction using the tx hash.
+     * @param {String} txHash - Transaction hash.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Returns the transaction information.
+     * @memberof EthRpc
+     */
     async getTransactionByHash(txHash, callback) {
         try {
             if (txHash == null) {
@@ -447,7 +568,15 @@ class EthRpc {
             return error;
         }
     }
-
+    /**
+     *
+     * Retrieves the transaction by block hash and transaction index.
+     * @param {String} blockHash - Block hash.
+     * @param {Number} index - Index of the transaction in the block.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Returns the transaction information.
+     * @memberof EthRpc
+     */
     async getTransactionByBlockHashAndIndex(blockHash, index, callback) {
         try {
             if (blockHash == null || index == null) {
@@ -480,6 +609,15 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Retrieves the transaction by block number and transaction index.
+     * @param {BlockTag} block - BlockTag or block number.
+     * @param {Number} index - Index of the transaction in the block.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Returns the transaction information.
+     * @memberof EthRpc
+     */
     async getTransactionByBlockNumberAndIndex(block, index, callback) {
         try {
             if (block == null || index == null) {
@@ -513,7 +651,14 @@ class EthRpc {
             return error;
         }
     }
-    // eth_getTransactionReceipt
+    /**
+     *
+     * Checks the status of a transaction in the blockchain.
+     * @param {String} txHash - Transaction hash.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - A transaction receipt object.
+     * @memberof EthRpc
+     */
     async getTransactionReceipt(txHash, callback) {
         try {
             if (txHash == null) {
@@ -545,6 +690,18 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Retrieves an array of all logs matching a given filter object
+     * @param {BlockTag} fromBlock - BlockTag or block number.
+     * @param {BlockTag} toBlock - BlockTag or block number.
+     * @param {Array} addressList - List of addresses.
+     * @param {Array} topics - Array DATA topics.
+     * @param {String} blockHash - Block hash.
+     * @param {callback} callback - callback handler.
+     * @returns {Array} - List of topics.
+     * @memberof EthRpc
+     */
     async getLogs(fromBlock, toBlock, addressList, topics, blockHash, callback) {
         try {
             // Create params
@@ -582,6 +739,19 @@ class EthRpc {
             return error;
         }
     }
+    /**
+     *
+     * Generates and returns an estimate of how much gas is necessary to allow the transaction to complete.
+     * @param {String} from - Recipient address.
+     * @param {String} to - Destination address.
+     * @param {Number} gas - Gas Value.
+     * @param {Number} gasPrice - Gas Price.
+     * @param {Number} value - Value.
+     * @param {String} data - Serialized data string.
+     * @param {callback} callback - callback handler.
+     * @returns {Number} - Returns gas estimate value;
+     * @memberof EthRpc
+     */
     async estimateGas(from, to, gas, gasPrice, value, data, callback) {
         try {
             if (to == null || data == null) {
@@ -631,11 +801,7 @@ class EthRpc {
             return error;
         }
     }
-
-
-
 }
-
 
 module.exports = {
     EthRpc
