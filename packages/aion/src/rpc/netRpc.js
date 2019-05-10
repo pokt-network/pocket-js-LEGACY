@@ -11,14 +11,32 @@ const NET_RPC_METHODS = Object.freeze({
     "peerCount": "net_peerCount"
 })
 
+/**
+ *
+ *
+ * @class NetRpc
+ */
 class NetRpc {
+    /**
+     *Creates an instance of NetRpc.
+     * @param {String} netID - Network identifier.
+     * @param {PocketAion} pocketAion - PocketAion instance.
+     * @memberof NetRpc
+     */
     constructor(netID, pocketAion) {
         this.networkName = "AION";
         this.netID = netID;
         this.pocketAion = pocketAion;
     }
-
-    // Send a relay with the rpc method params
+    /**
+     *
+     * Send a relay with the rpc method params
+     * @param {Array} params - RPC params.
+     * @param {Object} method - RPC Method name.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Response object.
+     * @memberof NetRpc
+     */
     async send(params, method, callback) {
         var result = await RpcUtils.send(params,method,this.pocketAion,this.netID);
         if (result instanceof Error) {
@@ -32,6 +50,13 @@ class NetRpc {
         }
         return result;
     }
+    /**
+     *
+     * Retrieves the current network identifier
+     * @param {callback} callback - callback handler.
+     * @returns {String} - Network identifier.
+     * @memberof NetRpc
+     */
     async version(callback) {
         try {
             // Send request
@@ -54,6 +79,13 @@ class NetRpc {
             return error;
         }
     }
+    /**
+     *
+     * Returns true if client is actively listening for network connections.
+     * @param {callback} callback - callback handler;
+     * @returns {boolean} - Listening status.
+     * @memberof NetRpc
+     */
     async listening(callback) {
         try {
             // Send request
@@ -76,7 +108,13 @@ class NetRpc {
             return error;
         }
     }
-
+    /**
+     *
+     * Retrieves the number of peers currently connected to the client.
+     * @param {callback} callback - callback handler.
+     * @returns {Number} - Peer count.
+     * @memberof NetRpc
+     */
     async peerCount(callback) {
         try {
             // Send request

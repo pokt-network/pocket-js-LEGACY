@@ -2,7 +2,19 @@ const axios = require('axios');
 const constants = require("../utils/constants.js");
 const requestProtocol = "https://";
 // Dispatch
+/**
+ *
+ *
+ * @class Node
+ */
 class Node {
+    /**
+     * Creates an instance of Node.
+     * @param {String} network - Network name.
+     * @param {String} netID - Network Identifier.
+     * @param {String} ipPort - Ip and port string ("10.0.0.1:80")
+     * @memberof Node
+     */
     constructor(network, netID, ipPort) {
         this.network = network;
         this.netID = netID;
@@ -16,6 +28,12 @@ class Node {
         this.port = ipPortArr[1];
     }
 
+    /**
+     *
+     * Verify if all properties are valid
+     * @returns {boolean} - True or false.
+     * @memberof Node
+     */
     isValid() {
         for (var property in this) {
             if (!this.hasOwnProperty(property) || this[property] == "") {
@@ -25,6 +43,14 @@ class Node {
         return true;
     }
 
+    /**
+     *
+     * Checks if params are equal to stored properties
+     * @param {String} netID - Network Identifier.
+     * @param {String} network - Network name.
+     * @returns {boolean} - True or false.
+     * @memberof Node
+     */
     isEqual(netID, network) {
         if (this.netID == netID.toString() && this.network == network.toString()) {
             return true;
@@ -32,6 +58,14 @@ class Node {
         return false;
     }
 
+    /**
+     *
+     * Sends a relay to a service node
+     * @param {Relay} relay - Relay object with the information.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Object with the response.
+     * @memberof Node
+     */
     async sendRelay(relay, callback) {
         try {
             const axiosInstance = axios.create({

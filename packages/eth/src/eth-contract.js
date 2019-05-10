@@ -2,14 +2,24 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Ethereum Network Smart Contract interaction logic.
  */
-const AbiCoder = require('web3-eth-abi').AbiCoder;
-
 // Variables
 var functions = {};
 // Constants
+const AbiCoder = require('web3-eth-abi').AbiCoder;
 const abiCoder = new AbiCoder();
-
+/**
+ *
+ *
+ * @class EthContract
+ */
 class EthContract {
+    /**
+     * Creates an instance of EthContract.
+     * @param {Network} network - Network instance.
+     * @param {String} contractAddress - Smart contract address in the blockchain.
+     * @param {Object} abiDefinition - ABI Definition.
+     * @memberof EthContract
+     */
     constructor(network, contractAddress, abiDefinition) {
         this.ethNetwork = network;
         this.contractAddress = contractAddress;
@@ -22,6 +32,20 @@ class EthContract {
         // Parse functions from ABI
         this._parseContractFunctions();
     }
+    /**
+     *
+     *
+     * Executes calls to a constant function.
+     * @param {String} functionName - Function name.
+     * @param {Array} functionParams - Function parameters.
+     * @param {String} fromAddress - Recipient address.
+     * @param {Number} gas - Gas Value.
+     * @param {Number} gasPrice - Gas Price value.
+     * @param {Number} value - Value to send.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Response object.
+     * @memberof EthContract
+     */
     async executeConstantFunction(functionName, functionParams, fromAddress, gas, gasPrice, value, callback) {
         // Retrieve function from the functions array
         var functionJSON = functions[functionName];
@@ -64,7 +88,20 @@ class EthContract {
             }
         });
     }
-
+    /**
+     *
+     * Executes a non-constant function.
+     * @param {String} functionName - Function name.
+     * @param {Wallet} wallet - Recipient's wallet.
+     * @param {Array} functionParams - Function parameters.
+     * @param {Number} nonce - Recipient's Transaction count.
+     * @param {Number} gas - Gas Value.
+     * @param {Number} gasPrice - Gas Price.
+     * @param {Number} value - Value to send.
+     * @param {callback} callback
+     * @returns {String} - Transaction hash.
+     * @memberof EthContract
+     */
     async executeFunction(functionName, wallet, functionParams, nonce, gas, gasPrice, value, callback) {
         // Retrieve function from the functions array
         var functionJSON = functions[functionName];
@@ -112,7 +149,6 @@ class EthContract {
             return result;
         }
     }
-
     _encodeFunctionCall(functionJSON, params) {
         // Function JSON
         var functionJSONStr = JSON.stringify(functionJSON);
@@ -121,7 +157,6 @@ class EthContract {
 
         return encodedFunction;
     }
-
     _decodeCallResponse(functionJSON, hexString) {
         var decodedResponse = abiCoder.decodeParameters(functionJSON.outputs, hexString);
         return decodedResponse;

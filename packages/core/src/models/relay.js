@@ -1,5 +1,18 @@
 // Relay
+/**
+ *
+ *
+ * @class Relay
+ */
 class Relay {
+	/**
+	 * Creates an instance of Relay.
+	 * @param {Blockchain} blockchain - A blockchain object.
+	 * @param {String} netID - Network identifier.
+	 * @param {String} data - Data string.
+	 * @param {Configuration} configuration - Configuration object.
+	 * @memberof Relay
+	 */
 	constructor(blockchain, netID, data, configuration) {
 		this.blockchain = blockchain;
 		this.netID = netID;
@@ -7,6 +20,12 @@ class Relay {
 		this.configuration = configuration;
 	}
 
+	/**
+	 *
+	 * Parse properties to a JSON Object.
+	 * @returns {JSON} - A JSON Object.
+	 * @memberof Relay
+	 */
 	toJSON(){
 		return {
 			"Blockchain": this.blockchain,
@@ -16,6 +35,12 @@ class Relay {
 		}
 	}
 
+	/**
+	 *
+	 * Verifies if the Relay is valid
+	 * @returns {boolean} - True or false
+	 * @memberof Relay
+	 */
 	isValid(){
 		for (var property in this) {
 			if (!this.hasOwnProperty(property) || this[property] == "") {
