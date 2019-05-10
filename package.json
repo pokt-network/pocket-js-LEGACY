@@ -36,13 +36,13 @@
   },
   "homepage": "https://github.com/pokt-network/pocket-js#readme",
   "dependencies": {
-    "pocket-js-core": "latest",
     "pocket-js-aion": "latest",
+    "pocket-js-core": "latest",
     "pocket-js-eth": "latest",
     "pocket-js-web3-provider": "latest"
   },
   "devDependencies": {
-    "mocha": "^6.0.2",
+    "mocha": "^6.1.4",
     "subpackage": "^1.1.0"
   }
 }

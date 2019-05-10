@@ -3,7 +3,17 @@ const Node = require("./node.js").Node;
 const constants = require("../utils/constants.js");
 
 // Dispatch
+/**
+ *
+ *
+ * @class Dispatch
+ */
 class Dispatch {
+  /**
+   *Creates an instance of Dispatch.
+   * @param {Configuration} configuration - Configuration object.
+   * @memberof Dispatch
+   */
   constructor(configuration) {
     this.configuration = configuration;
     this.axiosInstance = axios.create({
@@ -15,7 +25,12 @@ class Dispatch {
       }
     });
   }
-
+  /**
+   *
+   * blockchain object to JSON
+   * @returns {JSON} - JSON Array with the blockchain list.
+   * @memberof Dispatch
+   */
   blockchainsJSON() {
     var blockchainArray = []
     this.configuration.blockchains.forEach(element => {
@@ -23,7 +38,13 @@ class Dispatch {
     });
     return blockchainArray
   }
-
+  /**
+   *
+   * Retrieves a list of service nodes
+   * @param {callback} callback
+   * @returns {Node} - A Node object list.
+   * @memberof Dispatch
+   */
   async retrieveServiceNodes(callback) {
     try {
       var dispatch = this;
@@ -61,6 +82,13 @@ class Dispatch {
     }
   }
 
+  /**
+   *
+   * Parse the response from the dispatcher
+   * @param {Object} response
+   * @returns {Node} - A Node object list.
+   * @memberof Dispatch
+   */
   parseDispatchResponse(response) {
     try {
       // Variables

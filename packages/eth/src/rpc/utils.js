@@ -4,7 +4,16 @@
  */
 // Constants
 const NETWORK_NAME = "ETH";
-// Send a relay with the rpc method params
+/**
+ *
+ * Send a relay with the rpc method params
+ * @param {Array} params - RPC params.
+ * @param {String} method - RPC Method name.
+ * @param {PocketEth} pocketEth - PocketEth instance.
+ * @param {String} netID - Network identifier.
+ * @param {callback} callback - callback handler.
+ * @returns {Object} - Response object.
+ */
 async function send(params, method, pocketEth, netID, callback) {
     try {
         // Create data

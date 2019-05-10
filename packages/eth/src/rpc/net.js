@@ -10,7 +10,18 @@ const NET_RPC_METHODS = Object.freeze({
     "listening": "net_listening",
     "peerCount": "net_peerCount"
 })
+/**
+ *
+ *
+ * @class NetRpc
+ */
 class NetRpc {
+    /**
+     * Creates an instance of NetRpc.
+     * @param {String} netID - Network identifier.
+     * @param {PocketEth} pocketEth - PocketEth instance.
+     * @memberof NetRpc
+     */
     constructor(netID, pocketEth) {
         this.networkName = "ETH";
         this.netID = netID;

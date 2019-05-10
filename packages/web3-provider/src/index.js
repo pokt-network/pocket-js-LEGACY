@@ -1,10 +1,8 @@
 /**
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  */
-
 //  Dependencies
 const Pocket = require("pocket-js-core").Pocket;
-
 /**
  * Pocket Web3 Provider
  *  Sends Relays to a service node in the Pocket Network
@@ -38,7 +36,6 @@ class PocketProvider {
             requestTimeOut: this.timeout
         })
     }
-
     /**
      * Method to get the nonce for a given address
      * @method _getNonce
@@ -164,7 +161,14 @@ class PocketProvider {
         }
         return relayData;
     }
-
+    /**
+     *
+     * @method send
+     * @param {Object} payload - Object containing the payload.
+     * @param {callback} callback - callback handler.
+     * @returns {Object} - Reponse object.
+     * @memberof PocketProvider
+     */
     async send(payload, callback) {
         // Check for the pocket instance
         if (this.pocket instanceof Error) {
