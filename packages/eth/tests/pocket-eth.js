@@ -2,14 +2,17 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Eth plugin
  */
-var expect = require('chai').expect;
+// Config
+var config = require('../../../config.json')
+// Constants
+const expect = require('chai').expect;
 const PocketJSCore = require('pocket-js-core');
 const Wallet = PocketJSCore.Wallet;
 const PocketJSEth = require('../src/index');
 const PocketEth = PocketJSEth.PocketEth;
 const EthContract = PocketJSEth.EthContract;
 // Test data
-const DEV_ID = "DEVID1";
+const DEV_ID = config.dev_id;
 const RINKEBY_NETWORK = 4;
 const MAX_NODES = 10;
 const TIMEOUT = 10000;
