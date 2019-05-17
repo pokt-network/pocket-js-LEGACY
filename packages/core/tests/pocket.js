@@ -2,15 +2,19 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Core
  */
+// Config
+var config = require('../../../config.json')
+// Constants
 const expect = require('chai').expect;
 const Pocket = require("../src/index.js").Pocket;
+const DEV_ID = config.dev_id;
 
 describe('Pocket Class tests', function () {
 
     it('should instantiate a Pocket instance', function () {
         // Pocket options object
         var opts = {
-            devID: "DEVID1",
+            devID: DEV_ID,
             networkName: "ETH",
             netIDs: [4]
         }
@@ -37,7 +41,7 @@ describe('Pocket Class tests', function () {
     it('should retrieve a list of nodes from the Node Dispatcher', async () => {
         // Pocket options object
         var opts = {
-            devID: "DEVID1",
+            devID: DEV_ID,
             networkName: "ETH",
             netIDs: [4]
         }
@@ -53,7 +57,7 @@ describe('Pocket Class tests', function () {
     it('should fail to retrieve a list of nodes from the Node Dispatcher', async () => {
         // Pocket options object
         var opts = {
-            devID: "DEVID1",
+            devID: DEV_ID,
             networkName: "ETH2", // Wrong network name for intentional error scenario
             netIDs: [40]
         }
@@ -68,7 +72,7 @@ describe('Pocket Class tests', function () {
     it('should send a relay to a node in the network', async () => {
         // Pocket options object
         var opts = {
-            devID: "DEVID1",
+            devID: DEV_ID,
             networkName: "ETH",
             netIDs: [4]
         }
@@ -94,7 +98,7 @@ describe('Pocket Class tests', function () {
     it('should fail to send a relay to a node in the network with bad relay properties "netID"', async () => {
         // Pocket options object
         var opts = {
-            devID: "DEVID1",
+            devID: DEV_ID,
             networkName: "ETH",
             netIDs: [4]
         }
@@ -119,7 +123,7 @@ describe('Pocket Class tests', function () {
     it('should send a report of a node to the Node Dispatcher', async () => {
         // Pocket options object
         var opts = {
-            devID: "DEVID1",
+            devID: DEV_ID,
             networkName: "ETH",
             netIDs: [4]
         }
@@ -146,7 +150,7 @@ describe('Pocket Class tests', function () {
     it('should fail to send a report of a node to the Node Dispatcher with no Node IP', async () => {
         // Pocket options object
         var opts = {
-            devID: "DEVID1",
+            devID: DEV_ID,
             networkName: "ETH",
             netIDs: [4],
         }
