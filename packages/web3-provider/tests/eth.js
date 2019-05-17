@@ -2,11 +2,14 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Web3 Provider
  */
-var expect = require('chai').expect;
-var PocketProvider = require('../src/index.js');
-var EthereumTx = require('ethereumjs-tx');
-var web3Utils = require('web3-utils');
-
+// Constants
+const expect = require('chai').expect;
+const PocketProvider = require('../src/index.js');
+const EthereumTx = require('ethereumjs-tx');
+const web3Utils = require('web3-utils');
+// Config
+var config = require('../../../config.json')
+const DEV_ID = config.dev_id;
 // Ethereum data setup for test
 const EthTransactionSigner = {
     hasAddress: async function (address) {
@@ -28,7 +31,7 @@ const EthTransactionSigner = {
     }
 }
 // Network information
-var ethOpts = { networkName: "ETH", networkID: "4", devID: "DEVID1" };
+var ethOpts = { networkName: "ETH", networkID: "4", devID: DEV_ID };
 
 describe('Ethereum PocketProvider', function () {
     var opts = {
