@@ -2,10 +2,13 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Web3 Provider
  */
-var expect = require('chai').expect;
-var PocketProvider = require('../src/index.js');
-var aionAccount = require('aion-web3-eth-accounts');
-
+// Constants
+const expect = require('chai').expect;
+const PocketProvider = require('../src/index.js');
+const aionAccount = require('aion-web3-eth-accounts');
+// Config
+var config = require('../../../config.json')
+const DEV_ID = config.dev_id;
 // Aion data setup for test
 const AionTransactionSigner = {
     hasAddress: async function (address) {
@@ -28,7 +31,7 @@ const AionTransactionSigner = {
     }
 }
 // Network information
-var aionOpts = { networkName: "AION", networkID: "32", devID: "DEVID1" };
+var aionOpts = { networkName: "AION", networkID: "32", devID: DEV_ID };
 
 // Aion network tests
 describe('Aion PocketProvider', function () {
