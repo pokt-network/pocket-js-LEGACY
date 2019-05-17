@@ -2,6 +2,8 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Aion plugin
  */
+// Config
+var config = require('../../../config.json')
 var expect = require('chai').expect;
 // Constants
 const PocketJSCore = require('pocket-js-core');
@@ -10,7 +12,7 @@ const PocketJSAion = require('../src/index');
 const PocketAion = PocketJSAion.PocketAion;
 const AionContract = PocketJSAion.AionContract;
 // Test data
-const DEV_ID = "DEVx0rUzoU9jykzEyjuafsr";
+const DEV_ID = config.dev_id;
 const MASTERY_NETWORK = 32;
 const MAX_NODES = 10;
 const TIMEOUT = 20000;
