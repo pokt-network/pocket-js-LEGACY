@@ -1,6 +1,6 @@
 {
     "name": "pocket-js-core",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engine": {
         "node": ">= 11.6.0"
     },
