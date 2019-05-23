@@ -1,6 +1,7 @@
 const axios = require('axios');
 const constants = require("../utils/constants.js");
-const requestProtocol = "https://";
+const httpsRequestProtocol = "https://";
+const httpRequestProtocol = "http://";
 // Dispatch
 /**
  *
@@ -18,14 +19,18 @@ class Node {
     constructor(network, netID, ipPort) {
         this.network = network;
         this.netID = netID;
-        if (ipPort.includes("http://") || ipPort.includes("https://")) {
-            this.ipPort = ipPort;
-        } else {
-            this.ipPort = requestProtocol + ipPort;
-        }
         var ipPortArr = ipPort.split(":");
         this.ip = ipPortArr[0];
         this.port = ipPortArr[1];
+        if (ipPort.includes(httpsRequestProtocol) || ipPort.includes(httpRequestProtocol)) {
+            this.ipPort = ipPort;
+        } else {
+            if (this.port === "443" || this.port === 443) {
+                this.ipPort = httpsRequestProtocol + ipPort;
+            } else {
+                this.ipPort = httpRequestProtocol + ipPort;
+            }
+        }
     }
 
     /**
