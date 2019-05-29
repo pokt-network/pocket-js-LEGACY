@@ -51,7 +51,7 @@ You should have at least have a basic knowledge of blockchain technology and kno
 
 The PocketJS web3-provider package is hosted in [NPM](https://npmjs.com), see below how to install.
 
-`npm install --save web3-provider`
+`npm install --save pocket-js-web3-provider`
 
 <h1 align="left">Usage</h1>
 
