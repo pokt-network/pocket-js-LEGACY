@@ -12,8 +12,8 @@ const Pocket = require("pocket-js-core").Pocket;
  * @param {String} devID - Unique developer ID.
  * @param {Object} options - (optional) Object containing the transactionSigner, maxNodes and requestTimeOut.
  * @param {String} options.transactionSigner - (optional) Object containing the TransactionSigner interface methods.
- * @param {Number} options.maxNodes - (optional) Maximun amount of nodes to store in instance, default 5.
- * @param {Number} options.requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
+ * @param {Number} options.maxNodes - (optional) Maximum amount of nodes to store in instance, default 5.
+ * @param {Number} options.requestTimeOut - (optional) Maximum timeout for every request in milliseconds, default 10000.
  */
 class PocketProvider {
     constructor(networkName, networkID, devID, options) {
