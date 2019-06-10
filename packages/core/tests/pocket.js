@@ -81,7 +81,6 @@ describe('Pocket Class tests', function () {
         // Properties for the relay class
         // Create data
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
-        data = JSON.stringify(data)
         // Retrieve nodes first
         var nodes = await pocket.retrieveNodes();
         // Should return a list of nodes
@@ -106,7 +105,6 @@ describe('Pocket Class tests', function () {
         var pocket = new Pocket(opts);
         // Properties for the relay class
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
-        data = JSON.stringify(data)
         // Retrieve nodes first
         var nodes = await pocket.retrieveNodes();
         // Should return a list of nodes
