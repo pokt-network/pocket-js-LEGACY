@@ -68,15 +68,12 @@ class Relay {
 	 * @memberof Relay
 	 */
 	isValid() {
-		for (var property in this) {
-			// We check if the properties are optionals
-			if (property != "httpMethod" && property != "path") {
-				if (!this.hasOwnProperty(property) || this[property] == "") {
-					return false;
-				}
-			}
+		if (this.blockchain != null && this.blockchain != "" && 
+			this.netID != null && this.netID != ""
+			&& this.configuration != null && this.configuration != "") {
+				return true;
 		}
-		return true;
+		return false;
 	}
 }
 
