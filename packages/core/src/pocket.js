@@ -204,7 +204,7 @@ class Pocket {
   async sendRelay(relay, callback) {
     try {
       // Check for relay
-      if (relay == null || relay.data == null) {
+      if (relay == null) {
         if (callback) {
           callback(new Error("Relay is null or data field is missing"));
           return;
