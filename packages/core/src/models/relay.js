@@ -11,27 +11,53 @@ class Relay {
 	 * @param {String} netID - Network identifier.
 	 * @param {String} data - Data string.
 	 * @param {Configuration} configuration - Configuration object.
+	 * @param {String} httpMethod - (Optional) HTTP Method.
+	 * @param {String} path - (Optional) API path.
+	 * @param {Object} queryParams - (Optional) An object holding the query params.
+	 * {"enabled":"true", "active":"false"}
 	 * @memberof Relay
 	 */
-	constructor(blockchain, netID, data, configuration) {
+	constructor(blockchain, netID, data, configuration, httpMethod, path, queryParams) {
 		this.blockchain = blockchain;
 		this.netID = netID;
 		this.data = data;
 		this.configuration = configuration;
+		this.httpMethod = httpMethod;
+		this.path = path;
+		this.appendQueryParams(queryParams);
 	}
-
+	/**
+	 *
+	 * Appends the Query parameters to the "path" property string.
+	 * @param {Object} queryParams - Object containing one or multiple query parameters.
+	 * @memberof Relay
+	 */
+	appendQueryParams(queryParams) {
+		var paramsStr = "";
+		if (typeof queryParams === 'object') {
+			for (var k in queryParams) {
+				if (queryParams.hasOwnProperty(k)) {
+					paramsStr += k +"="+ queryParams[k] + "&";
+				}
+			}
+			// Append the query params to the path
+			this.path += "?"+paramsStr;
+		}
+	}
 	/**
 	 *
 	 * Parse properties to a JSON Object.
 	 * @returns {JSON} - A JSON Object.
 	 * @memberof Relay
 	 */
-	toJSON(){
+	toJSON() {
 		return {
 			"Blockchain": this.blockchain,
 			"NetID": this.netID,
 			"Data": this.data,
-			"DevID": this.configuration.devID
+			"DevID": this.configuration.devID,
+			"METHOD": this.httpMethod,
+			"PATH": this.path
 		}
 	}
 
@@ -41,13 +67,13 @@ class Relay {
 	 * @returns {boolean} - True or false
 	 * @memberof Relay
 	 */
-	isValid(){
-		for (var property in this) {
-			if (!this.hasOwnProperty(property) || this[property] == "") {
-				return false;
-			}
+	isValid() {
+		if (this.blockchain != null && this.blockchain != "" && 
+			this.netID != null && this.netID != ""
+			&& this.configuration != null && this.configuration != "") {
+				return true;
 		}
-		return true;
+		return false;
 	}
 }
 

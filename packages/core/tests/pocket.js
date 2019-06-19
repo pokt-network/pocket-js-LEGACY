@@ -74,18 +74,14 @@ describe('Pocket Class tests', function () {
         var opts = {
             devID: DEV_ID,
             networkName: "ETH",
-            netIDs: [4]
+            netIDs: [4],
+            requestTimeOut: 40000
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
         // Properties for the relay class
         // Create data
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
-        data = JSON.stringify(data)
-        // Retrieve nodes first
-        var nodes = await pocket.retrieveNodes();
-        // Should return a list of nodes
-        expect(nodes).to.be.a('array');
         // Create a relay
         var relay = pocket.createRelay("ETH", pocket.configuration.blockchains[0].netID, data);
         // Send relay
@@ -93,24 +89,20 @@ describe('Pocket Class tests', function () {
 
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
-    });
+    }).timeout(40000);
 
     it('should fail to send a relay to a node in the network with bad relay properties "netID"', async () => {
         // Pocket options object
         var opts = {
             devID: DEV_ID,
             networkName: "ETH",
-            netIDs: [4]
+            netIDs: [4],
+            requestTimeOut: 40000
         }
         // New Pocket instance
         var pocket = new Pocket(opts);
         // Properties for the relay class
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
-        data = JSON.stringify(data)
-        // Retrieve nodes first
-        var nodes = await pocket.retrieveNodes();
-        // Should return a list of nodes
-        expect(nodes).to.be.a('array');
         // Create a relay
         // We are passing a bad netID as second parameter "10" for intentional error scenario
         var relay = pocket.createRelay("ETH", 10, data);
@@ -119,6 +111,32 @@ describe('Pocket Class tests', function () {
 
         expect(response).to.be.an.instanceof(Error);
     });
+
+    it('should send a relay to a node with REST API support in the network', async () => {
+        // Pocket options object
+        var opts = {
+            devID: DEV_ID,
+            networkName: "TEZOS",
+            netIDs: ["MAINNET"],
+            requestTimeOut: 40000
+        }
+        // New Pocket instance
+        var pocket = new Pocket(opts);
+        // Properties for the relay class
+        var httpMethod = "GET";
+        var path = "/network/version";
+        // Retrieve nodes first
+        var nodes = await pocket.retrieveNodes();
+        // Should return a list of nodes
+        expect(nodes).to.be.a('array');
+        // Create a relay
+        var relay = pocket.createRelay(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID, null, httpMethod, path, null);
+        // Send relay
+        var response = await pocket.sendRelay(relay);
+
+        expect(response).to.not.be.an.instanceof(Error);
+        expect(response).to.be.a('string');
+    }).timeout(40000);
 
     it('should send a report of a node to the Node Dispatcher', async () => {
         // Pocket options object
