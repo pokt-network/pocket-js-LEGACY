@@ -36,7 +36,7 @@
     ],
     "dependencies": {
         "axios": "^0.18.1",
-        "pocket-js-core": "^0.0.3"
+        "pocket-js-core": "^0.0.4"
     },
     "devDependencies": {
         "aion-web3-eth-accounts": "^1.1.6",

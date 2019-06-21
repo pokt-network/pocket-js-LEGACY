@@ -32,7 +32,7 @@
     "aion-web3-eth-accounts": "^1.1.6",
     "aion-web3-utils": "^1.1.6",
     "node-zip": "^1.1.1",
-    "pocket-js-core": "^0.0.3"
+    "pocket-js-core": "^0.0.4"
   },
   "devDependencies": {
     "chai": "^4.2.0",
