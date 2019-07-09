@@ -26,10 +26,10 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
       - run: echo ${JSON_CONFIG} > config.json
-      - run: cd packages/aion && npm install
-      - run: cd packages/core && npm install
-      - run: cd packages/eth && npm install
-      - run: cd packages/web3-provider && npm install
+      - run: cd packages/aion && npm ci
+      - run: cd packages/core && npm ci
+      - run: cd packages/eth && npm ci
+      - run: cd packages/web3-provider && npm ci
 
       - save_cache:
           paths:
