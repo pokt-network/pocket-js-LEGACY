@@ -18,12 +18,13 @@ class Configuration {
    * @param {string} maxNodes - (optional) Maximun amount of nodes to store in instance, default 5.
    * @param {string} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
    */
-  constructor(devID, blockchains, maxNodes, requestTimeOut) {
+  constructor(devID, blockchains, maxNodes, requestTimeOut, sslOnly) {
     this.devID = devID;
     this.blockchains = blockchains;
     this.maxNodes = maxNodes || 5;
     this.nodes = [];
     this.requestTimeOut = requestTimeOut || 10000;
+    this.sslOnly = sslOnly || true;
     this.dispatch = null;
   }
   /**
@@ -68,7 +69,7 @@ class Pocket {
       blockchains.push(blockchain.toJSON());
     }
 
-    this.configuration = new Configuration(opts.devID, blockchains, opts.maxNodes || 5, opts.requestTimeOut || 10000);
+    this.configuration = new Configuration(opts.devID, blockchains, opts.maxNodes || 5, opts.requestTimeOut || 10000, opts.sslOnly || true);
 
   }
   /**
@@ -132,10 +133,10 @@ class Pocket {
           this.configuration.nodes = response;
         }
       }
-      
+
       this.configuration.nodes.forEach(node => {
         if (node.isEqual(netID, network)) {
-          nodes.push(node);
+            nodes.push(node);
         }
       });
 
@@ -281,10 +282,10 @@ class Pocket {
         this.configuration.nodes = nodes;
         // Return a list of nodes
         if (callback) {
-          callback(null, nodes);
+          callback(null, this.configuration.nodes);
           return;
         } else {
-          return nodes;
+          return this.configuration.nodes;
         }
       } else {
         // Returns an Error;
