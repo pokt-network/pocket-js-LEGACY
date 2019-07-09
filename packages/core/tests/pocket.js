@@ -23,7 +23,7 @@ describe('Pocket Class tests', function () {
 
         expect(pocket).to.not.be.an.instanceof(Error);
         expect(pocket).to.be.an.instanceof(Pocket);
-    });
+    }).timeout(0);
 
     it('should fail to instantiate a Pocket instance', function () {
         // Pocket options object
@@ -36,7 +36,7 @@ describe('Pocket Class tests', function () {
 
         expect(pocket).to.be.an.instanceof(Error);
         expect(pocket).to.not.be.an.instanceof(Pocket);
-    });
+    }).timeout(0);
 
     it('should retrieve a list of nodes from the Node Dispatcher', async () => {
         // Pocket options object
@@ -52,7 +52,7 @@ describe('Pocket Class tests', function () {
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('array');
-    });
+    }).timeout(0);
 
     it('should retrieve a list of SSL only nodes from the Node Dispatcher', async () => {
         // Pocket options object
@@ -77,7 +77,7 @@ describe('Pocket Class tests', function () {
           }
         });
         expect(result).to.not.be.empty;
-    });
+    }).timeout(0);
 
     it('should fail to retrieve a list of nodes from the Node Dispatcher', async () => {
         // Pocket options object
@@ -92,7 +92,7 @@ describe('Pocket Class tests', function () {
         var result = await pocket.retrieveNodes();
 
         expect(result).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);
 
     it('should send a relay to a node in the network', async () => {
         // Pocket options object
@@ -114,7 +114,7 @@ describe('Pocket Class tests', function () {
 
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
-    }).timeout(40000);
+    }).timeout(0);
 
     it('should fail to send a relay to a node in the network with bad relay properties "netID"', async () => {
         // Pocket options object
@@ -135,7 +135,7 @@ describe('Pocket Class tests', function () {
         var response = await pocket.sendRelay(relay);
 
         expect(response).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);
 
     it('should send a relay to a node with REST API support in the network', async () => {
         // Pocket options object
@@ -161,7 +161,7 @@ describe('Pocket Class tests', function () {
 
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
-    }).timeout(40000);
+    }).timeout(0);
 
     it('should send a report of a node to the Node Dispatcher', async () => {
         // Pocket options object
@@ -188,7 +188,7 @@ describe('Pocket Class tests', function () {
 
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
-    });
+    }).timeout(0);
 
     it('should fail to send a report of a node to the Node Dispatcher with no Node IP', async () => {
         // Pocket options object
@@ -214,5 +214,5 @@ describe('Pocket Class tests', function () {
         var response = await pocket.sendReport(report);
 
         expect(response).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);
 });
