@@ -53,13 +53,13 @@ describe('Pocket Eth Class tests', function () {
 
         expect(instance).to.not.be.an.instanceof(Error);
         expect(instance).to.be.an.instanceof(PocketEth);
-    });
+    }).timeout(0);;
 
     it('should fail to instantiate a Pocket Eth instance', function () {
         expect(function(){
             new PocketEth(null, [RINKEBY_NETWORK], MAX_NODES, TIMEOUT);
         }).to.throw(Error);
-    });
+    }).timeout(0);;
 
     it('should create a new Eth wallet', function () {
         // New Wallet
@@ -67,7 +67,7 @@ describe('Pocket Eth Class tests', function () {
 
         expect(wallet).to.not.be.an.instanceof(Error);
         expect(wallet).to.be.an.instanceof(Wallet);
-    });
+    }).timeout(0);;
 
     it('should import a wallet', function () {
         // Import Wallet
@@ -75,12 +75,12 @@ describe('Pocket Eth Class tests', function () {
 
         expect(wallet).to.not.be.an.instanceof(Error);
         expect(wallet).to.be.an.instanceof(Wallet);
-    });
+    }).timeout(0);;
 
     it('should fail to import a wallet', function () {
         var importedWallet = pocketEth.rinkeby.importWallet(null);
         expect(importedWallet).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 });
 
 describe('PocketEth ETH Namespace RPC Calls', function () {
@@ -90,189 +90,189 @@ describe('PocketEth ETH Namespace RPC Calls', function () {
 
         expect(balance).to.not.be.an.instanceof(Error);
         expect(balance).to.be.a('string');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve account balance', async () => {
         var balance = await pocketEth.rinkeby.eth.getBalance(null, "latest");
 
         expect(balance).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve an account transaction count', async () => {
         var balance = await pocketEth.rinkeby.eth.getTransactionCount(ADDRESS, "latest");
 
         expect(balance).to.not.be.an.instanceof(Error);
         expect(balance).to.be.a('number');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve an account transaction count', async () => {
         var balance = await pocketEth.rinkeby.eth.getTransactionCount(null, "latest");
 
         expect(balance).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve storage information', async () => {
         var balance = await pocketEth.rinkeby.eth.getStorageAt(STORAGE_ADDRESS, 0, "latest");
 
         expect(balance).to.not.be.an.instanceof(Error);
         expect(balance).to.be.a('string');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve storage information', async () => {
         var balance = await pocketEth.rinkeby.eth.getStorageAt(null, 0, "latest");
 
         expect(balance).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve a Block transaction count using the block hash', async () => {
         var txCount = await pocketEth.rinkeby.eth.getBlockTransactionCountByHash(BLOCK_HASH);
 
         expect(txCount).to.not.be.an.instanceof(Error);
         expect(txCount).to.be.a('number');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve a Block transaction count using the block hash', async () => {
         var txCount = await pocketEth.rinkeby.eth.getBlockTransactionCountByHash(null);
 
         expect(txCount).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve a Block transaction count using the block number', async () => {
         var txCount = await pocketEth.rinkeby.eth.getBlockTransactionCountByNumber(BLOCK_NUMBER);
 
         expect(txCount).to.not.be.an.instanceof(Error);
         expect(txCount).to.be.a('number');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve a Block transaction count using the block number', async () => {
         var txCount = await pocketEth.rinkeby.eth.getBlockTransactionCountByNumber(null);
 
         expect(txCount).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve code at the given address', async () => {
         var code = await pocketEth.rinkeby.eth.getCode(CODE_ADDRESS, "latest");
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('string');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve code at the given address', async () => {
         var code = await pocketEth.rinkeby.eth.getCode(null, null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should execute a new message call', async () => {
         var code = await pocketEth.rinkeby.eth.call(null, CALL_TO, null, null, null, CALL_DATA, "latest");
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('string');
-    });
+    }).timeout(0);;
 
     it('should fail to execute a new message call without destination address', async () => {
         var code = await pocketEth.rinkeby.eth.call(null, null, null, null, null, CALL_DATA, "latest");
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve the block information with the block hash', async () => {
         var code = await pocketEth.rinkeby.eth.getBlockByHash(BLOCK_HASH, true);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('object');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve the block information with the block hash', async () => {
         var code = await pocketEth.rinkeby.eth.getBlockByHash(null, null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve the block information with the block number', async () => {
         var code = await pocketEth.rinkeby.eth.getBlockByNumber(BLOCK_NUMBER, true);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('object');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve the block information with the block number', async () => {
         var code = await pocketEth.rinkeby.eth.getBlockByNumber(null, null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve a transaction information with the transaction hash', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionByHash(TX_HASH);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('object');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve a transaction information with the transaction hash', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionByHash(null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve a transaction information with the block hash and index', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionByBlockHashAndIndex(BLOCK_HASH, 0);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('object');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve a transaction information with the block hash and index', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionByBlockHashAndIndex(null, null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve a transaction information with the block number and index', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionByBlockNumberAndIndex(BLOCK_NUMBER, 0);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('object');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve a transaction information with the block number and index', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionByBlockNumberAndIndex(null, null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve a transaction receipt using the transaction hash', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionReceipt(TX_HASH);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('object');
-    });
+    }).timeout(0);;
 
     it('should retrieve a transaction receipt using the transaction hash', async () => {
         var code = await pocketEth.rinkeby.eth.getTransactionReceipt(null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should retrieve the logs with the block hash', async () => {
         var code = await pocketEth.rinkeby.eth.getLogs(null, null, null, null, BLOCK_HASH_LOGS);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('array');
-    });
+    }).timeout(0);;
 
     it('should retrieve the estimate gas value for a transaction', async () => {
         var code = await pocketEth.rinkeby.eth.estimateGas(null, ESTIMATE_GAS_TO, null, null, null, ESTIMATE_GAS_DATA);
 
         expect(code).to.not.be.an.instanceof(Error);
         expect(code).to.be.a('number');
-    });
+    }).timeout(0);;
 
     it('should fail to retrieve the estimate gas value for a transaction', async () => {
         var code = await pocketEth.rinkeby.eth.estimateGas(null, null, null, null, 1000000000, null);
 
         expect(code).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 
     it('should send a transaction getting the nonce using getTransactionCount', async () => {
         var nonce = await pocketEth.rinkeby.eth.getTransactionCount(importedWallet.address);
@@ -280,13 +280,13 @@ describe('PocketEth ETH Namespace RPC Calls', function () {
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('string');
-    });
+    }).timeout(0);;
 
     it('should fail to send a transaction without nonce', async () => {
         var result = await pocketEth.rinkeby.eth.sendTransaction(importedWallet, null, ADDRESS, 50000, 20000000000, 20000000000, null)
 
         expect(result).to.be.an.instanceof(Error);
-    });
+    }).timeout(0);;
 });
 describe('PocketEth NET Namespace RPC Calls', function () {
     it('should retrieve the current network id', async () => {
@@ -294,19 +294,19 @@ describe('PocketEth NET Namespace RPC Calls', function () {
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('string');
-    });
+    }).timeout(0);;
     it('should retrieve the listening status of the node', async () => {
         var result = await pocketEth.rinkeby.net.listening();
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('boolean');
-    });
+    }).timeout(0);;
     it('should retrieve the number of peers currently connected', async () => {
         var result = await pocketEth.rinkeby.net.peerCount();
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('number');
-    });
+    }).timeout(0);;
 });
 
 describe('PocketEth smart contract interface', function () {
@@ -315,12 +315,12 @@ describe('PocketEth smart contract interface', function () {
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('array');
-    });
+    }).timeout(0);;
 
     it('should add 1 value to the test smart contract state', async () => {
         var result = await ethContract.executeFunction(FUNCTION_NAME2, importedWallet2, FUNCTION_PARAMS2, null, 100000, 10000000000, 0);
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('string');
-    });
+    }).timeout(0);;
 });
