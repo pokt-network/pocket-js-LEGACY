@@ -33,7 +33,7 @@ class PocketAion extends Pocket {
      * @param {string} sslOnly - (Optional) Indicates if you prefer nodes with ssl enabled only, default is true.
      * @memberof PocketAion
      */
-    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.MASTERY, sslOnly) {
+    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.MASTERY, sslOnly = true) {
         if (devID == null || netIDs == null) {
             throw new Error("Invalid number of arguments");
         }
@@ -44,7 +44,7 @@ class PocketAion extends Pocket {
             "netIDs": netIDs.toString(),
             "requestTimeOut": requestTimeOut,
             "maxNodes": maxNodes,
-            "sslOnly": sslOnly || true
+            "sslOnly": sslOnly
         }
         // Call super with the options object
         super(opts);
