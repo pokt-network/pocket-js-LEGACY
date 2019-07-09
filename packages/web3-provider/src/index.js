@@ -14,6 +14,7 @@ const Pocket = require("pocket-js-core").Pocket;
  * @param {String} options.transactionSigner - (optional) Object containing the TransactionSigner interface methods.
  * @param {Number} options.maxNodes - (optional) Maximum amount of nodes to store in instance, default 5.
  * @param {Number} options.requestTimeOut - (optional) Maximum timeout for every request in milliseconds, default 10000.
+ * @param {string} options.sslOnly - (optional) Indicates if you prefer nodes with ssl enabled only, default is true.
  */
 class PocketProvider {
     constructor(networkName, networkID, devID, options) {
@@ -24,6 +25,7 @@ class PocketProvider {
         this.transactionSigner = options.transactionSigner;
         this.maxNodes = options.maxNodes || 5;
         this.timeout = options.timeout || 10000;
+        this.sslOnly = options.sslOnly || true;
         this.connected = false;
         // Make sure networkID is a string
         this.networkID = this.networkID.toString();
@@ -33,7 +35,8 @@ class PocketProvider {
             networkName: this.networkName,
             netIDs: [this.networkID],
             maxNodes: this.maxNodes,
-            requestTimeOut: this.timeout
+            requestTimeOut: this.timeout,
+            sslOnly: this.sslOnly
         })
     }
     /**

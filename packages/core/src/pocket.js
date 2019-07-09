@@ -17,6 +17,7 @@ class Configuration {
    * @param {string} blockchains - Blockchain class type list.
    * @param {string} maxNodes - (optional) Maximun amount of nodes to store in instance, default 5.
    * @param {string} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
+   * @param {string} sslOnly - (optional) Indicates if you prefer nodes with ssl enabled only, default is true.
    */
   constructor(devID, blockchains, maxNodes, requestTimeOut, sslOnly) {
     this.devID = devID;

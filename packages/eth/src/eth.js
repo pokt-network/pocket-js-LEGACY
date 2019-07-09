@@ -33,9 +33,10 @@ class PocketEth extends Pocket {
      * @param {number} [maxNodes=5] - (Optional) Maximum amount of nodes to store in the instance.
      * @param {number} [requestTimeOut=10000] - (Optional) Request timeout limit.
      * @param {String} [defaultNet=Networks.RINKEBY] - (Optional) Default network identifier.
+     * @param {string} sslOnly - (Optional) Indicates if you prefer nodes with ssl enabled only, default is true.
      * @memberof PocketEth
      */
-    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.RINKEBY) {
+    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.RINKEBY, sslOnly) {
         if (devID == null || netIDs == null) {
             throw new Error("Invalid number of arguments");
         }
@@ -45,7 +46,8 @@ class PocketEth extends Pocket {
             "networkName": NETWORK_NAME,
             "netIDs": netIDs.toString(),
             "requestTimeOut": requestTimeOut,
-            "maxNodes": maxNodes
+            "maxNodes": maxNodes,
+            "sslOnly": sslOnly || true
         }
         // Call super with the options object
         super(opts);
