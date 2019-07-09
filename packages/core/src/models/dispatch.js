@@ -40,6 +40,25 @@ class Dispatch {
   }
   /**
    *
+   * Filters a list of service nodes that supports SSL Only
+   * @param {Node} node - A list of Nodes from the Dispatcher
+   * @returns {Node} - A list of nodes with SSL Support
+   * @memberof Dispatch
+   */
+  sslOnlyNodes(nodes){
+    var result = [];
+    nodes.forEach(node => {
+      if (node.port == "443" || node.port == 443) {
+        result.push(node);
+      }
+    });
+    if (result.length == 0) {
+      return new Error("Failed to retrieve a list of nodes with SSL Support.")
+    }
+    return result;
+  }
+  /**
+   *
    * Retrieves a list of service nodes
    * @param {callback} callback
    * @returns {Node} - A Node object list.
@@ -58,11 +77,26 @@ class Dispatch {
       if (response != null && response.status == 200 && response.data != null) {
         var nodes = this.parseDispatchResponse(response.data);
 
-        if (callback) {
-          callback(nodes, null);
-          return;
-        } else {
-          return nodes;
+        var filteredNodes = nodes
+        // Check if SSL only nodes are requested
+        if (this.configuration.sslOnly) {
+          filteredNodes = this.sslOnlyNodes(nodes)
+        }
+        // Check if filteredNodes is an error
+        if (filteredNodes instanceof Error == false) {
+          if (callback) {
+            callback(filteredNodes, null);
+            return;
+          } else {
+            return filteredNodes;
+          }
+        }else{
+          if (callback) {
+            callback(null, filteredNodes);
+            return;
+          } else {
+            return filteredNodes;
+          }
         }
       } else {
         if (callback) {
