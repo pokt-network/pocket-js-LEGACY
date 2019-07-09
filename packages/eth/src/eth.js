@@ -36,7 +36,7 @@ class PocketEth extends Pocket {
      * @param {string} sslOnly - (Optional) Indicates if you prefer nodes with ssl enabled only, default is true.
      * @memberof PocketEth
      */
-    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.RINKEBY, sslOnly) {
+    constructor(devID, netIDs, maxNodes = 5, requestTimeOut = 10000, defaultNet = Networks.RINKEBY, sslOnly = true) {
         if (devID == null || netIDs == null) {
             throw new Error("Invalid number of arguments");
         }
@@ -47,7 +47,7 @@ class PocketEth extends Pocket {
             "netIDs": netIDs.toString(),
             "requestTimeOut": requestTimeOut,
             "maxNodes": maxNodes,
-            "sslOnly": sslOnly || true
+            "sslOnly": sslOnly
         }
         // Call super with the options object
         super(opts);
