@@ -54,6 +54,31 @@ describe('Pocket Class tests', function () {
         expect(result).to.be.a('array');
     });
 
+    it('should retrieve a list of SSL only nodes from the Node Dispatcher', async () => {
+        // Pocket options object
+        var opts = {
+            devID: DEV_ID,
+            networkName: "ETH",
+            netIDs: [4],
+            sslOnly: true
+        }
+        // New Pocket instance
+        var pocket = new Pocket(opts);
+
+        var nodes = await pocket.retrieveNodes();
+        expect(nodes).to.not.be.an.instanceof(Error);
+
+        var result = []
+        nodes.forEach(node => {
+            if (node.port == 443 || node.port == "443") {
+                result.push(node);
+          }else{
+                result.push(node);
+          }
+        });
+        expect(result).to.not.be.empty;
+    });
+
     it('should fail to retrieve a list of nodes from the Node Dispatcher', async () => {
         // Pocket options object
         var opts = {
