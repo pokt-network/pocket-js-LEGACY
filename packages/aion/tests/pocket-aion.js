@@ -317,7 +317,7 @@ describe('PocketAion smart contract interface', function () {
     }).timeout(0);
 
     it('should add 1 value to the test smart contract state', async () => {
-        var result = await aionContract.executeFunction(FUNCTION_NAME2, importedWallet2, FUNCTION_PARAMS2, null, 50000, 20000000000, 0);
+        var result = await aionContract.executeFunction(FUNCTION_NAME2, importedWallet2, FUNCTION_PARAMS2, null, 70000, 20000000000, 0);
         
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('string');
