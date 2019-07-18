@@ -75,7 +75,7 @@ class Node {
         try {
             const axiosInstance = axios.create({
                 baseURL: this.ipPort,
-                timeout: relay.configuration.requestTimeOut,
+                timeout: relay.requestTimeOut,
                 headers: {
                     'Content-Type': 'application/json'
                 }

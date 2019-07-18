@@ -108,7 +108,7 @@ describe('Pocket Class tests', function () {
         // Create data
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
         // Create a relay
-        var relay = pocket.createRelay("ETH", pocket.configuration.blockchains[0].netID, data);
+        var relay = pocket.createRelay("ETH", pocket.configuration.blockchains[0].netID, data)
         // Send relay
         var response = await pocket.sendRelay(relay);
 
@@ -155,7 +155,7 @@ describe('Pocket Class tests', function () {
         // Should return a list of nodes
         expect(nodes).to.be.a('array');
         // Create a relay
-        var relay = pocket.createRelay(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID, null, httpMethod, path, null);
+        var relay = pocket.createRelay(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID, null, 3, httpMethod, path, null);
         // Send relay
         var response = await pocket.sendRelay(relay);
 

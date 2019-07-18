@@ -9,19 +9,23 @@ class Relay {
 	 * Creates an instance of Relay.
 	 * @param {Blockchain} blockchain - A blockchain object.
 	 * @param {String} netID - Network identifier.
+	 * @param {String} devID - Developer identifier.
 	 * @param {String} data - Data string.
-	 * @param {Configuration} configuration - Configuration object.
+	 * @param {Number} retryAttempts - (Optional) Retry Attempts count.
+	 * @param {Number} requestTimeOut - (Optional) Relay request timeout.
 	 * @param {String} httpMethod - (Optional) HTTP Method.
 	 * @param {String} path - (Optional) API path.
 	 * @param {Object} queryParams - (Optional) An object holding the query params.
 	 * {"enabled":"true", "active":"false"}
 	 * @memberof Relay
 	 */
-	constructor(blockchain, netID, data, configuration, httpMethod, path, queryParams) {
+	constructor(blockchain, netID, devID, data, retryAttempts, requestTimeOut, httpMethod, path, queryParams) {
 		this.blockchain = blockchain;
 		this.netID = netID;
+		this.devID = devID;
 		this.data = data;
-		this.configuration = configuration;
+		this.retryAttempts = retryAttempts || 3;
+		this.requestTimeout = requestTimeOut || 10000
 		this.httpMethod = httpMethod;
 		this.path = path;
 		this.appendQueryParams(queryParams);
@@ -55,7 +59,7 @@ class Relay {
 			"Blockchain": this.blockchain,
 			"NetID": this.netID,
 			"Data": this.data,
-			"DevID": this.configuration.devID,
+			"DevID": this.devID,
 			"METHOD": this.httpMethod,
 			"PATH": this.path
 		}
@@ -70,7 +74,7 @@ class Relay {
 	isValid() {
 		if (this.blockchain != null && this.blockchain != "" && 
 			this.netID != null && this.netID != ""
-			&& this.configuration != null && this.configuration != "") {
+			&& this.devID != null && this.devID != "") {
 				return true;
 		}
 		return false;

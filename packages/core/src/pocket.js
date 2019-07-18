@@ -19,14 +19,23 @@ class Configuration {
    * @param {string} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
    * @param {string} sslOnly - (optional) Indicates if you prefer nodes with ssl enabled only, default is true.
    */
-  constructor(devID, blockchains, maxNodes, requestTimeOut, sslOnly) {
+  constructor(devID, blockchains, maxNodes, requestTimeOut, sslOnly, retryCount) {
     this.devID = devID;
     this.blockchains = blockchains;
     this.maxNodes = maxNodes || 5;
     this.nodes = [];
     this.requestTimeOut = requestTimeOut || 10000;
     this.sslOnly = sslOnly || true;
+    this.retryCount = retryCount || 3;
     this.dispatch = null;
+    this.removeIncluded = function (node) {
+      this.nodes.forEach(function(_node, index) {
+        if (JSON.stringify(node) === JSON.stringify(_node)) {
+          // Remove Node from the Node list
+          this.nodes.splice(index, 1)
+        }
+      }, this);
+    }
   }
   /**
    * Verify if the nodes list is empty
@@ -82,12 +91,12 @@ class Pocket {
    * @returns {Relay} - New Relay instance.
    * @memberof Pocket
    */
-  createRelay(blockchain, netID, data, httpMethod = "", path = "", queryParams = "") {
+  createRelay(blockchain, netID, data, retryAttempts = 3, httpMethod = "", path = "", queryParams = "") {
     // Check if data is a json tring
     if (typeof data == 'string') {
-      return new Relay(blockchain, netID, data, this.configuration, httpMethod, path, queryParams); 
+      return new Relay(blockchain, netID, this.configuration.devID, data, retryAttempts, 10000, httpMethod, path, queryParams)
     }
-    return new Relay(blockchain, netID, JSON.stringify(data), this.configuration, httpMethod, path, queryParams);
+    return new Relay(blockchain, netID, this.configuration.devID, JSON.stringify(data), retryAttempts, 10000, httpMethod, path, queryParams)
   }
   /**
    *
@@ -223,11 +232,10 @@ class Pocket {
           return new Error("Relay is missing a property, please verify all properties.");
         }
       }
-
       // Filter nodes for specified blockchain
       var node = await this.getNode(relay.netID,
         relay.blockchain);
-
+      
       if (node == null) {
         if (callback) {
           callback(new Error("Node is empty."));
@@ -236,7 +244,6 @@ class Pocket {
           return new Error("Node is empty.");
         }
       }
-
       // Send relay
       var response = await node.sendRelay(relay);
       // Response
@@ -248,6 +255,19 @@ class Pocket {
           return response;
         }
       } else {
+        // Remove Node from the list 
+        if (relay.retryAttempts > 0) {
+          this.removeNode(node)
+          // Reduce retry count
+          relay.retryAttempts--
+
+          if (callback) {
+            this.sendRelay(relay, callback);
+            return;
+          } else {
+            return this.sendRelay(relay);
+          }
+        }
         if (callback) {
           callback(response);
           return;
@@ -265,6 +285,15 @@ class Pocket {
       }
     }
 
+  }
+  /**
+   *
+   * Removes a node from the configuration node list
+   * @param {Node} node - Target node to be removed.
+   * @memberof Pocket
+   */
+  removeNode(node) {
+    this.configuration.removeIncluded(node)
   }
   /**
    *
