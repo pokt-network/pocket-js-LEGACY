@@ -150,12 +150,9 @@ describe('Pocket Class tests', function () {
         // Properties for the relay class
         var httpMethod = "GET";
         var path = "/network/version";
-        // Retrieve nodes first
-        var nodes = await pocket.retrieveNodes();
-        // Should return a list of nodes
-        expect(nodes).to.be.a('array');
+        var headers = {"Content-Type": "application/json"}
         // Create a relay
-        var relay = pocket.createRelay(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID, null, httpMethod, path, null);
+        var relay = pocket.createRelay(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID, null, httpMethod, path, null, headers);
         // Send relay
         var response = await pocket.sendRelay(relay);
 
