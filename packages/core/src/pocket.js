@@ -82,12 +82,12 @@ class Pocket {
    * @returns {Relay} - New Relay instance.
    * @memberof Pocket
    */
-  createRelay(blockchain, netID, data, httpMethod = "", path = "", queryParams = "") {
+  createRelay(blockchain, netID, data, httpMethod = "", path = "", queryParams = "", headers = {}) {
     // Check if data is a json tring
     if (typeof data == 'string') {
-      return new Relay(blockchain, netID, data, this.configuration, httpMethod, path, queryParams); 
+      return new Relay(blockchain, netID, data, this.configuration, httpMethod, path, queryParams, headers); 
     }
-    return new Relay(blockchain, netID, JSON.stringify(data), this.configuration, httpMethod, path, queryParams);
+    return new Relay(blockchain, netID, JSON.stringify(data), this.configuration, httpMethod, path, queryParams, headers);
   }
   /**
    *
