@@ -14,10 +14,10 @@ class Relay {
 	 * @param {String} httpMethod - (Optional) HTTP Method.
 	 * @param {String} path - (Optional) API path.
 	 * @param {Object} queryParams - (Optional) An object holding the query params.
-	 * {"enabled":"true", "active":"false"}
+	 * @param {Object} headers - (Optional) An object holding the HTTP Headers.
 	 * @memberof Relay
 	 */
-	constructor(blockchain, netID, data, configuration, httpMethod, path, queryParams) {
+	constructor(blockchain, netID, data, configuration, httpMethod, path, queryParams, headers) {
 		this.blockchain = blockchain;
 		this.netID = netID;
 		this.data = data;
@@ -25,6 +25,7 @@ class Relay {
 		this.httpMethod = httpMethod;
 		this.path = path;
 		this.appendQueryParams(queryParams);
+		this.headers = headers;
 	}
 	/**
 	 *
@@ -57,7 +58,8 @@ class Relay {
 			"Data": this.data,
 			"DevID": this.configuration.devID,
 			"METHOD": this.httpMethod,
-			"PATH": this.path
+			"PATH": this.path,
+			"HEADERS": this.headers
 		}
 	}
 
