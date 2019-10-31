@@ -1,6 +1,6 @@
 {
     "name": "pocket-js-eth",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "engine": {
         "node": ">= 11.6.0"
     },
@@ -36,14 +36,14 @@
         }
     ],
     "dependencies": {
-        "pocket-js-core": "^0.0.5",
+        "pocket-js-core": "^0.0.6",
         "pocket-js-web3-provider": "^0.0.2",
         "rxjs": "^6.4.0",
         "web3": "^1.0.0-beta.51",
-        "web3-core-subscriptions": "^1.0.0-beta.50",
-        "web3-eth-abi": "^1.0.0-beta.51",
-        "web3-eth-accounts": "^1.0.0-beta.50",
-        "web3-utils": "^1.0.0-beta.50"
+        "web3-core-subscriptions": "1.0.0-beta.50",
+        "web3-eth-abi": "1.0.0-beta.51",
+        "web3-eth-accounts": "1.0.0-beta.50",
+        "web3-utils": "1.0.0-beta.50"
     },
     "devDependencies": {
         "chai": "^4.2.0",
