@@ -1,1 +1,0 @@
-module.exports = Object.assign(module.exports, require('./aion'), require('./aion-contract'));
