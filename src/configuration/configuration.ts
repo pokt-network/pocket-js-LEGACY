@@ -14,7 +14,7 @@ export class Configuration {
   public nodes: Node[] = [];
   public dispatcher?: Dispatch;
 
-  private fs = require('fs');
+  private fs = require("fs");
   /**
    * Configuration stores settings.
    * @constructor
@@ -45,7 +45,7 @@ export class Configuration {
    * @memberof Configuration
    */
   public nodesIsEmpty() {
-    if (this.nodes == null || this.nodes.length == 0) {
+    if (this.nodes === null || this.nodes.length === 0) {
       return true;
     } else {
       return false;
@@ -61,10 +61,10 @@ export class Configuration {
   }
 
   public loadNodeList(file: string) {
-    const nodeList = JSON.parse(this.fs.readFileSync(file, 'utf8').toString())
+    const nodeList = JSON.parse(this.fs.readFileSync(file, "utf8").toString());
 
-    for(let serviceNode of nodeList.serviceNodes){
-        this.nodes.push(new Node('', '', serviceNode))
-     }
+    for (const serviceNode of nodeList.serviceNodes) {
+      this.nodes.push(new Node("", "", serviceNode));
+    }
   }
 }

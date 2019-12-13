@@ -7,6 +7,6 @@ const relayPath = "/v1/relay/";
 export = {
   dispatchNodeURL,
   dispatchPath,
-  reportPath,
-  relayPath
+  relayPath,
+  reportPath  
 };

@@ -1,5 +1,5 @@
-import { Configuration } from './configuration';
-import { Blockchain, Relay } from './models'
+import { Configuration } from "./configuration";
+import { Blockchain, Relay } from "./models";
 
 /**
  *
@@ -14,7 +14,7 @@ export class Pocket {
    * @memberof Pocket
    */
   constructor(opts: { [key: string]: any } = {}) {
-    var blockchains = [];
+    const blockchains = [];
 
     if (opts.devID == null || opts.networkName == null || opts.netIDs == null) {
       throw new Error("Invalid number of arguments");
@@ -22,16 +22,21 @@ export class Pocket {
 
     if (Array.isArray(opts.netIDs)) {
       opts.netIDs.forEach(element => {
-        var blockchain = new Blockchain(opts.networkName, element);
+        const blockchain = new Blockchain(opts.networkName, element);
         blockchains.push(blockchain.toJSON());
       });
     } else {
-      var blockchain = new Blockchain(opts.networkName, opts.netIDs);
+      const blockchain = new Blockchain(opts.networkName, opts.netIDs);
       blockchains.push(blockchain.toJSON());
     }
 
-    this.configuration = new Configuration(opts.devID, blockchains ,opts.maxNodes || 5, opts.requestTimeOut || 10000, opts.sslOnly || true);
-
+    this.configuration = new Configuration(
+      opts.devID,
+      blockchains,
+      opts.maxNodes || 5,
+      opts.requestTimeOut || 10000,
+      opts.sslOnly || true
+    );
   }
   /**
    *
@@ -42,12 +47,38 @@ export class Pocket {
    * @returns {Relay} - New Relay instance.
    * @memberof Pocket
    */
-  createRelay(blockchain: Blockchain, netID: string, data: string, httpMethod = "", path = "", queryParams = "", headers = {}) {
+  public createRelay(
+    blockchain: Blockchain,
+    netID: string,
+    data: string,
+    httpMethod = "",
+    path = "",
+    queryParams = "",
+    headers = {}
+  ) {
     // Check if data is a json tring
-    if (typeof data == 'string') {
-      return new Relay(blockchain, netID, data, this.configuration, httpMethod, path, queryParams, headers); 
+    if (typeof data === "string") {
+      return new Relay(
+        blockchain,
+        netID,
+        data,
+        this.configuration,
+        httpMethod,
+        path,
+        queryParams,
+        headers
+      );
     }
-    return new Relay(blockchain, netID, JSON.stringify(data), this.configuration, httpMethod, path, queryParams, headers);
+    return new Relay(
+      blockchain,
+      netID,
+      JSON.stringify(data),
+      this.configuration,
+      httpMethod,
+      path,
+      queryParams,
+      headers
+    );
   }
   /**
    *
@@ -57,7 +88,7 @@ export class Pocket {
    * @returns {Report} - New Report instance.
    * @memberof Pocket
    */
-  createReport(ip: string, message: string) {
+  public createReport(ip: string, message: string) {
     return new Report(ip, message, this.configuration);
   }
   /**
@@ -66,7 +97,7 @@ export class Pocket {
    * @returns {Dispatch} - New or existing Dispatch instance.
    * @memberof Pocket
    */
-  getDispatch() {
+  public getDispatch() {
     if (this.configuration.dispatcher == null) {
       this.configuration.dispatcher = new Dispatch(this.configuration);
     }
@@ -80,16 +111,16 @@ export class Pocket {
    * @returns {Node} - New Node instance.
    * @memberof Pocket
    */
-  async getNode(netID: string, network: string) {
+  public async getNode(netID: string, network: string) {
     try {
-      var nodes: Node[] = [];
+      const nodes: Node[] = [];
 
       if (this.configuration.nodesIsEmpty()) {
-        var response = await this.retrieveNodes();
+        const response = await this.retrieveNodes();
 
-        if (response instanceof Error == true) {
+        if (response instanceof Error === true) {
           throw response;
-        }else {
+        } else {
           // Save the nodes to the configuration.
           this.configuration.setNodes(response);
         }
@@ -97,12 +128,12 @@ export class Pocket {
 
       this.configuration.nodes.forEach(node => {
         if (node.isEqual(netID, network)) {
-            nodes.push(node);
+          nodes.push(node);
         }
       });
 
       if (nodes.length <= 0) {
-        return null
+        return null;
       }
 
       return nodes[Math.floor(Math.random() * nodes.length)];
@@ -118,7 +149,7 @@ export class Pocket {
    * @returns {String} - A String with the response.
    * @memberof Pocket
    */
-  async sendReport(report, callback) {
+  public async sendReport(report, callback) {
     try {
       // Check for report
       if (report == null) {
@@ -129,9 +160,9 @@ export class Pocket {
         throw new Error("One or more Report properties are empty.");
       }
       // Send Report
-      var response = await report.send();
+      const response = await report.send();
       // Response
-      if (response instanceof Error == false) {
+      if (response instanceof Error === false) {
         if (callback) {
           callback(null, response);
           return;
@@ -163,7 +194,7 @@ export class Pocket {
    * @returns {String} - A String with the response.
    * @memberof Pocket
    */
-  async sendRelay(relay, callback) {
+  public async sendRelay(relay, callback) {
     try {
       // Check for relay
       if (relay == null) {
@@ -177,16 +208,21 @@ export class Pocket {
       // Verify all relay properties are set
       if (!relay.isValid()) {
         if (callback) {
-          callback(new Error("Relay is missing a property, please verify all properties."));
+          callback(
+            new Error(
+              "Relay is missing a property, please verify all properties."
+            )
+          );
           return;
         } else {
-          return new Error("Relay is missing a property, please verify all properties.");
+          return new Error(
+            "Relay is missing a property, please verify all properties."
+          );
         }
       }
 
       // Filter nodes for specified blockchain
-      var node = await this.getNode(relay.netID,
-        relay.blockchain);
+      const node = await this.getNode(relay.netID, relay.blockchain);
 
       if (node == null) {
         if (callback) {
@@ -198,9 +234,9 @@ export class Pocket {
       }
 
       // Send relay
-      var response = await node.sendRelay(relay);
+      const response = await node.sendRelay(relay);
       // Response
-      if (response instanceof Error == false) {
+      if (response instanceof Error === false) {
         if (callback) {
           callback(null, response);
           return;
@@ -215,7 +251,6 @@ export class Pocket {
           return response;
         }
       }
-
     } catch (error) {
       if (callback) {
         callback(new Error("Failed to send relay with error: " + error));
@@ -224,7 +259,6 @@ export class Pocket {
         return new Error("Failed to send relay with error: " + error);
       }
     }
-
   }
   /**
    *
@@ -233,13 +267,13 @@ export class Pocket {
    * @returns {Node} - A list of Nodes.
    * @memberof Pocket
    */
-  async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
+  public async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
     try {
-      var dispatch = this.getDispatch();
-      var nodes: Node[] = [];
-      var response = await dispatch.retrieveServiceNodes();
-      
-      if (response instanceof Error == false && response.length != 0) {
+      const dispatch = this.getDispatch();
+      const nodes: Node[] = [];
+      const response = await dispatch.retrieveServiceNodes();
+
+      if (response instanceof Error === false && response.length !== 0) {
         // Save the nodes to the configuration.
         this.configuration.nodes = nodes;
         // Return a list of nodes
@@ -258,15 +292,18 @@ export class Pocket {
           return new Error("Failed to retrieve a list of nodes.");
         }
       }
-
     } catch (error) {
       if (callback) {
-        callback(null, new Error("Failed to retrieve a list of nodes with error: "+error));
+        callback(
+          null,
+          new Error("Failed to retrieve a list of nodes with error: " + error)
+        );
         return;
       } else {
-        return new Error("Failed to retrieve a list of nodes with error: "+error);
+        return new Error(
+          "Failed to retrieve a list of nodes with error: " + error
+        );
       }
     }
   }
-
 }

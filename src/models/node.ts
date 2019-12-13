@@ -25,7 +25,7 @@ export class Node {
   constructor(network: string, netID: string, ipPort: string) {
     this.network = network;
     this.netID = netID;
-    var ipPortArr = ipPort.split(":");
+    const ipPortArr = ipPort.split(":");
     this.ip = ipPortArr[0];
     this.port = ipPortArr[1];
 
@@ -49,9 +49,9 @@ export class Node {
    * @returns {boolean} - True or false.
    * @memberof Node
    */
-  isValid() {
-    for (var property in this) {
-      if (!this.hasOwnProperty(property) || property == "") {
+  public isValid() {
+    for (const property in this) {
+      if (!this.hasOwnProperty(property) || property === "") {
         return false;
       }
     }
@@ -66,8 +66,8 @@ export class Node {
    * @returns {boolean} - True or false.
    * @memberof Node
    */
-  isEqual(netID: string, network: string) {
-    if (this.netID == netID.toString() && this.network == network.toString()) {
+  public isEqual(netID: string, network: string) {
+    if (this.netID === netID.toString() && this.network === network.toString()) {
       return true;
     }
     return false;
@@ -81,26 +81,26 @@ export class Node {
    * @returns {Object} - Object with the response.
    * @memberof Node
    */
-  async sendRelay(
+  public async sendRelay(
     relay: Relay,
     callback: (result?: any, error?: Error) => any
   ) {
     try {
       const axiosInstance = axios.create({
         baseURL: this.ipPort,
-        timeout: relay.configuration.requestTimeOut,
         headers: {
           "Content-Type": "application/json"
-        }
+        },
+        timeout: relay.configuration.requestTimeOut
       });
 
-      var response = await axiosInstance.post(
+      const response = await axiosInstance.post(
         constants.relayPath,
         relay.toJSON()
       );
 
-      if (response.status == 200 && response.data != null) {
-        var result = response.data;
+      if (response.status === 200 && response.data !== null) {
+        const result = response.data;
 
         if (callback) {
           callback(result);
