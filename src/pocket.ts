@@ -1,9 +1,5 @@
 import { Configuration } from './configuration';
-import Models = require('./models/index');
-const Blockchain = Models.Blockchain;
-const Dispatch = Models.Dispatch;
-const Relay = Models.Relay;
-const Report = Models.Report;
+import { Blockchain, Relay } from './models'
 
 /**
  *
