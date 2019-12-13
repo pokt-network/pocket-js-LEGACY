@@ -1,48 +1,52 @@
 {
-  "name": "@pokt-network/pocket-js",
-  "version": "0.0.3",
-  "engine": {
-    "node": ">= 11.6.0"
-  },
-  "description": "Pocket-js package with a set of plugins that allows you to connect to the Eth and Aion Networks.",
-  "main": "index.js",
-  "subPackages": [
-    "packages/core",
-    "packages/web3-provider",
-    "packages/aion",
-    "packages/eth"
-  ],
-  "scripts": {
-    "subpkg-install": "subpkg install",
-    "subpkg-test": "subpkg test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/pokt-network/pocket-js.git"
-  },
-  "keywords": [
-    "pocket",
-    "sdk",
-    "blockchain",
-    "tool",
-    "core",
-    "eth",
-    "aion"
-  ],
-  "author": "Pabel Nunez Landestoy",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pokt-network/pocket-js/issues"
-  },
-  "homepage": "https://github.com/pokt-network/pocket-js#readme",
-  "dependencies": {
-    "pocket-js-aion": "latest",
-    "pocket-js-core": "latest",
-    "pocket-js-eth": "latest",
-    "pocket-js-web3-provider": "latest"
-  },
-  "devDependencies": {
-    "mocha": "^6.1.4",
-    "subpackage": "^1.1.0"
-  }
+    "name": "pocket-js-core",
+    "version": "0.1.0",
+    "engine": {
+        "node": ">= 11.6.0"
+    },
+    "description": "Pocket-js core package with the main functionalities to interact with the Pocket Network.",
+    "license": "MIT",
+    "main": "./core/src/index.js",
+    "directories": {
+        "tests": "./tests"
+    },
+    "scripts": {
+        "test": "mocha --reporter spec",
+        "build": "tsc",
+        "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+        "lint": "tslint -p tsconfig.json"
+    },
+    "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/core",
+    "homepage": "https://github.com/pokt-network/pocket-js",
+    "bugs": {
+        "url": "https://github.com/pokt-network/pocket-js/issues"
+    },
+    "keywords": [
+        "Pocket",
+        "Network",
+        "SDK",
+        "Core",
+        "JavaScript",
+        "Blockchain",
+        "Tool"
+    ],
+    "author": "Pocket Network",
+    "authors": [
+        {
+            "name": "Pabel Nunez Landestoy",
+            "email": "pabelnunezl@gmail.com",
+            "homepage": "https://github.com/pabelnl"
+        }
+    ],
+    "dependencies": {
+        "axios": "^0.18.1"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "mocha": "^6.2.2",
+        "prettier": "^1.19.1",
+        "tslint": "^5.20.1",
+        "tslint-config-prettier": "^1.18.0",
+        "typescript": "^3.7.2"
+    }
 }
