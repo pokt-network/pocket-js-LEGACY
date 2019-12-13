@@ -99,7 +99,7 @@ export class Pocket {
         }
       }
 
-      this.configuration.nodes.forEach(function(node: Node) {
+      this.configuration.nodes.forEach(node => {
         if (node.isEqual(netID, network)) {
             nodes.push(node);
         }
@@ -237,17 +237,18 @@ export class Pocket {
    * @returns {Node} - A list of Nodes.
    * @memberof Pocket
    */
-  async retrieveNodes(callback) {
+  async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
     try {
       var dispatch = this.getDispatch();
-      var nodes = await dispatch.retrieveServiceNodes();
+      var nodes: Node[] = [];
+      var response = await dispatch.retrieveServiceNodes();
       
-      if (nodes instanceof Error == false && nodes.length != 0) {
+      if (response instanceof Error == false && response.length != 0) {
         // Save the nodes to the configuration.
         this.configuration.nodes = nodes;
         // Return a list of nodes
         if (callback) {
-          callback(null, this.configuration.nodes);
+          callback(this.configuration.nodes);
           return;
         } else {
           return this.configuration.nodes;
@@ -255,7 +256,7 @@ export class Pocket {
       } else {
         // Returns an Error;
         if (callback) {
-          callback(new Error("Failed to retrieve a list of nodes."), null);
+          callback(null, new Error("Failed to retrieve a list of nodes."));
           return;
         } else {
           return new Error("Failed to retrieve a list of nodes.");
@@ -264,7 +265,7 @@ export class Pocket {
 
     } catch (error) {
       if (callback) {
-        callback(new Error("Failed to retrieve a list of nodes with error: "+error), null);
+        callback(null, new Error("Failed to retrieve a list of nodes with error: "+error));
         return;
       } else {
         return new Error("Failed to retrieve a list of nodes with error: "+error);
@@ -273,5 +274,3 @@ export class Pocket {
   }
 
 }
-
-module.exports = Pocket;

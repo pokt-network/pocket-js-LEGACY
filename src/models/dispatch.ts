@@ -67,7 +67,7 @@ export class Dispatch {
    * @returns {Node} - A Node object list.
    * @memberof Dispatch
    */
-  async retrieveServiceNodes(callback: (result?: any, error?: Error) => any) {
+  async retrieveServiceNodes(callback?: (result?: Node[], error?: Error) => any) {
     try {
       var dispatch = this;
       var response = null;
@@ -88,7 +88,7 @@ export class Dispatch {
         // Check if filteredNodes is an error
         if (filteredNodes instanceof Error == false) {
           if (callback) {
-            callback(filteredNodes);
+            callback(<Node[]>filteredNodes);
             return;
           } else {
             return filteredNodes;
