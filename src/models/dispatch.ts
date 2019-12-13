@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import {Node} from './node'; 
 import {Blockchain} from './blockchain';
 import constants = require('../utils/constants');
-import { Configuration } from '../configuration';
+import { Configuration } from '../configuration/configuration';
 
 // Dispatch
 /**
@@ -95,7 +95,7 @@ export class Dispatch {
           }
         }else{
           if (callback) {
-            callback(null, <Error>filteredNodes);
+            callback(undefined, <Error>filteredNodes);
             return;
           } else {
             return filteredNodes;
@@ -103,7 +103,7 @@ export class Dispatch {
         }
       } else {
         if (callback) {
-          callback(null, new Error("Failed to retrieve service nodes with error: " + response.data));
+          callback(undefined, new Error("Failed to retrieve service nodes with error: " + response.data));
           return;
         } else {
           return new Error("Failed to retrieve service nodes with error: " + response.data);
@@ -111,7 +111,7 @@ export class Dispatch {
       }
     } catch (err) {
       if (callback) {
-        callback(null, new Error("Failed to retrieve service nodes with error: " + err));
+        callback(undefined, new Error("Failed to retrieve service nodes with error: " + err));
         return;
       } else {
         return new Error("Failed to retrieve service nodes with error: " + err);

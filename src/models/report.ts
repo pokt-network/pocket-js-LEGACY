@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import constants = require('../utils/constants');
-import { Configuration } from '../configuration';
+import { Configuration } from '../configuration/configuration';
 
 // Report
 /**
