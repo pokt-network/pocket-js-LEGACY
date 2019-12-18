@@ -27,4 +27,15 @@ export class Blockchain {
     this.name + '", "netID":"' + 
     this.netID + '"}')
   }
+	/**
+	 *
+	 * Verifies if the Blockchain is valid
+	 * @returns {boolean} - True or false
+	 * @memberof Blockchain
+	 */
+  public isValid() {
+    return JSON.parse('{ "name":"' + 
+    this.name + '", "netID":"' + 
+    this.netID + '"}')
+  }
 }

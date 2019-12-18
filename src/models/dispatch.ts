@@ -95,7 +95,7 @@ export class Dispatch {
           }
         }else{
           if (callback) {
-            callback(null, <Error>filteredNodes);
+            callback(undefined, <Error>filteredNodes);
             return;
           } else {
             return filteredNodes;
@@ -103,7 +103,7 @@ export class Dispatch {
         }
       } else {
         if (callback) {
-          callback(null, new Error("Failed to retrieve service nodes with error: " + response.data));
+          callback(undefined, new Error("Failed to retrieve service nodes with error: " + response.data));
           return;
         } else {
           return new Error("Failed to retrieve service nodes with error: " + response.data);
@@ -111,7 +111,7 @@ export class Dispatch {
       }
     } catch (err) {
       if (callback) {
-        callback(null, new Error("Failed to retrieve service nodes with error: " + err));
+        callback(undefined, new Error("Failed to retrieve service nodes with error: " + err));
         return;
       } else {
         return new Error("Failed to retrieve service nodes with error: " + err);
@@ -135,13 +135,12 @@ export class Dispatch {
         // Iterate through the array for different networks results
         response.forEach(element => {
           
-          var network = element.name;
-          var netID = element.netid;
+          var blockchain = new Blockchain(element.name, element.netID);
 
           if (element.ips) {
             // Create a Node object for each item inside the dataKey object, IP:PORT
             element.ips.forEach(function(ipPort: string) {
-              var node = new Node(network, netID, ipPort);
+              var node = new Node(blockchain, ipPort);
               nodes.push(node);
             });
           }

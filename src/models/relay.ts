@@ -8,7 +8,6 @@ import {Configuration} from '../configuration';
  */
 export class Relay {
 	public readonly blockchain: Blockchain;
-	public readonly netID: string;
 	public readonly data: string;
 	public readonly configuration: Configuration;
 	public readonly httpMethod: string;
@@ -18,7 +17,6 @@ export class Relay {
 	/**
 	 * Creates an instance of Relay.
 	 * @param {Blockchain} blockchain - A blockchain object.
-	 * @param {string} netID - Network identifier.
 	 * @param {string} data - Data string.
 	 * @param {Configuration} configuration - Configuration object.
 	 * @param {string} httpMethod - (Optional) HTTP Method.
@@ -27,9 +25,8 @@ export class Relay {
 	 * @param {Object} headers - (Optional) An object holding the HTTP Headers.
 	 * @memberof Relay
 	 */
-	constructor(blockchain: Blockchain, netID: string, data: string, configuration: Configuration, httpMethod: string, path: string, queryParams: {}, headers: {}) {
+	constructor(blockchain: Blockchain, data: string, configuration: Configuration, httpMethod: string, path: string, queryParams: {}, headers: {}) {
 		this.blockchain = blockchain;
-		this.netID = netID;
 		this.data = data;
 		this.configuration = configuration;
 		this.httpMethod = httpMethod;
@@ -63,8 +60,8 @@ export class Relay {
 	 */
 	toJSON() {
 		return {
-			"Blockchain": this.blockchain,
-			"NetID": this.netID,
+			"Blockchain": this.blockchain.name,
+			"NetID": this.blockchain.netID,
 			"Data": this.data,
 			"DevID": this.configuration.devID,
 			"METHOD": this.httpMethod,
@@ -80,9 +77,8 @@ export class Relay {
 	 * @memberof Relay
 	 */
 	isValid() {
-		if (this.blockchain != null && this.blockchain != null && 
-			this.netID != null && this.netID != ""
-			&& this.configuration != null && this.configuration != null) {
+		if (this.blockchain != null &&  
+			this.blockchain.isValid() && this.configuration != null) {
 				return true;
 		}
 		return false;

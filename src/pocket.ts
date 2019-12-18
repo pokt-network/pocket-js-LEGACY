@@ -1,5 +1,5 @@
 import { Configuration } from './configuration';
-import { Blockchain, Relay } from './models'
+import { Blockchain, Dispatch, Node, Relay, Report, Wallet } from './models'
 
 /**
  *
@@ -37,17 +37,20 @@ export class Pocket {
    *
    * Create a Relay instance
    * @param {Blockchain} blockchain - Blockchain object.
-   * @param {String} netID - Network Idenfifier.
    * @param {String} data - String holding the json rpc call.
+	 * @param {string} httpMethod - (Optional) HTTP Method.
+	 * @param {string} path - (Optional) API path.
+	 * @param {Object} queryParams - (Optional) An object holding the query params.
+	 * @param {Object} headers - (Optional) An object holding the HTTP Headers.
    * @returns {Relay} - New Relay instance.
    * @memberof Pocket
    */
-  createRelay(blockchain: Blockchain, netID: string, data: string, httpMethod = "", path = "", queryParams = "", headers = {}) {
+  createRelay(blockchain: Blockchain, data: string, httpMethod = "", path = "", queryParams = "", headers = {}) {
     // Check if data is a json tring
     if (typeof data == 'string') {
-      return new Relay(blockchain, netID, data, this.configuration, httpMethod, path, queryParams, headers); 
+      return new Relay(blockchain, data, this.configuration, httpMethod, path, queryParams, headers); 
     }
-    return new Relay(blockchain, netID, JSON.stringify(data), this.configuration, httpMethod, path, queryParams, headers);
+    return new Relay(blockchain, JSON.stringify(data), this.configuration, httpMethod, path, queryParams, headers);
   }
   /**
    *
@@ -80,7 +83,7 @@ export class Pocket {
    * @returns {Node} - New Node instance.
    * @memberof Pocket
    */
-  async getNode(netID: string, network: string) {
+  async getNode(blockchain: Blockchain) {
     try {
       var nodes: Node[] = [];
 
@@ -91,12 +94,12 @@ export class Pocket {
           throw response;
         }else {
           // Save the nodes to the configuration.
-          this.configuration.setNodes(response);
+          this.configuration.setNodes(<Node[]>response);
         }
       }
 
       this.configuration.nodes.forEach(node => {
-        if (node.isEqual(netID, network)) {
+        if (node.isEqual(blockchain)) {
             nodes.push(node);
         }
       });
@@ -118,7 +121,7 @@ export class Pocket {
    * @returns {String} - A String with the response.
    * @memberof Pocket
    */
-  async sendReport(report, callback) {
+  async sendReport(report: Report, callback?: (result?: any, error?: Error ) => any) {
     try {
       // Check for report
       if (report == null) {
@@ -163,12 +166,12 @@ export class Pocket {
    * @returns {String} - A String with the response.
    * @memberof Pocket
    */
-  async sendRelay(relay, callback) {
+  async sendRelay(relay: Relay, callback?: (result?: any[], error?: Error) => any) {
     try {
       // Check for relay
       if (relay == null) {
         if (callback) {
-          callback(new Error("Relay is null or data field is missing"));
+          callback(undefined, new Error("Relay is null or data field is missing"));
           return;
         } else {
           return new Error("Relay is null or data field is missing");
@@ -177,7 +180,7 @@ export class Pocket {
       // Verify all relay properties are set
       if (!relay.isValid()) {
         if (callback) {
-          callback(new Error("Relay is missing a property, please verify all properties."));
+          callback(undefined, new Error("Relay is missing a property, please verify all properties."));
           return;
         } else {
           return new Error("Relay is missing a property, please verify all properties.");
@@ -185,12 +188,11 @@ export class Pocket {
       }
 
       // Filter nodes for specified blockchain
-      var node = await this.getNode(relay.netID,
-        relay.blockchain);
+      var node = await this.getNode(relay.blockchain);
 
       if (node == null) {
         if (callback) {
-          callback(new Error("Node is empty."));
+          callback(undefined, new Error("Node is empty."));
           return;
         } else {
           return new Error("Node is empty.");
@@ -202,14 +204,14 @@ export class Pocket {
       // Response
       if (response instanceof Error == false) {
         if (callback) {
-          callback(null, response);
+          callback(response);
           return;
         } else {
           return response;
         }
       } else {
         if (callback) {
-          callback(response);
+          callback(undefined, response);
           return;
         } else {
           return response;
@@ -218,13 +220,12 @@ export class Pocket {
 
     } catch (error) {
       if (callback) {
-        callback(new Error("Failed to send relay with error: " + error));
+        callback(undefined, new Error("Failed to send relay with error: " + error));
         return;
       } else {
         return new Error("Failed to send relay with error: " + error);
       }
     }
-
   }
   /**
    *
@@ -239,7 +240,7 @@ export class Pocket {
       var nodes: Node[] = [];
       var response = await dispatch.retrieveServiceNodes();
       
-      if (response instanceof Error == false && response.length != 0) {
+      if (!(response instanceof Error) && response !== undefined && response.length != 0) {
         // Save the nodes to the configuration.
         this.configuration.nodes = nodes;
         // Return a list of nodes

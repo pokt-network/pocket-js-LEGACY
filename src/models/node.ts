@@ -1,6 +1,7 @@
 import axios from 'axios';
 import constants = require('../utils/constants');
 import {Relay} from './relay';
+import {Blockchain} from './blockchain';
 const httpsRequestProtocol = "https://";
 const httpRequestProtocol = "http://";
 // Dispatch
@@ -10,21 +11,18 @@ const httpRequestProtocol = "http://";
  * @class Node
  */
 export class Node {
-    public readonly network: string;
-    public readonly netID: string;
+    public readonly blockchain: Blockchain;
     public readonly ipPort: string;
     public readonly ip: string;
     public readonly port: string;
     /**
      * Creates an instance of Node.
-     * @param {string} network - Network name.
-     * @param {string} netID - Network Identifier.
-     * @param {string} ipPort - Ip and port string ("10.0.0.1:80")
+     * @param {Blockchain} blockchain - Blockchain object.
+     * @param {string} ipPort - Ip and port string ("127.0.0.1:80")
      * @memberof Node
      */
-    constructor(network: string, netID: string, ipPort: string) {
-        this.network = network;
-        this.netID = netID;
+    constructor(blockchain: Blockchain, ipPort: string) {
+        this.blockchain = blockchain;
         var ipPortArr = ipPort.split(":");
         this.ip = ipPortArr[0];
         this.port = ipPortArr[1];
@@ -63,8 +61,8 @@ export class Node {
      * @returns {boolean} - True or false.
      * @memberof Node
      */
-    isEqual(netID: string, network: string) {
-        if (this.netID == netID.toString() && this.network == network.toString()) {
+    isEqual(blockchain: Blockchain) {
+        if (this.blockchain == blockchain) {
             return true;
         }
         return false;
@@ -78,7 +76,7 @@ export class Node {
      * @returns {Object} - Object with the response.
      * @memberof Node
      */
-    async sendRelay(relay: Relay, callback: (result?: any, error?: Error) => any) {
+    async sendRelay(relay: Relay, callback?: (result?: any, error?: Error) => any) {
         try {
             const axiosInstance = axios.create({
                 baseURL: this.ipPort,
