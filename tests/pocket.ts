@@ -7,8 +7,7 @@ import * as config from "../config.json";
 // Constants
 import { expect } from 'chai';
 import { Pocket } from '../src/pocket';
-import { Node } from "../src/models/node.js";
-import { Blockchain } from "../src/models/index.js";
+import { Node } from "../src/models/node";
 
 const DEV_ID = config.dev_id;
 
@@ -68,19 +67,18 @@ describe('Pocket Class tests', function () {
         // New Pocket instance
         var pocket = new Pocket(opts);
 
-        var nodes = await pocket.retrieveNodes();
+        var nodes = await pocket.retrieveNodes() as Node[];
         expect(nodes).to.not.be.an.instanceof(Error);
 
         var result: Node[] = [];
-        if (nodes instanceof Node) {
-            nodes.forEach(function(node: Node)  {
-                if (node.port == 443 || node.port == "443") {
-                    result.push(node);
-              }else{
-                    result.push(node);
-              }
-            });
-        }
+        
+        nodes.forEach(function(node: Node)  {
+            if (node.port == "443") {
+                result.push(node);
+            }else{
+                result.push(node);
+            }
+        });
 
         expect(result).to.not.be.empty;
     }).timeout(0);
@@ -122,12 +120,12 @@ describe('Pocket Class tests', function () {
         expect(response).to.be.a('string');
     }).timeout(0);
 
-    it('should fail to send a relay to a node in the network with bad relay properties "netID"', async () => {
+    it('should fail to send a relay to a node in the network with bad network ID', async () => {
         // Pocket options object
         var opts = {
             devID: DEV_ID,
             networkName: "ETH",
-            netIDs: [4],
+            netIDs: [10],
             requestTimeOut: 40000
         }
         // New Pocket instance
@@ -136,7 +134,7 @@ describe('Pocket Class tests', function () {
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
         // Create a relay
         // We are passing a bad netID as second parameter "10" for intentional error scenario
-        var relay = pocket.createRelay("ETH", 10, data);
+        var relay = pocket.createRelay(pocket.configuration.blockchains[0], data);
         // Send relay
         var response = await pocket.sendRelay(relay);
 
@@ -158,7 +156,7 @@ describe('Pocket Class tests', function () {
         var path = "/network/version";
         var headers = {"Content-Type": "application/json"}
         // Create a relay
-        var relay = pocket.createRelay(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID, null, httpMethod, path, null, headers);
+        var relay = pocket.createRelay(pocket.configuration.blockchains[0], "", httpMethod, path, "", headers);
         // Send relay
         var response = await pocket.sendRelay(relay);
 
