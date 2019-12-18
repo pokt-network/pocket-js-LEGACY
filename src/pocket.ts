@@ -1,4 +1,4 @@
-import { Configuration } from './configuration';
+import { Configuration } from './configuration/configuration';
 import { Blockchain, Dispatch, Node, Relay, Report, Wallet } from './models'
 
 /**
@@ -103,7 +103,7 @@ export class Pocket {
         }
       }
 
-      this.configuration.nodes.forEach(node => {
+      this.configuration.nodes.forEach(function(node: Node) {
         if (node.isEqual(blockchain)) {
             nodes.push(node);
         }
