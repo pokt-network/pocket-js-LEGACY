@@ -3,10 +3,13 @@
  * @description Unit test for the Pocket Core
  */
 // Config
-var config = require('../../../config.json')
+import * as config from "../config.json";
 // Constants
-const expect = require('chai').expect;
-const Pocket = require("../src/index.js").Pocket;
+import { expect } from 'chai';
+import { Pocket } from '../src/pocket';
+import { Node } from "../src/models/node.js";
+import { Blockchain } from "../src/models/index.js";
+
 const DEV_ID = config.dev_id;
 
 describe('Pocket Class tests', function () {
@@ -68,14 +71,17 @@ describe('Pocket Class tests', function () {
         var nodes = await pocket.retrieveNodes();
         expect(nodes).to.not.be.an.instanceof(Error);
 
-        var result = []
-        nodes.forEach(node => {
-            if (node.port == 443 || node.port == "443") {
-                result.push(node);
-          }else{
-                result.push(node);
-          }
-        });
+        var result: Node[] = [];
+        if (nodes instanceof Node) {
+            nodes.forEach(function(node: Node)  {
+                if (node.port == 443 || node.port == "443") {
+                    result.push(node);
+              }else{
+                    result.push(node);
+              }
+            });
+        }
+
         expect(result).to.not.be.empty;
     }).timeout(0);
 
@@ -108,7 +114,7 @@ describe('Pocket Class tests', function () {
         // Create data
         var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
         // Create a relay
-        var relay = pocket.createRelay("ETH", pocket.configuration.blockchains[0].netID, data);
+        var relay = pocket.createRelay(pocket.configuration.blockchains[0], data);
         // Send relay
         var response = await pocket.sendRelay(relay);
 

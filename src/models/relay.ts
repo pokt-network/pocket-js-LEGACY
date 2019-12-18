@@ -1,6 +1,6 @@
 // Relay
-import {Blockchain} from './blockchain';
-import {Configuration} from '../configuration';
+import { Blockchain } from "./blockchain";
+import { Configuration } from "../configuration/configuration";
 /**
  *
  *

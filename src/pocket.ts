@@ -14,7 +14,7 @@ export class Pocket {
    * @memberof Pocket
    */
   constructor(opts: { [key: string]: any } = {}) {
-    var blockchains = [];
+    const blockchains = [];
 
     if (opts.devID == null || opts.networkName == null || opts.netIDs == null) {
       throw new Error("Invalid number of arguments");
@@ -22,16 +22,21 @@ export class Pocket {
 
     if (Array.isArray(opts.netIDs)) {
       opts.netIDs.forEach(element => {
-        var blockchain = new Blockchain(opts.networkName, element);
+        const blockchain = new Blockchain(opts.networkName, element);
         blockchains.push(blockchain.toJSON());
       });
     } else {
-      var blockchain = new Blockchain(opts.networkName, opts.netIDs);
+      const blockchain = new Blockchain(opts.networkName, opts.netIDs);
       blockchains.push(blockchain.toJSON());
     }
 
-    this.configuration = new Configuration(opts.devID, blockchains ,opts.maxNodes || 5, opts.requestTimeOut || 10000, opts.sslOnly || true);
-
+    this.configuration = new Configuration(
+      opts.devID,
+      blockchains,
+      opts.maxNodes || 5,
+      opts.requestTimeOut || 10000,
+      opts.sslOnly || true
+    );
   }
   /**
    *
@@ -60,7 +65,7 @@ export class Pocket {
    * @returns {Report} - New Report instance.
    * @memberof Pocket
    */
-  createReport(ip: string, message: string) {
+  public createReport(ip: string, message: string) {
     return new Report(ip, message, this.configuration);
   }
   /**
@@ -69,7 +74,7 @@ export class Pocket {
    * @returns {Dispatch} - New or existing Dispatch instance.
    * @memberof Pocket
    */
-  getDispatch() {
+  public getDispatch() {
     if (this.configuration.dispatcher == null) {
       this.configuration.dispatcher = new Dispatch(this.configuration);
     }
@@ -85,14 +90,14 @@ export class Pocket {
    */
   async getNode(blockchain: Blockchain) {
     try {
-      var nodes: Node[] = [];
+      const nodes: Node[] = [];
 
       if (this.configuration.nodesIsEmpty()) {
-        var response = await this.retrieveNodes();
+        const response = await this.retrieveNodes();
 
-        if (response instanceof Error == true) {
+        if (response instanceof Error === true) {
           throw response;
-        }else {
+        } else {
           // Save the nodes to the configuration.
           this.configuration.setNodes(<Node[]>response);
         }
@@ -105,7 +110,7 @@ export class Pocket {
       });
 
       if (nodes.length <= 0) {
-        return null
+        return null;
       }
 
       return nodes[Math.floor(Math.random() * nodes.length)];
@@ -132,9 +137,9 @@ export class Pocket {
         throw new Error("One or more Report properties are empty.");
       }
       // Send Report
-      var response = await report.send();
+      const response = await report.send();
       // Response
-      if (response instanceof Error == false) {
+      if (response instanceof Error === false) {
         if (callback) {
           callback(null, response);
           return;
@@ -183,7 +188,9 @@ export class Pocket {
           callback(undefined, new Error("Relay is missing a property, please verify all properties."));
           return;
         } else {
-          return new Error("Relay is missing a property, please verify all properties.");
+          return new Error(
+            "Relay is missing a property, please verify all properties."
+          );
         }
       }
 
@@ -200,9 +207,9 @@ export class Pocket {
       }
 
       // Send relay
-      var response = await node.sendRelay(relay);
+      const response = await node.sendRelay(relay);
       // Response
-      if (response instanceof Error == false) {
+      if (response instanceof Error === false) {
         if (callback) {
           callback(response);
           return;
@@ -217,7 +224,6 @@ export class Pocket {
           return response;
         }
       }
-
     } catch (error) {
       if (callback) {
         callback(undefined, new Error("Failed to send relay with error: " + error));
@@ -234,7 +240,7 @@ export class Pocket {
    * @returns {Node} - A list of Nodes.
    * @memberof Pocket
    */
-  async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
+  public async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
     try {
       var dispatch = this.getDispatch();
       var nodes: Node[] = [];
@@ -259,15 +265,18 @@ export class Pocket {
           return new Error("Failed to retrieve a list of nodes.");
         }
       }
-
     } catch (error) {
       if (callback) {
-        callback(null, new Error("Failed to retrieve a list of nodes with error: "+error));
+        callback(
+          null,
+          new Error("Failed to retrieve a list of nodes with error: " + error)
+        );
         return;
       } else {
-        return new Error("Failed to retrieve a list of nodes with error: "+error);
+        return new Error(
+          "Failed to retrieve a list of nodes with error: " + error
+        );
       }
     }
   }
-
 }

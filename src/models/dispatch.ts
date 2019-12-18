@@ -1,8 +1,8 @@
-import axios, { AxiosInstance } from 'axios';
-import {Node} from './node'; 
-import {Blockchain} from './blockchain';
-import constants = require('../utils/constants');
-import { Configuration } from '../configuration';
+import axios, { AxiosInstance } from "axios";
+import { Node } from "./node";
+import { Blockchain } from "./blockchain";
+import constants = require("../utils/constants");
+import { Configuration } from "../configuration/configuration";
 
 // Dispatch
 /**
@@ -14,18 +14,18 @@ export class Dispatch {
   public readonly configuration: Configuration;
   public readonly axiosInstance: AxiosInstance;
   /**
-   *Creates an instance of Dispatch.
+   * Creates an instance of Dispatch.
    * @param {Configuration} configuration - Configuration object.
    * @memberof Dispatch
    */
   constructor(configuration: Configuration) {
     this.configuration = configuration;
     this.axiosInstance = axios.create({
-      url: constants.dispatchNodeURL + constants.dispatchPath,
-      timeout: this.configuration.requestTimeOut,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json"
+      },
+      timeout: this.configuration.requestTimeOut,
+      url: constants.dispatchNodeURL + constants.dispatchPath
     });
   }
   /**
@@ -34,32 +34,14 @@ export class Dispatch {
    * @returns {JSON} - JSON Array with the blockchain list.
    * @memberof Dispatch
    */
-  blockchainsJSON() {
-    var blockchainArray: Blockchain[] = [];
+  public blockchainsJSON() {
+    const blockchainArray: Blockchain[] = [];
     this.configuration.blockchains.forEach(element => {
       blockchainArray.push(element);
     });
-    return blockchainArray
+    return blockchainArray;
   }
-  /**
-   *
-   * Filters a list of service nodes that supports SSL Only
-   * @param {Node} node - A list of Nodes from the Dispatcher
-   * @returns {Node} - A list of nodes with SSL Support
-   * @memberof Dispatch
-   */
-  sslOnlyNodes(nodes: Node[]){
-    var result: Node[] = [];
-    nodes.forEach(node => {
-      if (node.port == "443") {
-        result.push(node);
-      }
-    });
-    if (result.length == 0) {
-      return new Error("Failed to retrieve a list of nodes with SSL Support.")
-    }
-    return result;
-  }
+  
   /**
    *
    * Retrieves a list of service nodes
@@ -67,33 +49,35 @@ export class Dispatch {
    * @returns {Node} - A Node object list.
    * @memberof Dispatch
    */
-  async retrieveServiceNodes(callback?: (result?: Node[], error?: Error) => any) {
+  public async retrieveServiceNodes(
+    callback?: (result?: Node[], error?: Error) => any
+  ) {
     try {
-      var dispatch = this;
-      var response = null;
+      const dispatch = this;
+      let response = null;
 
       response = await this.axiosInstance.post(constants.dispatchPath, {
-        "DevID": dispatch.configuration.devID,
-        "Blockchains": dispatch.blockchainsJSON()
+        Blockchains: dispatch.blockchainsJSON(),
+        DevID: dispatch.configuration.devID
       });
 
-      if (response != null && response.status == 200 && response.data != null) {
-        var nodes = this.parseDispatchResponse(response.data);
+      if (response !== null && response.status === 200 && response.data !== null) {
+        const nodes = this.parseDispatchResponse(response.data);
 
-        var filteredNodes = nodes
+        let filteredNodes = nodes;
         // Check if SSL only nodes are requested
         if (this.configuration.sslOnly) {
-          filteredNodes = this.sslOnlyNodes(<Node[]>nodes)
+          filteredNodes = this.sslOnlyNodes(nodes as Node[]);
         }
         // Check if filteredNodes is an error
-        if (filteredNodes instanceof Error == false) {
+        if (filteredNodes instanceof Error === false) {
           if (callback) {
-            callback(<Node[]>filteredNodes);
+            callback(filteredNodes as Node[]);
             return;
           } else {
             return filteredNodes;
           }
-        }else{
+        } else {
           if (callback) {
             callback(undefined, <Error>filteredNodes);
             return;
@@ -106,7 +90,9 @@ export class Dispatch {
           callback(undefined, new Error("Failed to retrieve service nodes with error: " + response.data));
           return;
         } else {
-          return new Error("Failed to retrieve service nodes with error: " + response.data);
+          return new Error(
+            "Failed to retrieve service nodes with error: " + response.data
+          );
         }
       }
     } catch (err) {
@@ -126,10 +112,10 @@ export class Dispatch {
    * @returns {Node} - A Node object list.
    * @memberof Dispatch
    */
-  parseDispatchResponse(response: { [key: string]: any[] } = {}) {
+  private parseDispatchResponse(response: { [key: string]: any[] } = {}) {
     try {
       // Variables
-      var nodes: Node[] = [];
+      const nodes: Node[] = [];
 
       if (Array.isArray(response)) {
         // Iterate through the array for different networks results
@@ -148,11 +134,28 @@ export class Dispatch {
       }
 
       return nodes;
-
     } catch (error) {
       return new Error("Failed to parsed service nodes with error: " + error);
     }
-
   }
 
+  /**
+   *
+   * Filters a list of service nodes that supports SSL Only
+   * @param {Node} node - A list of Nodes from the Dispatcher
+   * @returns {Node} - A list of nodes with SSL Support
+   * @memberof Dispatch
+   */
+  private sslOnlyNodes(nodes: Node[]) {
+    const result: Node[] = [];
+    nodes.forEach(node => {
+      if (node.port === "443") {
+        result.push(node);
+      }
+    });
+    if (result.length === 0) {
+      return new Error("Failed to retrieve a list of nodes with SSL Support.");
+    }
+    return result;
+  }
 }

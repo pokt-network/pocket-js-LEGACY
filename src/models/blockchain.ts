@@ -23,9 +23,9 @@ export class Blockchain {
    * @memberof Blockchain
    */
   public toJSON() {
-    return JSON.parse('{ "name":"' + 
-    this.name + '", "netID":"' + 
-    this.netID + '"}')
+    return JSON.parse(
+      '{ "name":"' + this.name + '", "netID":"' + this.netID + '"}'
+    );
   }
 	/**
 	 *

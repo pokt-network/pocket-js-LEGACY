@@ -11,7 +11,7 @@
         "tests": "./tests"
     },
     "scripts": {
-        "test": "mocha --reporter spec",
+        "test": "mocha 'tests/**/*.js'",
         "build": "tsc",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "lint": "tslint -p tsconfig.json"
@@ -44,6 +44,7 @@
     "devDependencies": {
         "@types/chai": "^4.2.7",
         "@types/mocha": "^5.2.7",
+        "@types/node": "^12.12.17",
         "chai": "^4.2.0",
         "mocha": "^6.2.2",
         "prettier": "^1.19.1",
