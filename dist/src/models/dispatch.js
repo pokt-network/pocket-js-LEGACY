@@ -97,7 +97,9 @@ var Dispatch = /** @class */ (function () {
                             })];
                     case 1:
                         response = _a.sent();
-                        if (response !== null && response.status === 200 && response.data !== null) {
+                        if (response !== null &&
+                            response.status === 200 &&
+                            response.data !== null) {
                             nodes = this.parseDispatchResponse(response.data);
                             filteredNodes = nodes;
                             // Check if SSL only nodes are requested

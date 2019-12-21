@@ -8,5 +8,5 @@ export = {
   dispatchNodeURL,
   dispatchPath,
   relayPath,
-  reportPath  
+  reportPath
 };

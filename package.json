@@ -11,8 +11,8 @@
         "tests": "./tests"
     },
     "scripts": {
-        "test": "mocha 'tests/**/*.js'",
-        "build": "tsc",
+        "test": "mocha --require ts-node/register tests/**/*.ts",
+        "build": "npm run format & npm run lint & tsc",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "lint": "tslint -p tsconfig.json"
     },
@@ -48,6 +48,7 @@
         "chai": "^4.2.0",
         "mocha": "^6.2.2",
         "prettier": "^1.19.1",
+        "ts-node": "^8.5.4",
         "tslint": "^5.20.1",
         "tslint-config-prettier": "^1.18.0",
         "typescript": "^3.7.2"

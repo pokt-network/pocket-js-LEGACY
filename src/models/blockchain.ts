@@ -27,15 +27,15 @@ export class Blockchain {
       '{ "name":"' + this.name + '", "netID":"' + this.netID + '"}'
     );
   }
-	/**
-	 *
-	 * Verifies if the Blockchain is valid
-	 * @returns {boolean} - True or false
-	 * @memberof Blockchain
-	 */
+  /**
+   *
+   * Verifies if the Blockchain is valid
+   * @returns {boolean} - True or false
+   * @memberof Blockchain
+   */
   public isValid() {
-    return JSON.parse('{ "name":"' + 
-    this.name + '", "netID":"' + 
-    this.netID + '"}')
+    return JSON.parse(
+      '{ "name":"' + this.name + '", "netID":"' + this.netID + '"}'
+    );
   }
 }

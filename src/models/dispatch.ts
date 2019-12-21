@@ -41,7 +41,7 @@ export class Dispatch {
     });
     return blockchainArray;
   }
-  
+
   /**
    *
    * Retrieves a list of service nodes
@@ -61,7 +61,11 @@ export class Dispatch {
         DevID: dispatch.configuration.devID
       });
 
-      if (response !== null && response.status === 200 && response.data !== null) {
+      if (
+        response !== null &&
+        response.status === 200 &&
+        response.data !== null
+      ) {
         const nodes = this.parseDispatchResponse(response.data);
 
         let filteredNodes = nodes;
@@ -79,7 +83,7 @@ export class Dispatch {
           }
         } else {
           if (callback) {
-            callback(undefined, <Error>filteredNodes);
+            callback(undefined, filteredNodes as Error);
             return;
           } else {
             return filteredNodes;
@@ -87,7 +91,12 @@ export class Dispatch {
         }
       } else {
         if (callback) {
-          callback(undefined, new Error("Failed to retrieve service nodes with error: " + response.data));
+          callback(
+            undefined,
+            new Error(
+              "Failed to retrieve service nodes with error: " + response.data
+            )
+          );
           return;
         } else {
           return new Error(
@@ -97,7 +106,10 @@ export class Dispatch {
       }
     } catch (err) {
       if (callback) {
-        callback(undefined, new Error("Failed to retrieve service nodes with error: " + err));
+        callback(
+          undefined,
+          new Error("Failed to retrieve service nodes with error: " + err)
+        );
         return;
       } else {
         return new Error("Failed to retrieve service nodes with error: " + err);
@@ -120,13 +132,12 @@ export class Dispatch {
       if (Array.isArray(response)) {
         // Iterate through the array for different networks results
         response.forEach(element => {
-          
-          var blockchain = new Blockchain(element.name, element.netID);
+          const blockchain = new Blockchain(element.name, element.netID);
 
           if (element.ips) {
             // Create a Node object for each item inside the dataKey object, IP:PORT
-            element.ips.forEach(function(ipPort: string) {
-              var node = new Node(blockchain, ipPort);
+            element.ips.forEach((ipPort: string) => {
+              const node = new Node(blockchain, ipPort);
               nodes.push(node);
             });
           }

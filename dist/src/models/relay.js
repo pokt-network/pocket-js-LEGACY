@@ -30,37 +30,19 @@ var Relay = /** @class */ (function () {
     }
     /**
      *
-     * Appends the Query parameters to the "path" property string.
-     * @param {Object} queryParams - Object containing one or multiple query parameters.
-     * @memberof Relay
-     */
-    Relay.prototype.appendQueryParams = function (queryParams) {
-        var paramsStr = "";
-        if (typeof queryParams === 'object') {
-            for (var k in queryParams) {
-                if (queryParams.hasOwnProperty(k)) {
-                    paramsStr += k + "=" + queryParams[k] + "&";
-                }
-            }
-            // Append the query params to the path
-            this.path += "?" + paramsStr;
-        }
-    };
-    /**
-     *
      * Parse properties to a JSON Object.
      * @returns {JSON} - A JSON Object.
      * @memberof Relay
      */
     Relay.prototype.toJSON = function () {
         return {
-            "Blockchain": this.blockchain.name,
-            "NetID": this.blockchain.netID,
-            "Data": this.data,
-            "DevID": this.configuration.devID,
-            "METHOD": this.httpMethod,
-            "PATH": this.path,
-            "HEADERS": this.headers
+            Blockchain: this.blockchain.name,
+            Data: this.data,
+            DevID: this.configuration.devID,
+            HEADERS: this.headers,
+            METHOD: this.httpMethod,
+            NetID: this.blockchain.netID,
+            PATH: this.path
         };
     };
     /**
@@ -71,10 +53,29 @@ var Relay = /** @class */ (function () {
      */
     Relay.prototype.isValid = function () {
         if (this.blockchain != null &&
-            this.blockchain.isValid() && this.configuration != null) {
+            this.blockchain.isValid() &&
+            this.configuration != null) {
             return true;
         }
         return false;
+    };
+    /**
+     *
+     * Appends the Query parameters to the "path" property string.
+     * @param {Object} queryParams - Object containing one or multiple query parameters.
+     * @memberof Relay
+     */
+    Relay.prototype.appendQueryParams = function (queryParams) {
+        var paramsStr = "";
+        if (typeof queryParams === "object") {
+            for (var k in queryParams) {
+                if (queryParams.hasOwnProperty(k)) {
+                    paramsStr += k + "=" + queryParams[k] + "&";
+                }
+            }
+            // Append the query params to the path
+            this.path += "?" + paramsStr;
+        }
     };
     return Relay;
 }());

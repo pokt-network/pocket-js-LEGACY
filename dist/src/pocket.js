@@ -72,10 +72,10 @@ var Pocket = /** @class */ (function () {
      * Create a Relay instance
      * @param {Blockchain} blockchain - Blockchain object.
      * @param {String} data - String holding the json rpc call.
-       * @param {string} httpMethod - (Optional) HTTP Method.
-       * @param {string} path - (Optional) API path.
-       * @param {Object} queryParams - (Optional) An object holding the query params.
-       * @param {Object} headers - (Optional) An object holding the HTTP Headers.
+     * @param {string} httpMethod - (Optional) HTTP Method.
+     * @param {string} path - (Optional) API path.
+     * @param {Object} queryParams - (Optional) An object holding the query params.
+     * @param {Object} headers - (Optional) An object holding the HTTP Headers.
      * @returns {Relay} - New Relay instance.
      * @memberof Pocket
      */
@@ -85,7 +85,7 @@ var Pocket = /** @class */ (function () {
         if (queryParams === void 0) { queryParams = ""; }
         if (headers === void 0) { headers = {}; }
         // Check if data is a json tring
-        if (typeof data == 'string') {
+        if (typeof data === "string") {
             return new models_1.Relay(blockchain, data, this.configuration, httpMethod, path, queryParams, headers);
         }
         return new models_1.Relay(blockchain, JSON.stringify(data), this.configuration, httpMethod, path, queryParams, headers);
@@ -324,7 +324,9 @@ var Pocket = /** @class */ (function () {
                         return [4 /*yield*/, dispatch.retrieveServiceNodes()];
                     case 1:
                         response = _a.sent();
-                        if (!(response instanceof Error) && response !== undefined && response.length != 0) {
+                        if (!(response instanceof Error) &&
+                            response !== undefined &&
+                            response.length !== 0) {
                             // Save the nodes to the configuration.
                             this.configuration.nodes = nodes;
                             // Return a list of nodes
