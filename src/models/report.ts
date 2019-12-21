@@ -57,7 +57,7 @@ export class Report {
    * @returns {String} - An string with the result.
    * @memberof Report
    */
-  async send(callback?: (result?: any, error?: Error) => any) {
+  public async send(callback?: (result?: any, error?: Error) => any) {
     const axiosInstance = axios.create({
       baseURL: constants.dispatchNodeURL,
       headers: {

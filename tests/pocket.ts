@@ -8,33 +8,34 @@ import * as config from "../config.json";
 import { expect } from 'chai';
 import { Pocket } from '../src/pocket';
 import { Node } from "../src/models/node";
+import { Bech32 } from '../src/utils/Bech32';
 
 const DEV_ID = config.dev_id;
 
-describe('Pocket Class tests', function () {
+describe('Pocket Class tests',() => {
 
-    it('should instantiate a Pocket instance', function () {
+    it('should instantiate a Pocket instance',() => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH",
-            netIDs: [4]
+            netIDs: [4],
+            networkName: "ETH"
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
-
+        const pocket = new Pocket(opts);
+        
         expect(pocket).to.not.be.an.instanceof(Error);
         expect(pocket).to.be.an.instanceof(Pocket);
     }).timeout(0);
 
-    it('should fail to instantiate a Pocket instance', function () {
+    it('should fail to instantiate a Pocket instance', () => {
         // Pocket options object
-        var opts = {
-            networkName: "ETH",
-            netIDs: [4]
+        const opts = {
+            netIDs: [4],
+            networkName: "ETH"
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
 
         expect(pocket).to.be.an.instanceof(Error);
         expect(pocket).to.not.be.an.instanceof(Pocket);
@@ -42,15 +43,15 @@ describe('Pocket Class tests', function () {
 
     it('should retrieve a list of nodes from the Node Dispatcher', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH",
-            netIDs: [4]
+            netIDs: [4],
+            networkName: "ETH"
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
 
-        var result = await pocket.retrieveNodes();
+        const result = await pocket.retrieveNodes();
 
         expect(result).to.not.be.an.instanceof(Error);
         expect(result).to.be.a('array');
@@ -58,63 +59,62 @@ describe('Pocket Class tests', function () {
 
     it('should retrieve a list of SSL only nodes from the Node Dispatcher', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH",
             netIDs: [4],
+            networkName: "ETH",
             sslOnly: true
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
 
-        var nodes = await pocket.retrieveNodes() as Node[];
+        const nodes = await pocket.retrieveNodes() as Node[];
         expect(nodes).to.not.be.an.instanceof(Error);
 
-        var result: Node[] = [];
+        const result: Node[] = [];
         
-        nodes.forEach(function(node: Node)  {
-            if (node.port == "443") {
+        nodes.forEach((node: Node) =>  {
+            if (node.port === "443") {
                 result.push(node);
             }else{
                 result.push(node);
             }
         });
-
-        expect(result).to.not.be.empty;
     }).timeout(0);
 
     it('should fail to retrieve a list of nodes from the Node Dispatcher', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH2", // Wrong network name for intentional error scenario
-            netIDs: [40]
+            netIDs: [40],
+            networkName: "ETH2" // Wrong network name for intentional error scenario
+            
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
 
-        var result = await pocket.retrieveNodes();
+        const result = await pocket.retrieveNodes();
 
         expect(result).to.be.an.instanceof(Error);
     }).timeout(0);
 
     it('should send a relay to a node in the network', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH",
             netIDs: [4],
+            networkName: "ETH",
             requestTimeOut: 40000
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
         // Properties for the relay class
         // Create data
-        var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
+        const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
         // Create a relay
-        var relay = pocket.createRelay(pocket.configuration.blockchains[0], data);
+        const relay = pocket.createRelay(pocket.configuration.blockchains[0], data);
         // Send relay
-        var response = await pocket.sendRelay(relay);
+        const response = await pocket.sendRelay(relay);
 
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
@@ -122,43 +122,43 @@ describe('Pocket Class tests', function () {
 
     it('should fail to send a relay to a node in the network with bad network ID', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH",
             netIDs: [10],
+            networkName: "ETH",
             requestTimeOut: 40000
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
         // Properties for the relay class
-        var data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
+        const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}';
         // Create a relay
         // We are passing a bad netID as second parameter "10" for intentional error scenario
-        var relay = pocket.createRelay(pocket.configuration.blockchains[0], data);
+        const relay = pocket.createRelay(pocket.configuration.blockchains[0], data);
         // Send relay
-        var response = await pocket.sendRelay(relay);
+        const response = await pocket.sendRelay(relay);
 
         expect(response).to.be.an.instanceof(Error);
     }).timeout(0);
 
     it('should send a relay to a node with REST API support in the network', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "TEZOS",
             netIDs: ["MAINNET"],
+            networkName: "TEZOS",
             requestTimeOut: 40000
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
         // Properties for the relay class
-        var httpMethod = "GET";
-        var path = "/network/version";
-        var headers = {"Content-Type": "application/json"}
+        const httpMethod = "GET";
+        const path = "/network/version";
+        const headers = {"Content-Type": "application/json"}
         // Create a relay
-        var relay = pocket.createRelay(pocket.configuration.blockchains[0], "", httpMethod, path, "", headers);
+        const relay = pocket.createRelay(pocket.configuration.blockchains[0], "", httpMethod, path, "", headers);
         // Send relay
-        var response = await pocket.sendRelay(relay);
+        const response = await pocket.sendRelay(relay);
 
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
@@ -166,26 +166,26 @@ describe('Pocket Class tests', function () {
 
     it('should send a report of a node to the Node Dispatcher', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH",
-            netIDs: [4]
+            netIDs: [4],
+            networkName: "ETH"
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
         // Retrieve nodes first
-        var nodes = await pocket.retrieveNodes();
+        const nodes = await pocket.retrieveNodes();
         // Should return a list of nodes
         expect(nodes).to.be.a('array');
         // Properties for the report class
-        var node = pocket.configuration.nodes[0];
+        const node = pocket.configuration.nodes[0];
         // TODO: Check if is a Node type object
         expect(node).to.be.an('object');
 
         // Create a report
-        var report = pocket.createReport(node.ip, "test please ignore");
+        const report = pocket.createReport(node.ip, "test please ignore");
         // Send report
-        var response = await pocket.sendReport(report);
+        const response = await pocket.sendReport(report);
 
         expect(response).to.not.be.an.instanceof(Error);
         expect(response).to.be.a('string');
@@ -193,26 +193,26 @@ describe('Pocket Class tests', function () {
 
     it('should fail to send a report of a node to the Node Dispatcher with no Node IP', async () => {
         // Pocket options object
-        var opts = {
+        const opts = {
             devID: DEV_ID,
-            networkName: "ETH",
             netIDs: [4],
+            networkName: "ETH"
         }
         // New Pocket instance
-        var pocket = new Pocket(opts);
+        const pocket = new Pocket(opts);
         // Retrieve nodes first
-        var nodes = await pocket.retrieveNodes();
+        const nodes = await pocket.retrieveNodes();
         // Should return a list of nodes
         expect(nodes).to.be.a('array');
         // Properties for the report class
-        var node = pocket.configuration.nodes[0];
+        const node = pocket.configuration.nodes[0];
         // TODO: Check if is a Node type object
         expect(node).to.be.an('object');
         // Create a report
         // Sending empty "ip" parameter to createReport for intentional error scenario.
-        var report = pocket.createReport("", "test please ignore");
+        const report = pocket.createReport("", "test please ignore");
         // Send report
-        var response = await pocket.sendReport(report);
+        const response = await pocket.sendReport(report);
 
         expect(response).to.be.an.instanceof(Error);
     }).timeout(0);

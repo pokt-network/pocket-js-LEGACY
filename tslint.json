@@ -1,7 +1,9 @@
 {
     "extends": ["tslint:recommended", "tslint-config-prettier"],
     "rules": {
-        "ordered-imports": [false]
+        "ordered-imports": [false],
+        "no-bitwise": false,
+        "prefer-for-of": false
     }
  }
  

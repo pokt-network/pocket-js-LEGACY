@@ -32,9 +32,7 @@ var Blockchain = /** @class */ (function () {
      * @memberof Blockchain
      */
     Blockchain.prototype.isValid = function () {
-        return JSON.parse('{ "name":"' +
-            this.name + '", "netID":"' +
-            this.netID + '"}');
+        return JSON.parse('{ "name":"' + this.name + '", "netID":"' + this.netID + '"}');
     };
     return Blockchain;
 }());

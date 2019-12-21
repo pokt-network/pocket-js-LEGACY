@@ -58,7 +58,8 @@ var Node = /** @class */ (function () {
         var ipPortArr = ipPort.split(":");
         this.ip = ipPortArr[0];
         this.port = ipPortArr[1];
-        if (ipPort.indexOf(httpsRequestProtocol) > -1 || ipPort.indexOf(httpRequestProtocol) > -1) {
+        if (ipPort.indexOf(httpsRequestProtocol) > -1 ||
+            ipPort.indexOf(httpRequestProtocol) > -1) {
             this.ipPort = ipPort;
         }
         else {
@@ -78,7 +79,7 @@ var Node = /** @class */ (function () {
      */
     Node.prototype.isValid = function () {
         for (var property in this) {
-            if (!this.hasOwnProperty(property) || property == "") {
+            if (!this.hasOwnProperty(property) || property === "") {
                 return false;
             }
         }
@@ -93,7 +94,7 @@ var Node = /** @class */ (function () {
      * @memberof Node
      */
     Node.prototype.isEqual = function (blockchain) {
-        if (this.blockchain == blockchain) {
+        if (this.blockchain === blockchain) {
             return true;
         }
         return false;
@@ -115,15 +116,15 @@ var Node = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         axiosInstance = axios_1.default.create({
                             baseURL: this.ipPort,
-                            timeout: relay.configuration.requestTimeOut,
                             headers: {
-                                'Content-Type': 'application/json'
-                            }
+                                "Content-Type": "application/json"
+                            },
+                            timeout: relay.configuration.requestTimeOut
                         });
                         return [4 /*yield*/, axiosInstance.post(constants.relayPath, relay.toJSON())];
                     case 1:
                         response = _a.sent();
-                        if (response.status == 200 && response.data != null) {
+                        if (response.status === 200 && response.data !== null) {
                             result = response.data;
                             if (callback) {
                                 callback(result);

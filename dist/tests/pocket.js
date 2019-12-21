@@ -47,13 +47,12 @@ var chai_1 = require("chai");
 var pocket_1 = require("../src/pocket");
 var DEV_ID = config.dev_id;
 describe('Pocket Class tests', function () {
-    var _this = this;
     it('should instantiate a Pocket instance', function () {
         // Pocket options object
         var opts = {
             devID: DEV_ID,
-            networkName: "ETH",
-            netIDs: [4]
+            netIDs: [4],
+            networkName: "ETH"
         };
         // New Pocket instance
         var pocket = new pocket_1.Pocket(opts);
@@ -63,23 +62,23 @@ describe('Pocket Class tests', function () {
     it('should fail to instantiate a Pocket instance', function () {
         // Pocket options object
         var opts = {
-            networkName: "ETH",
-            netIDs: [4]
+            netIDs: [4],
+            networkName: "ETH"
         };
         // New Pocket instance
         var pocket = new pocket_1.Pocket(opts);
         chai_1.expect(pocket).to.be.an.instanceof(Error);
         chai_1.expect(pocket).to.not.be.an.instanceof(pocket_1.Pocket);
     }).timeout(0);
-    it('should retrieve a list of nodes from the Node Dispatcher', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should retrieve a list of nodes from the Node Dispatcher', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "ETH",
-                        netIDs: [4]
+                        netIDs: [4],
+                        networkName: "ETH"
                     };
                     pocket = new pocket_1.Pocket(opts);
                     return [4 /*yield*/, pocket.retrieveNodes()];
@@ -91,15 +90,15 @@ describe('Pocket Class tests', function () {
             }
         });
     }); }).timeout(0);
-    it('should retrieve a list of SSL only nodes from the Node Dispatcher', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should retrieve a list of SSL only nodes from the Node Dispatcher', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, nodes, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "ETH",
                         netIDs: [4],
+                        networkName: "ETH",
                         sslOnly: true
                     };
                     pocket = new pocket_1.Pocket(opts);
@@ -109,27 +108,26 @@ describe('Pocket Class tests', function () {
                     chai_1.expect(nodes).to.not.be.an.instanceof(Error);
                     result = [];
                     nodes.forEach(function (node) {
-                        if (node.port == "443") {
+                        if (node.port === "443") {
                             result.push(node);
                         }
                         else {
                             result.push(node);
                         }
                     });
-                    chai_1.expect(result).to.not.be.empty;
                     return [2 /*return*/];
             }
         });
     }); }).timeout(0);
-    it('should fail to retrieve a list of nodes from the Node Dispatcher', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should fail to retrieve a list of nodes from the Node Dispatcher', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "ETH2",
-                        netIDs: [40]
+                        netIDs: [40],
+                        networkName: "ETH2" // Wrong network name for intentional error scenario
                     };
                     pocket = new pocket_1.Pocket(opts);
                     return [4 /*yield*/, pocket.retrieveNodes()];
@@ -140,15 +138,15 @@ describe('Pocket Class tests', function () {
             }
         });
     }); }).timeout(0);
-    it('should send a relay to a node in the network', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should send a relay to a node in the network', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, data, relay, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "ETH",
                         netIDs: [4],
+                        networkName: "ETH",
                         requestTimeOut: 40000
                     };
                     pocket = new pocket_1.Pocket(opts);
@@ -163,15 +161,15 @@ describe('Pocket Class tests', function () {
             }
         });
     }); }).timeout(0);
-    it('should fail to send a relay to a node in the network with bad network ID', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should fail to send a relay to a node in the network with bad network ID', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, data, relay, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "ETH",
                         netIDs: [10],
+                        networkName: "ETH",
                         requestTimeOut: 40000
                     };
                     pocket = new pocket_1.Pocket(opts);
@@ -185,15 +183,15 @@ describe('Pocket Class tests', function () {
             }
         });
     }); }).timeout(0);
-    it('should send a relay to a node with REST API support in the network', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should send a relay to a node with REST API support in the network', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, httpMethod, path, headers, relay, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "TEZOS",
                         netIDs: ["MAINNET"],
+                        networkName: "TEZOS",
                         requestTimeOut: 40000
                     };
                     pocket = new pocket_1.Pocket(opts);
@@ -210,15 +208,15 @@ describe('Pocket Class tests', function () {
             }
         });
     }); }).timeout(0);
-    it('should send a report of a node to the Node Dispatcher', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should send a report of a node to the Node Dispatcher', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, nodes, node, report, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "ETH",
-                        netIDs: [4]
+                        netIDs: [4],
+                        networkName: "ETH"
                     };
                     pocket = new pocket_1.Pocket(opts);
                     return [4 /*yield*/, pocket.retrieveNodes()];
@@ -239,15 +237,15 @@ describe('Pocket Class tests', function () {
             }
         });
     }); }).timeout(0);
-    it('should fail to send a report of a node to the Node Dispatcher with no Node IP', function () { return __awaiter(_this, void 0, void 0, function () {
+    it('should fail to send a report of a node to the Node Dispatcher with no Node IP', function () { return __awaiter(void 0, void 0, void 0, function () {
         var opts, pocket, nodes, node, report, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     opts = {
                         devID: DEV_ID,
-                        networkName: "ETH",
                         netIDs: [4],
+                        networkName: "ETH"
                     };
                     pocket = new pocket_1.Pocket(opts);
                     return [4 /*yield*/, pocket.retrieveNodes()];
