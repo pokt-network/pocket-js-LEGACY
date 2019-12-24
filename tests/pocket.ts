@@ -8,7 +8,7 @@ import * as config from "../config.json";
 import { expect } from 'chai';
 import { Pocket } from '../src/pocket';
 import { Node } from "../src/models/node";
-import { Bech32 } from '../src/utils/Bech32';
+import { Hex } from '../src/utils/Hex';
 
 const DEV_ID = config.dev_id;
 
@@ -23,6 +23,8 @@ describe('Pocket Class tests',() => {
         }
         // New Pocket instance
         const pocket = new Pocket(opts);
+
+        console.log(Hex.decodeString("48656c6c6f20476f7068657221"))
         
         expect(pocket).to.not.be.an.instanceof(Error);
         expect(pocket).to.be.an.instanceof(Pocket);
