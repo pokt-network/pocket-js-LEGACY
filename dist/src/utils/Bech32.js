@@ -6,6 +6,7 @@ var buffer_1 = require("buffer");
  *
  *
  * @class Bech32
+ * @deprecated
  * This class provides a TypeScript implementation of the bech32 format specified in BIP 173 --> https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki.
  */
 var Bech32 = /** @class */ (function () {

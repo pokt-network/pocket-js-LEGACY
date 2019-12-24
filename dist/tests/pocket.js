@@ -45,6 +45,7 @@ var config = require("../config.json");
 // Constants
 var chai_1 = require("chai");
 var pocket_1 = require("../src/pocket");
+var Hex_1 = require("../src/utils/Hex");
 var DEV_ID = config.dev_id;
 describe('Pocket Class tests', function () {
     it('should instantiate a Pocket instance', function () {
@@ -56,6 +57,7 @@ describe('Pocket Class tests', function () {
         };
         // New Pocket instance
         var pocket = new pocket_1.Pocket(opts);
+        console.log(Hex_1.Hex.decodeString("48656c6c6f20476f7068657221"));
         chai_1.expect(pocket).to.not.be.an.instanceof(Error);
         chai_1.expect(pocket).to.be.an.instanceof(pocket_1.Pocket);
     }).timeout(0);
