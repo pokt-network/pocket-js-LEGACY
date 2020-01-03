@@ -23,8 +23,8 @@ describe('Routing Table tests',() => {
         }
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
-        const node = new Node(blockchain, '127.0.0.1:80');
-        let nodes: Node[] = [node];
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
+        const nodes: Node[] = [node];
         const routing = new Routing( nodes, pocket.configuration);
 
         expect(routing).to.be.an.instanceof(Routing);
@@ -38,7 +38,7 @@ describe('Routing Table tests',() => {
             requestTimeOut: 40000
         }
         const pocket = new Pocket(opts);
-        let nodes: Node[] = [];
+        const nodes: Node[] = [];
 
         expect(() => new Routing(nodes, pocket.configuration)).to.throw("Routing table must be initialized with at least one node.");
     }).timeout(0);
@@ -52,11 +52,12 @@ describe('Routing Table tests',() => {
         }
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
-        const node = new Node(blockchain, '127.0.0.1:80');
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
 
-        let nodes: Node[] = [node];
+        const nodes: Node[] = [node];
         for(let i = 0; i < pocket.configuration.maxNodes; i++) {
-            nodes.push(node);
+            const secondaryNode = new Node(blockchain, '127.0.0.' + i + ':80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4' + i);
+            nodes.push(secondaryNode);
         }
 
         expect(() => new Routing(nodes, pocket.configuration)).to.throw("Routing table cannot contain more than the specified maxNodes per blockchain.");
@@ -71,11 +72,11 @@ describe('Routing Table tests',() => {
         }
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
-        const node = new Node(blockchain, '127.0.0.1:80');
-        let nodes: Node[] = [node];
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
+        const nodes: Node[] = [node];
         const routing = new Routing( nodes, pocket.configuration);
 
-        const readNode = routing.readNode(pocket.configuration.blockchains[0].netID, 'http://127.0.0.1:80');
+        const readNode = routing.readNode('0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
         expect(readNode).to.be.an.instanceof(Node);
     }).timeout(0);
 
@@ -88,14 +89,14 @@ describe('Routing Table tests',() => {
         }
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
-        const node = new Node(blockchain, '127.0.0.1:80');
-        let nodes: Node[] = [node];
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
+        const nodes: Node[] = [node];
 
         const routing = new Routing( nodes, pocket.configuration);
-        const node2 = new Node(blockchain, '127.0.0.2:80');
-        routing.addNode(node2);
+        const secondaryNode = new Node(blockchain, '127.0.0.2:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4d');
+        routing.addNode(secondaryNode);
 
-        const readNode = routing.readNode(pocket.configuration.blockchains[0].netID, 'http://127.0.0.2:80');
+        const readNode = routing.readNode('0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
         expect(readNode).to.be.an.instanceof(Node);
     }).timeout(0);
 
@@ -108,13 +109,13 @@ describe('Routing Table tests',() => {
         }
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
-        const node = new Node(blockchain, '127.0.0.1:80');
-        let nodes: Node[] = [node];
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
+        const nodes: Node[] = [node];
 
         const routing = new Routing( nodes, pocket.configuration);
         routing.deleteNode(node);
 
-        const readNode = routing.readNode(pocket.configuration.blockchains[0].netID, 'http://127.0.0.1:80');
+        const readNode = routing.readNode('0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
         expect(readNode).to.be.an.instanceof(Error);
     }).timeout(0);
 
@@ -127,15 +128,16 @@ describe('Routing Table tests',() => {
         }
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
-        const node = new Node(blockchain, '127.0.0.1:80');
-        let nodes: Node[] = [node];
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
+        const nodes: Node[] = [node];
 
         const routing = new Routing( nodes, pocket.configuration);
         // Add more than the currently allowed since one was added already above
         for(let i = 0; i < pocket.configuration.maxNodes; i++) {
-            routing.addNode(node);
+            const secondaryNode = new Node(blockchain, '127.0.0.' + i + ':80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4' + i);
+            routing.addNode(secondaryNode);
         }
-        expect(routing.nodes[pocket.configuration.blockchains[0].netID].length).to.lte(pocket.configuration.maxNodes);
+        expect(routing.nodes.length).to.lte(pocket.configuration.maxNodes);
     }).timeout(0);
 
     it('should be able to read a random node from the routing table', () => {
@@ -147,11 +149,11 @@ describe('Routing Table tests',() => {
         }
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
-        const node = new Node(blockchain, '127.0.0.1:80');
-        let nodes: Node[] = [node];
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
+        const nodes: Node[] = [node];
         const routing = new Routing( nodes, pocket.configuration);
 
-        const readNode = routing.readRandomNode(pocket.configuration.blockchains[0].netID);
+        const readNode = routing.readRandomNode();
         expect(readNode).to.be.an.instanceof(Node);
     }).timeout(0);
 
@@ -165,16 +167,16 @@ describe('Routing Table tests',() => {
         const pocket = new Pocket(opts);
         const blockchain = new Blockchain(pocket.configuration.blockchains[0].name, pocket.configuration.blockchains[0].netID);
 
-        const node = new Node(blockchain, '127.0.0.1:80');
-        let nodes: Node[] = [node];
+        const node = new Node(blockchain, '127.0.0.1:80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
+        const nodes: Node[] = [node];
         const routing = new Routing( nodes, pocket.configuration);
 
         for(let i = 2; i <= pocket.configuration.maxNodes; i++) {
-            let node = new Node(blockchain, '127.0.0.' + i + ':80');
-            routing.addNode(node);
+            const secondaryNode = new Node(blockchain, '127.0.0.' + i + ':80', '0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4' + i);
+            routing.addNode(secondaryNode);
         }
 
-        const readNodes = routing.readRandomNodes(pocket.configuration.blockchains[0].netID, 3);
+        const readNodes = routing.readRandomNodes(3);
 
         expect(readNodes[0]).to.be.an.instanceof(Node);
         expect(readNodes[1]).to.be.an.instanceof(Node);

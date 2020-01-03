@@ -7,88 +7,79 @@ import { Configuration } from "../configuration/configuration";
  * @class Routing
  */
 export class Routing {
-    public readonly nodes: { [netID: string]: Node[] } = {};
+    public readonly nodes: Node[] = [];
     public readonly configuration: Configuration;
     /**
-    * Creates an instance of routing.
-    * @param {Array} nodes - Array holding the initial node(s).
-    * @param {Configuration} configuration - Configuration object.
-    * @memberof Routing
-    */
+     * Creates an instance of routing.
+     * @param {Array} nodes - Array holding the initial node(s).
+     * @param {Configuration} configuration - Configuration object.
+     * @memberof Routing
+     */
     constructor(nodes: Node[], configuration: Configuration) {
-        let routingNodes: { [netID: string]: Node[] } = {};
-        nodes.forEach(function (node) {
-            routingNodes[node.blockchain.netID] = routingNodes[node.blockchain.netID] || [];
-            routingNodes[node.blockchain.netID].push(node);
-            if (routingNodes[node.blockchain.netID].length  > configuration.maxNodes) {
-                throw new Error("Routing table cannot contain more than the specified maxNodes per blockchain.");
-            }
-        });
 
-        if (Object.keys(routingNodes).length < 1) {
+        if (Object.keys(nodes).length > configuration.maxNodes) {
+            throw new Error("Routing table cannot contain more than the specified maxNodes per blockchain.");
+        }
+        if (Object.keys(nodes).length < 1) {
             throw new Error("Routing table must be initialized with at least one node.");
         }
 
-        this.nodes = routingNodes;
+        this.nodes = nodes;
         this.configuration = configuration;
     }
 
     /**
-    * Reads an array of random nodes from the routing table based on blockchain netID
-    * @param {string} netID - blockchain netID
-    * @param {number} count - desired number of nodes returned
-    */
-    public readRandomNodes(netID: string, count: number) {
-        let nodes = this.nodes[netID];
+     * Reads an array of random nodes from the routing table
+     * @param {number} count - desired number of nodes returned
+     */
+    public readRandomNodes(count: number) {
+        const nodes = this.nodes;
         // Shuffle array then return the slice
         const shuffled = nodes.sort(() => 0.5 - Math.random());
         return shuffled.slice(0, count);
     }
 
     /**
-    * Reads a random node from the routing table based on blockchain netID
-    * @param {string} netID - blockchain netID
-    */
-    public readRandomNode(netID: string) {
-        return this.nodes[netID][Math.floor(Math.random() * this.nodes[netID].length)];
+     * Reads a random node from the routing table based on blockchain netID
+     */
+    public readRandomNode() {
+        return this.nodes[Math.floor(Math.random() * this.nodes.length)];
     }
 
     /**
-    * Reads a specific node from the routing table based on blockchain netID, ip, and port
-    * @param {string} netID - blockchain netID
-    * @param {string} ipPort - Ip and port string ("127.0.0.1:80")
-    */
-    public readNode(netID: string, ipPort: string) {
-        for(let i = 0; i < this.nodes[netID].length; i++) {
-            if (this.nodes[netID][i].ipPort == ipPort) {
-                return this.nodes[netID][i];
+     * Reads a specific node from the routing table based on public key
+     * @param {string} publicKey - public key attached to the node
+     */
+    public readNode(publicKey: string) {
+        for(let i = 0; i < this.nodes.length; i++) {
+            if (this.nodes[i].publicKey === publicKey) {
+                return this.nodes[i];
             }
         }
         return new Error("Node not found in routing table.");
     }
 
     /**
-    * Add a node to the routing table
-    * @param {Node} node - node object to be added
-    */
+     * Add a node to the routing table
+     * @param {Node} node - node object to be added
+     */
     public addNode(node: Node) {
-        this.nodes[node.blockchain.netID] = this.nodes[node.blockchain.netID] || [];
-        this.nodes[node.blockchain.netID].push(node);
+        this.nodes.push(node);
         // If this pushes the count over the maxNodes, splice the first element off
-        if (this.nodes[node.blockchain.netID].length  > this.configuration.maxNodes) {
-            this.nodes[node.blockchain.netID].splice(0, 1);
+        if (this.nodes.length  > this.configuration.maxNodes) {
+            this.nodes.splice(0, 1);
         }
     }
 
     /**
-    * Deletes a node from the routing table
-    * @param {Node} node - node object to be deleted
-    */
+     * Deletes a node from the routing table
+     * @param {Node} node - node object to be deleted
+     */
     public deleteNode(node: Node) {
         // Cycle through the list of nodes, find a match, splice it off
-        for(let i = 0; i < this.nodes[node.blockchain.netID].length; i++) {
-            if (this.nodes[node.blockchain.netID][i].ipPort == node.ipPort) {
-                this.nodes[node.blockchain.netID].splice(i, 1);
+        for(let i = 0; i < this.nodes.length; i++) {
+            if (this.nodes[i].publicKey === node.publicKey) {
+                this.nodes.splice(i, 1);
             }
         }
     }
