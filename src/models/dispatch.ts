@@ -137,7 +137,7 @@ export class Dispatch {
           if (element.ips) {
             // Create a Node object for each item inside the dataKey object, IP:PORT
             element.ips.forEach((ipPort: string) => {
-              const node = new Node(blockchain, ipPort);
+              const node = new Node(blockchain, ipPort, ""); // Empty var added for publicKey
               nodes.push(node);
             });
           }

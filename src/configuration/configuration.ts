@@ -64,7 +64,7 @@ export class Configuration {
     const nodeList = JSON.parse(this.fs.readFileSync(file, "utf8").toString());
 
     for (const serviceNode of nodeList.serviceNodes) {
-      this.nodes.push(new Node(new Blockchain("", ""), serviceNode));
+      this.nodes.push(new Node(new Blockchain("", ""), serviceNode, "")); // Empty var added for publicKey
     }
   }
 }
