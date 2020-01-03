@@ -114,9 +114,8 @@ describe('Routing Table tests',() => {
 
         const routing = new Routing( nodes, pocket.configuration);
         routing.deleteNode(node);
-
-        const readNode = routing.readNode('0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c');
-        expect(readNode).to.be.an.instanceof(Error);
+        
+        expect(() => routing.readNode('0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c')).to.throw("Node not found in routing table.");
     }).timeout(0);
 
     it('should not allow more than the max number of nodes per blockchain to be added to the routing table', () => {

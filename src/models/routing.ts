@@ -32,7 +32,7 @@ export class Routing {
      * Reads an array of random nodes from the routing table
      * @param {number} count - desired number of nodes returned
      */
-    public readRandomNodes(count: number) {
+    public readRandomNodes(count: number): Node[] {
         const nodes = this.nodes;
         // Shuffle array then return the slice
         const shuffled = nodes.sort(() => 0.5 - Math.random());
@@ -42,7 +42,7 @@ export class Routing {
     /**
      * Reads a random node from the routing table based on blockchain netID
      */
-    public readRandomNode() {
+    public readRandomNode(): Node {
         return this.nodes[Math.floor(Math.random() * this.nodes.length)];
     }
 
@@ -50,13 +50,13 @@ export class Routing {
      * Reads a specific node from the routing table based on public key
      * @param {string} publicKey - public key attached to the node
      */
-    public readNode(publicKey: string) {
+    public readNode(publicKey: string): Node {
         for(let i = 0; i < this.nodes.length; i++) {
             if (this.nodes[i].publicKey === publicKey) {
                 return this.nodes[i];
             }
         }
-        return new Error("Node not found in routing table.");
+        throw new Error("Node not found in routing table.");
     }
 
     /**
