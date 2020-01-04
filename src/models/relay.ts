@@ -1,19 +1,19 @@
 // Relay
-import { Blockchain } from "./blockchain";
-import { Configuration } from "../configuration/configuration";
+import { Blockchain } from "./blockchain"
+import { Configuration } from "../configuration/configuration"
 /**
  *
  *
  * @class Relay
  */
 export class Relay {
-  public readonly blockchain: Blockchain;
-  public readonly data: string;
-  public readonly configuration: Configuration;
-  public readonly httpMethod: string;
-  public path: string;
-  public readonly queryParams: { [key: string]: any[] } = {};
-  public readonly headers: { [key: string]: any[] } = {};
+  public readonly blockchain: Blockchain
+  public readonly data: string
+  public readonly configuration: Configuration
+  public readonly httpMethod: string
+  public path: string
+  public readonly queryParams: { [key: string]: any[] } = {}
+  public readonly headers: { [key: string]: any[] } = {}
   /**
    * Creates an instance of Relay.
    * @param {Blockchain} blockchain - A blockchain object.
@@ -34,13 +34,13 @@ export class Relay {
     queryParams: {},
     headers: {}
   ) {
-    this.blockchain = blockchain;
-    this.data = data;
-    this.configuration = configuration;
-    this.httpMethod = httpMethod;
-    this.path = path;
-    this.appendQueryParams(queryParams);
-    this.headers = headers;
+    this.blockchain = blockchain
+    this.data = data
+    this.configuration = configuration
+    this.httpMethod = httpMethod
+    this.path = path
+    this.appendQueryParams(queryParams)
+    this.headers = headers
   }
 
   /**
@@ -58,7 +58,7 @@ export class Relay {
       METHOD: this.httpMethod,
       NetID: this.blockchain.netID,
       PATH: this.path
-    };
+    }
   }
 
   /**
@@ -73,9 +73,9 @@ export class Relay {
       this.blockchain.isValid() &&
       this.configuration != null
     ) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   /**
@@ -85,15 +85,15 @@ export class Relay {
    * @memberof Relay
    */
   private appendQueryParams(queryParams: { [key: string]: any[] }) {
-    let paramsStr = "";
+    let paramsStr = ""
     if (typeof queryParams === "object") {
       for (const k in queryParams) {
         if (queryParams.hasOwnProperty(k)) {
-          paramsStr += k + "=" + queryParams[k] + "&";
+          paramsStr += k + "=" + queryParams[k] + "&"
         }
       }
       // Append the query params to the path
-      this.path += "?" + paramsStr;
+      this.path += "?" + paramsStr
     }
   }
 }

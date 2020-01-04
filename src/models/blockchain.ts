@@ -4,8 +4,8 @@
  * @class Blockchain
  */
 export class Blockchain {
-  public readonly name: string;
-  public readonly netID: string;
+  public readonly name: string
+  public readonly netID: string
   /**
    * Creates an instance of Blockchain.
    * @param {String} name - Blockchain's name.
@@ -13,8 +13,8 @@ export class Blockchain {
    * @memberof Blockchain
    */
   constructor(name: string, netID: string) {
-    this.name = name;
-    this.netID = netID;
+    this.name = name
+    this.netID = netID
   }
   /**
    *
@@ -25,7 +25,7 @@ export class Blockchain {
   public toJSON() {
     return JSON.parse(
       '{ "name":"' + this.name + '", "netID":"' + this.netID + '"}'
-    );
+    )
   }
   /**
    *
@@ -36,6 +36,6 @@ export class Blockchain {
   public isValid() {
     return JSON.parse(
       '{ "name":"' + this.name + '", "netID":"' + this.netID + '"}'
-    );
+    )
   }
 }

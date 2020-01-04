@@ -1,5 +1,5 @@
-import { BondStatus } from "./BondStatus";
-import { Hex } from "../../utils/Hex";
+import { BondStatus } from "./BondStatus"
+import { Hex } from "../../utils/Hex"
 
 /**
  *
@@ -8,8 +8,8 @@ import { Hex } from "../../utils/Hex";
  */
 export class SessionNode {
   public static fromJSON(json: string): SessionNode {
-    const jsonObject = JSON.parse(json);
-    const status: BondStatus = BondStatus.getStatus(jsonObject.status);
+    const jsonObject = JSON.parse(json)
+    const status: BondStatus = BondStatus.getStatus(jsonObject.status)
 
     return new SessionNode(
       jsonObject.address,
@@ -20,17 +20,17 @@ export class SessionNode {
       jsonObject.serviceurl,
       jsonObject.chains,
       jsonObject.unstaking_time
-    );
+    )
   }
 
-  public readonly address: string;
-  public readonly consPubKey: string;
-  public readonly jailed: boolean;
-  public readonly status: BondStatus;
-  public readonly stakedTokens: number;
-  public readonly serviceURL: string;
-  public readonly chains: string[];
-  public readonly unstakingCompletionTime: number | undefined;
+  public readonly address: string
+  public readonly consPubKey: string
+  public readonly jailed: boolean
+  public readonly status: BondStatus
+  public readonly stakedTokens: number
+  public readonly serviceURL: string
+  public readonly chains: string[]
+  public readonly unstakingCompletionTime: number | undefined
 
   /**
    * Create a Session Node.
@@ -54,21 +54,21 @@ export class SessionNode {
     chains: string[] = [],
     unstakingCompletionTime?: number
   ) {
-    this.address = Hex.decodeString(address);
-    this.consPubKey = consPubKey;
-    this.jailed = jailed;
-    this.status = status;
-    this.stakedTokens = stakedTokens;
-    this.serviceURL = serviceURL;
-    this.chains = chains;
-    this.unstakingCompletionTime = unstakingCompletionTime;
+    this.address = Hex.decodeString(address)
+    this.consPubKey = consPubKey
+    this.jailed = jailed
+    this.status = status
+    this.stakedTokens = stakedTokens
+    this.serviceURL = serviceURL
+    this.chains = chains
+    this.unstakingCompletionTime = unstakingCompletionTime
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.");
+      throw new TypeError("Invalid properties length.")
     }
   }
 
   private isValid(): boolean {
-    return this.address.length !== 0 && this.serviceURL.length !== 0;
+    return this.address.length !== 0 && this.serviceURL.length !== 0
   }
 }

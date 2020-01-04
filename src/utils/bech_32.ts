@@ -1,4 +1,4 @@
-import { Buffer } from "buffer";
+import { Buffer } from "buffer"
 
 // Inspiration: https://github.com/btcsuite/btcutil/tree/master/bech32
 /**
@@ -9,23 +9,23 @@ import { Buffer } from "buffer";
  * This class provides a TypeScript implementation of the bech32 format specified in BIP 173 --> https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki.
  */
 export class Bech32 {
-  private readonly alphabet: string = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
-  private readonly alphabetMap: Map<string, number> = new Map();
+  private readonly alphabet: string = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+  private readonly alphabetMap: Map<string, number> = new Map()
 
   /**
    * Creates an instance of Bech32.
    * Fill in the alphabet map with the possible characters that the encrypted text will have
    */
   constructor() {
-    let index = 0;
-    const alphabetArray = this.alphabet.split(/(?=[\s\S])/u);
+    let index = 0
+    const alphabetArray = this.alphabet.split(/(?=[\s\S])/u)
     alphabetArray.forEach(letter => {
       if (this.alphabetMap.has(letter)) {
-        throw new TypeError(`${letter} is ambiguous`);
+        throw new TypeError(`${letter} is ambiguous`)
       }
-      this.alphabetMap.set(letter, index);
-      index++;
-    });
+      this.alphabetMap.set(letter, index)
+      index++
+    })
   }
 
   /**
@@ -36,37 +36,37 @@ export class Bech32 {
    * @returns {String} - Encoded value.
    */
   public encode(hrp: string, str: string): string {
-    const bytes: number[] = this.toBytes(str);
+    const bytes: number[] = this.toBytes(str)
 
     if (hrp.length + 7 + bytes.length > 90) {
-      throw new TypeError("Exceeds length limit");
+      throw new TypeError("Exceeds length limit")
     }
 
-    const lowerHrp = hrp.toLowerCase();
-    let checksum = this.verifyChecksum(lowerHrp);
-    let result = lowerHrp + "1";
+    const lowerHrp = hrp.toLowerCase()
+    let checksum = this.verifyChecksum(lowerHrp)
+    let result = lowerHrp + "1"
 
     bytes.forEach(byte => {
       if (byte >> 5 !== 0) {
-        throw new TypeError("Non 5-bit word");
+        throw new TypeError("Non 5-bit word")
       }
 
-      checksum = this.convertBits(checksum) ^ byte;
-      result += this.alphabet.charAt(byte);
-    });
+      checksum = this.convertBits(checksum) ^ byte
+      result += this.alphabet.charAt(byte)
+    })
 
     for (let index = 0; index < 6; ++index) {
-      checksum = this.convertBits(checksum);
+      checksum = this.convertBits(checksum)
     }
 
-    checksum ^= 1;
+    checksum ^= 1
 
     for (let index = 0; index < 6; ++index) {
-      const encodedValue = (checksum >> ((5 - index) * 5)) & 0x1f;
-      result += this.alphabet.charAt(encodedValue);
+      const encodedValue = (checksum >> ((5 - index) * 5)) & 0x1f
+      result += this.alphabet.charAt(encodedValue)
     }
 
-    return result;
+    return result
   }
 
   /**
@@ -76,53 +76,53 @@ export class Bech32 {
    */
   public decode(str: string): { hrp: string; bytes: number[] } {
     if (str.length < 8) {
-      throw new TypeError(`${str} too short`);
+      throw new TypeError(`${str} too short`)
     }
     if (str.length > 90) {
-      throw new TypeError("Exceeds length limit");
+      throw new TypeError("Exceeds length limit")
     }
 
     if (str !== str.toLowerCase() && str !== str.toUpperCase()) {
-      throw new TypeError("Mixed-case string");
+      throw new TypeError("Mixed-case string")
     }
 
-    const strLower = str.toLowerCase();
-    const split = strLower.lastIndexOf("1");
+    const strLower = str.toLowerCase()
+    const split = strLower.lastIndexOf("1")
 
     if (split === -1) {
-      throw new TypeError(`No separator character for ${strLower}`);
+      throw new TypeError(`No separator character for ${strLower}`)
     }
     if (split === 0) {
-      throw new TypeError(`Missing hrp for ${strLower}`);
+      throw new TypeError(`Missing hrp for ${strLower}`)
     }
 
-    const hrp = strLower.slice(0, split);
-    const bytesChars = strLower.slice(split + 1);
+    const hrp = strLower.slice(0, split)
+    const bytesChars = strLower.slice(split + 1)
     if (bytesChars.length < 6) {
-      throw new TypeError("Data too short");
+      throw new TypeError("Data too short")
     }
 
-    let checksum = this.verifyChecksum(hrp);
-    const bytes: number[] = [];
+    let checksum = this.verifyChecksum(hrp)
+    const bytes: number[] = []
 
     for (let index = 0; index < bytesChars.length; ++index) {
-      const byte = bytesChars.charAt(index);
-      const value = this.alphabetMap.get(byte);
+      const byte = bytesChars.charAt(index)
+      const value = this.alphabetMap.get(byte)
       if (value === undefined) {
-        throw new TypeError(`Unknown character ${byte}`);
+        throw new TypeError(`Unknown character ${byte}`)
       }
 
-      checksum = this.convertBits(checksum) ^ value;
+      checksum = this.convertBits(checksum) ^ value
       if (index + 6 >= bytesChars.length) {
-        continue;
+        continue
       }
-      bytes.push(value);
+      bytes.push(value)
     }
 
     if (checksum !== 1) {
-      throw new TypeError(`Invalid checksum for ${str}`);
+      throw new TypeError(`Invalid checksum for ${str}`)
     }
-    return { hrp, bytes };
+    return { hrp, bytes }
   }
 
   /**
@@ -132,24 +132,24 @@ export class Bech32 {
    * @returns {Number} - Checksum.
    */
   private verifyChecksum(hrp: string): number {
-    let checksum: number = 1;
-    const hrpArray = hrp.split(/(?=[\s\S])/u);
+    let checksum: number = 1
+    const hrpArray = hrp.split(/(?=[\s\S])/u)
 
     hrpArray.forEach(char => {
-      const charCode = char.charCodeAt(0);
+      const charCode = char.charCodeAt(0)
       if (charCode < 33 || charCode > 126) {
-        throw new TypeError(`Invalid hrp: ${hrp}`);
+        throw new TypeError(`Invalid hrp: ${hrp}`)
       }
 
-      checksum = this.convertBits(checksum) ^ (charCode >> 5);
-    });
-    checksum = this.convertBits(checksum);
+      checksum = this.convertBits(checksum) ^ (charCode >> 5)
+    })
+    checksum = this.convertBits(checksum)
 
     hrpArray.forEach(char => {
-      const charCode = char.charCodeAt(0);
-      checksum = this.convertBits(checksum) ^ (charCode & 0x1f);
-    });
-    return checksum;
+      const charCode = char.charCodeAt(0)
+      checksum = this.convertBits(checksum) ^ (charCode & 0x1f)
+    })
+    return checksum
   }
 
   /**
@@ -159,27 +159,27 @@ export class Bech32 {
    * @returns {[Number]} - Array of bytes.
    */
   private toBytes(str: string): number[] {
-    const bytes: ArrayLike<number> = Buffer.from(str, "utf8");
-    const maxValue: number = (1 << 5) - 1;
-    let value: number = 0;
-    let bits: number = 0;
+    const bytes: ArrayLike<number> = Buffer.from(str, "utf8")
+    const maxValue: number = (1 << 5) - 1
+    let value: number = 0
+    let bits: number = 0
 
-    const result: number[] = [];
+    const result: number[] = []
     for (let index = 0; index < bytes.length; ++index) {
-      value = (value << 8) | bytes[index];
-      bits += 8;
+      value = (value << 8) | bytes[index]
+      bits += 8
 
       while (bits >= 5) {
-        bits -= 5;
-        result.push((value >> bits) & maxValue);
+        bits -= 5
+        result.push((value >> bits) & maxValue)
       }
     }
 
     if (bits > 0) {
-      result.push((value << (5 - bits)) & maxValue);
+      result.push((value << (5 - bits)) & maxValue)
     }
 
-    return result;
+    return result
   }
 
   /**
@@ -189,7 +189,7 @@ export class Bech32 {
    * @returns {Number} - Checksum.
    */
   private convertBits(checksum: number): number {
-    const byte = checksum >> 25;
+    const byte = checksum >> 25
     return (
       ((checksum & 0x1ffffff) << 5) ^
       (-((byte >> 0) & 1) & 0x3b6a57b2) ^
@@ -197,6 +197,6 @@ export class Bech32 {
       (-((byte >> 2) & 1) & 0x1ea119fa) ^
       (-((byte >> 3) & 1) & 0x3d4233dd) ^
       (-((byte >> 4) & 1) & 0x2a1462b3)
-    );
+    )
   }
 }

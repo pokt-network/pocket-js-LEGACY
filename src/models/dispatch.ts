@@ -1,8 +1,8 @@
-import axios, { AxiosInstance } from "axios";
-import { Node } from "./node";
-import { Blockchain } from "./blockchain";
-import constants = require("../utils/constants");
-import { Configuration } from "../configuration/configuration";
+import axios, { AxiosInstance } from "axios"
+import { Node } from "./node"
+import { Blockchain } from "./blockchain"
+import constants = require("../utils/constants")
+import { Configuration } from "../configuration/configuration"
 
 // Dispatch
 /**
@@ -11,22 +11,22 @@ import { Configuration } from "../configuration/configuration";
  * @class Dispatch
  */
 export class Dispatch {
-  public readonly configuration: Configuration;
-  public readonly axiosInstance: AxiosInstance;
+  public readonly configuration: Configuration
+  public readonly axiosInstance: AxiosInstance
   /**
    * Creates an instance of Dispatch.
    * @param {Configuration} configuration - Configuration object.
    * @memberof Dispatch
    */
   constructor(configuration: Configuration) {
-    this.configuration = configuration;
+    this.configuration = configuration
     this.axiosInstance = axios.create({
       headers: {
         "Content-Type": "application/json"
       },
       timeout: this.configuration.requestTimeOut,
       url: constants.dispatchNodeURL + constants.dispatchPath
-    });
+    })
   }
   /**
    *
@@ -35,11 +35,11 @@ export class Dispatch {
    * @memberof Dispatch
    */
   public blockchainsJSON() {
-    const blockchainArray: Blockchain[] = [];
+    const blockchainArray: Blockchain[] = []
     this.configuration.blockchains.forEach(element => {
-      blockchainArray.push(element);
-    });
-    return blockchainArray;
+      blockchainArray.push(element)
+    })
+    return blockchainArray
   }
 
   /**
@@ -53,40 +53,40 @@ export class Dispatch {
     callback?: (result?: Node[], error?: Error) => any
   ) {
     try {
-      const dispatch = this;
-      let response = null;
+      const dispatch = this
+      let response = null
 
       response = await this.axiosInstance.post(constants.dispatchPath, {
         Blockchains: dispatch.blockchainsJSON(),
         DevID: dispatch.configuration.devID
-      });
+      })
 
       if (
         response !== null &&
         response.status === 200 &&
         response.data !== null
       ) {
-        const nodes = this.parseDispatchResponse(response.data);
+        const nodes = this.parseDispatchResponse(response.data)
 
-        let filteredNodes = nodes;
+        let filteredNodes = nodes
         // Check if SSL only nodes are requested
         if (this.configuration.sslOnly) {
-          filteredNodes = this.sslOnlyNodes(nodes as Node[]);
+          filteredNodes = this.sslOnlyNodes(nodes as Node[])
         }
         // Check if filteredNodes is an error
         if (filteredNodes instanceof Error === false) {
           if (callback) {
-            callback(filteredNodes as Node[]);
-            return;
+            callback(filteredNodes as Node[])
+            return
           } else {
-            return filteredNodes;
+            return filteredNodes
           }
         } else {
           if (callback) {
-            callback(undefined, filteredNodes as Error);
-            return;
+            callback(undefined, filteredNodes as Error)
+            return
           } else {
-            return filteredNodes;
+            return filteredNodes
           }
         }
       } else {
@@ -96,12 +96,12 @@ export class Dispatch {
             new Error(
               "Failed to retrieve service nodes with error: " + response.data
             )
-          );
-          return;
+          )
+          return
         } else {
           return new Error(
             "Failed to retrieve service nodes with error: " + response.data
-          );
+          )
         }
       }
     } catch (err) {
@@ -109,10 +109,10 @@ export class Dispatch {
         callback(
           undefined,
           new Error("Failed to retrieve service nodes with error: " + err)
-        );
-        return;
+        )
+        return
       } else {
-        return new Error("Failed to retrieve service nodes with error: " + err);
+        return new Error("Failed to retrieve service nodes with error: " + err)
       }
     }
   }
@@ -127,26 +127,26 @@ export class Dispatch {
   private parseDispatchResponse(response: { [key: string]: any[] } = {}) {
     try {
       // Variables
-      const nodes: Node[] = [];
+      const nodes: Node[] = []
 
       if (Array.isArray(response)) {
         // Iterate through the array for different networks results
         response.forEach(element => {
-          const blockchain = new Blockchain(element.name, element.netID);
+          const blockchain = new Blockchain(element.name, element.netID)
 
           if (element.ips) {
             // Create a Node object for each item inside the dataKey object, IP:PORT
             element.ips.forEach((ipPort: string) => {
-              const node = new Node(blockchain, ipPort, ""); // Empty var added for publicKey
-              nodes.push(node);
-            });
+              const node = new Node(blockchain, ipPort)
+              nodes.push(node)
+            })
           }
-        });
+        })
       }
 
-      return nodes;
+      return nodes
     } catch (error) {
-      return new Error("Failed to parsed service nodes with error: " + error);
+      return new Error("Failed to parsed service nodes with error: " + error)
     }
   }
 
@@ -158,15 +158,15 @@ export class Dispatch {
    * @memberof Dispatch
    */
   private sslOnlyNodes(nodes: Node[]) {
-    const result: Node[] = [];
+    const result: Node[] = []
     nodes.forEach(node => {
       if (node.port === "443") {
-        result.push(node);
+        result.push(node)
       }
-    });
+    })
     if (result.length === 0) {
-      return new Error("Failed to retrieve a list of nodes with SSL Support.");
+      return new Error("Failed to retrieve a list of nodes with SSL Support.")
     }
-    return result;
+    return result
   }
 }
