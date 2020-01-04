@@ -2,10 +2,6 @@ import axios from "axios"
 import constants = require("../utils/constants")
 import { Relay } from "./relay"
 import { Blockchain } from "./blockchain"
-import { BondStatus } from "./output/bond_status"
-import { Hex } from "../utils/hex"
-
-
 const httpsRequestProtocol = "https://"
 const httpRequestProtocol = "http://"
 // Dispatch

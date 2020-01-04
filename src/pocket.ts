@@ -1,5 +1,5 @@
-import { Configuration } from "./configuration/configuration";
-import { Blockchain, Dispatch, Node, Relay, Report, Wallet } from "./models";
+import { Configuration } from "./configuration/configuration"
+import { Blockchain, Dispatch, Node, Relay, Report, Wallet } from "./models"
 
 /**
  *
@@ -7,27 +7,27 @@ import { Blockchain, Dispatch, Node, Relay, Report, Wallet } from "./models";
  * @class Pocket
  */
 export class Pocket {
-  public readonly configuration: Configuration;
+  public readonly configuration: Configuration
   /**
    * Creates an instance of Pocket.
    * @param {Object} opts - Options for the initializer, devID, networkName, netIDs, maxNodes, requestTimeOut.
    * @memberof Pocket
    */
   constructor(opts: { [key: string]: any } = {}) {
-    const blockchains = [];
+    const blockchains = []
 
     if (opts.devID == null || opts.networkName == null || opts.netIDs == null) {
-      throw new Error("Invalid number of arguments");
+      throw new Error("Invalid number of arguments")
     }
 
     if (Array.isArray(opts.netIDs)) {
       opts.netIDs.forEach(element => {
-        const blockchain = new Blockchain(opts.networkName, element);
-        blockchains.push(blockchain.toJSON());
-      });
+        const blockchain = new Blockchain(opts.networkName, element)
+        blockchains.push(blockchain.toJSON())
+      })
     } else {
-      const blockchain = new Blockchain(opts.networkName, opts.netIDs);
-      blockchains.push(blockchain.toJSON());
+      const blockchain = new Blockchain(opts.networkName, opts.netIDs)
+      blockchains.push(blockchain.toJSON())
     }
 
     this.configuration = new Configuration(
@@ -36,7 +36,7 @@ export class Pocket {
       opts.maxNodes || 5,
       opts.requestTimeOut || 10000,
       opts.sslOnly || true
-    );
+    )
   }
   /**
    *
@@ -68,7 +68,7 @@ export class Pocket {
         path,
         queryParams,
         headers
-      );
+      )
     }
     return new Relay(
       blockchain,
@@ -78,7 +78,7 @@ export class Pocket {
       path,
       queryParams,
       headers
-    );
+    )
   }
   /**
    *
@@ -89,7 +89,7 @@ export class Pocket {
    * @memberof Pocket
    */
   public createReport(ip: string, message: string) {
-    return new Report(ip, message, this.configuration);
+    return new Report(ip, message, this.configuration)
   }
   /**
    *
@@ -99,9 +99,9 @@ export class Pocket {
    */
   public getDispatch() {
     if (this.configuration.dispatcher == null) {
-      this.configuration.dispatcher = new Dispatch(this.configuration);
+      this.configuration.dispatcher = new Dispatch(this.configuration)
     }
-    return this.configuration.dispatcher;
+    return this.configuration.dispatcher
   }
   /**
    *
@@ -113,32 +113,32 @@ export class Pocket {
    */
   public async getNode(blockchain: Blockchain) {
     try {
-      const nodes: Node[] = [];
+      const nodes: Node[] = []
 
       if (this.configuration.nodesIsEmpty()) {
-        const response = await this.retrieveNodes();
+        const response = await this.retrieveNodes()
 
         if (response instanceof Error === true) {
-          throw response;
+          throw response
         } else {
           // Save the nodes to the configuration.
-          this.configuration.setNodes(response as Node[]);
+          this.configuration.setNodes(response as Node[])
         }
       }
 
       this.configuration.nodes.forEach((node: Node) => {
         if (node.isEqual(blockchain)) {
-          nodes.push(node);
+          nodes.push(node)
         }
-      });
+      })
 
       if (nodes.length <= 0) {
-        return null;
+        return null
       }
 
-      return nodes[Math.floor(Math.random() * nodes.length)];
+      return nodes[Math.floor(Math.random() * nodes.length)]
     } catch (error) {
-      return null;
+      return null
     }
   }
   /**
@@ -156,36 +156,36 @@ export class Pocket {
     try {
       // Check for report
       if (report == null) {
-        throw new Error("Report is null");
+        throw new Error("Report is null")
       }
       // Verify all report properties are set
       if (!report.isValid()) {
-        throw new Error("One or more Report properties are empty.");
+        throw new Error("One or more Report properties are empty.")
       }
       // Send Report
-      const response = await report.send();
+      const response = await report.send()
       // Response
       if (response instanceof Error === false) {
         if (callback) {
-          callback(null, response);
-          return;
+          callback(null, response)
+          return
         } else {
-          return response;
+          return response
         }
       } else {
         if (callback) {
-          callback(response);
-          return;
+          callback(response)
+          return
         } else {
-          return response;
+          return response
         }
       }
     } catch (error) {
       if (callback) {
-        callback(error);
-        return;
+        callback(error)
+        return
       } else {
-        return error;
+        return error
       }
     }
   }
@@ -208,10 +208,10 @@ export class Pocket {
           callback(
             undefined,
             new Error("Relay is null or data field is missing")
-          );
-          return;
+          )
+          return
         } else {
-          return new Error("Relay is null or data field is missing");
+          return new Error("Relay is null or data field is missing")
         }
       }
       // Verify all relay properties are set
@@ -222,43 +222,43 @@ export class Pocket {
             new Error(
               "Relay is missing a property, please verify all properties."
             )
-          );
-          return;
+          )
+          return
         } else {
           return new Error(
             "Relay is missing a property, please verify all properties."
-          );
+          )
         }
       }
 
       // Filter nodes for specified blockchain
-      const node = await this.getNode(relay.blockchain);
+      const node = await this.getNode(relay.blockchain)
 
       if (node == null) {
         if (callback) {
-          callback(undefined, new Error("Node is empty."));
-          return;
+          callback(undefined, new Error("Node is empty."))
+          return
         } else {
-          return new Error("Node is empty.");
+          return new Error("Node is empty.")
         }
       }
 
       // Send relay
-      const response = await node.sendRelay(relay);
+      const response = await node.sendRelay(relay)
       // Response
       if (response instanceof Error === false) {
         if (callback) {
-          callback(response);
-          return;
+          callback(response)
+          return
         } else {
-          return response;
+          return response
         }
       } else {
         if (callback) {
-          callback(undefined, response);
-          return;
+          callback(undefined, response)
+          return
         } else {
-          return response;
+          return response
         }
       }
     } catch (error) {
@@ -266,10 +266,10 @@ export class Pocket {
         callback(
           undefined,
           new Error("Failed to send relay with error: " + error)
-        );
-        return;
+        )
+        return
       } else {
-        return new Error("Failed to send relay with error: " + error);
+        return new Error("Failed to send relay with error: " + error)
       }
     }
   }
@@ -282,9 +282,9 @@ export class Pocket {
    */
   public async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
     try {
-      const dispatch = this.getDispatch();
-      const nodes: Node[] = [];
-      const response = await dispatch.retrieveServiceNodes();
+      const dispatch = this.getDispatch()
+      const nodes: Node[] = []
+      const response = await dispatch.retrieveServiceNodes()
 
       if (
         !(response instanceof Error) &&
@@ -292,21 +292,21 @@ export class Pocket {
         response.length !== 0
       ) {
         // Save the nodes to the configuration.
-        this.configuration.nodes = nodes;
+        this.configuration.nodes = nodes
         // Return a list of nodes
         if (callback) {
-          callback(this.configuration.nodes);
-          return;
+          callback(this.configuration.nodes)
+          return
         } else {
-          return this.configuration.nodes;
+          return this.configuration.nodes
         }
       } else {
-        // Returns an Error;
+        // Returns an Error
         if (callback) {
-          callback(null, new Error("Failed to retrieve a list of nodes."));
-          return;
+          callback(null, new Error("Failed to retrieve a list of nodes."))
+          return
         } else {
-          return new Error("Failed to retrieve a list of nodes.");
+          return new Error("Failed to retrieve a list of nodes.")
         }
       }
     } catch (error) {
@@ -314,12 +314,12 @@ export class Pocket {
         callback(
           null,
           new Error("Failed to retrieve a list of nodes with error: " + error)
-        );
-        return;
+        )
+        return
       } else {
         return new Error(
           "Failed to retrieve a list of nodes with error: " + error
-        );
+        )
       }
     }
   }

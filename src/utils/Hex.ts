@@ -1,4 +1,4 @@
-import { Buffer } from "buffer";
+import { Buffer } from "buffer"
 
 // Inspiration: https://github.com/golang/go/blob/master/src/encoding/hex/hex.go
 /**
@@ -17,8 +17,8 @@ export class Hex {
    */
 
   public static encodeToString(str: string): string {
-    const encoded: string[] = this.encode(str);
-    return encoded.join("");
+    const encoded: string[] = this.encode(str)
+    return encoded.join("")
   }
 
   /**
@@ -28,11 +28,11 @@ export class Hex {
    * @returns {String} - Encoded value.
    */
   public static decodeString(hex: string) {
-    let text = "";
+    let text = ""
     for (let i = 0; i < hex.length; i += 2) {
-      text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+      text += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
     }
-    return text;
+    return text
   }
 
   private static readonly alphabet: string[] = [
@@ -52,50 +52,50 @@ export class Hex {
     "d",
     "e",
     "f"
-  ];
+  ]
 
   private static encode(str: string): string[] {
-    const value = this.toByteArray(str);
-    const result: string[] = [];
+    const value = this.toByteArray(str)
+    const result: string[] = []
 
-    let count = 0;
+    let count = 0
     value.forEach(byte => {
-      result[count] = this.alphabet[byte >> 4];
-      result[count + 1] = this.alphabet[byte & 0x0f];
+      result[count] = this.alphabet[byte >> 4]
+      result[count + 1] = this.alphabet[byte & 0x0f]
 
-      count = count + 2;
-    });
+      count = count + 2
+    })
 
-    return result;
+    return result
   }
 
   private static toByteArray(str: string): number[] {
-    const utf8: number[] = [];
+    const utf8: number[] = []
     for (let index = 0; index < str.length; index++) {
-      let charcode = str.charCodeAt(index);
+      let charcode = str.charCodeAt(index)
       if (charcode < 0x80) {
-        utf8.push(charcode);
+        utf8.push(charcode)
       } else if (charcode < 0x800) {
-        utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
+        utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f))
       } else if (charcode < 0xd800 || charcode >= 0xe000) {
         utf8.push(
           0xe0 | (charcode >> 12),
           0x80 | ((charcode >> 6) & 0x3f),
           0x80 | (charcode & 0x3f)
-        );
+        )
       } else {
-        index++;
+        index++
         charcode =
           0x10000 +
-          (((charcode & 0x3ff) << 10) | (str.charCodeAt(index) & 0x3ff));
+          (((charcode & 0x3ff) << 10) | (str.charCodeAt(index) & 0x3ff))
         utf8.push(
           0xf0 | (charcode >> 18),
           0x80 | ((charcode >> 12) & 0x3f),
           0x80 | ((charcode >> 6) & 0x3f),
           0x80 | (charcode & 0x3f)
-        );
+        )
       }
     }
-    return utf8;
+    return utf8
   }
 }
