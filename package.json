@@ -39,7 +39,8 @@
         }
     ],
     "dependencies": {
-        "axios": "^0.18.1"
+        "axios": "^0.18.1",
+        "rxjs": "^6.5.4"
     },
     "devDependencies": {
         "@types/chai": "^4.2.7",

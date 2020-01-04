@@ -1,6 +1,6 @@
-import axios, { AxiosInstance } from "axios";
-import constants = require("../utils/constants");
-import { Configuration } from "../configuration/configuration";
+import axios, { AxiosInstance } from "axios"
+import constants = require("../utils/constants")
+import { Configuration } from "../configuration/configuration"
 
 // Report
 /**
@@ -9,9 +9,9 @@ import { Configuration } from "../configuration/configuration";
  * @class Report
  */
 export class Report {
-  public readonly ip: string;
-  public readonly message: string;
-  public readonly configuration: Configuration;
+  public readonly ip: string
+  public readonly message: string
+  public readonly configuration: Configuration
   /**
    * Creates an instance of Report.
    * @param {String} ip - Internet protocol address of the node.
@@ -20,9 +20,9 @@ export class Report {
    * @memberof Report
    */
   constructor(ip: string, message: string, configuration: Configuration) {
-    this.ip = ip;
-    this.message = message;
-    this.configuration = configuration;
+    this.ip = ip
+    this.message = message
+    this.configuration = configuration
   }
   /**
    *
@@ -34,7 +34,7 @@ export class Report {
     return {
       IP: this.ip,
       Message: this.message
-    };
+    }
   }
   /**
    *
@@ -45,10 +45,10 @@ export class Report {
   public isValid() {
     for (const property in this) {
       if (!this.hasOwnProperty(property) || property != null) {
-        return false;
+        return false
       }
     }
-    return true;
+    return true
   }
   /**
    *
@@ -64,27 +64,27 @@ export class Report {
         "Content-Type": "application/json"
       },
       timeout: this.configuration.requestTimeOut
-    });
+    })
 
     const response = await axiosInstance.post(
       constants.reportPath,
       this.toJSON()
-    );
+    )
 
     if (response.status === 200 && response.data != null) {
       if (callback) {
-        callback(null, response.data);
-        return;
+        callback(null, response.data)
+        return
       }
-      return response.data;
+      return response.data
     } else {
       if (callback) {
         callback(
           new Error("Failed to send report with error: " + response.data)
-        );
-        return;
+        )
+        return
       }
-      return new Error("Failed to send report with error: " + response.data);
+      return new Error("Failed to send report with error: " + response.data)
     }
   }
 }

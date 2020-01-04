@@ -1,9 +1,9 @@
-import axios from "axios";
-import constants = require("../utils/constants");
-import { Relay } from "./relay";
-import { Blockchain } from "./blockchain";
-const httpsRequestProtocol = "https://";
-const httpRequestProtocol = "http://";
+import axios from "axios"
+import constants = require("../utils/constants")
+import { Relay } from "./relay"
+import { Blockchain } from "./blockchain"
+const httpsRequestProtocol = "https://"
+const httpRequestProtocol = "http://"
 // Dispatch
 /**
  *
@@ -11,10 +11,10 @@ const httpRequestProtocol = "http://";
  * @class Node
  */
 export class Node {
-  public readonly blockchain: Blockchain;
-  public readonly ipPort: string;
-  public readonly ip: string;
-  public readonly port: string;
+  public readonly blockchain: Blockchain
+  public readonly ipPort: string
+  public readonly ip: string
+  public readonly port: string
   /**
    * Creates an instance of Node.
    * @param {Blockchain} blockchain - Blockchain object.
@@ -22,21 +22,21 @@ export class Node {
    * @memberof Node
    */
   constructor(blockchain: Blockchain, ipPort: string) {
-    this.blockchain = blockchain;
-    const ipPortArr = ipPort.split(":");
-    this.ip = ipPortArr[0];
-    this.port = ipPortArr[1];
+    this.blockchain = blockchain
+    const ipPortArr = ipPort.split(":")
+    this.ip = ipPortArr[0]
+    this.port = ipPortArr[1]
 
     if (
       ipPort.indexOf(httpsRequestProtocol) > -1 ||
       ipPort.indexOf(httpRequestProtocol) > -1
     ) {
-      this.ipPort = ipPort;
+      this.ipPort = ipPort
     } else {
       if (this.port === "443") {
-        this.ipPort = httpsRequestProtocol + ipPort;
+        this.ipPort = httpsRequestProtocol + ipPort
       } else {
-        this.ipPort = httpRequestProtocol + ipPort;
+        this.ipPort = httpRequestProtocol + ipPort
       }
     }
   }
@@ -50,10 +50,10 @@ export class Node {
   public isValid() {
     for (const property in this) {
       if (!this.hasOwnProperty(property) || property === "") {
-        return false;
+        return false
       }
     }
-    return true;
+    return true
   }
 
   /**
@@ -66,9 +66,9 @@ export class Node {
    */
   public isEqual(blockchain: Blockchain) {
     if (this.blockchain === blockchain) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   /**
@@ -90,39 +90,39 @@ export class Node {
           "Content-Type": "application/json"
         },
         timeout: relay.configuration.requestTimeOut
-      });
+      })
 
       const response = await axiosInstance.post(
         constants.relayPath,
         relay.toJSON()
-      );
+      )
 
       if (response.status === 200 && response.data !== null) {
-        const result = response.data;
+        const result = response.data
 
         if (callback) {
-          callback(result);
-          return;
+          callback(result)
+          return
         } else {
-          return result;
+          return result
         }
       } else {
         if (callback) {
           callback(
             null,
             new Error("Failed to send relay with error: " + response.data)
-          );
-          return;
+          )
+          return
         } else {
-          return new Error("Failed to send relay with error: " + response.data);
+          return new Error("Failed to send relay with error: " + response.data)
         }
       }
     } catch (error) {
       if (callback) {
-        callback(null, new Error("Failed to send relay with error: " + error));
-        return;
+        callback(null, new Error("Failed to send relay with error: " + error))
+        return
       } else {
-        return new Error("Failed to send relay with error: " + error);
+        return new Error("Failed to send relay with error: " + error)
       }
     }
   }
