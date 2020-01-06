@@ -1,4 +1,4 @@
-import { Blockchain, Node, Dispatch } from "../models"
+import { Blockchain, Node } from "../models";
 
 /**
  *
@@ -6,13 +6,12 @@ import { Blockchain, Node, Dispatch } from "../models"
  * @class Configuration
  */
 export class Configuration {
-  public readonly devID: string
-  public readonly blockchains: Blockchain[]
-  public readonly maxNodes: number = 5
-  public readonly requestTimeOut: number = 10000
-  public readonly sslOnly: boolean = true
-  public nodes: Node[] = []
-  public dispatcher?: Dispatch
+  public readonly devID: string;
+  public readonly blockchains: Blockchain[];
+  public readonly maxNodes: number = 5;
+  public readonly requestTimeOut: number = 10000;
+  public readonly sslOnly: boolean = true;
+  public nodes: Node[] = [];
 
   private fs = require("fs")
   /**
@@ -50,10 +49,6 @@ export class Configuration {
     } else {
       return false
     }
-  }
-
-  public setDispatcher(dispatcher: Dispatch) {
-    this.dispatcher = dispatcher
   }
 
   public setNodes(nodes: Node[]) {
