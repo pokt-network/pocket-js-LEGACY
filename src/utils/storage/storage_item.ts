@@ -1,4 +1,4 @@
-import { IStorageItem } from "./IStorageItem"
+import { IStorageItem } from "./i_storage_item"
 
 export class StorageItem {
     public readonly key: string

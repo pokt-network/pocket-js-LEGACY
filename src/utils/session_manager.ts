@@ -1,6 +1,6 @@
-import { SessionHeader } from "../models/input/SessionHeader"
-import { Session } from "../models/output/Session"
-import { LocalStorageHelper } from "./storage/LocalStorageHelper"
+import { SessionHeader } from "../models/input/session_header"
+import { Session } from "../models/output/session"
+import { LocalStorageHelper } from "./storage/local_storage_helper"
 
 /**
  *
