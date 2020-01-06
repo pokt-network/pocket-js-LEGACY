@@ -1,5 +1,6 @@
-import { SessionNode } from "./SessionNode"
-import { SessionHeader } from "../input/SessionHeader"
+import { SessionHeader } from "../input/session_header"
+import { Node } from "../node"
+
 
 /**
  *
@@ -9,9 +10,7 @@ import { SessionHeader } from "../input/SessionHeader"
 export class Session {
   public static fromJSON(json: string): Session {
     const jsonObject = JSON.parse(json)
-    const sessionHeader: SessionHeader = SessionHeader.fromJSON(
-      jsonObject.header
-    )
+    const sessionHeader: SessionHeader = SessionHeader.fromJSON(jsonObject.header)
     const sessionNodes: SessionNode[] = []
 
     for (const sessionNodeJson in jsonObject.nodes) {
@@ -25,7 +24,7 @@ export class Session {
 
   public readonly sessionHeader: SessionHeader
   public readonly sessionKey: number[]
-  public readonly sessionNodes: SessionNode[]
+  public readonly sessionNodes: Node[]
 
   /**
    * Request for Session.

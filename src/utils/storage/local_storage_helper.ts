@@ -1,4 +1,4 @@
-import { StorageItem  } from "./StorageItem"
+import { StorageItem  } from "./storage_item"
 
 export class LocalStorageHelper {
 

@@ -8,7 +8,7 @@ import * as config from "../config.json"
 import { expect } from 'chai'
 import { Pocket } from '../src/pocket'
 import { Node } from "../src/models/node"
-import { Hex } from '../src/utils/Hex'
+import { Hex } from '../src/utils/hex'
 
 const DEV_ID = config.dev_id
 
