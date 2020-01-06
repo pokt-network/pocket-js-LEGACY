@@ -34,23 +34,48 @@
     "authors": [
         {
             "name": "Pabel Nunez Landestoy",
-            "email": "pabelnunezl@gmail.com",
+            "email": "pabel@pokt.network",
             "homepage": "https://github.com/pabelnl"
+        },
+        {
+            "name": "Luis C. de León",
+            "email": "luis@pokt.network",
+            "homepage": "https://github.com/luyzdeleon"
+        },
+        {
+            "name": "Wilson Garcia",
+            "email": "wilson@pokt.network",
+            "homepage": "https://github.com/wgarcia4190"
+        },
+        {
+            "name": "Alex Firmani",
+            "email": "alex@pokt.network",
+            "homepage": "https://github.com/nymd"
         }
     ],
     "dependencies": {
-        "axios": "^0.18.1"
+        "@types/aes-js": "^3.1.0",
+        "aes-js": "^3.1.2",
+        "axios": "^0.18.1",
+        "ed25519": "0.0.4",
+        "js-sha256": "^0.9.0",
+        "pbkdf2": "^3.0.17",
+        "seedrandom": "^3.0.5"
     },
     "devDependencies": {
         "@types/chai": "^4.2.7",
+        "@types/ed25519": "0.0.0",
         "@types/mocha": "^5.2.7",
         "@types/node": "^12.12.17",
+        "@types/pbkdf2": "^3.0.0",
+        "@types/seedrandom": "^2.4.28",
         "chai": "^4.2.0",
         "mocha": "^6.2.2",
         "prettier": "^1.19.1",
         "ts-node": "^8.5.4",
         "tslint": "^5.20.1",
         "tslint-config-prettier": "^1.18.0",
-        "typescript": "^3.7.2"
+        "typescript": "^3.7.2",
+        "ts-node": "^8.5.4"
     }
 }
