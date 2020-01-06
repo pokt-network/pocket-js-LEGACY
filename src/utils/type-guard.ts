@@ -1,0 +1,34 @@
+// Credit: https://dev.to/krumpet/generic-type-guard-in-typescript-258l
+interface typeMap {
+    // for mapping from strings to types
+    string: string;
+    number: number;
+    boolean: boolean;
+}
+
+type PrimitiveOrConstructor = { new (...args: any[]): any } | keyof typeMap; // 'string' | 'number' | 'boolean' | constructor
+
+// infer the guarded type from a specific case of PrimitiveOrConstructor
+type GuardedType<T extends PrimitiveOrConstructor> = T extends {
+    new (...args: any[]): infer U;
+}
+    ? U
+    : T extends keyof typeMap
+    ? typeMap[T]
+    : never;
+
+/**
+ * A generic type guard function to verify the class of a particular object, specially used for Error checks
+ * @param o Object to check the class for
+ * @param className The class to check against
+ */
+export function typeGuard<T extends PrimitiveOrConstructor>(
+    o: any,
+    className: T
+): o is GuardedType<T> {
+    const localPrimitiveOrConstructor: PrimitiveOrConstructor = className;
+    if (typeof localPrimitiveOrConstructor === "string") {
+        return typeof o === localPrimitiveOrConstructor;
+    }
+    return o instanceof localPrimitiveOrConstructor;
+}
