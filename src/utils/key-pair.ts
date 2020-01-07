@@ -9,7 +9,7 @@ import { sha256 } from "js-sha256"
  * @param publicKey Public key from which we're going to calculate the address for
  */
 export function addressFromPublickey(publicKey: Buffer): Buffer {
-    var hash = sha256.create()
+    const hash = sha256.create()
     hash.update(publicKey)
     return Buffer.from(hash.hex(), "hex").slice(0, 20)
 }

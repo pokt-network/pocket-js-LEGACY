@@ -8,115 +8,115 @@ import { expect } from "chai"
 import { Keybase } from "../../src/keybase/keybase"
 import { Account } from "../../src/models/account"
 
-describe("Keybase Digital signature operations", function() {
-    describe("Success scenarios", function() {
-        it("should produce a valid signature for a payload given the account address and passphrase", async function() {
+describe("Keybase Digital signature operations", () => {
+    describe("Success scenarios", () => {
+        it("should produce a valid signature for a payload given the account address and passphrase", async () => {
             // Create a new account
-            let keybase = new Keybase()
-            let passphrase = "test"
-            let accountOrError = await keybase.createAccount(passphrase)
+            const keybase = new Keybase()
+            const passphrase = "test"
+            const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
-            let account = <Account>accountOrError
+            const account = accountOrError as Account
 
             // Sign arbitrary payload
-            let payload = Buffer.from("Arbitrary Message", "utf8")
-            let signatureOrError = await keybase.sign(
+            const payload = Buffer.from("Arbitrary Message", "utf8")
+            const signatureOrError = await keybase.sign(
                 account.addressHex,
                 passphrase,
                 payload
             )
             expect(signatureOrError).not.to.be.a("error")
-            let signature = <Buffer>signatureOrError
+            const signature = signatureOrError as Buffer
             expect(signature.length).to.be.greaterThan(0)
         }).timeout(0)
 
-        it("should verify a valid signature for a given a public key and payload", async function() {
+        it("should verify a valid signature for a given a public key and payload", async () => {
             // Create a new account
-            let keybase = new Keybase()
-            let passphrase = "test"
-            let accountOrError = await keybase.createAccount(passphrase)
+            const keybase = new Keybase()
+            const passphrase = "test"
+            const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
-            let account = <Account>accountOrError
+            const account = accountOrError as Account
 
             // Sign arbitrary payload
-            let payload = Buffer.from("Arbitrary Message", "utf8")
-            let signatureOrError = await keybase.sign(
+            const payload = Buffer.from("Arbitrary Message", "utf8")
+            const signatureOrError = await keybase.sign(
                 account.addressHex,
                 passphrase,
                 payload
             )
             expect(signatureOrError).not.to.be.a("error")
-            let signature = <Buffer>signatureOrError
+            const signature = signatureOrError as Buffer
             expect(signature.length).to.be.greaterThan(0)
 
             // Verify signature
-            let verification = await keybase.verifySignature(
+            const verification = await keybase.verifySignature(
                 account.publicKey,
                 payload,
                 signature
             )
-            expect(verification).to.be.true
+            expect(verification).to.equal(true)
         }).timeout(0)
 
-        it("should return a falsey result for a valid signature given the incorrect public key and/or payload", async function() {
+        it("should return a falsey result for a valid signature given the incorrect public key and/or payload", async () => {
             // Create a new account
-            let keybase = new Keybase()
-            let passphrase = "test"
-            let accountOrError = await keybase.createAccount(passphrase)
+            const keybase = new Keybase()
+            const passphrase = "test"
+            const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
-            let account = <Account>accountOrError
+            const account = accountOrError as Account
 
             // Sign arbitrary payload
-            let payload = Buffer.from("Arbitrary Message", "utf8")
-            let signatureOrError = await keybase.sign(
+            const payload = Buffer.from("Arbitrary Message", "utf8")
+            const signatureOrError = await keybase.sign(
                 account.addressHex,
                 passphrase,
                 payload
             )
             expect(signatureOrError).not.to.be.a("error")
-            let signature = <Buffer>signatureOrError
+            const signature = signatureOrError as Buffer
             expect(signature.length).to.be.greaterThan(0)
 
             // Verify signature with the wrong public key
-            let verificationWrongPK = await keybase.verifySignature(
+            const verificationWrongPK = await keybase.verifySignature(
                 Buffer.from("wrong public key", "utf8"),
                 payload,
                 signature
             )
-            expect(verificationWrongPK).to.be.false
+            expect(verificationWrongPK).to.equal(false)
 
             // Verify signature with the wrong payload
-            let verificationWrongPayload = await keybase.verifySignature(
+            const verificationWrongPayload = await keybase.verifySignature(
                 account.publicKey,
                 Buffer.from("wrong payload", "utf8"),
                 signature
             )
-            expect(verificationWrongPayload).to.be.false
+            expect(verificationWrongPayload).to.equal(false)
 
             // Verify signature with the wrong payload and wrong public key
-            let verificationWrongBoth = await keybase.verifySignature(
+            const verificationWrongBoth = await keybase.verifySignature(
                 Buffer.from("wrong public key", "utf8"),
                 Buffer.from("wrong payload", "utf8"),
                 signature
             )
-            expect(verificationWrongBoth).to.be.false
+            expect(verificationWrongBoth).to.equal(false)
         }).timeout(0)
     }).timeout(0)
 
-    describe("Error scenarios", function() {
-        it("should produce an error to create a signature for a payload given an empty/non-existent address", async function() {
+    describe("Error scenarios", () => {
+        it("should produce an error to create a signature for a payload given an empty/non-existent address", async () => {
             // Create a new account
-            let keybase = new Keybase()
-            let passphrase = "test"
-            let accountOrError = await keybase.createAccount(passphrase)
+            const keybase = new Keybase()
+            const passphrase = "test"
+            const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
-            let account = <Account>accountOrError
-            let payload = Buffer.from("Arbitrary Message", "utf8")
+            const account = accountOrError as Account
+            const payload = Buffer.from("Arbitrary Message", "utf8")
 
             // Sign arbitrary payload with empty address
-            let emptyAddress = ""
+            const emptyAddress = ""
             expect(emptyAddress).to.not.equal(account.addressHex)
-            let signatureOrErrorEmpty = await keybase.sign(
+            const signatureOrErrorEmpty = await keybase.sign(
                 emptyAddress,
                 passphrase,
                 payload
@@ -124,9 +124,9 @@ describe("Keybase Digital signature operations", function() {
             expect(signatureOrErrorEmpty).to.be.a("error")
 
             // Sign arbitrary payload with a non-existent address
-            let wrongAddress = "1234"
+            const wrongAddress = "1234"
             expect(wrongAddress).to.not.equal(account.addressHex)
-            let signatureOrErrorWrong = await keybase.sign(
+            const signatureOrErrorWrong = await keybase.sign(
                 wrongAddress,
                 passphrase,
                 payload
@@ -134,19 +134,19 @@ describe("Keybase Digital signature operations", function() {
             expect(signatureOrErrorWrong).to.be.a("error")
         }).timeout(0)
 
-        it("should produce an error to create a signature for a payload given a account an invalid/empty passphrase", async function() {
+        it("should produce an error to create a signature for a payload given a account an invalid/empty passphrase", async () => {
             // Create a new account
-            let keybase = new Keybase()
-            let passphrase = "test"
-            let accountOrError = await keybase.createAccount(passphrase)
+            const keybase = new Keybase()
+            const passphrase = "test"
+            const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
-            let account = <Account>accountOrError
-            let payload = Buffer.from("Arbitrary Message", "utf8")
+            const account = accountOrError as Account
+            const payload = Buffer.from("Arbitrary Message", "utf8")
 
             // Sign arbitrary payload with empty address
-            let emptyPassphrase = ""
+            const emptyPassphrase = ""
             expect(emptyPassphrase).to.not.equal(passphrase)
-            let signatureOrErrorEmpty = await keybase.sign(
+            const signatureOrErrorEmpty = await keybase.sign(
                 account.addressHex,
                 emptyPassphrase,
                 payload
@@ -154,9 +154,9 @@ describe("Keybase Digital signature operations", function() {
             expect(signatureOrErrorEmpty).to.be.a("error")
 
             // Sign arbitrary payload with a non-existent address
-            let wrongPassphrase = "1234"
+            const wrongPassphrase = "1234"
             expect(wrongPassphrase).to.not.equal(passphrase)
-            let signatureOrErrorWrong = await keybase.sign(
+            const signatureOrErrorWrong = await keybase.sign(
                 account.addressHex,
                 wrongPassphrase,
                 payload
@@ -165,93 +165,93 @@ describe("Keybase Digital signature operations", function() {
         }).timeout(0)
     }).timeout(0)
 
-    describe("Account unlocking for passphrase free signing", function() {
-        describe("Success scenarios", function() {
-            it("should unlock an account given it's passphrase", async function() {
+    describe("Account unlocking for passphrase free signing", () => {
+        describe("Success scenarios", () => {
+            it("should unlock an account given it's passphrase", async () => {
                 // Create a new account
-                let keybase = new Keybase()
-                let passphrase = "test"
+                const keybase = new Keybase()
+                const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
-                account = <Account>account
+                account = account as Account
 
                 // Unlock account
-                let errorOrUndefined = await keybase.unlockAccount(
+                const errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
                     passphrase
                 )
-                expect(errorOrUndefined).to.be.undefined
+                expect(errorOrUndefined).to.be.a('undefined')
                 // Check wheter or not is unlocked
-                let isUnlocked = await keybase.isUnlocked(account.addressHex)
-                expect(isUnlocked).to.be.true
+                const isUnlocked = await keybase.isUnlocked(account.addressHex)
+                expect(isUnlocked).to.equal(true)
             }).timeout(0)
 
-            it("should lock an unlocked account given it's address", async function() {
+            it("should lock an unlocked account given it's address", async () => {
                 // Create a new account
-                let keybase = new Keybase()
-                let passphrase = "test"
+                const keybase = new Keybase()
+                const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
-                account = <Account>account
+                account = account as Account
 
                 // Unlock account
-                let errorOrUndefined = await keybase.unlockAccount(
+                const errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
                     passphrase
                 )
-                expect(errorOrUndefined).to.be.undefined
+                expect(errorOrUndefined).to.be.a('undefined')
 
                 // Re-lock account
-                let errorOrUndefinedLock = await keybase.lockAccount(
+                const errorOrUndefinedLock = await keybase.lockAccount(
                     account.addressHex
                 )
-                expect(errorOrUndefinedLock).to.be.undefined
+                expect(errorOrUndefinedLock).to.be.a('undefined')
 
                 // Check wheter or not is unlocked
-                let isUnlocked = await keybase.isUnlocked(account.addressHex)
-                expect(isUnlocked).to.be.false
+                const isUnlocked = await keybase.isUnlocked(account.addressHex)
+                expect(isUnlocked).to.equal(false)
             }).timeout(0)
 
-            it("should produce a valid signature for a payload given an unlocked account address", async function() {
+            it("should produce a valid signature for a payload given an unlocked account address", async () => {
                 // Create a new account
-                let keybase = new Keybase()
-                let passphrase = "test"
+                const keybase = new Keybase()
+                const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
-                account = <Account>account
+                account = account as Account
 
                 // Unlock account
-                let errorOrUndefined = await keybase.unlockAccount(
+                const errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
                     passphrase
                 )
-                expect(errorOrUndefined).to.be.undefined
+                expect(errorOrUndefined).to.be.a('undefined')
                 expect(await keybase.isUnlocked(account.addressHex))
 
                 // Produce signature with unlocked account
                 // Sign arbitrary payload
-                let payload = Buffer.from("Arbitrary Message", "utf8")
-                let signatureOrError = await keybase.signWithUnlockedAccount(
+                const payload = Buffer.from("Arbitrary Message", "utf8")
+                const signatureOrError = await keybase.signWithUnlockedAccount(
                     account.addressHex,
                     payload
                 )
                 expect(signatureOrError).not.to.be.a("error")
-                let signature = <Buffer>signatureOrError
+                const signature = signatureOrError as Buffer
                 expect(signature.length).to.be.greaterThan(0)
             }).timeout(0)
         }).timeout(0)
 
-        describe("Error scenarios", function() {
-            it("should fail to unlock an account given an wrong or empty passphrase", async function() {
+        describe("Error scenarios", () => {
+            it("should fail to unlock an account given an wrong or empty passphrase", async () => {
                 // Create a new account
-                let keybase = new Keybase()
-                let passphrase = "test"
+                const keybase = new Keybase()
+                const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
-                account = <Account>account
+                account = account as Account
 
                 // Unlock account with wrong passphrase
-                let wrongPassphrase = "wrong"
+                const wrongPassphrase = "wrong"
                 expect(wrongPassphrase).to.not.equal(passphrase)
                 let errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
@@ -260,10 +260,10 @@ describe("Keybase Digital signature operations", function() {
                 expect(errorOrUndefined).to.be.a("error")
                 // Check wheter or not is unlocked
                 let isUnlocked = await keybase.isUnlocked(account.addressHex)
-                expect(isUnlocked).to.be.false
+                expect(isUnlocked).to.equal(false)
 
                 // Unlock account with empty passphrase
-                let emptyPassphrase = ""
+                const emptyPassphrase = ""
                 expect(emptyPassphrase).to.not.equal(passphrase)
                 errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
@@ -272,36 +272,36 @@ describe("Keybase Digital signature operations", function() {
                 expect(errorOrUndefined).to.be.a("error")
                 // Check wheter or not is unlocked
                 isUnlocked = await keybase.isUnlocked(account.addressHex)
-                expect(isUnlocked).to.be.false
+                expect(isUnlocked).to.equal(false)
             }).timeout(0)
 
-            it("should fail to lock an account given an address that has not been unlocked yet", async function() {
+            it("should fail to lock an account given an address that has not been unlocked yet", async () => {
                 // Create a new account
-                let keybase = new Keybase()
-                let passphrase = "test"
+                const keybase = new Keybase()
+                const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
-                account = <Account>account
+                account = account as Account
 
                 // Lock account
-                let errorOrUndefinedLock = await keybase.lockAccount(
+                const errorOrUndefinedLock = await keybase.lockAccount(
                     account.addressHex
                 )
                 expect(errorOrUndefinedLock).to.be.a("error")
             }).timeout(0)
 
-            it("should fail to produce a valid signature for a payload given an address that has not been unlocked yet", async function() {
+            it("should fail to produce a valid signature for a payload given an address that has not been unlocked yet", async () => {
                 // Create a new account
-                let keybase = new Keybase()
-                let passphrase = "test"
+                const keybase = new Keybase()
+                const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
-                account = <Account>account
+                account = account as Account
 
                 // Produce signature with unlocked account
                 // Sign arbitrary payload
-                let payload = Buffer.from("Arbitrary Message", "utf8")
-                let signatureOrError = await keybase.signWithUnlockedAccount(
+                const payload = Buffer.from("Arbitrary Message", "utf8")
+                const signatureOrError = await keybase.signWithUnlockedAccount(
                     account.addressHex,
                     payload
                 )

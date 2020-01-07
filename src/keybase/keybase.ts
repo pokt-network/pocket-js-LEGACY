@@ -40,9 +40,9 @@ export class Keybase {
 
         try {
             // Create the keypair
-            let rng = seedrandom(passphrase, { entropy: true })
-            var seed = Buffer.from(sha256(rng().toString()), "hex")
-            let keyPair = ed25519.MakeKeypair(seed)
+            const rng = seedrandom(passphrase, { entropy: true })
+            const seed = Buffer.from(sha256(rng().toString()), "hex")
+            const keyPair = ed25519.MakeKeypair(seed)
             return await this.importAccount(keyPair.privateKey, passphrase)
         } catch (err) {
             return err
@@ -52,10 +52,12 @@ export class Keybase {
     /**
      * @description Lists all the accounts stored in this keybase
      */
-    public async listAccounts(): Promise<Array<Account>> {
-        var result = new Array<Account>()
-        for (let addressHex in this.accounts) {
-            result.push(this.accounts[addressHex])
+    public async listAccounts(): Promise<Account[]> {
+        const result = new Array<Account>()
+        for (const addressHex in this.accounts) {
+            if (this.accounts.hasOwnProperty(addressHex)) {
+                result.push(this.accounts[addressHex])
+            }
         }
         return result
     }
@@ -66,11 +68,11 @@ export class Keybase {
      */
     public async getAccount(addressHex: string): Promise<Account | Error> {
         // Validate the address
-        let validationError = validateAddressHex(addressHex)
+        const validationError = validateAddressHex(addressHex)
         if (validationError) {
             return validationError
         }
-        let result = this.accounts[addressHex]
+        const result = this.accounts[addressHex]
         if (result) {
             return result
         } else {
@@ -87,21 +89,21 @@ export class Keybase {
         addressHex: string,
         passphrase: string
     ): Promise<Error | undefined> {
-        let validationError = validateAddressHex(addressHex)
+        const validationError = validateAddressHex(addressHex)
         if (validationError) {
             return validationError
         }
 
-        var error = undefined
-        let unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        let error
+        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, UnlockedAccount)) {
-            let unlockedAccount = <UnlockedAccount>unlockedAccountOrError
+            const unlockedAccount = unlockedAccountOrError as UnlockedAccount
             return this.removeAccountRecord(unlockedAccount)
         } else if (typeGuard(unlockedAccountOrError, Error)) {
-            error = <Error>unlockedAccountOrError
+            error = unlockedAccountOrError as Error
         } else {
             error = new Error("Unknown error decrypting Account")
         }
@@ -120,36 +122,36 @@ export class Keybase {
         newPassphrase: string
     ): Promise<Error | undefined> {
         // Validate the address
-        let validationError = validateAddressHex(addressHex)
+        const validationError = validateAddressHex(addressHex)
         if (validationError) {
             return validationError
         }
 
-        var error = undefined
-        let unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        let error
+        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, UnlockedAccount)) {
-            let unlockedAccount = <UnlockedAccount>unlockedAccountOrError
+            const unlockedAccount = unlockedAccountOrError as UnlockedAccount
 
             // Remove the account record with the existing passphrase
-            let errorOrUndefined = await this.removeAccountRecord(
+            const errorOrUndefined = await this.removeAccountRecord(
                 unlockedAccount
             )
             if (typeGuard(errorOrUndefined, Error)) {
-                error = <Error>errorOrUndefined
+                error = errorOrUndefined as Error
             } else {
-                let importedAccountOrError = this.importAccount(
+                const importedAccountOrError = this.importAccount(
                     unlockedAccount.privateKey,
                     newPassphrase
                 )
                 if (typeGuard(importedAccountOrError, Error)) {
-                    error = <Error>importedAccountOrError
+                    error = importedAccountOrError as Error
                 }
             }
         } else if (typeGuard(unlockedAccountOrError, Error)) {
-            error = <Error>unlockedAccountOrError
+            error = unlockedAccountOrError as Error
         } else {
             error = new Error("Unknown error decrypting Account")
         }
@@ -167,14 +169,14 @@ export class Keybase {
         passphrase: string,
         payload: Buffer
     ): Promise<Buffer | Error> {
-        let unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return <Error>unlockedAccountOrError
+            return unlockedAccountOrError as Error
         }
-        let unlockedAccount = <UnlockedAccount>unlockedAccountOrError
+        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         try {
             return ed25519.Sign(payload, unlockedAccount.privateKey)
         } catch (err) {
@@ -191,12 +193,12 @@ export class Keybase {
         addressHex: string,
         payload: Buffer
     ): Promise<Buffer | Error> {
-        let isUnlocked = await this.isUnlocked(addressHex)
+        const isUnlocked = await this.isUnlocked(addressHex)
         if (!isUnlocked) {
             return new Error("Account is not unlocked")
         }
         try {
-            let unlockedAccount = this.unlockedAccounts[addressHex]
+            const unlockedAccount = this.unlockedAccounts[addressHex]
             return ed25519.Sign(payload, unlockedAccount.privateKey)
         } catch (err) {
             return err
@@ -230,18 +232,18 @@ export class Keybase {
         addressHex: string,
         passphrase: string
     ): Promise<Error | undefined> {
-        let unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
 
         // Return errors if any
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return <Error>unlockedAccountOrError
+            return unlockedAccountOrError as Error
         }
 
         // Cast to unlocked account
-        let unlockedAccount = <UnlockedAccount>unlockedAccountOrError
+        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         this.unlockedAccounts[unlockedAccount.addressHex] = unlockedAccount
         return undefined
     }
@@ -251,7 +253,7 @@ export class Keybase {
      * @param addressHex The address of the account that will be locked in hex string format
      */
     public async lockAccount(addressHex: string): Promise<Error | undefined> {
-        let isUnlocked = await this.isUnlocked(addressHex)
+        const isUnlocked = await this.isUnlocked(addressHex)
         if (!isUnlocked) {
             return new Error("Account is not unlocked")
         }
@@ -286,10 +288,10 @@ export class Keybase {
         }
         try {
             // Parse public key
-            let publicKey = publicKeyFromPrivate(privateKey)
+            const publicKey = publicKeyFromPrivate(privateKey)
 
             // Generate AES key
-            let key = pbkdf2.pbkdf2Sync(
+            const key = pbkdf2.pbkdf2Sync(
                 passphrase,
                 sha256(passphrase),
                 1,
@@ -297,15 +299,15 @@ export class Keybase {
             )
 
             // Generate encryptedBytes Hex
-            let encryptedPKHex = aesjs.utils.hex.fromBytes(
+            const encryptedPKHex = aesjs.utils.hex.fromBytes(
                 new aesjs.ModeOfOperation.ctr(key, undefined).encrypt(
                     privateKey
                 )
             )
-            let account = new Account(publicKey, encryptedPKHex)
-            let errorOrUndefined = await this.persistAccount(account)
+            const account = new Account(publicKey, encryptedPKHex)
+            const errorOrUndefined = await this.persistAccount(account)
             if (typeGuard(errorOrUndefined, Error)) {
-                return <Error>errorOrUndefined
+                return errorOrUndefined as Error
             } else {
                 return account
             }
@@ -323,14 +325,14 @@ export class Keybase {
         addressHex: string,
         passphrase: string
     ): Promise<Buffer | Error> {
-        let unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return <Error>unlockedAccountOrError
+            return unlockedAccountOrError as Error
         }
-        let unlockedAccount = <UnlockedAccount>unlockedAccountOrError
+        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         return unlockedAccount.privateKey
     }
 
@@ -344,14 +346,13 @@ export class Keybase {
         addressHex: string,
         passphrase: string
     ): Promise<UnlockedAccount | Error> {
-        var error = undefined
-        let account
-        let accountOrError = await this.getAccount(addressHex)
+        let error
+        const accountOrError = await this.getAccount(addressHex)
         if (typeGuard(accountOrError, Account)) {
-            account = <Account>accountOrError
+            const account = accountOrError as Account
             try {
                 // Generate decryption key
-                let key = pbkdf2.pbkdf2Sync(
+                const key = pbkdf2.pbkdf2Sync(
                     passphrase,
                     sha256(passphrase),
                     1,
@@ -359,25 +360,25 @@ export class Keybase {
                 )
 
                 // Generate encryptedBytes Hex
-                let encryptedPKBytes = aesjs.utils.hex.toBytes(
+                const encryptedPKBytes = aesjs.utils.hex.toBytes(
                     account.encryptedPrivateKeyHex
                 )
 
                 // Decrypt the private key in hex format
-                let decryptedPKHex = aesjs.utils.hex.fromBytes(
+                const decryptedPKHex = aesjs.utils.hex.fromBytes(
                     new aesjs.ModeOfOperation.ctr(key, undefined).decrypt(
                         encryptedPKBytes
                     )
                 )
 
                 // Extract the public key from the decrypted private key
-                let decryptedPublicKey = decryptedPKHex.slice(
+                const decryptedPublicKey = decryptedPKHex.slice(
                     decryptedPKHex.length / 2,
                     decryptedPKHex.length
                 )
 
                 // Get the address from the public key
-                let decryptedAddress = addressFromPublickey(
+                const decryptedAddress = addressFromPublickey(
                     Buffer.from(decryptedPublicKey, "hex")
                 )
 
@@ -387,7 +388,7 @@ export class Keybase {
                 }
 
                 // Create the corresponding UnlockedAccount object
-                let unlockedAccount = new UnlockedAccount(
+                const unlockedAccount = new UnlockedAccount(
                     account,
                     Buffer.from(decryptedPKHex, "hex")
                 )
@@ -396,7 +397,7 @@ export class Keybase {
                 return err
             }
         } else if (typeGuard(accountOrError, Error)) {
-            error = <Error>accountOrError
+            error = accountOrError as Error
         } else {
             error = new Error("Unknown error getting account")
         }
