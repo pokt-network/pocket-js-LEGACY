@@ -60,6 +60,7 @@
         "ed25519": "0.0.4",
         "js-sha256": "^0.9.0",
         "pbkdf2": "^3.0.17",
+        "node-localstorage": "^2.1.5",
         "seedrandom": "^3.0.5"
     },
     "devDependencies": {
