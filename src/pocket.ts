@@ -1,5 +1,7 @@
-import { Configuration } from "./configuration/configuration"
-import { Blockchain, Dispatch, Node, Relay, Report, Wallet } from "./models"
+import { Configuration } from './configuration/configuration';
+import { Blockchain, Node, Relay, Wallet } from './models'
+import { RequestManager } from './request_manager';
+import paths = require("./utils/enums");
 
 /**
  *
@@ -59,16 +61,8 @@ export class Pocket {
     headers = {}
   ) {
     // Check if data is a json tring
-    if (typeof data === "string") {
-      return new Relay(
-        blockchain,
-        data,
-        this.configuration,
-        httpMethod,
-        path,
-        queryParams,
-        headers
-      )
+    if (typeof data == 'string') {
+      return new Relay(blockchain, data, this.configuration, httpMethod, path, queryParams, headers);
     }
     return new Relay(
       blockchain,
@@ -82,33 +76,9 @@ export class Pocket {
   }
   /**
    *
-   * Create a Report instance
-   * @param {String} ip - Internet protocol address.
-   * @param {String} message - Brief description for the report.
-   * @returns {Report} - New Report instance.
-   * @memberof Pocket
-   */
-  public createReport(ip: string, message: string) {
-    return new Report(ip, message, this.configuration)
-  }
-  /**
-   *
-   * Get a Dispatch instance or creates one
-   * @returns {Dispatch} - New or existing Dispatch instance.
-   * @memberof Pocket
-   */
-  public getDispatch() {
-    if (this.configuration.dispatcher == null) {
-      this.configuration.dispatcher = new Dispatch(this.configuration)
-    }
-    return this.configuration.dispatcher
-  }
-  /**
-   *
-   * Filter nodes by netID and blockchain name
-   * @param {String} netID - Network Idenfifier.
-   * @param {String} network - Network Name.
-   * @returns {Node} - New Node instance.
+   * Filter nodes by Blockchain
+   * @param {Blockchain} blockchain - Blockchain.
+   * @returns {Node} - New Node object.
    * @memberof Pocket
    */
   public async getNode(blockchain: Blockchain) {
@@ -126,9 +96,9 @@ export class Pocket {
         }
       }
 
-      this.configuration.nodes.forEach((node: Node) => {
+      this.configuration.nodes.forEach(function (node: Node) {
         if (node.isEqual(blockchain)) {
-          nodes.push(node)
+          nodes.push(node);
         }
       })
 
@@ -143,120 +113,51 @@ export class Pocket {
   }
   /**
    *
-   * Send a report
-   * @param {Report} report - Report instance with the information.
-   * @param {callback} callback - callback handler.
-   * @returns {String} - A String with the response.
-   * @memberof Pocket
-   */
-  public async sendReport(
-    report: Report,
-    callback?: (result?: any, error?: Error) => any
-  ) {
-    try {
-      // Check for report
-      if (report == null) {
-        throw new Error("Report is null")
-      }
-      // Verify all report properties are set
-      if (!report.isValid()) {
-        throw new Error("One or more Report properties are empty.")
-      }
-      // Send Report
-      const response = await report.send()
-      // Response
-      if (response instanceof Error === false) {
-        if (callback) {
-          callback(null, response)
-          return
-        } else {
-          return response
-        }
-      } else {
-        if (callback) {
-          callback(response)
-          return
-        } else {
-          return response
-        }
-      }
-    } catch (error) {
-      if (callback) {
-        callback(error)
-        return
-      } else {
-        return error
-      }
-    }
-  }
-  /**
-   *
    * Send an already created Relay
    * @param {Relay} relay - Relay instance with the information.
    * @param {callback} callback - callback handler.
    * @returns {String} - A String with the response.
    * @memberof Pocket
    */
-  public async sendRelay(
-    relay: Relay,
-    callback?: (result?: any[], error?: Error) => any
-  ) {
+  async sendRelay(relay: Relay, configuration = this.configuration, callback?: (result?: any[], error?: Error) => any) {
+    // Verify all relay properties are set
+    if (!relay.isValid()) {
+      if (callback) {
+        callback(undefined, new Error("Relay is missing a property, please verify all properties."));
+        return;
+      } else {
+        return new Error(
+          "Relay is missing a property, please verify all properties."
+        );
+      }
+    }
     try {
-      // Check for relay
-      if (relay == null) {
-        if (callback) {
-          callback(
-            undefined,
-            new Error("Relay is null or data field is missing")
-          )
-          return
-        } else {
-          return new Error("Relay is null or data field is missing")
-        }
-      }
-      // Verify all relay properties are set
-      if (!relay.isValid()) {
-        if (callback) {
-          callback(
-            undefined,
-            new Error(
-              "Relay is missing a property, please verify all properties."
-            )
-          )
-          return
-        } else {
-          return new Error(
-            "Relay is missing a property, please verify all properties."
-          )
-        }
-      }
-
-      // Filter nodes for specified blockchain
-      const node = await this.getNode(relay.blockchain)
+      // Retrieve a node for specified blockchain
+      var node = await this.getNode(relay.blockchain);
 
       if (node == null) {
         if (callback) {
-          callback(undefined, new Error("Node is empty."))
-          return
+          callback(undefined, new Error("Unable to retrieve a Node."));
+          return;
         } else {
-          return new Error("Node is empty.")
+          return new Error("Unable to retrieve a Node.");
         }
       }
-
       // Send relay
-      const response = await node.sendRelay(relay)
+      const response = await RequestManager.relay(paths.Routes.RELAY, node, configuration);
+      
       // Response
       if (response instanceof Error === false) {
         if (callback) {
-          callback(response)
-          return
+          callback(response as any);
+          return;
         } else {
           return response
         }
       } else {
         if (callback) {
-          callback(undefined, response)
-          return
+          callback(undefined, response as Error);
+          return;
         } else {
           return response
         }
@@ -282,15 +183,11 @@ export class Pocket {
    */
   public async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
     try {
-      const dispatch = this.getDispatch()
-      const nodes: Node[] = []
-      const response = await dispatch.retrieveServiceNodes()
+      var dispatch = this.getDispatch();
+      var nodes: Node[] = [];
+      var response = await dispatch.retrieveServiceNodes();
 
-      if (
-        !(response instanceof Error) &&
-        response !== undefined &&
-        response.length !== 0
-      ) {
+      if (!(response instanceof Error) && response !== undefined && response.length != 0) {
         // Save the nodes to the configuration.
         this.configuration.nodes = nodes
         // Return a list of nodes
