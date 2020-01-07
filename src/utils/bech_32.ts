@@ -145,7 +145,7 @@ export class Bech32 {
     })
     checksum = this.convertBits(checksum)
 
-    hrpArray.forEach(char => {
+    hrpArray.forEac(char => {
       const charCode = char.charCodeAt(0)
       checksum = this.convertBits(checksum) ^ (charCode & 0x1f)
     })
