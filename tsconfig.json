@@ -7,7 +7,7 @@
     "outDir": "./dist",
     "strict": true,
     "alwaysStrict": true,
-    "lib": [ "es2015" ],
+    "lib": ["es5", "es6", "dom"],
     "resolveJsonModule": true
   },
   "exclude": ["node_modules", "**/__tests__/*"]

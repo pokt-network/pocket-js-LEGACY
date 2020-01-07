@@ -4,31 +4,30 @@ import { KVStore } from "./kv_store";
 
 export class InMemoryKVStore implements KVStore {
 
-    private readonly localStorageSupported: boolean = false
+    private localStorage: any = undefined
 
     public add(item: IStorageItem) {
         this.init()
-        if (this.localStorageSupported) {
-            localStorage.setItem(item.key, item.value)
-        }
+        this.localStorage.setItem(item.key, item.value)
     }
 
     public get(key: string): string {
         this.init()
-        if (this.localStorageSupported) {
-            const item = localStorage.getItem(key)
-            return item
-        } else {
-            return null
+
+        const item = this.localStorage.getItem(key)
+        if(item === undefined) {
+            throw new TypeError("Key doesn't exist")
         }
+        return item
+        
     }
 
     public getItems(): IStorageItem[] {
         const list = new Array<StorageItem>()
 
-        for (let index = 0; index < localStorage.length; index++) {
-            const key = localStorage.key(index)
-            const value = localStorage.getItem(key)
+        for (let index = 0; index < this.localStorage.length; index++) {
+            const key = this.localStorage.key(index)
+            const value = this.localStorage.getItem(key)
 
             list.push(new StorageItem({key, value}))
         }
@@ -38,19 +37,19 @@ export class InMemoryKVStore implements KVStore {
 
     public remove(key: string) {
         this.init()
-        if (this.localStorageSupported) {
-            localStorage.removeItem(key)
-        }
+        this.localStorage.removeItem(key)
     }
 
     public clear() {
         this.init()
-        if (this.localStorageSupported) {
-            localStorage.clear()
-        }
+        this.localStorage.clear()
     }
 
     private init(){
-        this.localStorageSupported = typeof window.localStorage !== "undefined" && window.localStorage !== null
+        if (typeof window.localStorage === "undefined" || window.localStorage === null) {
+            var LocalStorage = require('node-localstorage').LocalStorage;
+            this.localStorage = new LocalStorage('./scratch');
+          }
+
     }    
 }
