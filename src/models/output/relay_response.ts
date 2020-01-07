@@ -62,9 +62,9 @@ export class RelayResponse {
     }
     /**
    *
-   * Check if the NodeProof object is valid
+   * Check if the RelayResponse object is valid
    * @returns {boolean} - True or false.
-   * @memberof NodeProof
+   * @memberof RelayResponse
    */
     public isValid(): boolean {
         return this.signature.length !== 0 && this.proof.isValid() && this.response.length !== 0;
