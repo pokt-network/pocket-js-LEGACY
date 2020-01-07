@@ -1,6 +1,6 @@
 import { SessionHeader } from "../models/input/session_header"
 import { Session } from "../models/output/session"
-import { LocalStorageHelper } from "./storage/local_storage_helper"
+import { LocalStorageHelper } from "./storage/in_memory_kv_store"
 
 /**
  *
