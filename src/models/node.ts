@@ -1,43 +1,80 @@
-import axios from "axios";
-import constants = require("../utils/constants");
-import { Relay } from "./relay";
-import { Blockchain } from "./blockchain";
-const httpsRequestProtocol = "https://";
-const httpRequestProtocol = "http://";
+import axios from "axios"
+import constants = require("../utils/constants")
+import { Relay } from "./relay"
+import { Blockchain } from "./blockchain"
+import { BondStatus } from "./output/bond_status"
+import { Hex } from "../utils/Hex"
+
+
+const httpsRequestProtocol = "https://"
+const httpRequestProtocol = "http://"
 // Dispatch
 /**
  *
  *
  * @class Node
  */
-export class Node {
-  public readonly blockchain: Blockchain;
-  public readonly ipPort: string;
-  public readonly ip: string;
-  public readonly port: string;
-  /**
-   * Creates an instance of Node.
-   * @param {Blockchain} blockchain - Blockchain object.
-   * @param {string} ipPort - Ip and port string ("127.0.0.1:80")
-   * @memberof Node
-   */
-  constructor(blockchain: Blockchain, ipPort: string) {
-    this.blockchain = blockchain;
-    const ipPortArr = ipPort.split(":");
-    this.ip = ipPortArr[0];
-    this.port = ipPortArr[1];
 
-    if (
-      ipPort.indexOf(httpsRequestProtocol) > -1 ||
-      ipPort.indexOf(httpRequestProtocol) > -1
-    ) {
-      this.ipPort = ipPort;
-    } else {
-      if (this.port === "443") {
-        this.ipPort = httpsRequestProtocol + ipPort;
-      } else {
-        this.ipPort = httpRequestProtocol + ipPort;
-      }
+
+export class Node {
+  public static fromJSON(json: string): Node {
+    const jsonObject = JSON.parse(json)
+    const status: BondStatus = BondStatus.getStatus(jsonObject.status)
+
+    return new Node(
+      jsonObject.address,
+      jsonObject.cons_pubkey,
+      jsonObject.jailed,
+      status,
+      jsonObject.stakedTokens,
+      jsonObject.serviceurl,
+      jsonObject.chains,
+      jsonObject.unstaking_time
+    )
+  }
+
+  public readonly address: string
+  public readonly consPubKey: string
+  public readonly jailed: boolean
+  public readonly status: BondStatus
+  public readonly stakedTokens: number
+  public readonly serviceURL: string
+  public readonly chains: string[]
+  public readonly unstakingCompletionTime: number | undefined
+
+  /**
+   * Create a Session Node.
+   * @constructor
+   * @param {string} address - the hex address of the validator
+   * @param {string} consPubKey - the hex consensus public key of the validator.
+   * @param {boolean} jailed - has the validator been jailed from staked status?
+   * @param {BondStatus} status - validator status
+   * @param {number} stakedTokens - how many staked tokens
+   * @param {string} serviceURL - Service node url
+   * @param {string[]} chains - chains
+   * @param {number} unstakingCompletionTime - if unstaking, min time for the validator to complete unstaking
+   */
+  constructor(
+    address: string,
+    consPubKey: string,
+    jailed: boolean,
+    status: BondStatus,
+    stakedTokens: number = 0,
+    serviceURL: string,
+    chains: string[] = [],
+    unstakingCompletionTime?: number
+  ) {
+    this.address = Hex.decodeString(address)
+    this.consPubKey = consPubKey
+    this.jailed = jailed
+    this.status = status
+    this.stakedTokens = stakedTokens
+    this.serviceURL = serviceURL
+    this.chains = chains
+    this.unstakingCompletionTime = unstakingCompletionTime
+
+    if (!this.isValid()) {
+      throw new TypeError("Invalid properties length.")
     }
   }
 
@@ -50,25 +87,10 @@ export class Node {
   public isValid() {
     for (const property in this) {
       if (!this.hasOwnProperty(property) || property === "") {
-        return false;
+        return false
       }
     }
-    return true;
-  }
-
-  /**
-   *
-   * Checks if params are equal to stored properties
-   * @param {String} netID - Network Identifier.
-   * @param {String} network - Network name.
-   * @returns {boolean} - True or false.
-   * @memberof Node
-   */
-  public isEqual(blockchain: Blockchain) {
-    if (this.blockchain === blockchain) {
-      return true;
-    }
-    return false;
+    return true
   }
 
   /**
@@ -90,39 +112,39 @@ export class Node {
           "Content-Type": "application/json"
         },
         timeout: relay.configuration.requestTimeOut
-      });
+      })
 
       const response = await axiosInstance.post(
         constants.relayPath,
         relay.toJSON()
-      );
+      )
 
       if (response.status === 200 && response.data !== null) {
-        const result = response.data;
+        const result = response.data
 
         if (callback) {
-          callback(result);
-          return;
+          callback(result)
+          return
         } else {
-          return result;
+          return result
         }
       } else {
         if (callback) {
           callback(
             null,
             new Error("Failed to send relay with error: " + response.data)
-          );
-          return;
+          )
+          return
         } else {
-          return new Error("Failed to send relay with error: " + response.data);
+          return new Error("Failed to send relay with error: " + response.data)
         }
       }
     } catch (error) {
       if (callback) {
-        callback(null, new Error("Failed to send relay with error: " + error));
-        return;
+        callback(null, new Error("Failed to send relay with error: " + error))
+        return
       } else {
-        return new Error("Failed to send relay with error: " + error);
+        return new Error("Failed to send relay with error: " + error)
       }
     }
   }

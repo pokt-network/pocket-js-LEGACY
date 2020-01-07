@@ -1,5 +1,5 @@
-import { SessionNode } from "./SessionNode";
-import { SessionHeader } from "../input/SessionHeader";
+import { Node } from "../node"
+import { SessionHeader } from "../input/session_header"
 
 /**
  *
@@ -12,11 +12,11 @@ export class Session {
     const sessionHeader: SessionHeader = SessionHeader.fromJSON(
       jsonObject.header
     );
-    const sessionNodes: SessionNode[] = [];
+    const sessionNodes: Node[] = [];
 
     for (const sessionNodeJson in jsonObject.nodes) {
       if (sessionNodeJson.hasOwnProperty("serviceurl")) {
-        sessionNodes.push(SessionNode.fromJSON(sessionNodeJson));
+        sessionNodes.push(Node.fromJSON(sessionNodeJson));
       }
     }
 
@@ -25,7 +25,7 @@ export class Session {
 
   public readonly sessionHeader: SessionHeader;
   public readonly sessionKey: number[];
-  public readonly sessionNodes: SessionNode[];
+  public readonly sessionNodes: Node[];
 
   /**
    * Request for Session.
@@ -37,7 +37,7 @@ export class Session {
   constructor(
     sessionHeader: SessionHeader,
     sessionKey: number[],
-    sessionNodes: SessionNode[]
+    sessionNodes: Node[]
   ) {
     this.sessionHeader = sessionHeader;
     this.sessionKey = sessionKey;
