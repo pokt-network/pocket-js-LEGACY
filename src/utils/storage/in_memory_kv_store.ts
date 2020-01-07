@@ -1,15 +1,19 @@
 import { StorageItem  } from "./storage_item"
+import { IStorageItem } from "./i_storage_item"
+import { KVStore } from "./kv_store";
 
-export class LocalStorageHelper {
+export class InMemoryKVStore implements KVStore {
 
-    public static add(key: string, item: string) {
+    private readonly localStorageSupported: boolean = false
+
+    public add(item: IStorageItem) {
         this.init()
         if (this.localStorageSupported) {
-            localStorage.setItem(key, item)
+            localStorage.setItem(item.key, item.value)
         }
     }
 
-    public static get(key: string): string {
+    public get(key: string): string {
         this.init()
         if (this.localStorageSupported) {
             const item = localStorage.getItem(key)
@@ -19,7 +23,7 @@ export class LocalStorageHelper {
         }
     }
 
-    public static getItems(): StorageItem[] {
+    public getItems(): IStorageItem[] {
         const list = new Array<StorageItem>()
 
         for (let index = 0; index < localStorage.length; index++) {
@@ -32,23 +36,21 @@ export class LocalStorageHelper {
         return list
     }
 
-    public static remove(key: string) {
+    public remove(key: string) {
         this.init()
         if (this.localStorageSupported) {
             localStorage.removeItem(key)
         }
     }
 
-    public static clear() {
+    public clear() {
         this.init()
         if (this.localStorageSupported) {
             localStorage.clear()
         }
     }
 
-    private static localStorageSupported: boolean
-
-    private static init(){
+    private init(){
         this.localStorageSupported = typeof window.localStorage !== "undefined" && window.localStorage !== null
     }    
 }
