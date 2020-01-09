@@ -1,4 +1,4 @@
-import { StoredProof } from "../stored_proof";
+import { StoredProof } from "../stored-proof";
 /**
  *
  *

@@ -1,4 +1,4 @@
-import { Hex } from "../utils/Hex"
+import { Hex } from "../utils/hex"
 /**
  *
  *

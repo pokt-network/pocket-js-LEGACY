@@ -1,4 +1,4 @@
-import { ApplicationParams } from "../application_params";
+import { ApplicationParams } from "../application-params";
 
 /**
  *

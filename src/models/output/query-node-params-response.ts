@@ -1,4 +1,4 @@
-import { NodeParams } from "../node_params";
+import { NodeParams } from "../node-params";
 
 /**
  *

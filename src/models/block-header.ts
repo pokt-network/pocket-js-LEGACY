@@ -1,5 +1,5 @@
-import { BlockID } from "./block_id";
-import { Hex } from "../utils/Hex";
+import { BlockID } from "./block-id";
+import { Hex } from "../utils/hex";
 import { Consensus } from "./consensus";
 
 /**

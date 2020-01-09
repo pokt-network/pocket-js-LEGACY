@@ -1,5 +1,5 @@
-import { Hex } from "../utils/Hex";
-import { BlockHeader } from "./block_header";
+import { Hex } from "../utils/hex";
+import { BlockHeader } from "./block-header";
 import { Commit } from "./commit";
 
 /**

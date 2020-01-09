@@ -1,4 +1,3 @@
-import { Blockchain } from "./blockchain";
 
 /**
  *
@@ -18,8 +17,8 @@ export class Proof {
 
         return new Proof(
             jsonObject.index,
-            jsonObject.sessionBlockHeight,
-            jsonObject.servicePubKey,
+            jsonObject.session_block_height,
+            jsonObject.service_pub_key,
             jsonObject.blockchain,
             jsonObject.token,
             jsonObject.signature
@@ -70,12 +69,12 @@ export class Proof {
    */
     public toJSON() {
         return {
-            "Index": this.index,
-            "SessionBlockHeight": this.sessionBlockHeight,
-            "ServicePubKey": this.servicePubKey,
-            "Blockchain": this.blockchain,
-            "Token": this.token,
-            "Signature": this.signature
+            "index": this.index,
+            "session_block_height": this.sessionBlockHeight,
+            "service_pub_key": this.servicePubKey,
+            "blockchain": this.blockchain,
+            "token": this.token,
+            "signature": this.signature
         }
     }
     /**

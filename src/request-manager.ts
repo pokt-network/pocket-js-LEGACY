@@ -1,29 +1,31 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { Node } from "./models/node";
-import { NodeProof } from "./models/input/node_proof";
+import { NodeProof } from "./models/input/node-proof";
 import { Configuration } from "./configuration/configuration";
 import enums = require("./utils/enums");
 import { StakingStatus } from "./utils/enums";
-import { RelayResponse } from "./models/output/relay_response";
-import { DispatchResponse } from "./models/output/dispatch_response";
-import { QuerySupplyResponse } from "./models/output/query_supply_response";
-import { QueryHeightResponse } from "./models/output/query_height_response";
-import { QueryNodesResponse } from "./models/output/query_nodes_response";
-import { QueryBlockResponse } from "./models/output/query_block_response";
-import { QueryTXResponse } from "./models/output/query_tx_response";
-import { QueryBalanceResponse } from "./models/output/query_balance_response";
-import { QueryNodeResponse } from "./models/output/query_node_response";
-import { QueryNodeParamsResponse } from "./models/output/query_node_params_response";
-import { QueryNodeProofsResponse } from "./models/output/query_node_proofs_response";
-import { QueryNodeProofResponse } from "./models/output/query_node_proof_response";
-import { QueryAppsResponse } from "./models/output/query_apps_response";
-import { QueryAppResponse } from "./models/output/query_app_response";
-import { QueryAppParamsResponse } from "./models/output/query_app_params_response";
-import { QueryPocketParamsResponse } from "./models/output/query_pocket_params_response";
-import { QuerySupportedChainsResponse } from "./models/output/query_supported_chains_response";
-import { RpcErrorResponse } from "./models/output/rpc_error_response";
+import { RelayResponse } from "./models/output/relay-response";
+import { DispatchResponse } from "./models/output/dispatch-response";
+import { QuerySupplyResponse } from "./models/output/query-supply-response";
+import { QueryHeightResponse } from "./models/output/query-height-response";
+import { QueryNodesResponse } from "./models/output/query-nodes-response";
+import { QueryBlockResponse } from "./models/output/query-block-response";
+import { QueryTXResponse } from "./models/output/query-tx-response";
+import { QueryBalanceResponse } from "./models/output/query-balance-response";
+import { QueryNodeResponse } from "./models/output/query-node-response";
+import { QueryNodeParamsResponse } from "./models/output/query-node-params-response";
+import { QueryNodeProofsResponse } from "./models/output/query-node-proofs-response";
+import { QueryNodeProofResponse } from "./models/output/query-node-proof-response";
+import { QueryAppsResponse } from "./models/output/query-apps-response";
+import { QueryAppResponse } from "./models/output/query-app-response";
+import { QueryAppParamsResponse } from "./models/output/query-app-params-response";
+import { QueryPocketParamsResponse } from "./models/output/query-pocket-params-response";
+import { QuerySupportedChainsResponse } from "./models/output/query-supported-chains-response";
+import { RpcErrorResponse } from "./models/output/rpc-error-response";
+import { RelayRequest } from "./models/input/relay-request";
+import { DispatchRequest } from "./models/input/dispatch-request";
+import { typeGuard } from "./utils/type-guard";
 
-// Request Manager
 /**
  *
  *
@@ -39,13 +41,13 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async relay(payload: {}, node: Node, configuration: Configuration): Promise<RelayResponse | RpcErrorResponse> {
+  public static async relay(request: RelayRequest, node: Node, configuration: Configuration): Promise<RelayResponse | RpcErrorResponse> {
 
     try {
-      const response = await RequestManager.send(enums.Routes.RELAY, payload, node, configuration);
+      const response = await RequestManager.send(enums.Routes.RELAY, request.toJSON(), node, configuration);
 
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -68,12 +70,12 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async dispatch(payload: {}, node: Node, configuration: Configuration): Promise<DispatchResponse | RpcErrorResponse >{
+  public static async dispatch(request: DispatchRequest, node: Node, configuration: Configuration): Promise<DispatchResponse | RpcErrorResponse >{
     try {
-      const response = await RequestManager.send(enums.Routes.DISPATCH, payload, node, configuration);
+      const response = await RequestManager.send(enums.Routes.DISPATCH, request.toJSON(), node, configuration);
 
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -103,7 +105,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryBlock, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -133,7 +135,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryTX, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -160,7 +162,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryHeight, {}, node, configuration);
 
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -191,7 +193,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryBalance, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -222,7 +224,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryNodes, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -238,7 +240,7 @@ export abstract class RequestManager {
   }
   /**
  *
- * Query a Transaction information
+ * Query a Node information
  * @param {string} address - Node address.
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
@@ -253,7 +255,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryNode, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -283,7 +285,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryNodeParams, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -314,7 +316,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryNodeProofs, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -344,7 +346,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryNodeProof, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -375,7 +377,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryApps, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -406,7 +408,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryApp, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -436,7 +438,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryAppParams, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -466,7 +468,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QueryPocketParams, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -496,7 +498,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QuerySupportedChains, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -526,7 +528,7 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.RPCRoutes.QuerySupply, payload, node, configuration);
   
       // Check if response is an error
-      if (response instanceof Error === false) {
+      if (!typeGuard(response, Error)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;

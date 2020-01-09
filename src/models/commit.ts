@@ -1,5 +1,5 @@
-import { BlockID } from "./block_id";
-import { CommitSignature } from "./commit_signature";
+import { BlockID } from "./block-id";
+import { CommitSignature } from "./commit-signature";
 
 /**
  *

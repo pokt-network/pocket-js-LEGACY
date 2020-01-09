@@ -1,5 +1,5 @@
-import { BlockID } from "./block_id";
-import { BlockHeader } from "./block_header";
+import { BlockID } from "./block-id";
+import { BlockHeader } from "./block-header";
 
 /**
  *

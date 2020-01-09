@@ -1,5 +1,5 @@
-import { Hex } from "../utils/Hex";
-import { TxProof } from "./tx_proof";
+import { Hex } from "../utils/hex";
+import { TxProof } from "./tx-proof";
 
 /**
  *
