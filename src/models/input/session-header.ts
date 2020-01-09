@@ -5,12 +5,13 @@
  */
 export class SessionHeader {
   public static fromJSON(json: string): SessionHeader {
-    const jsonObject = JSON.parse(json)
+    const jsonObject = JSON.parse(json);
 
     return new SessionHeader(
       jsonObject.app_pub_key,
-      jsonObject.chain
-    )
+      jsonObject.chain,
+      jsonObject.session_height
+    );
   }
 
   public readonly applicationPubKey: string;
@@ -29,11 +30,12 @@ export class SessionHeader {
     chain: string,
     sessionBlockHeight: BigInt
   ) {
-    this.applicationPubKey = applicationPubKey
-    this.chain = chain
+    this.applicationPubKey = applicationPubKey;
+    this.chain = chain;
+    this.sessionBlockHeight = sessionBlockHeight;
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid properties length.");
     }
   }
   /**
