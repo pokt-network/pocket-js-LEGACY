@@ -1,6 +1,6 @@
-import { StorageItem  } from "./storage_item"
-import { IStorageItem } from "./i_storage_item"
-import { KVStore } from "./kv_store";
+import { StorageItem  } from "./storage-item"
+import { IStorageItem } from "./i-storage-item"
+import { KVStore } from "./kv-store";
 
 export class InMemoryKVStore implements KVStore {
 
@@ -46,10 +46,7 @@ export class InMemoryKVStore implements KVStore {
     }
 
     private init(){
-        if (typeof window.localStorage === "undefined" || window.localStorage === null) {
-            var LocalStorage = require('node-localstorage').LocalStorage;
-            this.localStorage = new LocalStorage('./scratch');
-          }
-
+        var LocalStorage = require('node-localstorage').LocalStorage;
+        this.localStorage = new LocalStorage('./scratch');
     }    
 }
