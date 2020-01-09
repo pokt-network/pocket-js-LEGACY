@@ -4,17 +4,14 @@ import { KVStore } from "./kv-store";
 
 export class InMemoryKVStore implements KVStore {
 
-    private localStorage: any = undefined
+    private readonly localStorage: Map<string, string> = new Map()
 
     public add(item: IStorageItem) {
-        this.init()
-        this.localStorage.setItem(item.key, item.value)
+        this.localStorage.set(item.key, item.value)
     }
 
     public get(key: string): string {
-        this.init()
-
-        const item = this.localStorage.getItem(key)
+        const item = this.localStorage.get(key)
         if(item === undefined) {
             throw new TypeError("Key doesn't exist")
         }
@@ -25,28 +22,21 @@ export class InMemoryKVStore implements KVStore {
     public getItems(): IStorageItem[] {
         const list = new Array<StorageItem>()
 
-        for (let index = 0; index < this.localStorage.length; index++) {
-            const key = this.localStorage.key(index)
-            const value = this.localStorage.getItem(key)
+        Array.from(this.localStorage.entries()).forEach(entry => {
+            const key = entry[0]
+            const value = entry[1]
 
             list.push(new StorageItem({key, value}))
-        }
-
+        })
+        
         return list
     }
 
     public remove(key: string) {
-        this.init()
-        this.localStorage.removeItem(key)
+        this.localStorage.delete(key)
     }
 
     public clear() {
-        this.init()
         this.localStorage.clear()
     }
-
-    private init(){
-        var LocalStorage = require('node-localstorage').LocalStorage;
-        this.localStorage = new LocalStorage('./scratch');
-    }    
 }
