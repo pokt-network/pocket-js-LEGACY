@@ -21,6 +21,7 @@ import { QueryAppResponse } from "./models/output/query_app_response";
 import { QueryAppParamsResponse } from "./models/output/query_app_params_response";
 import { QueryPocketParamsResponse } from "./models/output/query_pocket_params_response";
 import { QuerySupportedChainsResponse } from "./models/output/query_supported_chains_response";
+import { RpcErrorResponse } from "./models/output/rpc_error_response";
 
 // Request Manager
 /**
@@ -38,20 +39,24 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async relay(payload: {}, node: Node, configuration: Configuration): Promise<RelayResponse | Error> {
+  public static async relay(payload: {}, node: Node, configuration: Configuration): Promise<RelayResponse | RpcErrorResponse> {
 
     try {
       const response = await RequestManager.send(enums.Routes.RELAY, payload, node, configuration);
 
       // Check if response is an error
-      if (response instanceof Error === false && response) {
+      if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const relayResponse = RelayResponse.fromJSON(response.data as string);
         return relayResponse;
       } else {
-        return new Error("Failed to send relay request with error: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to send relay request with error: " + response.data);
       }
     } catch (err) {
-      return err
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -63,19 +68,23 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async dispatch(payload: {}, node: Node, configuration: Configuration): Promise<DispatchResponse | Error> {
+  public static async dispatch(payload: {}, node: Node, configuration: Configuration): Promise<DispatchResponse | RpcErrorResponse >{
     try {
       const response = await RequestManager.send(enums.Routes.DISPATCH, payload, node, configuration);
 
       // Check if response is an error
       if (response instanceof Error === false) {
-        const dispatchResponse = DispatchResponse.fromJSON(response.data as string);
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
+        const dispatchResponse = DispatchResponse.fromJSON(response.data);
         return dispatchResponse;
       } else {
-        return new Error("Failed to send dispatch request with error: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to send dispatch request with error: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -87,7 +96,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getBlock(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBlockResponse | Error> {
+  public static async getBlock(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBlockResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
@@ -95,13 +104,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryBlockResponse = QueryBlockResponse.fromJSON(response.data);
         return queryBlockResponse;
       } else {
-        return new Error("Failed to retrieve the block information: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the block information: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -113,7 +126,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getTX(txHash: string, node: Node, configuration: Configuration): Promise<QueryTXResponse | Error> {
+  public static async getTX(txHash: string, node: Node, configuration: Configuration): Promise<QueryTXResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Hash": txHash });
 
@@ -121,13 +134,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryTXResponse = QueryTXResponse.fromJSON(response.data);
         return queryTXResponse;
       } else {
-        return new Error("Failed to retrieve the block information: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the block information: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -138,19 +155,23 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getHeight(node: Node, configuration: Configuration): Promise<QueryHeightResponse | Error> {
+  public static async getHeight(node: Node, configuration: Configuration): Promise<QueryHeightResponse | RpcErrorResponse >{
     try {
       const response = await RequestManager.send(enums.RPCRoutes.QueryHeight, {}, node, configuration);
 
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryHeightResponse = QueryHeightResponse.fromJSON(response.data);
         return queryHeightResponse;
       } else {
-        return new Error("Failed to retrieve the network block height: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the network block height: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -163,7 +184,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getBalance(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBalanceResponse | Error> {
+  public static async getBalance(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBalanceResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
@@ -171,13 +192,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryBalanceResponse = QueryBalanceResponse.fromJSON(response.data);
         return queryBalanceResponse;
       } else {
-        return new Error("Failed to retrieve current balance: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve current balance: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -190,7 +215,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getNodes(stakingStatus: StakingStatus, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodesResponse | Error> {
+  public static async getNodes(stakingStatus: StakingStatus, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodesResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "StakingStatus": stakingStatus, "Height": blockHeight });
 
@@ -198,13 +223,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryNodesResponse = QueryNodesResponse.fromJSON(response.data);
         return queryNodesResponse;
       } else {
-        return new Error("Failed to retrieve a list of nodes: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve a list of nodes: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -217,7 +246,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getNode(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeResponse | Error> {
+  public static async getNode(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
@@ -225,13 +254,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryNodeResponse = QueryNodeResponse.fromJSON(response.data);
         return queryNodeResponse;
       } else {
-        return new Error("Failed to retrieve the node information: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node information: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -243,7 +276,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getNodeParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeParamsResponse | Error> {
+  public static async getNodeParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeParamsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
@@ -251,13 +284,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryNodeParamsResponse = QueryNodeParamsResponse.fromJSON(response.data);
         return queryNodeParamsResponse;
       } else {
-        return new Error("Failed to retrieve the node params information: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node params information: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -270,7 +307,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getNodeProofs(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeProofsResponse | Error> {
+  public static async getNodeProofs(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeProofsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
@@ -278,13 +315,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryNodeProofsResponse = QueryNodeProofsResponse.fromJSON(response.data);
         return queryNodeProofsResponse;
       } else {
-        return new Error("Failed to retrieve the node proofs: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node proofs: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -296,7 +337,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getNodeProof(nodeProof: NodeProof, node: Node, configuration: Configuration): Promise<QueryNodeProofResponse | Error> {
+  public static async getNodeProof(nodeProof: NodeProof, node: Node, configuration: Configuration): Promise<QueryNodeProofResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify(nodeProof.toJSON());
 
@@ -304,10 +345,14 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryNodeProofResponse = QueryNodeProofResponse.fromJSON(response.data);
         return queryNodeProofResponse;
       } else {
-        return new Error("Failed to retrieve the node proof: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node proof: " + response.data);
       }
     } catch (err) {
       return err
@@ -323,7 +368,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getApps(stakingStatus: StakingStatus, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppsResponse | Error> {
+  public static async getApps(stakingStatus: StakingStatus, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "StakingStatus": stakingStatus, "Height": blockHeight });
 
@@ -331,13 +376,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryAppsResponse = QueryAppsResponse.fromJSON(response.data)
         return queryAppsResponse;
       } else {
-        return new Error("Failed to retrieve the list of apps: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the list of apps: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -350,7 +399,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getApp(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppResponse | Error> {
+  public static async getApp(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
@@ -358,13 +407,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryAppResponse = QueryAppResponse.fromJSON(response.data);
         return queryAppResponse;
       } else {
-        return new Error("Failed to retrieve the app infromation: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the app infromation: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -376,7 +429,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getAppParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppParamsResponse | Error> {
+  public static async getAppParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppParamsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
@@ -384,13 +437,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryAppParamsResponse = QueryAppParamsResponse.fromJSON(response.data)
         return queryAppParamsResponse;
       } else {
-        return new Error("Failed to retrieve the app params: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the app params: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -402,7 +459,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getPocketParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryPocketParamsResponse | Error> {
+  public static async getPocketParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryPocketParamsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
@@ -410,13 +467,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const queryPocketParamsResponse = QueryPocketParamsResponse.fromJSON(response.data);
         return queryPocketParamsResponse;
       } else {
-        return new Error("Failed to retrieve the pocket params: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the pocket params: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -428,7 +489,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getSupportedChains(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QuerySupportedChainsResponse | Error> {
+  public static async getSupportedChains(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QuerySupportedChainsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
@@ -436,13 +497,17 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const querySupportedChainsResponse = QuerySupportedChainsResponse.fromJSON(response.data);
         return querySupportedChainsResponse;
       } else {
-        return new Error("Failed to retrieve the supported chains list: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the supported chains list: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -454,7 +519,7 @@ export abstract class RequestManager {
  * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  public static async getSupply(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QuerySupplyResponse | Error> {
+  public static async getSupply(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QuerySupplyResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
@@ -462,14 +527,18 @@ export abstract class RequestManager {
   
       // Check if response is an error
       if (response instanceof Error === false) {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error;
+        }
         const querySupplyResponse = QuerySupplyResponse.fromJSON(response.data as string);
   
         return querySupplyResponse;
       } else {
-        return new Error("Failed to retrieve the supply information: " + response.data);
+        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the supply information: " + response.data);
       }
     } catch (err) {
-      return err;
+      return new RpcErrorResponse("0",err);
     }
   }
   /**
@@ -498,7 +567,7 @@ export abstract class RequestManager {
 
       return response;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 }

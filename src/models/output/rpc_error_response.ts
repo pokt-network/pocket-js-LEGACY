@@ -1,8 +1,3 @@
-// rpcError{
-//     Code:    errorCode,
-//     Message: errorMsg,
-// }
-
 /**
  *
  *
@@ -65,6 +60,7 @@ export class RpcErrorResponse {
    * @memberof RpcErrorResponse
    */
     public isValid(): boolean {
-        return this.code.length !== 0 && this.message.length !== 0;
+        return this.code.length !== 0 && this.code 
+        != "" && this.message != "" && this.message.length !== 0;
     }
 }
