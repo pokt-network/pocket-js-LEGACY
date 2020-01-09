@@ -98,4 +98,31 @@ export class Session {
   public isValid(): boolean {
     return this.sessionHeader.isValid() && this.sessionKey != undefined && this.sessionNodes != undefined;
   }
+
+  /**
+*
+* Creates a JSON object with the Session properties
+* @returns {JSON} - JSON Object.
+* @memberof Session
+*/
+  public toJSON() {
+    var nodeListJSON;
+    this.sessionNodes.forEach(node => {
+      nodeListJSON.push(node.toJSON());
+    });
+    return {
+      "header": this.sessionHeader.toJSON(),
+      "key": this.sessionKey,
+      "nodes": nodeListJSON
+    }
+  }
+  /**
+  *
+  * Check if the Session object is valid
+  * @returns {boolean} - True or false.
+  * @memberof Session
+  */
+  public isValid(): boolean {
+    return this.sessionHeader.isValid() && this.sessionKey != undefined && this.sessionNodes != undefined;
+  }
 }
