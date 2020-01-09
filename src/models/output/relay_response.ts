@@ -55,9 +55,9 @@ export class RelayResponse {
    */
     public toJSON() {
         return {
-            "Signature": this.signature,
-            "Response": this.response,
-            "Proof": this.proof.toJSON()
+            "signature": this.signature,
+            "response": this.response,
+            "proof": this.proof.toJSON()
         }
     }
     /**
