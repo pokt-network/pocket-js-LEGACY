@@ -1,4 +1,4 @@
-import { PocketParams } from "../pocket_params";
+import { PocketParams } from "../pocket-params";
 
 /**
  *

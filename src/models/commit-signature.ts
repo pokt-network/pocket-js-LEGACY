@@ -1,5 +1,5 @@
-import { Hex } from "../utils/Hex";
-import { BlockID } from "./block_id";
+import { Hex } from "../utils/hex";
+import { BlockID } from "./block-id";
 
 // CommitSig is a vote included in a Commit.
 // For now, it is identical to a vote,

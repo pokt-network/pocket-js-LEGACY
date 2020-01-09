@@ -1,4 +1,4 @@
-import { SessionHeader } from "./input/session_header";
+import { SessionHeader } from "./input/session-header";
 
 /**
  *

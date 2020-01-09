@@ -1,6 +1,6 @@
 import { Configuration } from './configuration/configuration';
 import { Blockchain, Node, Relay, Wallet } from './models'
-import { RequestManager } from './request_manager';
+import { RequestManager } from './request-manager';
 import paths = require("./utils/enums");
 
 /**

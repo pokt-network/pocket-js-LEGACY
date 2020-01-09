@@ -1,4 +1,4 @@
-import { BlockMeta } from "../block_meta";
+import { BlockMeta } from "../block-meta";
 import { Block } from "../block";
 
 /**

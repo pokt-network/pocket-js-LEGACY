@@ -1,4 +1,3 @@
-import { Buffer } from "buffer"
 
 // Inspiration: https://github.com/golang/go/blob/master/src/encoding/hex/hex.go
 /**

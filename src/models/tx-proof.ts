@@ -1,5 +1,5 @@
-import { Hex } from "../utils/Hex"
-import { SimpleProof } from "./simple_proof"
+import { Hex } from "../utils/hex"
+import { SimpleProof } from "./simple-proof"
 
 /**
  *

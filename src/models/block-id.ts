@@ -1,5 +1,5 @@
-import { Hex } from "../utils/Hex";
-import { PartSetHeader } from "./part_set_header";
+import { Hex } from "../utils/hex";
+import { PartSetHeader } from "./part-set-header";
 
 /**
  *
