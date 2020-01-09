@@ -1,24 +1,23 @@
 import { BondStatus } from "./output/bond_status"
 import { Hex } from "../utils/Hex"
-
 /**
  *
  *
- * @class Node
+ * @class Application
  */
-export class Node {
-    public static fromJSON(json: string): Node {
+export class Application {
+    public static fromJSON(json: string): Application {
         const jsonObject = JSON.parse(json)
         const status: BondStatus = BondStatus.getStatus(jsonObject.status)
 
-        return new Node(
+        return new Application(
             jsonObject.address,
             jsonObject.cons_pubkey,
             jsonObject.jailed,
             status,
-            jsonObject.stakedTokens,
-            jsonObject.serviceurl,
             jsonObject.chains,
+            jsonObject.Tokens,
+            jsonObject.max_relays,
             jsonObject.unstaking_time
         )
     }
@@ -27,21 +26,21 @@ export class Node {
     public readonly consPubKey: string
     public readonly jailed: boolean
     public readonly status: BondStatus
-    public readonly stakedTokens: BigInt
-    public readonly serviceURL: string
     public readonly chains: string[]
+    public readonly stakedTokens: BigInt
+    public readonly maxRelays: BigInt
     public readonly unstakingCompletionTime: string | undefined
 
     /**
-     * Creates a Node.
+     * Creates a Application.
      * @constructor
      * @param {string} address - the hex address of the validator
      * @param {string} consPubKey - the hex consensus public key of the validator.
      * @param {boolean} jailed - has the validator been jailed from staked status?
      * @param {BondStatus} status - validator status
-     * @param {BigInt} stakedTokens - how many staked tokens
-     * @param {string} serviceURL - Service node url
      * @param {string[]} chains - chains
+     * @param {BigInt} stakedTokens - how many staked tokens
+     * @param {string} maxRelays - Service Application url
      * @param {string} unstakingCompletionTime - if unstaking, min time for the validator to complete unstaking
      */
     constructor(
@@ -49,18 +48,18 @@ export class Node {
         consPubKey: string,
         jailed: boolean,
         status: BondStatus,
-        stakedTokens: BigInt,
-        serviceURL: string,
         chains: string[] = [],
+        stakedTokens: BigInt,
+        maxRelays: BigInt,
         unstakingCompletionTime?: string
     ) {
         this.address = Hex.decodeString(address)
         this.consPubKey = Hex.decodeString(consPubKey)
         this.jailed = jailed
         this.status = status
-        this.stakedTokens = stakedTokens
-        this.serviceURL = serviceURL
         this.chains = chains
+        this.stakedTokens = stakedTokens
+        this.maxRelays = maxRelays
         this.unstakingCompletionTime = unstakingCompletionTime
 
         if (!this.isValid()) {
@@ -69,9 +68,9 @@ export class Node {
     }
     /**
    *
-   * Creates a JSON object with the Node properties
+   * Creates a JSON object with the Application properties
    * @returns {JSON} - JSON Object.
-   * @memberof Node
+   * @memberof Application
    */
     public toJSON() {
         return {
@@ -79,9 +78,9 @@ export class Node {
             "cons_pubkey": this.consPubKey,
             "jailed": this.jailed,
             "status": this.status,
-            "tokens": this.stakedTokens,
-            "service_url": this.serviceURL,
             "chains": this.chains,
+            "tokens": this.stakedTokens,
+            "max_relays": this.maxRelays,
             "unstaking_time": this.unstakingCompletionTime
         }
     }
@@ -89,7 +88,7 @@ export class Node {
      *
      * Verify if all properties are valid
      * @returns {boolean} - True or false.
-     * @memberof Node
+     * @memberof Application
      */
     public isValid() {
         for (const property in this) {

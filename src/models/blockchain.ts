@@ -4,17 +4,35 @@
  * @class Blockchain
  */
 export class Blockchain {
-  public readonly name: string
-  public readonly netID: string
+  /**
+ *
+ * Creates a Blockchain object using a JSON string
+ * @param {String} json - JSON string.
+ * @returns {Block} - Block object.
+ * @memberof Block
+ */
+  public static fromJSON(json: string): Blockchain {
+    const jsonObject = JSON.parse(json);
+
+    return new Blockchain(
+      jsonObject.name,
+      jsonObject.net_id,
+    );
+  }
+  public readonly name: string;
+  public readonly netID: string;
   /**
    * Creates an instance of Blockchain.
    * @param {String} name - Blockchain's name.
    * @param {String} netID - Network identifier.
    * @memberof Blockchain
    */
-  constructor(name: string, netID: string) {
-    this.name = name
-    this.netID = netID
+  constructor(
+    name: string,
+    netID: string
+  ) {
+    this.name = name;
+    this.netID = netID;
   }
   /**
    *
@@ -23,9 +41,10 @@ export class Blockchain {
    * @memberof Blockchain
    */
   public toJSON() {
-    return JSON.parse(
-      '{ "name":"' + this.name + '", "netID":"' + this.netID + '"}'
-    )
+    return {
+      "name": this.name,
+      "net_id": this.netID
+    }
   }
   /**
    *
@@ -33,9 +52,12 @@ export class Blockchain {
    * @returns {boolean} - True or false
    * @memberof Blockchain
    */
-  public isValid() {
-    return JSON.parse(
-      '{ "name":"' + this.name + '", "netID":"' + this.netID + '"}'
-    )
+  public isValid(): boolean {
+    for (let key in this) {
+      if (!this.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

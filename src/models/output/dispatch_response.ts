@@ -1,3 +1,5 @@
+import { Node } from "..";
+
 /**
  *
  *
@@ -23,19 +25,19 @@ export class DispatchResponse {
 
     public readonly header: string;
     public readonly key: string;
-    public readonly nodes: [];
+    public readonly nodes: Node[];
 
     /**
-     * Relay Response.
+     * Dispatch Response.
      * @constructor
      * @param {string} header - 
      * @param {string} key - 
-     * @param {[]} nodes - 
+     * @param {Node[]} nodes - 
      */
     constructor(
         header: string,
         key: string,
-        nodes: [],
+        nodes: Node[],
 
     ) {
         this.header = header
@@ -53,10 +55,17 @@ export class DispatchResponse {
    * @memberof DispatchResponse
    */
     public toJSON() {
+        var nodeListJSON;
+
+        if (this.nodes.length > 0) {
+            this.nodes.forEach(node => {
+                nodeListJSON.push(node.toJSON());
+            });
+        }
         return {
             "Header": this.header,
             "Key": this.key,
-            "Nodes": this.nodes
+            "Nodes": nodeListJSON || {}
         }
     }
     /**
