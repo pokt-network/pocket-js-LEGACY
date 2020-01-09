@@ -1,11 +1,11 @@
 // Possible request path lists.
-enum Routes {
+export enum Routes {
   DISPATCH = "/v1/client/dispatch",
   RELAY = "/v1/client/relay",
   VERSION = "/v1"
 }
 
-enum RPCRoutes {
+export enum RPCRoutes {
   QueryBlock = "/v1/query/block",
   QueryTX = "/v1/query/tx",
   QueryHeight = "/v1/query/height",
@@ -23,7 +23,26 @@ enum RPCRoutes {
   QuerySupply = "/v1/query/supply",
 }
 
-export = {
-  Routes,
-  RPCRoutes
-};
+export enum StakingStatus {
+  Staked = "staked",
+  Unstaked = "unstaked",
+  Unstaking = "unstaking",
+  None = ""
+
+}
+export namespace StakingStatus {
+  export function getStatus(status: string): StakingStatus {
+    switch (status) {
+      case "staked":
+        return StakingStatus.Staked;
+      case "unstaked":
+        return StakingStatus.Unstaked;
+      case "unstaking":
+        return StakingStatus.Unstaking;
+      case "":
+        return StakingStatus.None;
+      default:
+        return StakingStatus.None;
+    }
+  }
+}
