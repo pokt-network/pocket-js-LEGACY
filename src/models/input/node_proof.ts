@@ -18,7 +18,7 @@ export class NodeProof {
 
         return new NodeProof(
             jsonObject.address,
-            jsonObject.blockchain,
+            new Blockchain(jsonObject.blockchain,""),//TODO: Confirm if the blockchain json property is a hash
             jsonObject.app_pubkey,
             jsonObject.session_block_height,
             jsonObject.height
@@ -27,8 +27,8 @@ export class NodeProof {
 
     public readonly address: string;
     public readonly blockchain: Blockchain;
-    public readonly app_pubkey: string;
-    public readonly session_block_height: BigInt;
+    public readonly appPubKey: string;
+    public readonly SBlockHeight: BigInt;
     public readonly height: BigInt;
 
     /**
@@ -36,21 +36,21 @@ export class NodeProof {
      * @constructor
      * @param {string} address - Node address.
      * @param {Blockchain} blockchain - Blockchain information.
-     * @param {string} app_pubkey - Application Key associated with a client.
-     * @param {BigInt} session_block_height - Session Block Height.
+     * @param {string} appPubKey - Application Key associated with a client.
+     * @param {BigInt} SBlockHeight - Session Block Height.
      * @param {BigInt} height - Height of session.
      */
     constructor(
         address: string,
         blockchain: Blockchain,
-        app_pubkey: string,
-        session_block_height: BigInt,
+        appPubKey: string,
+        SBlockHeight: BigInt,
         height: BigInt,
     ) {
         this.address = address
         this.blockchain = blockchain
-        this.app_pubkey = app_pubkey
-        this.session_block_height = session_block_height
+        this.appPubKey = appPubKey
+        this.SBlockHeight = SBlockHeight
         this.height = height
 
         if (!this.isValid()) {
@@ -65,11 +65,11 @@ export class NodeProof {
    */
     public toJSON() {
         return {
-            "Blockchain": this.blockchain.name,
-            "AppPubKey": this.app_pubkey,
-            "Address": this.address,
-            "SBlockHeight": this.session_block_height,
-            "Height": this.height
+            "address": this.address,
+            "blockchain": this.blockchain.name,
+            "app_pubkey": this.appPubKey,
+            "session_block_height": this.SBlockHeight,
+            "height": this.height
         }
     }
     /**
@@ -79,6 +79,7 @@ export class NodeProof {
    * @memberof NodeProof
    */
     private isValid(): boolean {
-        return this.address.length !== 0 && this.blockchain.isValid() && this.app_pubkey.length !== 0;
+        return this.address.length !== 0 && this.blockchain.isValid() && this.appPubKey.length !== 0 
+        && this.SBlockHeight != undefined && this.height != undefined;
     }
 }
