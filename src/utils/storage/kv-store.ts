@@ -1,9 +1,7 @@
-import { IStorageItem } from "./i_storage_item"
-
 export interface KVStore {
-    add(item: IStorageItem): void
+    add(key: string, value: any): void
     get(key: string): string
-    getItems(): IStorageItem[]
+    getItems(): any[]
     remove(key: string): void
     clear(): void
 }

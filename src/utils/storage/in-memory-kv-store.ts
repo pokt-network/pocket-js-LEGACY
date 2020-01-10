@@ -1,13 +1,11 @@
-import { StorageItem  } from "./storage-item"
-import { IStorageItem } from "./i-storage-item"
 import { KVStore } from "./kv-store";
 
 export class InMemoryKVStore implements KVStore {
 
-    private readonly localStorage: Map<string, string> = new Map()
+    private readonly localStorage: Map<string, any> = new Map()
 
-    public add(item: IStorageItem) {
-        this.localStorage.set(item.key, item.value)
+    public add(key: string, value: any) {
+        this.localStorage.set(key, value)
     }
 
     public get(key: string): string {
@@ -19,14 +17,14 @@ export class InMemoryKVStore implements KVStore {
         
     }
 
-    public getItems(): IStorageItem[] {
-        const list = new Array<StorageItem>()
+    public getItems(): any[] {
+        const list = new Array<any>()
 
         Array.from(this.localStorage.entries()).forEach(entry => {
             const key = entry[0]
             const value = entry[1]
 
-            list.push(new StorageItem({key, value}))
+            list.push({key, value})
         })
         
         return list
