@@ -8,6 +8,7 @@
     "strict": true,
     "alwaysStrict": true,
     "lib": ["es5", "es6", "dom"],
+    "downlevelIteration": true,
     "resolveJsonModule": true
   },
   "exclude": ["node_modules", "**/__tests__/*"]

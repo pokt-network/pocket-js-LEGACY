@@ -17,7 +17,7 @@ export class Session {
 
     for (const sessionNodeJson in jsonObject.nodes) {
       if (sessionNodeJson.hasOwnProperty("serviceurl")) {
-        sessionNodes.push(SessionNode.fromJSON(sessionNodeJson))
+        sessionNodes.push(Node.fromJSON(sessionNodeJson))
       }
     }
 
@@ -25,78 +25,24 @@ export class Session {
   }
 
   public readonly sessionHeader: SessionHeader;
-  public readonly sessionKey: Hex;
+  public readonly sessionKey: string;
   public readonly sessionNodes: Node[];
 
   /**
    * Request for Session.
    * @constructor
    * @param {SessionHeader} sessionHeader - Application Key associated with a client.
-   * @param {hex} sessionKey - Chain.
+   * @param {string} sessionKey - Chain.
    * @param {SessionNode[]} sessionNodes - Height of session.
    */
   constructor(
     sessionHeader: SessionHeader,
-    sessionKey: Hex,
+    sessionKey: string,
     sessionNodes: Node[]
   ) {
     this.sessionHeader = sessionHeader
     this.sessionKey = sessionKey
     this.sessionNodes = sessionNodes
-  }
-
-  /**
-*
-* Creates a JSON object with the Session properties
-* @returns {JSON} - JSON Object.
-* @memberof Session
-*/
-  public toJSON() {
-    var nodeListJSON;
-    this.sessionNodes.forEach(node => {
-      nodeListJSON.push(node.toJSON());
-    });
-    return {
-      "header": this.sessionHeader.toJSON(),
-      "key": this.sessionKey,
-      "nodes": nodeListJSON
-    }
-  }
-  /**
-  *
-  * Check if the Session object is valid
-  * @returns {boolean} - True or false.
-  * @memberof Session
-  */
-  public isValid(): boolean {
-    return this.sessionHeader.isValid() && this.sessionKey != undefined && this.sessionNodes != undefined;
-  }
-
-  /**
-*
-* Creates a JSON object with the Session properties
-* @returns {JSON} - JSON Object.
-* @memberof Session
-*/
-  public toJSON() {
-    var nodeListJSON;
-    this.sessionNodes.forEach(node => {
-      nodeListJSON.push(node.toJSON());
-    });
-    return {
-      "header": this.sessionHeader.toJSON(),
-      "key": this.sessionKey,
-      "nodes": nodeListJSON
-    }
-  }
-  /**
-  *
-  * Check if the Session object is valid
-  * @returns {boolean} - True or false.
-  * @memberof Session
-  */
-  public isValid(): boolean {
-    return this.sessionHeader.isValid() && this.sessionKey != undefined && this.sessionNodes != undefined;
   }
 
   /**

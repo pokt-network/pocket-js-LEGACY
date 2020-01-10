@@ -1,6 +1,15 @@
 import { SessionHeader } from "../models/input/session-header"
 import { Session } from "../models/output/session"
-import { LocalStorageHelper } from "./storage/in-memory-kv-store"
+import { KVStore } from "../utils/storage/kv-store"
+import { InMemoryKVStore } from "./storage/in-memory-kv-store"
+import { Node } from "../models"
+import { Configuration } from "../configuration/configuration"
+import { DispatchResponse } from "../models/output/dispatch-response"
+import { RpcErrorResponse } from "../models/output/rpc-error-response"
+import { RequestManager } from "../request-manager"
+import { DispatchRequest } from "../models/input/dispatch-request"
+import { typeGuard } from "../utils/type-guard";
+import { Queue } from "./structure/queue"
 
 /**
  *
@@ -11,16 +20,41 @@ import { LocalStorageHelper } from "./storage/in-memory-kv-store"
 
  export class SessionManager {
 
-    public static createSession(header: SessionHeader): Promise<string> {
-        // TODO: Get this promise from the request manager
-        const promise: Promise<string> = new Promise<string>((result, reject) => {
-            
-            if(result !== undefined){
-                LocalStorageHelper.add("session", result.toString())
-            } else {
-                reject("Session could not be created!")
+    private readonly store: KVStore
+    private readonly sessionQueue: Queue<Session>
+
+    constructor(store: KVStore = new InMemoryKVStore()) {
+        this.store = store
+        this.sessionQueue = new Queue()
+    }
+
+    public createSession(header: SessionHeader, node: Node, configuration: Configuration) {
+        const dispatchRequest: DispatchRequest = new DispatchRequest(header)
+        RequestManager.dispatch(dispatchRequest, node, configuration).then((rcpErrorResponse) => {
+            return rcpErrorResponse
+        }).then((dispatchResponse) => {
+            const session: Session = Session.fromJSON(JSON.stringify(dispatchResponse.toJSON()))
+
+            //TODO replace 10 with a configuration property
+            if(this.sessionQueue.length > 10) {
+                this.sessionQueue.enqueue(session)
+
+                const currentSession = this.getSession()
+                this.store.add(currentSession.sessionKey, currentSession)
             }
         })
-        return promise
+    }
+
+    public getSession(): Session {
+        const currentSession = this.sessionQueue.front
+        if(currentSession !== undefined) {
+            return currentSession
+        }
+
+        throw new TypeError("Session not found")
+    }
+
+    public destroySession() {
+        this.sessionQueue.dequeue()
     }
  }
