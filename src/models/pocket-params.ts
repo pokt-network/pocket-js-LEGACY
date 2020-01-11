@@ -1,4 +1,3 @@
-
 /**
  *
  *
@@ -16,10 +15,10 @@ export class PocketParams {
         const jsonObject = JSON.parse(json);
         
         return new PocketParams(
-            jsonObject.sessionNodeCount,
-            jsonObject.proofWaitingPeriod,
-            jsonObject.supportedBlockchains,
-            jsonObject.claimExpiration
+            jsonObject.session_node_ount,
+            jsonObject.proof_waiting_period,
+            jsonObject.supported_blockchains,
+            jsonObject.claim_expiration
         );
     }
 
@@ -59,10 +58,10 @@ export class PocketParams {
    */
     public toJSON() {
         return {
-            "sessionNodeCount": this.sessionNodeCount,
-            "proofWaitingPeriod": this.proofWaitingPeriod,
-            "supportedBlockchains": this.supportedBlockchains,
-            "claimExpiration": this.claimExpiration
+            "session_node_count": this.sessionNodeCount,
+            "proof_waiting_period": this.proofWaitingPeriod,
+            "supported_blockchains": this.supportedBlockchains,
+            "claim_expiration": this.claimExpiration
         }
     }
     /**

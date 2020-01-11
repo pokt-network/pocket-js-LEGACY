@@ -6,21 +6,21 @@ export enum Routes {
 }
 
 export enum RPCRoutes {
-  QueryBlock = "/v1/query/block",
-  QueryTX = "/v1/query/tx",
-  QueryHeight = "/v1/query/height",
-  QueryBalance = "/v1/query/balance",
-  QueryNodes = "/v1/query/nodes",
-  QueryNode = "/v1/query/node",
-  QueryNodeParams = "/v1/query/nodeparams",
-  QueryNodeProofs = "/v1/query/nodeproofs",
-  QueryNodeProof = "/v1/query/nodeproof",
-  QueryApps = "/v1/query/apps",
-  QueryApp = "/v1/query/app",
-  QueryAppParams = "/v1/query/appparams",
-  QueryPocketParams = "/v1/query/pocketparams",
-  QuerySupportedChains = "/v1/query/supportedchains",
-  QuerySupply = "/v1/query/supply",
+  QueryBlock = Routes.VERSION+"/query/block",
+  QueryTX = Routes.VERSION+"/query/tx",
+  QueryHeight = Routes.VERSION+"/query/height",
+  QueryBalance = Routes.VERSION+"/query/balance",
+  QueryNodes = Routes.VERSION+"/query/nodes",
+  QueryNode = Routes.VERSION+"/query/node",
+  QueryNodeParams = Routes.VERSION+"/query/nodeparams",
+  QueryNodeProofs = Routes.VERSION+"/query/nodeproofs",
+  QueryNodeProof = Routes.VERSION+"/query/nodeproof",
+  QueryApps = Routes.VERSION+"/query/apps",
+  QueryApp = Routes.VERSION+"/query/app",
+  QueryAppParams = Routes.VERSION+"/query/appparams",
+  QueryPocketParams = Routes.VERSION+"/query/pocketparams",
+  QuerySupportedChains = Routes.VERSION+"/query/supportedchains",
+  QuerySupply = Routes.VERSION+"/query/supply",
 }
 
 export enum StakingStatus {
