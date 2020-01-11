@@ -11,6 +11,7 @@ export class Configuration {
   public readonly maxNodes: number = 5;
   public readonly requestTimeOut: number = 10000;
   public readonly sslOnly: boolean = true;
+  public readonly maxSessions: number = 10
   public nodes: Node[] = [];
 
   private fs = require("fs")
