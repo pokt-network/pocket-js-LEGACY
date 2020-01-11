@@ -35,8 +35,7 @@ import { Queue } from "./structure/queue"
         }).then((dispatchResponse) => {
             const session: Session = Session.fromJSON(JSON.stringify(dispatchResponse.toJSON()))
 
-            //TODO replace 10 with a configuration property
-            if(this.sessionQueue.length > 10) {
+            if(this.sessionQueue.length > configuration.maxSessions) {
                 this.sessionQueue.enqueue(session)
 
                 const currentSession = this.getSession()
