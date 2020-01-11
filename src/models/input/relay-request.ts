@@ -34,7 +34,6 @@ export class RelayRequest {
     constructor(
         payload: RelayPayload,
         proof: Proof,
-
     ) {
         this.payload = payload
         this.proof = proof

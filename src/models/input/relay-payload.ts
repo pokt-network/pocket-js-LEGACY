@@ -1,6 +1,6 @@
 
 // Http headers map type
-type RelayHeaders = Record<string, string>;
+export type RelayHeaders = Record<string, string>;
 
 /**
  *
