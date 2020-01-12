@@ -42,15 +42,13 @@ import { Queue } from "./structure/queue"
                 if(session instanceof Session){
                     this.store.add((currentSession as Session).sessionKey, currentSession)
                 }
-                
+
                 return currentSession
             }
             return new RpcErrorResponse("500", "You have reached the maximum number of sessions");
         })
 
-        return new Promise<Session | RpcErrorResponse>((resolve) => {
-            resolve(result)
-        })
+        return result
     }
 
     public getSession(): Session | RpcErrorResponse {
