@@ -26,23 +26,23 @@ export class RelayPayload {
         );
     }
 
-    public readonly data: string;
-    public readonly method: string;
-    public readonly path: string;
+    public readonly data: String;
+    public readonly method: String;
+    public readonly path: String;
     public readonly headers: RelayHeaders;
 
     /**
      * Relay Response.
      * @constructor
-     * @param {string} data - The actual data string for the external chain.
-     * @param {string} method - The http CRUD method.
-     * @param {string} path - The REST pathx.
+     * @param {String} data - The actual data String for the external chain.
+     * @param {String} method - The http CRUD method.
+     * @param {String} path - The REST pathx.
      * @param {RelayHeaders} headers - Http headers.
      */
     constructor(
-        data: string,
-        method: string,
-        path: string,
+        data: String,
+        method: String,
+        path: String,
         headers: RelayHeaders
     ) {
         this.data = data;
