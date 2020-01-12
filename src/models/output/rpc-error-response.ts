@@ -20,18 +20,18 @@ export class RpcErrorResponse {
         );
     }
 
-    public readonly code: string;
-    public readonly message: string;
+    public readonly code: String;
+    public readonly message: String;
 
     /**
      * Relay Response.
      * @constructor
-     * @param {string} code - Error code.
-     * @param {string} message - Error message.
+     * @param {String} code - Error code.
+     * @param {String} message - Error message.
      */
     constructor(
-        code: string,
-        message: string,
+        code: String,
+        message: String,
 
     ) {
         this.code = code
