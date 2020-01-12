@@ -25,6 +25,8 @@ import { RpcErrorResponse } from "./models/output/rpc-error-response";
 import { RelayRequest } from "./models/input/relay-request";
 import { DispatchRequest } from "./models/input/dispatch-request";
 import { typeGuard } from "./utils/type-guard";
+import { SendResponse } from "./models/output/send-response";
+import { QuerySessionBlockResponse } from "./models/output/query-session-block-response";
 
 /**
  *
@@ -42,20 +44,19 @@ export abstract class RequestManager {
  * @memberof RequestManager
  */
   public static async relay(request: RelayRequest, node: Node, configuration: Configuration): Promise<RelayResponse | RpcErrorResponse> {
-
     try {
       const response = await RequestManager.send(enums.Routes.RELAY, request.toJSON(), node, configuration);
-
+      
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const relayResponse = RelayResponse.fromJSON(response.data as string);
+        const relayResponse = RelayResponse.fromJSON(JSON.stringify(response.data));
         return relayResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to send relay request with error: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to send relay request with error: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -75,19 +76,43 @@ export abstract class RequestManager {
       const response = await RequestManager.send(enums.Routes.DISPATCH, request.toJSON(), node, configuration);
 
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const dispatchResponse = DispatchResponse.fromJSON(response.data);
+        const dispatchResponse = DispatchResponse.fromJSON(JSON.stringify(response.data));
         return dispatchResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to send dispatch request with error: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to send dispatch request with error: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
     }
+  }
+    /**
+   *
+   * Query a Session Block Height
+   * @param {Node} node - Node that will receive the relay.
+   * @param {Configuration} configuration - Configuration object containing preferences information.
+   * @param {callback} callback - (Optional) callback.
+   * @memberof RequestManager
+   */
+  public static async getSessionBlockHeight(node: Node, configuration: Configuration): Promise<QuerySessionBlockResponse | RpcErrorResponse > {
+    // Get current block height
+    const queryHeightResponse = await RequestManager.getHeight(node, configuration)
+    if (!typeGuard(queryHeightResponse, QueryHeightResponse)) {
+      return queryHeightResponse
+    }
+    // Get current session block
+    const queryNodeParamsResponse = await RequestManager.getNodeParams(queryHeightResponse.height, node, configuration)
+    if (!typeGuard(queryNodeParamsResponse, QueryNodeParamsResponse)) {
+      return queryNodeParamsResponse
+    }
+    // Create querySessionBlockResponse
+    const querySessionBlockResponse = new QuerySessionBlockResponse(queryNodeParamsResponse.nodeParams.sessionBlock)
+
+    return querySessionBlockResponse
   }
   /**
  *
@@ -95,25 +120,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getBlock(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBlockResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryBlock, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryBlock.toString().toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryBlockResponse = QueryBlockResponse.fromJSON(response.data);
+        const queryBlockResponse = QueryBlockResponse.fromJSON(JSON.stringify(response.data));
         return queryBlockResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the block information: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the block information: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -125,25 +149,24 @@ export abstract class RequestManager {
  * @param {string} txHash - Transaction hash.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getTX(txHash: string, node: Node, configuration: Configuration): Promise<QueryTXResponse | RpcErrorResponse >{
     try {
-      const payload = JSON.stringify({ "Hash": txHash });
+      const payload = JSON.stringify({ "hash": txHash });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryTX, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryTX.toString().toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryTXResponse = QueryTXResponse.fromJSON(response.data);
+        const queryTXResponse = QueryTXResponse.fromJSON(JSON.stringify(response.data));
         return queryTXResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the block information: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the block information: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -154,23 +177,22 @@ export abstract class RequestManager {
  * Get the current network block height
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getHeight(node: Node, configuration: Configuration): Promise<QueryHeightResponse | RpcErrorResponse >{
     try {
-      const response = await RequestManager.send(enums.RPCRoutes.QueryHeight, {}, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryHeight.toString(), {}, node, configuration);
 
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryHeightResponse = QueryHeightResponse.fromJSON(response.data);
+        const queryHeightResponse = QueryHeightResponse.fromJSON(JSON.stringify(response.data));
         return queryHeightResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the network block height: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the network block height: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -183,25 +205,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getBalance(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBalanceResponse | RpcErrorResponse >{
     try {
-      const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
+      const payload = JSON.stringify({ "address": address, "height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryBalance, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryBalance.toString().toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryBalanceResponse = QueryBalanceResponse.fromJSON(response.data);
+        const queryBalanceResponse = QueryBalanceResponse.fromJSON(JSON.stringify(response.data));
         return queryBalanceResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve current balance: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve current balance: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -214,25 +235,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getNodes(stakingStatus: StakingStatus, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodesResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "StakingStatus": stakingStatus, "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryNodes, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryNodes.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryNodesResponse = QueryNodesResponse.fromJSON(response.data);
+        const queryNodesResponse = QueryNodesResponse.fromJSON(JSON.stringify(response.data));
         return queryNodesResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve a list of nodes: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve a list of nodes: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -245,25 +265,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getNode(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryNode, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryNode.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryNodeResponse = QueryNodeResponse.fromJSON(response.data);
+        const queryNodeResponse = QueryNodeResponse.fromJSON(JSON.stringify(response.data));
         return queryNodeResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node information: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the node information: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -275,25 +294,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getNodeParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeParamsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryNodeParams, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryNodeParams.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryNodeParamsResponse = QueryNodeParamsResponse.fromJSON(response.data);
+        const queryNodeParamsResponse = QueryNodeParamsResponse.fromJSON(JSON.stringify(response.data));
         return queryNodeParamsResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node params information: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the node params information: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -306,25 +324,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getNodeProofs(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeProofsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryNodeProofs, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryNodeProofs.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryNodeProofsResponse = QueryNodeProofsResponse.fromJSON(response.data);
+        const queryNodeProofsResponse = QueryNodeProofsResponse.fromJSON(JSON.stringify(response.data));
         return queryNodeProofsResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node proofs: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the node proofs: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -336,25 +353,24 @@ export abstract class RequestManager {
  * @param {NodeProof} nodeProof - Node's address.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getNodeProof(nodeProof: NodeProof, node: Node, configuration: Configuration): Promise<QueryNodeProofResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify(nodeProof.toJSON());
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryNodeProof, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryNodeProof.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryNodeProofResponse = QueryNodeProofResponse.fromJSON(response.data);
+        const queryNodeProofResponse = QueryNodeProofResponse.fromJSON(JSON.stringify(response.data));
         return queryNodeProofResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the node proof: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the node proof: " + response.message);
       }
     } catch (err) {
       return err
@@ -367,25 +383,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getApps(stakingStatus: StakingStatus, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "StakingStatus": stakingStatus, "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryApps, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryApps.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryAppsResponse = QueryAppsResponse.fromJSON(response.data)
+        const queryAppsResponse = QueryAppsResponse.fromJSON(JSON.stringify(response.data))
         return queryAppsResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the list of apps: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the list of apps: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -398,25 +413,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getApp(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryApp, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryApp.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryAppResponse = QueryAppResponse.fromJSON(response.data);
+        const queryAppResponse = QueryAppResponse.fromJSON(JSON.stringify(response.data));
         return queryAppResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the app infromation: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the app infromation: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -428,25 +442,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getAppParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryAppParamsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryAppParams, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryAppParams.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryAppParamsResponse = QueryAppParamsResponse.fromJSON(response.data)
+        const queryAppParamsResponse = QueryAppParamsResponse.fromJSON(JSON.stringify(response.data))
         return queryAppParamsResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the app params: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the app params: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -458,25 +471,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getPocketParams(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryPocketParamsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QueryPocketParams, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QueryPocketParams.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const queryPocketParamsResponse = QueryPocketParamsResponse.fromJSON(response.data);
+        const queryPocketParamsResponse = QueryPocketParamsResponse.fromJSON(JSON.stringify(response.data));
         return queryPocketParamsResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the pocket params: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the pocket params: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -488,25 +500,24 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getSupportedChains(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QuerySupportedChainsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QuerySupportedChains, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QuerySupportedChains.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
         }
-        const querySupportedChainsResponse = QuerySupportedChainsResponse.fromJSON(response.data);
+        const querySupportedChainsResponse = QuerySupportedChainsResponse.fromJSON(JSON.stringify(response.data));
         return querySupportedChainsResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the supported chains list: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the supported chains list: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -518,17 +529,16 @@ export abstract class RequestManager {
  * @param {BigInt} blockHeight - Block's number.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async getSupply(blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QuerySupplyResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Height": blockHeight });
 
-      const response = await RequestManager.send(enums.RPCRoutes.QuerySupply, payload, node, configuration);
+      const response = await RequestManager.send(enums.RPCRoutes.QuerySupply.toString(), payload, node, configuration);
   
       // Check if response is an error
-      if (!typeGuard(response, Error)) {
+      if (!typeGuard(response, RpcErrorResponse)) {
         const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
         if (error.isValid()) {
           return error;
@@ -537,7 +547,7 @@ export abstract class RequestManager {
   
         return querySupplyResponse;
       } else {
-        return new RpcErrorResponse(response.status.toString(), "Failed to retrieve the supply information: " + response.data);
+        return new RpcErrorResponse(response.code, "Failed to retrieve the supply information: " + response.message);
       }
     } catch (err) {
       return new RpcErrorResponse("0",err);
@@ -550,10 +560,9 @@ export abstract class RequestManager {
  * @param {Object} payload - Payload object with the parameters.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
-  private static async send(path: string = "", payload: {}, node: Node, configuration: Configuration) {
+  private static async send(path: string = "", payload: {}, node: Node, configuration: Configuration): Promise<SendResponse | RpcErrorResponse > {
     try {
       const axiosInstance = axios.create({
         headers: {
@@ -562,12 +571,24 @@ export abstract class RequestManager {
         timeout: configuration.requestTimeOut,
         url: node.serviceURL// TODO: ERROR OUT NODE WITHOUT HTTPS: URI and the scheme to https
       });
-
+      // Await response
       const response = await axiosInstance.post(path,
         payload
       );
-
-      return response;
+      // Create SendResponse object
+      const sendResponse = SendResponse.fromJSON(JSON.stringify(response))
+      // Check for validation
+      if (sendResponse.isValid()) {
+        // If successs 200
+        if (sendResponse.status == 200) {
+          return sendResponse;
+        }else {
+          return new RpcErrorResponse(sendResponse.statusText, JSON.stringify(sendResponse.data))
+        }
+      }
+      // Request failed
+      return new RpcErrorResponse("NONE", "Failed to send request with error: "+ JSON.stringify(response))
+      
     } catch (error) {
       throw error;
     }
