@@ -32,7 +32,7 @@ export class PocketParams {
      * @constructor
      * @param {BigInt} sessionNodeCount - Session node count.
      * @param {BigInt} proofWaitingPeriod - Proof waiting period.
-     * @param {string[]} supportedBlockchains - Supported blockchain array.
+     * @param {string[]} supportedBlockchains - Supported blockchain hash array.
      * @param {BigInt} claimExpiration - Claim expiration.
      */
     constructor(

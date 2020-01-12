@@ -1,5 +1,3 @@
-import { Blockchain } from "../blockchain";
-
 /**
  *
  *
@@ -18,7 +16,7 @@ export class NodeProof {
 
         return new NodeProof(
             jsonObject.address,
-            new Blockchain(jsonObject.blockchain,""),//TODO: Confirm if the blockchain json property is a hash
+            jsonObject.blockchain,
             jsonObject.app_pubkey,
             jsonObject.session_block_height,
             jsonObject.height
@@ -26,7 +24,7 @@ export class NodeProof {
     }
 
     public readonly address: string;
-    public readonly blockchain: Blockchain;
+    public readonly blockchain: string;
     public readonly appPubKey: string;
     public readonly SBlockHeight: BigInt;
     public readonly height: BigInt;
@@ -35,14 +33,14 @@ export class NodeProof {
      * Node Proof.
      * @constructor
      * @param {string} address - Node address.
-     * @param {Blockchain} blockchain - Blockchain information.
+     * @param {string} blockchain - Blockchain hash.
      * @param {string} appPubKey - Application Key associated with a client.
      * @param {BigInt} SBlockHeight - Session Block Height.
      * @param {BigInt} height - Height of session.
      */
     constructor(
         address: string,
-        blockchain: Blockchain,
+        blockchain: string,
         appPubKey: string,
         SBlockHeight: BigInt,
         height: BigInt,
@@ -66,7 +64,7 @@ export class NodeProof {
     public toJSON() {
         return {
             "address": this.address,
-            "blockchain": this.blockchain.name,
+            "blockchain": this.blockchain,
             "app_pubkey": this.appPubKey,
             "session_block_height": this.SBlockHeight,
             "height": this.height
@@ -79,7 +77,7 @@ export class NodeProof {
    * @memberof NodeProof
    */
     private isValid(): boolean {
-        return this.address.length !== 0 && this.blockchain.isValid() && this.appPubKey.length !== 0 
+        return this.address.length !== 0 && this.blockchain.length !== 0 && this.appPubKey.length !== 0 
         && this.SBlockHeight != undefined && this.height != undefined;
     }
 }

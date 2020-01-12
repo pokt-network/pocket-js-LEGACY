@@ -14,20 +14,20 @@ export class SessionHeader {
     );
   }
 
-  public readonly applicationPubKey: string;
-  public readonly chain: string;
+  public readonly applicationPubKey: String;
+  public readonly chain: String;
   public readonly sessionBlockHeight: BigInt;
 
   /**
    * Request for Session.
    * @constructor
-   * @param {string} applicationPubKey - Application Key associated with a client.
-   * @param {string} chain - Chain.
+   * @param {String} applicationPubKey - Application Key associated with a client.
+   * @param {String} chain - Chain.
    * @param {BigInt} sessionBlockHeight - Height of session.
    */
   constructor(
-    applicationPubKey: string,
-    chain: string,
+    applicationPubKey: String,
+    chain: String,
     sessionBlockHeight: BigInt
   ) {
     this.applicationPubKey = applicationPubKey;
