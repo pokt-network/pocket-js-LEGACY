@@ -28,9 +28,9 @@ import { Queue } from "./structure/queue"
         this.sessionQueue = new Queue()
     }
 
-    public createSession(header: SessionHeader, node: Node, configuration: Configuration) {
+    public async createSession(header: SessionHeader, node: Node, configuration: Configuration): Promise<Session | RpcErrorResponse> {
         const dispatchRequest: DispatchRequest = new DispatchRequest(header)
-        RequestManager.dispatch(dispatchRequest, node, configuration).then((rcpErrorResponse) => {
+        const result = await RequestManager.dispatch(dispatchRequest, node, configuration).then((rcpErrorResponse) => {
             return rcpErrorResponse
         }).then((dispatchResponse) => {
             const session: Session = Session.fromJSON(JSON.stringify(dispatchResponse.toJSON()))
@@ -39,18 +39,27 @@ import { Queue } from "./structure/queue"
                 this.sessionQueue.enqueue(session)
 
                 const currentSession = this.getSession()
-                this.store.add(currentSession.sessionKey, currentSession)
+                if(session instanceof Session){
+                    this.store.add((currentSession as Session).sessionKey, currentSession)
+                }
+                
+                return currentSession
             }
+            return new RpcErrorResponse("500", "You have reached the maximum number of sessions");
+        })
+
+        return new Promise<Session | RpcErrorResponse>((resolve) => {
+            resolve(result)
         })
     }
 
-    public getSession(): Session {
+    public getSession(): Session | RpcErrorResponse {
         const currentSession = this.sessionQueue.front
         if(currentSession !== undefined) {
             return currentSession
         }
 
-        throw new TypeError("Session not found")
+        return new RpcErrorResponse("500", "Session not found")
     }
 
     public destroySession() {
