@@ -1,7 +1,19 @@
 import { Configuration } from './configuration/configuration';
-import { Blockchain, Node, Relay, Wallet } from './models'
+import { Node } from './models/node'
 import { RequestManager } from './request-manager';
-import paths = require("./utils/enums");
+import { RelayPayload, RelayHeaders } from './models/input/relay-payload';
+import { RelayRequest } from './models/input/relay-request';
+import { Proof } from './models/proof';
+import { typeGuard } from "./utils/type-guard";
+import { RelayResponse } from './models/output/relay-response';
+import { SessionManager } from './utils/session-manager';
+import { SessionHeader } from './models/input/session-header';
+import { QuerySessionBlockResponse } from './models/output/query-session-block-response';
+import { RpcErrorResponse } from './models/output/rpc-error-response';
+import { Session } from 'inspector';
+import { Keybase } from './keybase/keybase';
+import { Account } from './models/account';
+import { Routing } from './models/routing';
 
 /**
  *
@@ -9,215 +21,197 @@ import paths = require("./utils/enums");
  * @class Pocket
  */
 export class Pocket {
+  public readonly sessionManager: SessionManager
   public readonly configuration: Configuration
+  public readonly routingTable: Routing
+  public readonly optionalConfiguration?: Configuration
+
   /**
    * Creates an instance of Pocket.
    * @param {Object} opts - Options for the initializer, devID, networkName, netIDs, maxNodes, requestTimeOut.
    * @memberof Pocket
    */
-  constructor(opts: { [key: string]: any } = {}) {
-    const blockchains = []
-
-    if (opts.devID == null || opts.networkName == null || opts.netIDs == null) {
-      throw new Error("Invalid number of arguments")
-    }
-
-    if (Array.isArray(opts.netIDs)) {
-      opts.netIDs.forEach(element => {
-        const blockchain = new Blockchain(opts.networkName, element)
-        blockchains.push(blockchain.toJSON())
-      })
-    } else {
-      const blockchain = new Blockchain(opts.networkName, opts.netIDs)
-      blockchains.push(blockchain.toJSON())
-    }
-
-    this.configuration = new Configuration(
-      opts.devID,
-      blockchains,
-      opts.maxNodes || 5,
-      opts.requestTimeOut || 10000,
-      opts.sslOnly || true
-    )
+  constructor(configuration: Configuration, optionalConfiguration?: Configuration) {
+    this.configuration = configuration
+    this.optionalConfiguration = optionalConfiguration ?? undefined
+    this.sessionManager = new SessionManager()
+    this.routingTable = new Routing([], configuration)
   }
   /**
    *
-   * Create a Relay instance
-   * @param {Blockchain} blockchain - Blockchain object.
+   * Create a Relay
+   * @param {String} blockchain - Blockchain hash.
    * @param {String} data - String holding the json rpc call.
-   * @param {string} httpMethod - (Optional) HTTP Method.
-   * @param {string} path - (Optional) API path.
+   * @param {String} httpMethod - (Optional) HTTP Method.
+   * @param {String} path - (Optional) API path.
    * @param {Object} queryParams - (Optional) An object holding the query params.
    * @param {Object} headers - (Optional) An object holding the HTTP Headers.
    * @returns {Relay} - New Relay instance.
    * @memberof Pocket
    */
-  public createRelay(
-    blockchain: Blockchain,
-    data: string,
-    httpMethod = "",
+  public async createRelayRequest(
+    data: String,
+    blockchain: String,
+    headers: RelayHeaders,
+    node?: Node,
+    useMainConfig = true,
+    method = "",
     path = "",
-    queryParams = "",
-    headers = {}
-  ) {
-    // Check if data is a json tring
-    if (typeof data == 'string') {
-      return new Relay(blockchain, data, this.configuration, httpMethod, path, queryParams, headers);
+  ): Promise<RelayRequest | RpcErrorResponse> {
+    const relayPayload = new RelayPayload(data, method, path, headers)
+    let config = this.configuration
+    let activeNode
+
+    // Check if using main or optional configuration
+    if (!useMainConfig && this.optionalConfiguration != undefined) {
+      config = this.optionalConfiguration
     }
-    return new Relay(
-      blockchain,
-      JSON.stringify(data),
-      this.configuration,
-      httpMethod,
-      path,
-      queryParams,
-      headers
-    )
-  }
-  /**
-   *
-   * Filter nodes by Blockchain
-   * @param {Blockchain} blockchain - Blockchain.
-   * @returns {Node} - New Node object.
-   * @memberof Pocket
-   */
-  public async getNode(blockchain: Blockchain) {
-    try {
-      const nodes: Node[] = []
-
-      if (this.configuration.nodesIsEmpty()) {
-        const response = await this.retrieveNodes()
-
-        if (response instanceof Error === true) {
-          throw response
-        } else {
-          // Save the nodes to the configuration.
-          this.configuration.setNodes(response as Node[])
-        }
+    // Check if node is provided or retrieve one
+    if (node == undefined) {
+      activeNode = this.routingTable.readNodeBy(blockchain)
+      if (!typeGuard(activeNode, Node)) {
+        return activeNode 
       }
+    }
+    if (activeNode == undefined) {
+      return new RpcErrorResponse("101","Failed to retrieve a node for the relay request.") 
+    }
+    // Get session block height
+    const sessionBlockHeightResponse = await RequestManager.getSessionBlockHeight(activeNode, config)
+    if (!typeGuard(sessionBlockHeightResponse, QuerySessionBlockResponse)) {
+      return sessionBlockHeightResponse 
+    }
+    
+    // TODO: Add toJSON method to the pocket-aat lib
+    // TODO: Proof 1st parameter index value origin pending
+    // Create a proof object
+    const relayProof = new Proof(BigInt(0), sessionBlockHeightResponse.sessionBlock, activeNode?.address,
+      blockchain, JSON.parse(JSON.stringify(config.pocketAAT)), config.pocketAAT.signature)
+    // Create relay Request
+    const relayRequest = new RelayRequest(relayPayload, relayProof)
 
-      this.configuration.nodes.forEach(function (node: Node) {
-        if (node.isEqual(blockchain)) {
-          nodes.push(node);
-        }
-      })
-
-      if (nodes.length <= 0) {
-        return null
-      }
-
-      return nodes[Math.floor(Math.random() * nodes.length)]
-    } catch (error) {
-      return null
+    // Check if the relay request is valid
+    if (relayRequest.isValid()) {
+      return relayRequest
+    } else {
+      return new RpcErrorResponse("101","Failed to create a Relay: One or more properties are invalid")
     }
   }
   /**
    *
-   * Send an already created Relay
-   * @param {Relay} relay - Relay instance with the information.
+   * Sends a Relay Request
+   * @param {RelayRequest} relay - Relay instance with the information.
    * @param {callback} callback - callback handler.
    * @returns {String} - A String with the response.
    * @memberof Pocket
    */
-  async sendRelay(relay: Relay, configuration = this.configuration, callback?: (result?: any[], error?: Error) => any) {
-    // Verify all relay properties are set
-    if (!relay.isValid()) {
-      if (callback) {
-        callback(undefined, new Error("Relay is missing a property, please verify all properties."));
-        return;
-      } else {
-        return new Error(
-          "Relay is missing a property, please verify all properties."
-        );
-      }
+  async sendRelay(relay: RelayRequest, configuration = this.configuration): Promise<RelayResponse | RpcErrorResponse> {
+    // Retrieves a session
+    const currentSession = await this.retrieveSession(relay.proof.blockchain)
+    if (!typeGuard(currentSession, Session)) {
+      return currentSession
     }
-    try {
-      // Retrieve a node for specified blockchain
-      var node = await this.getNode(relay.blockchain);
+    const nodes = this.routingTable.filterNodes(relay.proof.blockchain, currentSession.sessionNodes)
+    const node = nodes[Math.floor(Math.random() * nodes.length)]
+    // Send relay
+    const relayResponse = await RequestManager.relay(relay, node, configuration);
+    // Return response
+    return relayResponse
+  }
+  //
+  // Account management
+  //
+  /**
+   * Import account from the keybase using a passphrase.
+   * @param {string} passphrase - Account passphrase.
+   * @param {string} privateKey - Account privateKey.
+   * @returns {Account} - Account.
+   * @memberof Pocket
+   */
+  public async importAccount(passphrase: string, privateKey: string): Promise<Account | Error> {
+    const keybase = new Keybase()
+    const importedAccountOrError = await keybase.importAccount(
+        Buffer.from(
+            privateKey,
+            "hex"
+        ),
+        passphrase
+    )
+    return importedAccountOrError
+  }
+  /**
+   * Export account to retrieve the private key.
+   * @param {Account} blockchain - Account object.
+   * @param {string} passphrase - Account passphrase.
+   * @returns {Buffer} - Private Key buffer.
+   * @memberof Pocket
+   */
+  public async exportAccount(account: Account, passphrase: string): Promise<Buffer | Error> {
+    const keybase = new Keybase()
 
-      if (node == null) {
-        if (callback) {
-          callback(undefined, new Error("Unable to retrieve a Node."));
-          return;
-        } else {
-          return new Error("Unable to retrieve a Node.");
-        }
-      }
-      // Send relay
-      const response = await RequestManager.relay(paths.Routes.RELAY, node, configuration);
-      
-      // Response
-      if (response instanceof Error === false) {
-        if (callback) {
-          callback(response as any);
-          return;
-        } else {
-          return response
-        }
-      } else {
-        if (callback) {
-          callback(undefined, response as Error);
-          return;
-        } else {
-          return response
-        }
-      }
-    } catch (error) {
-      if (callback) {
-        callback(
-          undefined,
-          new Error("Failed to send relay with error: " + error)
-        )
-        return
-      } else {
-        return new Error("Failed to send relay with error: " + error)
-      }
+    // Export the private key
+    const privateKey = await keybase.exportAccount(
+        account.addressHex,
+        passphrase
+    )
+    // Check if is type Buffer
+    if (!typeGuard(privateKey, Buffer)) {
+      return privateKey
+    }
+    // Check private key length
+    if (privateKey.length == 64) {
+      return privateKey
+    } else {
+      return new Error("Failed to export account")
     }
   }
   /**
-   *
-   * Retrieve a list of service nodes from the Node Dispatcher
-   * @param {callback} callback
-   * @returns {Node} - A list of Nodes.
+   * Creates a new session.
+   * @param {String} blockchain - Blockchain hash
+   * @returns {Relay} - New Relay instance.
    * @memberof Pocket
    */
-  public async retrieveNodes(callback?: (result?: any, error?: Error) => any) {
-    try {
-      var dispatch = this.getDispatch();
-      var nodes: Node[] = [];
-      var response = await dispatch.retrieveServiceNodes();
+  private async createSession(blockchain: String): Promise< Session | RpcErrorResponse> {
+    let node: Node | RpcErrorResponse
 
-      if (!(response instanceof Error) && response !== undefined && response.length != 0) {
-        // Save the nodes to the configuration.
-        this.configuration.nodes = nodes
-        // Return a list of nodes
-        if (callback) {
-          callback(this.configuration.nodes)
-          return
-        } else {
-          return this.configuration.nodes
-        }
-      } else {
-        // Returns an Error
-        if (callback) {
-          callback(null, new Error("Failed to retrieve a list of nodes."))
-          return
-        } else {
-          return new Error("Failed to retrieve a list of nodes.")
-        }
-      }
-    } catch (error) {
-      if (callback) {
-        callback(
-          null,
-          new Error("Failed to retrieve a list of nodes with error: " + error)
-        )
-        return
-      } else {
-        return new Error(
-          "Failed to retrieve a list of nodes with error: " + error
-        )
-      }
+    if (this.routingTable.nodes.length !== 0) {
+      // Load and initial node list to create session
+      node = this.routingTable.readNodeBy(blockchain)
+    } else {
+      return new RpcErrorResponse("101", "Failed to load the initial local node list")
     }
+    // If failed to read a node return error
+    if (typeGuard(node, RpcErrorResponse)) {
+      return node
+    }
+    // Retrieve the session block height
+    const sessionBlockHeightResponse = await RequestManager.getSessionBlockHeight(node, this.configuration)
+    if (!typeGuard(sessionBlockHeightResponse, QuerySessionBlockResponse)) {
+      return sessionBlockHeightResponse 
+    }
+    // Create session header
+    const header = new SessionHeader(this.configuration.pocketAAT.applicationPublicKey, blockchain, 
+      sessionBlockHeightResponse.sessionBlock)
+    // Create the session
+    const session = await this.sessionManager.createSession(header, node, this.configuration)
+    if (!typeGuard(session, Session)) {
+      return session
+    } else {
+      return new RpcErrorResponse("101", session)
+    }
+  }
+  /**
+   * Retrieves a current session or creates a new one
+   * @param {String} blockchain - Blockchain hash.
+   * @returns {Session} - Current or new session.
+   * @memberof Pocket
+   */
+  private async retrieveSession(blockchain: String): Promise< Session | RpcErrorResponse>{
+    let currentSession = SessionManager.getSession()
+    if (!typeGuard(currentSession, Session)) {
+      currentSession = await this.createSession(blockchain)
+      return currentSession
+    }
+    return currentSession
   }
 }
