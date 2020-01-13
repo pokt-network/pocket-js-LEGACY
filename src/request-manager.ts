@@ -40,7 +40,6 @@ export abstract class RequestManager {
  * @param {Object} payload - Payload object containing the needed parameters.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async relay(request: RelayRequest, node: Node, configuration: Configuration): Promise<RelayResponse | RpcErrorResponse> {
@@ -68,7 +67,6 @@ export abstract class RequestManager {
  * @param {Object} payload - Payload object containing the needed parameters.
  * @param {Node} node - Node that will receive the relay.
  * @param {Configuration} configuration - Configuration object containing preferences information.
- * @param {callback} callback - (Optional) callback.
  * @memberof RequestManager
  */
   public static async dispatch(request: DispatchRequest, node: Node, configuration: Configuration): Promise<DispatchResponse | RpcErrorResponse >{
@@ -95,7 +93,6 @@ export abstract class RequestManager {
    * Query a Session Block Height
    * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - Configuration object containing preferences information.
-   * @param {callback} callback - (Optional) callback.
    * @memberof RequestManager
    */
   public static async getSessionBlockHeight(node: Node, configuration: Configuration): Promise<QuerySessionBlockResponse | RpcErrorResponse > {
@@ -151,7 +148,7 @@ export abstract class RequestManager {
  * @param {Configuration} configuration - Configuration object containing preferences information.
  * @memberof RequestManager
  */
-  public static async getTX(txHash: string, node: Node, configuration: Configuration): Promise<QueryTXResponse | RpcErrorResponse >{
+  public static async getTX(txHash: String, node: Node, configuration: Configuration): Promise<QueryTXResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "hash": txHash });
 
@@ -207,7 +204,7 @@ export abstract class RequestManager {
  * @param {Configuration} configuration - Configuration object containing preferences information.
  * @memberof RequestManager
  */
-  public static async getBalance(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBalanceResponse | RpcErrorResponse >{
+  public static async getBalance(address: String, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryBalanceResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "address": address, "height": blockHeight });
 
@@ -326,7 +323,7 @@ export abstract class RequestManager {
  * @param {Configuration} configuration - Configuration object containing preferences information.
  * @memberof RequestManager
  */
-  public static async getNodeProofs(address: string, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeProofsResponse | RpcErrorResponse >{
+  public static async getNodeProofs(address: String, blockHeight: BigInt = BigInt(0), node: Node, configuration: Configuration): Promise<QueryNodeProofsResponse | RpcErrorResponse >{
     try {
       const payload = JSON.stringify({ "Address": address, "Height": blockHeight });
 
