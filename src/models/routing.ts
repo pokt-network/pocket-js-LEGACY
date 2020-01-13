@@ -49,7 +49,21 @@ export class Routing {
      * @memberof Routing
      */
     public readRandomNode(): Node {
-        return this.nodes[Math.floor(Math.random() * this.nodes.length)];
+        return this.nodes[Math.floor(Math.random() * this.nodes.length)]
+    }
+
+    /**
+     * Gets a node for the Pocket network rpc calls
+     * @memberof Routing
+     */
+    public getNode(): Node | RpcErrorResponse {
+        if (this.nodes.length < 0) {
+           this.loadLocalNodes()
+           if (this.nodes.length > 0) {
+               return this.nodes[Math.floor(Math.random() * this.nodes.length)]
+           }
+        }
+        return new RpcErrorResponse("101", "Node not found in routing table.")
     }
 
     /**
