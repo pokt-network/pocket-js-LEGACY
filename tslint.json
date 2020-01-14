@@ -6,7 +6,10 @@
         "prefer-for-of": false,
         "no-console": false,
         "no-namespace": false,
-        "semicolon": [true, "never"]
+        "semicolon": [true, "never"],
+        "no-unused-expression": false,
+        "only-arrow-functions": false,
+        "max-classes-per-file": [true, 2]
     }
  }
  
