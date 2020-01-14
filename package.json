@@ -12,7 +12,7 @@
     },
     "scripts": {
         "test": "mocha --require ts-node/register tests/**/*.ts",
-        "build": "npm run format & npm run lint & tsc",
+        "build": "npm run lint & tsc",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "lint": "tslint -p tsconfig.json"
     },
@@ -61,7 +61,8 @@
         "js-sha256": "^0.9.0",
         "pbkdf2": "^3.0.17",
         "node-localstorage": "^2.1.5",
-        "seedrandom": "^3.0.5"
+        "seedrandom": "^3.0.5",
+        "pocket-aat-js": "file:../aat-sdk"
     },
     "devDependencies": {
         "@types/chai": "^4.2.7",
