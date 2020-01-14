@@ -1,4 +1,4 @@
-import { Node } from "./node";
-import { Wallet } from "./wallet";
+import { Node } from "./node"
+import { Wallet } from "./wallet"
 
-export {Node, Wallet };
+export { Node, Wallet }
