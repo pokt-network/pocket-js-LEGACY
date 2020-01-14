@@ -6,260 +6,258 @@
  */
 
 export class Queue<T> {
+  private intHead?: QueueItem<T> = undefined
+  private intTail?: QueueItem<T> = undefined
+  private iintLength: number = 0
 
-    private _head?: QueueItem<T> = undefined
-    private _tail?: QueueItem<T> = undefined
-    private _length: number = 0
+  constructor(...values: T[]) {
+    if (values.length > 0) {
+      values.forEach(value => {
+        this.append(value)
+      })
+    }
+  }
 
-    constructor(...values: T[]) {
-        if (values.length > 0) {
-          values.forEach((value) => {
-            this.append(value);
-          });
-        }
-      }
+  public *iterator(): IterableIterator<T> {
+    let currentItem = this.intHead
 
-      *iterator(): IterableIterator<T> {
-        let currentItem = this._head;
-    
-        while(currentItem) {
-          yield currentItem.value
-          currentItem = currentItem.next
-        }
-      }
-    
-      [Symbol.iterator]() {
-        return this.iterator();
-      }
-    
-      get head(): T | undefined {
-        return this._head !== undefined ? this._head.value : undefined;
-      }
-    
-      get tail(): T | undefined {
-        return this._tail !== undefined ? this._tail.value : undefined;
-      }
-    
-      get length(): number {
-        return this._length;
-      }
-    
-      insert(val: T, previousItem: T, checkDuplicates: boolean = false): boolean {
-    
-        if (checkDuplicates && this.isDuplicate(val)) {
-          return false;
-        }
-    
-        let newItem: QueueItem<T> = new QueueItem<T>(val);
-        let currentItem: QueueItem<T> | undefined = this._head;
-    
-        if (!currentItem) {
-          return false;
+    while (currentItem) {
+      yield currentItem.value
+      currentItem = currentItem.next
+    }
+  }
+
+  public [Symbol.iterator]() {
+    return this.iterator()
+  }
+
+  get head(): T | undefined {
+    return this.intHead !== undefined ? this.intHead.value : undefined
+  }
+
+  get tail(): T | undefined {
+    return this.intTail !== undefined ? this.intTail.value : undefined
+  }
+
+  get length(): number {
+    return this.iintLength
+  }
+
+  public insert(
+    val: T,
+    previousItem: T,
+    checkDuplicates: boolean = false
+  ): boolean {
+    if (checkDuplicates && this.isDuplicate(val)) {
+      return false
+    }
+
+    const newItem: QueueItem<T> = new QueueItem<T>(val)
+    let currentItem: QueueItem<T> | undefined = this.intHead
+
+    if (!currentItem) {
+      return false
+    } else {
+      while (true) {
+        if (currentItem.value === previousItem) {
+          newItem.next = currentItem.next
+          newItem.prev = currentItem
+          currentItem.next = newItem
+
+          if (newItem.next) {
+            newItem.next.prev = newItem
+          } else {
+            this.intTail = newItem
+          }
+          this.iintLength++
+          return true
         } else {
-          while (true) {
-            if (currentItem.value === previousItem) {
-              newItem.next = currentItem.next;
-              newItem.prev = currentItem;
-              currentItem.next = newItem;
-    
-              if (newItem.next) {
-                newItem.next.prev = newItem;
-              } else {
-                this._tail = newItem;
-              }
-              this._length++;
-              return true;
-            } else {
-              if (currentItem.next) {
-                currentItem = currentItem.next;
-              }
-              else {
-                return false;
-              }
-            }
+          if (currentItem.next) {
+            currentItem = currentItem.next
+          } else {
+            return false
           }
         }
       }
-    
-      append(val: T, checkDuplicates: boolean = false): boolean {
-    
-        if (checkDuplicates && this.isDuplicate(val)) {
-          return false;
-        }
-    
-        let newItem = new QueueItem<T>(val);
-    
-        if (!this._tail) {
-          this._head = this._tail = newItem;
-        } else {
-          this._tail.next = newItem;
-          newItem.prev = this._tail;
-          this._tail = newItem;
-        }
-    
-        this._length++;
-        return true;
+    }
+  }
+
+  public append(val: T, checkDuplicates: boolean = false): boolean {
+    if (checkDuplicates && this.isDuplicate(val)) {
+      return false
+    }
+
+    const newItem = new QueueItem<T>(val)
+
+    if (!this.intTail) {
+      this.intHead = this.intTail = newItem
+    } else {
+      this.intTail.next = newItem
+      newItem.prev = this.intTail
+      this.intTail = newItem
+    }
+
+    this.iintLength++
+    return true
+  }
+
+  public prepend(val: T, checkDuplicates: boolean = false): boolean {
+    if (checkDuplicates && this.isDuplicate(val)) {
+      return false
+    }
+
+    const newItem = new QueueItem<T>(val)
+
+    if (!this.intHead) {
+      this.intHead = this.intTail = newItem
+    } else {
+      newItem.next = this.intHead
+      this.intHead.prev = newItem
+      this.intHead = newItem
+    }
+
+    this.iintLength++
+    return true
+  }
+
+  public remove(val: T): T | undefined {
+    let currentItem = this.intHead
+
+    if (!currentItem) {
+      return
+    }
+
+    if (currentItem.value === val) {
+      this.intHead = currentItem.next
+      this.iintLength--
+
+      if (this.intHead !== undefined) {
+        this.intHead.prev = undefined
       }
-    
-      prepend(val: T, checkDuplicates: boolean = false): boolean {
-    
-        if (checkDuplicates && this.isDuplicate(val)) {
-          return false;
-        }
-        
-        let newItem = new QueueItem<T>(val);
-    
-        if (!this._head) {
-          this._head = this._tail = newItem;
-        } else {
-          newItem.next = this._head;
-          this._head.prev = newItem;
-          this._head = newItem;
-        }
-        
-        this._length++;
-        return true;
-      }
-    
-      remove(val: T): T | undefined {
-        let currentItem = this._head;
-    
-        if (!currentItem) {
-          return;
-        }
-    
+
+      currentItem.next = currentItem.prev = undefined
+
+      return currentItem.value
+    } else {
+      while (true) {
         if (currentItem.value === val) {
-          this._head = currentItem.next;
-          this._length--;
-
-          if(this._head !== undefined){
-            this._head.prev = undefined;
-          }
-
-          currentItem.next = currentItem.prev = undefined;
-          
-          return currentItem.value;
-    
-        } else {
-          while (true) {
-            if (currentItem.value === val) {
-              if (currentItem.next) {
-                if(currentItem.prev){
-                    currentItem.prev.next = currentItem.next;
-                }
-                currentItem.next.prev = currentItem.prev;
-                currentItem.next = currentItem.prev = undefined;
-              } else {
-                if(currentItem.prev){
-                    currentItem.prev.next = undefined;
-                }
-                this._tail = currentItem.prev;
-                currentItem.next = currentItem.prev = undefined;
-              }
-              this._length--;
-              return currentItem.value;
-            } else {
-              if (currentItem.next) {
-                currentItem = currentItem.next;
-              } else {
-                return;
-              }
+          if (currentItem.next) {
+            if (currentItem.prev) {
+              currentItem.prev.next = currentItem.next
             }
+            currentItem.next.prev = currentItem.prev
+            currentItem.next = currentItem.prev = undefined
+          } else {
+            if (currentItem.prev) {
+              currentItem.prev.next = undefined
+            }
+            this.intTail = currentItem.prev
+            currentItem.next = currentItem.prev = undefined
+          }
+          this.iintLength--
+          return currentItem.value
+        } else {
+          if (currentItem.next) {
+            currentItem = currentItem.next
+          } else {
+            return
           }
         }
       }
-    
-      removeHead(): T | undefined {
-        let currentItem = this._head;
-    
-        // empty list
-        if (!currentItem) {
-          return
-        }
-    
-        // single item list
-        if (!this._head?.next) {
-          this._head = undefined;
-          this._tail = undefined;
-        
-        // full list
-        } else {
-            this._head.next.prev = undefined;  
-          this._head = this._head.next;
-          currentItem.next = currentItem.prev = undefined;
-        }
-    
-        this._length--;
-        return currentItem.value;
-      }
-    
-      removeTail(): T | undefined {
-        let currentItem = this._tail;
-    
-        // empty list
-        if (!currentItem) {
-          return
-        }
-    
-        // single item list
-        if (!this._tail?.prev) {
-          this._head = undefined;
-          this._tail = undefined;
-              
-        // full list
-        } else {
-          this._tail.prev.next = undefined;
-          this._tail = this._tail.prev;
-          currentItem.next = currentItem.prev = undefined;
-        }
-    
-        this._length--;
-        return currentItem.value;
-      }
-    
-      first(num: number): T[] {
-        let iter = this.iterator();
-        let result = [];
-    
-        let n = Math.min(num, this.length);
-    
-        for (let i = 0; i < n; i++) {
-          let val = iter.next();
-          result.push(val.value);
-        }
-        return result;
-      }
-    
-      toArray(): T[] {
-        return [...this];
-      }
+    }
+  }
 
-      get front() {
-        return this.head;
-      }
-    
-      enqueue(val: T) {
-        this.append(val);
-      }
-    
-      dequeue(): T | undefined {
-        return this.removeHead();
-      }
-    
-      private isDuplicate(val: T): boolean {
-        let set = new Set(this.toArray());
-        return set.has(val);
-      }
+  public removeHead(): T | undefined {
+    const currentItem = this.intHead
+
+    // empty list
+    if (!currentItem) {
+      return
     }
-    
-    export class QueueItem<T> {
-      value: T;
-      next?: QueueItem<T>;
-      prev?: QueueItem<T>;
-    
-      constructor(val: T) {
-        this.value = val;
-        this.next = undefined;
-        this.prev = undefined;
-      }
+
+    // single item list
+    if (!this.intHead?.next) {
+      this.intHead = undefined
+      this.intTail = undefined
+
+      // full list
+    } else {
+      this.intHead.next.prev = undefined
+      this.intHead = this.intHead.next
+      currentItem.next = currentItem.prev = undefined
     }
+
+    this.iintLength--
+    return currentItem.value
+  }
+
+  public removeTail(): T | undefined {
+    const currentItem = this.intTail
+
+    // empty list
+    if (!currentItem) {
+      return
+    }
+
+    // single item list
+    if (!this.intTail?.prev) {
+      this.intHead = undefined
+      this.intTail = undefined
+
+      // full list
+    } else {
+      this.intTail.prev.next = undefined
+      this.intTail = this.intTail.prev
+      currentItem.next = currentItem.prev = undefined
+    }
+
+    this.iintLength--
+    return currentItem.value
+  }
+
+  public first(num: number): T[] {
+    const iter = this.iterator()
+    const result = []
+
+    const n = Math.min(num, this.length)
+
+    for (let i = 0; i < n; i++) {
+      const val = iter.next()
+      result.push(val.value)
+    }
+    return result
+  }
+
+  public toArray(): T[] {
+    return [...this]
+  }
+
+  get front() {
+    return this.head
+  }
+
+  public enqueue(val: T) {
+    this.append(val)
+  }
+
+  public dequeue(): T | undefined {
+    return this.removeHead()
+  }
+
+  private isDuplicate(val: T): boolean {
+    const set = new Set(this.toArray())
+    return set.has(val)
+  }
+}
+
+export class QueueItem<T> {
+  public value: T
+  public next?: QueueItem<T>
+  public prev?: QueueItem<T>
+
+  constructor(val: T) {
+    this.value = val
+    this.next = undefined
+    this.prev = undefined
+  }
+}

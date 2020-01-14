@@ -1,4 +1,4 @@
-import { PocketAAT } from 'pocket-aat-js';
+import { PocketAAT } from "pocket-aat-js"
 
 /**
  *
@@ -6,7 +6,6 @@ import { PocketAAT } from 'pocket-aat-js';
  * @class Configuration
  */
 export class Configuration {
-
   public readonly blockchains: string[]
   public readonly pocketAAT: PocketAAT
   public readonly maxNodes: number = 5
@@ -32,7 +31,7 @@ export class Configuration {
     sslOnly: boolean
   ) {
     this.blockchains = blockchains
-    this.pocketAAT = pocketAAT,
+    this.pocketAAT = pocketAAT
     this.maxNodes = maxNodes || 5
     this.requestTimeOut = requestTimeOut || 10000
     this.sslOnly = sslOnly || true
@@ -44,7 +43,6 @@ export class Configuration {
    * @memberof Configuration
    */
   public isValid(): boolean {
-    this.blockchains.length != 0 && this.pocketAAT.isValid()
-    return false
+    return this.blockchains.length !== 0 && this.pocketAAT.isValid()
   }
 }

@@ -1,6 +1,5 @@
 import { Node } from "../node"
 import { SessionHeader } from "../input/session-header"
-import { Hex } from "../../utils/hex";
 
 /**
  *
@@ -9,11 +8,9 @@ import { Hex } from "../../utils/hex";
  */
 export class Session {
   public static fromJSON(json: string): Session {
-    const jsonObject = JSON.parse(json);
-    const sessionHeader = SessionHeader.fromJSON(
-      jsonObject.header
-    );
-    const sessionNodes: Node[] = [];
+    const jsonObject = JSON.parse(json)
+    const sessionHeader = SessionHeader.fromJSON(jsonObject.header)
+    const sessionNodes: Node[] = []
 
     for (const sessionNodeJson in jsonObject.nodes) {
       if (sessionNodeJson.hasOwnProperty("serviceurl")) {
@@ -24,9 +21,9 @@ export class Session {
     return new Session(sessionHeader, jsonObject.key, sessionNodes)
   }
 
-  public readonly sessionHeader: SessionHeader;
-  public readonly sessionKey: string;
-  public readonly sessionNodes: Node[];
+  public readonly sessionHeader: SessionHeader
+  public readonly sessionKey: string
+  public readonly sessionNodes: Node[]
 
   /**
    * Request for Session.
@@ -46,29 +43,33 @@ export class Session {
   }
 
   /**
-*
-* Creates a JSON object with the Session properties
-* @returns {JSON} - JSON Object.
-* @memberof Session
-*/
+   *
+   * Creates a JSON object with the Session properties
+   * @returns {JSON} - JSON Object.
+   * @memberof Session
+   */
   public toJSON() {
-    var nodeListJSON;
+    const nodeListJSON: Node[] = []
     this.sessionNodes.forEach(node => {
-      nodeListJSON.push(node.toJSON());
-    });
+      nodeListJSON.push(node)
+    })
     return {
-      "header": this.sessionHeader.toJSON(),
-      "key": this.sessionKey,
-      "nodes": nodeListJSON
+      header: this.sessionHeader.toJSON(),
+      key: this.sessionKey,
+      nodes: JSON.parse(JSON.stringify(nodeListJSON))
     }
   }
   /**
-  *
-  * Check if the Session object is valid
-  * @returns {boolean} - True or false.
-  * @memberof Session
-  */
+   *
+   * Check if the Session object is valid
+   * @returns {boolean} - True or false.
+   * @memberof Session
+   */
   public isValid(): boolean {
-    return this.sessionHeader.isValid() && this.sessionKey != undefined && this.sessionNodes != undefined;
+    return (
+      this.sessionHeader.isValid() &&
+      this.sessionKey !== undefined &&
+      this.sessionNodes !== undefined
+    )
   }
 }

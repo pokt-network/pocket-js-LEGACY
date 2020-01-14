@@ -1,4 +1,4 @@
-import { SessionHeader } from "./session-header";
+import { SessionHeader } from "./session-header"
 
 /**
  *
@@ -6,52 +6,47 @@ import { SessionHeader } from "./session-header";
  * @class DispatchRequest
  */
 export class DispatchRequest {
-    /**
+  /**
    *
    * Creates a DispatchRequest object using a JSON string
    * @param {String} json - JSON string.
    * @returns {DispatchRequest} - DispatchRequest object.
    * @memberof DispatchRequest
    */
-    public static fromJSON(json: string): DispatchRequest {
+  public static fromJSON(json: string): DispatchRequest {
+    return new DispatchRequest(SessionHeader.fromJSON(json))
+  }
 
-        return new DispatchRequest(
-            SessionHeader.fromJSON(json)
-        );
+  public readonly sessionHeader: SessionHeader
+
+  /**
+   * Dispatch Request.
+   * @constructor
+   * @param {SessionHeader} sessionHeader - Session header object.
+   */
+  constructor(sessionHeader: SessionHeader) {
+    this.sessionHeader = sessionHeader
+
+    if (!this.isValid()) {
+      throw new TypeError("Invalid properties length.")
     }
-
-    public readonly sessionHeader: SessionHeader;
-
-    /**
-     * Dispatch Request.
-     * @constructor
-     * @param {SessionHeader} sessionHeader - Session header object.
-     */
-    constructor(
-        sessionHeader: SessionHeader
-    ) {
-        this.sessionHeader = sessionHeader
-
-        if (!this.isValid()) {
-            throw new TypeError("Invalid properties length.");
-        }
-    }
-    /**
+  }
+  /**
    *
    * Creates a JSON object with the DispatchRequest properties
    * @returns {JSON} - JSON Object.
    * @memberof DispatchRequest
    */
-    public toJSON() {
-        return this.sessionHeader.toJSON();
-    }
-    /**
+  public toJSON() {
+    return this.sessionHeader.toJSON()
+  }
+  /**
    *
    * Check if the DispatchRequest object is valid
    * @returns {boolean} - True or false.
    * @memberof DispatchRequest
    */
-    public isValid(): boolean {
-        return this.sessionHeader.isValid()
-    }
+  public isValid(): boolean {
+    return this.sessionHeader.isValid()
+  }
 }
