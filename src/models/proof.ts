@@ -39,7 +39,7 @@ export class Proof {
      * @param {BigInt} sessionBlockHeight - Session Block Height.
      * @param {String} servicePubKey - Service Public Key.
      * @param {String} blockchain - Blockchain hash.
-     * @param {AAT} token - Application Authentication Token.
+     * @param {String} token - Application Authentication Token.
      * @param {String} signature - Proof's signature.
      */
     constructor(
