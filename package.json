@@ -6,7 +6,8 @@
     },
     "description": "Pocket-js core package with the main functionalities to interact with the Pocket Network.",
     "license": "MIT",
-    "main": "./core/src/index.js",
+    "main": "lib/src/index.js",
+    "types": "lib/src/index.d.ts",
     "directories": {
         "tests": "./tests"
     },
