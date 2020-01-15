@@ -62,5 +62,5 @@ typings/
 
 *node_modules/
 *jspm_packages/
-*dist/
+/lib
 
