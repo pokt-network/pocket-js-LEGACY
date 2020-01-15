@@ -63,7 +63,7 @@
         "pbkdf2": "^3.0.17",
         "node-localstorage": "^2.1.5",
         "seedrandom": "^3.0.5",
-        "pocket-aat-js": "file:../aat-sdk"
+        "pocket-aat-js": "pokt-network/pocket-aat-js#staging"
     },
     "devDependencies": {
         "@types/chai": "^4.2.7",
