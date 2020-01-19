@@ -8,7 +8,7 @@
         "no-namespace": false,
         "semicolon": [true, "never"],
         "no-unused-expression": false,
-        "only-arrow-functions": false,
+        "only-arrow-functions": true,
         "max-classes-per-file": [true, 2]
     }
  }

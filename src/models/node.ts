@@ -93,7 +93,12 @@ export class Node {
    */
   public isValid() {
     for (const property in this) {
+      if(property === 'toJSON' || property === 'isValid') {
+        continue
+      }
+    
       if (!this.hasOwnProperty(property) || property === "") {
+        console.log(property)
         return false
       }
     }
