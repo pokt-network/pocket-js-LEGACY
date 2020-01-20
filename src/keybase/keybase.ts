@@ -4,7 +4,7 @@ import { UnlockedAccount } from "../models/unlocked-account"
 import * as pbkdf2 from "pbkdf2"
 import { sha256 } from "js-sha256"
 import * as aesjs from "aes-js"
-import * as seedrandom from "seedrandom"
+import seedrandom from "seedrandom"
 import { typeGuard } from "../utils/type-guard"
 import {
   addressFromPublickey,
