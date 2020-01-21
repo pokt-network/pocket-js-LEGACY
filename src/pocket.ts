@@ -54,8 +54,8 @@ export class Pocket {
   ) {
     this.configuration = configuration
     this.optionalConfiguration = optionalConfiguration ?? undefined
-    this.sessionManager = new SessionManager()
     this.routingTable = new Routing([], configuration)
+    this.sessionManager = new SessionManager(this.routingTable)
   }
   /**
    *
