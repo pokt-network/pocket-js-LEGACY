@@ -10,6 +10,7 @@ import { RequestManager } from "../request-manager"
 import { DispatchRequest } from "../models/input/dispatch-request"
 import { typeGuard } from "../utils/type-guard"
 import { Queue } from "./structure/queue"
+import { Routing } from "../models/routing"
 
 /**
  *
@@ -21,54 +22,57 @@ import { Queue } from "./structure/queue"
 export class SessionManager {
   private readonly store: IKVStore
   private readonly sessionQueue: Queue<Session>
+  private readonly routingTable: Routing
 
-  constructor(store: IKVStore = new InMemoryKVStore()) {
+  constructor(routingTable: Routing, store: IKVStore = new InMemoryKVStore()) {
     this.store = store
+    this.routingTable = routingTable
     this.sessionQueue = new Queue()
   }
 
-  public async createSession(
+  public async requestCurrentSession(
     header: SessionHeader,
-    node: Node,
     configuration: Configuration
   ): Promise<Session | RpcErrorResponse> {
+    const node = this.routingTable.getNode()
+
+    if (!typeGuard(node, Node)) {
+      return new RpcErrorResponse(
+        "500",
+        "You have reached the maximum number of sessions"
+      )
+    }
+    
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
-    const result = await RequestManager.dispatch(
-      dispatchRequest,
-      node,
-      configuration
-    )
-      .then(rcpErrorResponse => {
-        return rcpErrorResponse
-      })
-      .then(dispatchResponse => {
+    const result = await RequestManager.dispatch(dispatchRequest, node as Node, configuration)
+
+    switch(true) {
+      case typeGuard(result, DispatchResponse):
         const session: Session = Session.fromJSON(
-          JSON.stringify(dispatchResponse.toJSON())
+          JSON.stringify(result.toJSON())
         )
 
         if (this.sessionQueue.length > configuration.maxSessions) {
           this.sessionQueue.enqueue(session)
 
-          const currentSession = this.getSession()
-          if (session instanceof Session) {
-            this.store.add(
-              (currentSession as Session).sessionKey,
-              currentSession
-            )
+          if (typeGuard(session, Session)) {
+            this.saveCurrentSession() 
           }
 
-          return currentSession
+          return this.getCurrentSession()
         }
         return new RpcErrorResponse(
           "500",
           "You have reached the maximum number of sessions"
         )
-      })
 
-    return result
+        default:
+          return result as RpcErrorResponse
+    }
   }
 
-  public getSession(): Session | RpcErrorResponse {
+  public getCurrentSession(): Session | RpcErrorResponse {
+
     const currentSession = this.sessionQueue.front
     if (currentSession !== undefined) {
       return currentSession
@@ -79,5 +83,13 @@ export class SessionManager {
 
   public destroySession() {
     this.sessionQueue.dequeue()
+  }
+
+  private saveCurrentSession() {
+    const currentSession = this.getCurrentSession()
+    this.store.add(
+      (currentSession as Session).sessionKey,
+      currentSession
+    )
   }
 }
