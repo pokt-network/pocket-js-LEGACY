@@ -19,7 +19,7 @@ const invalidConfiguration = new Configuration([], undefined, 5, 40000, true)
 
 describe("Pocket Interface functionalities", () => {
     describe("Success scenarios", () => {
-        it('should instantiate a Pocket instance',() => {
+        it('should instantiate a Pocket instance due to a valid configuration is being used',() => {
             
             const pocket = new Pocket(validConfiguration)
             
@@ -27,7 +27,7 @@ describe("Pocket Interface functionalities", () => {
             expect(pocket).to.be.an.instanceof(Pocket)
         }).timeout(0)
 
-        it('should instance a RelayRequest instance', () => {
+        it('should instance a RelayRequest instance due to a node is being passed ', () => {
             const pocket = new Pocket(validConfiguration)
             pocket.routingTable.addNode(node)
 
@@ -42,7 +42,7 @@ describe("Pocket Interface functionalities", () => {
             
         }).timeout(0)
 
-        it('should send a relay', () => {
+        it('should send a relay due to a valid RelayRequest is being created and used', () => {
             const pocket = new Pocket(validConfiguration)
             pocket.routingTable.addNode(node)
 
@@ -60,7 +60,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a block', () => {
+        it('should get a block due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetBlock()
 
             const pocket = new Pocket(validConfiguration)
@@ -71,7 +71,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a transaction', () => {
+        it('should get a transaction due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetTx()
 
             const pocket = new Pocket(validConfiguration)
@@ -82,7 +82,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get the height', () => {
+        it('should get the height due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetHeight()
 
             const pocket = new Pocket(validConfiguration)
@@ -93,7 +93,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get the balance', () => {
+        it('should get the balance due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetBalance()
 
             const pocket = new Pocket(validConfiguration)
@@ -104,7 +104,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a list of nodes', () => {
+        it('should get a list of nodes due to the proper request is being created', () => {
             NockUtil.mockGetNodes()
 
             const pocket = new Pocket(validConfiguration)
@@ -115,7 +115,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a node', () => {
+        it('should get a node due to an existing address is being used', () => {
             NockUtil.mockGetNode()
 
             const pocket = new Pocket(validConfiguration)
@@ -126,7 +126,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a node params', () => {
+        it('should get a node params due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetNodeParams()
 
             const pocket = new Pocket(validConfiguration)
@@ -137,7 +137,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a list of proofs of a node', () => {
+        it('should get a list of proofs of a node due to a valid address is being used', () => {
             NockUtil.mockGetNodeProofs()
 
             const pocket = new Pocket(validConfiguration)
@@ -148,7 +148,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a proof of a node', () => {
+        it('should get a proof of a node due to a valid node and a valid NodeProof are being used', () => {
             NockUtil.mockGetNodeProof()
 
             const nodeProof = new NodeProof("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", "ETH10", "0x1", BigInt(0), BigInt(0))
@@ -160,7 +160,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get a list of apps', () => {
+        it('should get a list of apps due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetApps()
 
             const pocket = new Pocket(validConfiguration)
@@ -171,7 +171,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get an app', () => {
+        it('should get an app due to a valid address is being used', () => {
             NockUtil.mockGetApp()
 
             const pocket = new Pocket(validConfiguration)
@@ -182,7 +182,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get an app params', () => {
+        it('should get an app params due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetAppParams()
 
             const pocket = new Pocket(validConfiguration)
@@ -193,7 +193,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get the pocket params', () => {
+        it('should get the pocket params due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetPocketParams()
 
             const pocket = new Pocket(validConfiguration)
@@ -204,7 +204,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get the supported chains', () => {
+        it('should get the supported chains due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetSupportedChains()
 
             const pocket = new Pocket(validConfiguration)
@@ -215,7 +215,7 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should get the supply', () => {
+        it('should get the supply due to a valid node and a valid configuration are being used', () => {
             NockUtil.mockGetSupply()
 
             const pocket = new Pocket(validConfiguration)
@@ -234,7 +234,7 @@ describe("Pocket Interface functionalities", () => {
             ).should.throw(TypeError, /Configuration is not valid/);
         }).timeout(0)
 
-        it('should error to create an instance of RelayRequest instance', () => {
+        it('should error to create an instance of RelayRequest instance due to no nodes are being passed', () => {
             const pocket = new Pocket(validConfiguration)
             const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
             const headers: Record<string, string> = {
@@ -248,9 +248,8 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should error to send a relay', () => {
+        it('should error to send a relay due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
             const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
             const headers: Record<string, string> = {
@@ -266,95 +265,87 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should returns an error trying to get a block', () => {
+        it('should returns an error trying to get a block due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetBlock(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
             
             pocket.getBlock(BigInt(5), true).then(blockResponse => {
                 expect(blockResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get a transaction', () => {
+        it('should returns an error trying to get a transaction due to an address is not being sent. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetTx(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
-
-            pocket.getTX("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", true).then(txResponse => {
+            pocket.getTX("", true).then(txResponse => {
                 expect(txResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get the height', () => {
+        it('should returns an error trying to get the height due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetHeight(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
-
+            
             pocket.getHeight(true).then(heightResponse => {
                 expect(heightResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get the balance', () => {
+        it('should returns an error trying to get the balance due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetBalance(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
-
-            pocket.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(5), true).then(balanceResponse => {
+        
+            pocket.getBalance("0xa", BigInt(5), true).then(balanceResponse => {
                 expect(balanceResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get a list of nodes', () => {
+        it('should returns an error trying to get a list of nodes due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetNodes(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
-
+            
             pocket.getNodes(StakingStatus.Staked, BigInt(5), true).then(nodesResponse => {
                 expect(nodesResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get a node', () => {
+        it('should returns an error trying to get a node due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetNode(500)
 
             const pocket = new Pocket(validConfiguration)
             pocket.routingTable.addNode(node)
 
-            pocket.getNode("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(5), true).then(nodeResponse => {
+            pocket.getNode("0xa", BigInt(5), true).then(nodeResponse => {
                 expect(nodeResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get the node params', () => {
+        it('should returns an error trying to get the node params due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetNodeParams(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
             pocket.getNodeParams(BigInt(5), true).then(nodeParamsResponse => {
                 expect(nodeParamsResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get a list of proofs of a node', () => {
+        it('should returns an error trying to get a list of proofs of a node due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetNodeProofs(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
-            pocket.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(5), true).then(nodeProofsResponse => {
+            pocket.getNodeProofs("0xa", BigInt(5), true).then(nodeProofsResponse => {
                 expect(nodeProofsResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get a proof of a node', () => {
+        it('should returns an error trying to get a proof of a node due to a invalid NodeProof is being used. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetNodeProof(500)
 
             const nodeProof = new NodeProof(")x0", "ETH10", "0x1", BigInt(0), BigInt(0))
@@ -366,66 +357,61 @@ describe("Pocket Interface functionalities", () => {
             })
         }).timeout(0)
 
-        it('should returns an error trying to get a list of apps', () => {
+        it('should returns an error trying to get a list of apps due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetApps(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
             pocket.getApps(StakingStatus.Staked, BigInt(5), true).then(appsResponse => {
                 expect(appsResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get an app', () => {
+        it('should returns an error trying to get an app due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetApp(500)
 
             const pocket = new Pocket(validConfiguration)
             pocket.routingTable.addNode(node)
 
-            pocket.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(5), true).then(appResponse => {
+            pocket.getApp("0x1", BigInt(5), true).then(appResponse => {
                 expect(appResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get an app params', () => {
+        it('should returns an error trying to get an app params due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetAppParams(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
             pocket.getAppParams(BigInt(5), true).then(appParamsResponse => {
                 expect(appParamsResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get the pocket params', () => {
+        it('should returns an error trying to get the pocket params due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetPocketParams(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
             pocket.getPocketParams(BigInt(5), true).then(pocketParamsResponse => {
                 expect(pocketParamsResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get the supported chains', () => {
+        it('should returns an error trying to get the supported chains due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetSupportedChains(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
             pocket.getSupportedChains(BigInt(5), true).then(supportedResponse => {
                 expect(supportedResponse).to.be.instanceOf(RpcErrorResponse)
             })
         }).timeout(0)
 
-        it('should returns an error trying to get the supply', () => {
+        it('should returns an error trying to get the supply due to the lack of a valid node. An RpcErrorResponse is expected', () => {
             NockUtil.mockGetSupply(500)
 
             const pocket = new Pocket(validConfiguration)
-            pocket.routingTable.addNode(node)
 
             pocket.getSupply(BigInt(5), true).then(supplyResponse => {
                 expect(supplyResponse).to.be.instanceOf(RpcErrorResponse)

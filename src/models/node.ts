@@ -98,7 +98,6 @@ export class Node {
       }
     
       if (!this.hasOwnProperty(property) || property === "") {
-        console.log(property)
         return false
       }
     }
