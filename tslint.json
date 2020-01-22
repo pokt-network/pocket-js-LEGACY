@@ -8,8 +8,16 @@
         "no-namespace": false,
         "semicolon": [true, "never"],
         "no-unused-expression": false,
-        "only-arrow-functions": true,
-        "max-classes-per-file": [true, 2]
+        "only-arrow-functions": false,
+        "max-classes-per-file": [true, 2],
+        "forin": false,
+        "no-shadowed-variable": false
+    },
+    "linterOptions": {
+        "exclude": [
+            "**/index.ts",
+            "lib/*"
+        ]
     }
  }
  
