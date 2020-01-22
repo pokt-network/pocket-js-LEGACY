@@ -8,6 +8,16 @@
  */
 export class Hex {
     /**
+     * Validates wheter or not str is a valid hex string
+     * @param {string} str string to validate
+     */
+    public static isHex(str: string): boolean {
+        const regexp = new RegExp("/^[0-9A-F]{" + str.length + "}$/i", "gi")
+        const match = str.match(regexp)
+        return match == null ? false : match.length === str.length
+    }
+    
+    /**
      *
      *  Encodes str into an array of bytes. After that using bitwise operations we transform each byte into an hexadecimal value.
      * @param {String} str - String value to be encoded.

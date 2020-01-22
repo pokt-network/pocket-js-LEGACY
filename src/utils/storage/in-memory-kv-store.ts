@@ -25,12 +25,8 @@ export class InMemoryKVStore implements IKVStore {
    * @description Returns the value to which the specified key is mapped.
    * @param {string} key - the key whose associated value is to be returned
    */
-  public get(key: string): any {
-    const item = this.localStorage.get(key)
-    if (item === undefined) {
-      throw new TypeError("Key doesn't exist")
-    }
-    return item
+  public get(key: string): any | undefined {
+    return this.localStorage.get(key)
   }
   
   /**
@@ -61,8 +57,8 @@ export class InMemoryKVStore implements IKVStore {
    * @description Removes the mapping for a key from this object if it is present.
    * @param {string} key - key whose mapping is to be removed from the memory
    */
-  public remove(key: string) {
-    this.localStorage.delete(key)
+  public remove(key: string): boolean {
+    return this.localStorage.delete(key)
   }
 
   /**
