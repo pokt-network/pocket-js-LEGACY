@@ -7,6 +7,7 @@
 import { expect } from "chai"
 import { Keybase } from "../../src/keybase/keybase"
 import { Account } from "../../src/models/account"
+import { InMemoryKVStore } from "../../src"
 
 /**
  * @description Keybase class tests
@@ -14,7 +15,7 @@ import { Account } from "../../src/models/account"
 describe("Keybase Import/Export of account", () => {
     describe("Success scenarios", () => {
         it("should import a account given it's private key and a passphrase for encryption", async () => {
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const importedAccountOrError = await keybase.importAccount(
                 Buffer.from(
@@ -27,7 +28,7 @@ describe("Keybase Import/Export of account", () => {
         }).timeout(0)
 
         it("should export a private key given the address and passphrase", async () => {
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const importedAccountOrError = await keybase.importAccount(
                 Buffer.from(
@@ -53,7 +54,7 @@ describe("Keybase Import/Export of account", () => {
     describe("Error scenarios", () => {
         it("should error to import an account given an empty/invalid private key", async () => {
             // Empty private key
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const importedAccountOrError = await keybase.importAccount(
                 Buffer.from("", "hex"),
@@ -71,7 +72,7 @@ describe("Keybase Import/Export of account", () => {
 
         it("should error to import an account given an empty passphrase", async () => {
             // Empty passphrase
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const emptyPassphrase = ""
             expect(emptyPassphrase.length).to.equal(0)
             const importedAccountOrError = await keybase.importAccount(
@@ -85,7 +86,7 @@ describe("Keybase Import/Export of account", () => {
         }).timeout(0)
 
         it("should fail to export non-existent account", async () => {
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const addressHex = "0fb45a3d00033d373aad0ecefe2e125233c4537c"
             const passphrase = "test"
 
@@ -98,7 +99,7 @@ describe("Keybase Import/Export of account", () => {
         })
 
         it("should fail to export with wrong/empty passphrase", async () => {
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const importedAccountOrError = await keybase.importAccount(
                 Buffer.from(
