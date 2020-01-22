@@ -1,5 +1,5 @@
 import { Node } from "./node"
-import { Configuration } from "../configuration/configuration"
+import { Configuration } from "./configuration"
 import { RpcErrorResponse } from "./output/rpc-error-response"
 import { IKVStore } from "../utils/storage/kv-store"
 import { InMemoryKVStore } from "../utils/storage/in-memory-kv-store"

@@ -9,7 +9,7 @@ import { Pocket } from '../src/pocket'
 import { Routing } from "../src/models/routing"
 import { Node } from "../src/models/node"
 import { BondStatus } from "../src/models/output/bond-status.js"
-import { Configuration } from "../src/configuration/configuration.js"
+import { Configuration } from "../src/models/configuration.js"
 import { PocketAAT } from "pocket-aat-js"
 
 
