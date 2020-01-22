@@ -20,11 +20,11 @@ export class Hex {
   /**
    *
    *  Encodes str into an array of bytes. After that using bitwise operations we transform each byte into an hexadecimal value.
-   * @param {String} str - String value to be encoded.
-   * @returns {String} - Encoded value.
+   * @param {string} str - string value to be encoded.
+   * @returns {string} - Encoded value.
    */
 
-  public static encodeToString(str: string): string {
+  public static encodeTostring(str: string): string {
     const encoded: string[] = this.encode(str)
     return encoded.join("")
   }
@@ -32,8 +32,8 @@ export class Hex {
   /**
    *
    *  Decodes hex into an redable string. This function expects that hex contains only hexadecimal characters and that hex has even length.
-   * @param {String} hex - Encoded value to be decoded.
-   * @returns {String} - Encoded value.
+   * @param {string} hex - Encoded value to be decoded.
+   * @returns {string} - Encoded value.
    */
   public static decodeString(hex: string) {
     let text = ""
@@ -42,28 +42,17 @@ export class Hex {
     }
     return text
   }
-
+  /**
+   *
+   *  Validates if a provided network identifier is a valid hex and byte length 32
+   * @param {string} str - Network identifier.
+   * @returns {boolean} - True or false.
+   */
   public static validateNetworkIdentifier(str: string): boolean {
     if (Hex.isHex(str) && Hex.byteLength(str) === 32) {
       return true
     }
     return false
-  }
-
-  /**
- * referenced from https://stackoverflow.com/a/10121740
- * Checks the lenght of a provided string
- * @param {string} str - Provided string.
- * @returns {number} - The string lenght in bytes.
- * @memberof Hex
- */
-  private static byteLength(str: string): number {
-    const a = []
-    for (let i = 0; i < str.length; i += 2) {
-      a.push(str.substr(i, 2))
-    }
-
-    return a.length
   }
 
   private static readonly alphabet: string[] = [
@@ -85,6 +74,27 @@ export class Hex {
     "f"
   ]
 
+  /**
+   * referenced from https://stackoverflow.com/a/10121740
+   * Checks the lenght of a provided string
+   * @param {string} str - Provided string.
+   * @returns {number} - The string lenght in bytes.
+   * @memberof Hex
+   */
+  private static byteLength(str: string): number {
+    const a = []
+    for (let i = 0; i < str.length; i += 2) {
+      a.push(str.substr(i, 2))
+    }
+
+    return a.length
+  }
+  /**
+   *
+   *  Encodes a decoded value.
+   * @param {string} str - Decoded value to be encoded.
+   * @returns {string} - Encoded value.
+   */
   private static encode(str: string): string[] {
     const value = this.toByteArray(str)
     const result: string[] = []
@@ -99,7 +109,12 @@ export class Hex {
 
     return result
   }
-
+  /**
+   *
+   *  Converts an string to a byte array
+   * @param {string} str - string value.
+   * @returns {string} - Byte array.
+   */
   private static toByteArray(str: string): number[] {
     const utf8: number[] = []
     for (let index = 0; index < str.length; index++) {
