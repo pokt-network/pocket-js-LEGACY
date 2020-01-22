@@ -1,4 +1,4 @@
-import { Configuration } from "./configuration/configuration"
+import { Configuration } from "./models/configuration"
 import { Node } from "./models/node"
 import { RequestManager } from "./request-manager"
 import { RelayPayload, RelayHeaders } from "./models/input/relay-payload"

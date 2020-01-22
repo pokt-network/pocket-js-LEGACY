@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios"
 import { Node } from "./models/node"
 import { NodeProof } from "./models/input/node-proof"
-import { Configuration } from "./configuration/configuration"
+import { Configuration } from "./models/configuration"
 import enums = require("./utils/enums")
 import { StakingStatus } from "./utils/enums"
 import { RelayResponse } from "./models/output/relay-response"
