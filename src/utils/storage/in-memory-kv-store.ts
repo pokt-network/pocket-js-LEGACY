@@ -25,7 +25,7 @@ export class InMemoryKVStore implements IKVStore {
    * @description Returns the value to which the specified key is mapped.
    * @param {string} key - the key whose associated value is to be returned
    */
-  public get(key: string): string {
+  public get(key: string): any {
     const item = this.localStorage.get(key)
     if (item === undefined) {
       throw new TypeError("Key doesn't exist")
