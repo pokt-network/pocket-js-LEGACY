@@ -1,6 +1,8 @@
 import { Node } from "./node"
 import { Configuration } from "../configuration/configuration"
 import { RpcErrorResponse } from "./output/rpc-error-response"
+import { IKVStore } from "../utils/storage/kv-store"
+import { InMemoryKVStore } from "../utils/storage/in-memory-kv-store"
 
 /**
  *
@@ -8,31 +10,33 @@ import { RpcErrorResponse } from "./output/rpc-error-response"
  * @class Routing
  */
 export class Routing {
-  public readonly nodes: Node[] = []
   public readonly configuration: Configuration
   public readonly localNodesFileName = ""
-  private fs = require("fs")
+
+  private readonly nodesKey: string = "NODES_KEY"
+  private readonly store: IKVStore
   /**
    * Creates an instance of routing.
    * @param {Array} nodes - Array holding the initial node(s).
    * @param {Configuration} configuration - Configuration object.
    * @memberof Routing
    */
-  constructor(nodes: Node[], configuration: Configuration) {
+  constructor(nodes: Node[] = [], configuration: Configuration, store: IKVStore = new InMemoryKVStore()) {
     if (nodes.length > configuration.maxNodes) {
       throw new Error(
         "Routing table cannot contain more than the specified maxNodes per blockchain."
       )
     }
     if (nodes.length < 1) {
-      this.loadLocalNodes()
       throw new Error(
         "Routing table must be initialized with at least one node."
       )
     }
 
-    this.nodes = nodes
     this.configuration = configuration
+    this.store = store
+
+    this.store.add(this.nodesKey, nodes)
   }
 
   /**
@@ -41,7 +45,7 @@ export class Routing {
    * @memberof Routing
    */
   public readRandomNodes(count: number): Node[] {
-    const nodes = this.nodes
+    const nodes = this.store.get(this.nodesKey) as Node[]
     // Shuffle array then return the slice
     const shuffled = nodes.sort(() => 0.5 - Math.random())
     return shuffled.slice(0, count)
@@ -52,7 +56,8 @@ export class Routing {
    * @memberof Routing
    */
   public readRandomNode(): Node {
-    return this.nodes[Math.floor(Math.random() * this.nodes.length)]
+    const nodes = this.store.get(this.nodesKey) as Node[]
+    return nodes[Math.floor(Math.random() * nodes.length)]
   }
 
   /**
@@ -60,13 +65,11 @@ export class Routing {
    * @memberof Routing
    */
   public getNode(): Node | RpcErrorResponse {
-    if (this.nodes.length < 0) {
-      this.loadLocalNodes()
-      if (this.nodes.length > 0) {
-        return this.nodes[Math.floor(Math.random() * this.nodes.length)]
-      }
+    const nodes = this.store.get(this.nodesKey) as Node[]
+    if (nodes.length < 0) {
+      return new RpcErrorResponse("101", "Node not found in routing table.")
     }
-    return new RpcErrorResponse("101", "Node not found in routing table.")
+    return nodes[Math.floor(Math.random() * nodes.length)]
   }
 
   /**
@@ -75,7 +78,8 @@ export class Routing {
    * @memberof Routing
    */
   public readNode(publicKey: string): Node {
-    this.nodes.forEach(function(node: Node) {
+    const nodes = this.store.get(this.nodesKey) as Node[]
+    nodes.forEach(function(node: Node) {
       if (node.address === publicKey) {
         return node
       }
@@ -89,11 +93,14 @@ export class Routing {
    * @memberof Routing
    */
   public addNode(node: Node) {
-    this.nodes.push(node)
+    const nodes = this.store.get(this.nodesKey) as Node[]
+    nodes.push(node)
     // If this pushes the count over the maxNodes, splice the first element off
-    if (this.nodes.length > this.configuration.maxNodes) {
-      this.nodes.splice(0, 1)
+    if (nodes.length > this.configuration.maxNodes) {
+      nodes.splice(0, 1)
     }
+
+    this.store.add(this.nodesKey, nodes)
   }
 
   /**
@@ -103,30 +110,14 @@ export class Routing {
    */
   public deleteNode(node: Node): boolean {
     // Cycle through the list of nodes, find a match, splice it off
-    for (let i = 0; i < this.nodes.length; i++) {
-      if (this.nodes[i].address === node.address) {
-        this.nodes.splice(i, 1)
+    const nodes = this.store.get(this.nodesKey) as Node[]
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].address === node.address) {
+        nodes.splice(i, 1)
         return true
       }
     }
     return false
-  }
-
-  /**
-   * Configuration stores settings.
-   * @constructor
-   * @param {Node[]} nodes - (optional) Node list.
-   * @memberof Routing
-   */
-  public loadLocalNodes() {
-    const nodeList = JSON.parse(
-      this.fs.readFileSync(this.localNodesFileName, "utf8").tostring()
-    )
-
-    for (let index = 0; index < nodeList.serviceNodes.length; index++) {
-      const node = Node.fromJSON(JSON.stringify(nodeList.serviceNodes[index]))
-      this.addNode(node)
-    }
   }
 
   /**
@@ -138,10 +129,6 @@ export class Routing {
    */
   public filterNodes(blockchain: string, nodes: Node[]): Node[] {
     const nodeList: Node[] = []
-    if (this.nodes.length < 1) {
-      // Load local nodes if none are loaded
-      this.loadLocalNodes()
-    }
     nodes.forEach(node => {
       node.chains.forEach(chain => {
         if (chain === blockchain) {
@@ -161,31 +148,10 @@ export class Routing {
    */
   // TODO: Do round robin type selection
   public readNodeBy(blockchain: string): Node | RpcErrorResponse {
-    const filteredNodes = this.filterNodes(blockchain, this.nodes)
-    if (filteredNodes.length !== 0) {
-      return filteredNodes[Math.floor(Math.random() * this.nodes.length)]
-    } else {
-      return new RpcErrorResponse(
-        "",
-        "Failed to read node for the provided blockchain"
-      )
-    }
-  }
-  /**
-   * Filter a provided list of nodes by chain and return a random one
-   * @param {string} blockchain - Blockchain hash.
-   * @param {Node[]} nodes - Node list to filter.
-   * @returns {Node[]} - Filtered list of nodes.
-   * @memberof Routing
-   */
-  // TODO: Do round robin type selection
-  public readNodeFrom(
-    blockchain: string,
-    nodes: Node[]
-  ): Node | RpcErrorResponse {
+    const nodes = this.store.get(this.nodesKey) as Node[]
     const filteredNodes = this.filterNodes(blockchain, nodes)
     if (filteredNodes.length !== 0) {
-      return filteredNodes[Math.floor(Math.random() * this.nodes.length)]
+      return filteredNodes[Math.floor(Math.random() * nodes.length)]
     } else {
       return new RpcErrorResponse(
         "",
