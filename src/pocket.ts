@@ -31,6 +31,7 @@ import { QueryAppParamsResponse } from "./models/output/query-app-params-respons
 import { QueryPocketParamsResponse } from "./models/output/query-pocket-params-response"
 import { QuerySupportedChainsResponse } from "./models/output/query-supported-chains-response"
 import { QuerySupplyResponse } from "./models/output/query-supply-response"
+import { InMemoryKVStore } from "./utils"
 
 /**
  *
@@ -117,7 +118,7 @@ export class Pocket {
       activeNode?.address,
       blockchain,
       JSON.parse(JSON.stringify(config.pocketAAT)),
-      config.pocketAAT.signature
+      config.pocketAAT.applicationSignature
     )
     // Create relay Request
     const relayRequest = new RelayRequest(relayPayload, relayProof)
@@ -731,7 +732,7 @@ export class Pocket {
     passphrase: string,
     privateKey: string
   ): Promise<Account | Error> {
-    const keybase = new Keybase()
+    const keybase = new Keybase(new InMemoryKVStore())
     const importedAccountOrError = await keybase.importAccount(
       Buffer.from(privateKey, "hex"),
       passphrase
@@ -749,7 +750,7 @@ export class Pocket {
     account: Account,
     passphrase: string
   ): Promise<Buffer | Error> {
-    const keybase = new Keybase()
+    const keybase = new Keybase(new InMemoryKVStore())
 
     // Export the private key
     const privateKey = await keybase.exportAccount(

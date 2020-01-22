@@ -3,6 +3,7 @@
  * @description Utility functions for ed25519 keypairs
  */
 import { sha256 } from "js-sha256"
+import { Hex } from "./hex"
 
 /**
  * @description Calculates the address from a given public key
@@ -35,7 +36,7 @@ export function validatePrivateKey(privateKey: Buffer): boolean {
  * @param addressHex
  */
 export function validateAddressHex(addressHex: string): Error | undefined {
-  if (addressHex.length !== 40) {
+  if (Hex.isHex(addressHex) && addressHex.length !== 40) {
     return new Error("Invalid address length (should be 20 bytes)")
   }
   return undefined
