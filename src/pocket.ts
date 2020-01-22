@@ -89,7 +89,7 @@ export class Pocket {
     }
     // Check if node is provided or retrieve one
     if (node === undefined) {
-      activeNode = this.routingTable.readNodeBy(blockchain)
+      activeNode = this.routingTable.readRandomNode()
       if (!typeGuard(activeNode, Node)) {
         return activeNode
       }
@@ -779,15 +779,8 @@ export class Pocket {
   ): Promise<Session | RpcErrorResponse> {
     let node: Node | RpcErrorResponse
 
-    if (this.routingTable.nodes.length !== 0) {
-      // Load and initial node list to create session
-      node = this.routingTable.readNodeBy(blockchain)
-    } else {
-      return new RpcErrorResponse(
-        "101",
-        "Failed to load the initial local node list"
-      )
-    }
+    // TODO: fix this
+    node = this.routingTable.readRandomNode()
     // If failed to read a node return error
     if (typeGuard(node, RpcErrorResponse)) {
       return node
@@ -806,17 +799,20 @@ export class Pocket {
       blockchain,
       sessionBlockHeightResponse.sessionBlock
     )
+    return new RpcErrorResponse('101', 'Unimplemented')
     // Create the session
-    const session = await this.sessionManager.createSession(
-      header,
-      node,
-      this.configuration
-    )
-    if (typeGuard(session, Session)) {
-      return session
-    } else {
-      return session
-    }
+    // TODO: Figure out how to get the session from the session manager
+    // const session = await this.sessionManager.getCurrentSession(
+    //   header,
+    //   node,
+    //   this.configuration
+    // )
+    // const session =
+    // if (typeGuard(session, Session)) {
+    //   return session
+    // } else {
+    //   return session
+    // }
   }
   /**
    * Retrieves a current session or creates a new one
@@ -827,12 +823,14 @@ export class Pocket {
   private async retrieveSession(
     blockchain: string
   ): Promise<Session | RpcErrorResponse> {
-    let currentSession = this.sessionManager.getSession()
-    if (!typeGuard(currentSession, Session)) {
-      currentSession = await this.createSession(blockchain)
-      return currentSession
-    }
-    return currentSession
+    // TODO: implement
+    return new RpcErrorResponse('101', 'Unimplemented')
+    // let currentSession = this.sessionManager.getSession()
+    // if (!typeGuard(currentSession, Session)) {
+    //   currentSession = await this.createSession(blockchain)
+    //   return currentSession
+    // }
+    // return currentSession
   }
   /**
    * Get a node from the routing table by using a blockchain hash.
@@ -841,7 +839,7 @@ export class Pocket {
    * @memberof Pocket
    */
   private getNodeFrom(blockchain: string): Node | RpcErrorResponse {
-    return this.routingTable.readNodeBy(blockchain)
+    return this.routingTable.readRandomNode()
   }
   /**
    * Get a node from the routing table.
