@@ -7,7 +7,7 @@ export class InMemoryKVStore implements IKVStore {
     this.localStorage.set(key, value)
   }
 
-  public get(key: string): string {
+  public get(key: string): any {
     const item = this.localStorage.get(key)
     if (item === undefined) {
       throw new TypeError("Key doesn't exist")
@@ -26,6 +26,10 @@ export class InMemoryKVStore implements IKVStore {
     })
 
     return list
+  }
+
+  public has(key: string): boolean {
+    return this.localStorage.has(key)
   }
 
   public remove(key: string) {

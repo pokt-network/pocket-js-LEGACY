@@ -21,13 +21,19 @@ import { Routing } from "../models/routing"
 
 export class SessionManager {
   private readonly store: IKVStore
-  private readonly sessionQueue: Queue<Session>
+  private readonly sessionMap: Map<string, Queue<Session>>
   private readonly routingTable: Routing
+  private readonly sessionMapKey: string = "SESSIONS_KEY"
 
   constructor(routingTable: Routing, store: IKVStore = new InMemoryKVStore()) {
     this.store = store
     this.routingTable = routingTable
-    this.sessionQueue = new Queue()
+    this.sessionMap = new Map()
+
+    if(this.store.has(this.sessionMapKey)){
+      this.sessionMap = this.store.get(this.sessionMapKey)
+    }
+
   }
 
   public async requestCurrentSession(
@@ -43,8 +49,13 @@ export class SessionManager {
       )
     }
     
+    if(!this.sessionMap.has(header.chain)) {
+      this.sessionMap.set(header.chain, new Queue())
+    }
+
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await RequestManager.dispatch(dispatchRequest, node as Node, configuration)
+    const sessionQueue = this.sessionMap.get(header.chain) as Queue<Session>
 
     switch(true) {
       case typeGuard(result, DispatchResponse):
@@ -52,14 +63,14 @@ export class SessionManager {
           JSON.stringify(result.toJSON())
         )
 
-        if (this.sessionQueue.length > configuration.maxSessions) {
-          this.sessionQueue.enqueue(session)
+        if (sessionQueue.length > configuration.maxSessions) {
+          sessionQueue.enqueue(session)
 
           if (typeGuard(session, Session)) {
-            this.saveCurrentSession() 
+            this.saveCurrentSession(header, configuration) 
           }
 
-          return this.getCurrentSession()
+          return this.getCurrentSession(header, configuration)
         }
         return new RpcErrorResponse(
           "500",
@@ -71,9 +82,13 @@ export class SessionManager {
     }
   }
 
-  public getCurrentSession(): Session | RpcErrorResponse {
+  public async getCurrentSession(header: SessionHeader, configuration: Configuration): Promise<Session | RpcErrorResponse> {
 
-    const currentSession = this.sessionQueue.front
+    if(!this.sessionMap.has(header.chain)){
+      return await this.requestCurrentSession(header, configuration)
+    }
+
+    const currentSession = (this.sessionMap.get(header.chain) as Queue<Session>).front
     if (currentSession !== undefined) {
       return currentSession
     }
@@ -81,15 +96,27 @@ export class SessionManager {
     return new RpcErrorResponse("500", "Session not found")
   }
 
-  public destroySession() {
-    this.sessionQueue.dequeue()
+  public destroySession(chain: string) {
+    (this.sessionMap.get(chain) as Queue<Session>).dequeue()
   }
 
-  private saveCurrentSession() {
-    const currentSession = this.getCurrentSession()
-    this.store.add(
-      (currentSession as Session).sessionKey,
-      currentSession
-    )
+  private saveCurrentSession(header: SessionHeader, configuration: Configuration) {
+    this.getCurrentSession(header, configuration).then(currentSession => {
+      switch(true) {
+        case typeGuard(currentSession, Session):
+
+
+          if(!this.store.has(this.sessionMapKey)) {
+            const map: Map<string, Queue<Session>> = new Map()
+            map.set(header.chain, new Queue<Session>())
+            this.store.add(this.sessionMapKey, map)
+          }
+          ((this.store.get(this.sessionMapKey) as Map<string, Queue<Session>>)
+          .get(header.chain) as Queue<Session>).enqueue(currentSession as Session)
+        
+        default:
+          throw currentSession as RpcErrorResponse
+      }
+    })
   }
 }
