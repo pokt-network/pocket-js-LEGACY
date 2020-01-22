@@ -25,6 +25,12 @@ export class SessionManager {
   private readonly routingTable: Routing
   private readonly sessionMapKey: string = "SESSIONS_KEY"
 
+  /**
+   * Creates an instance of SessionManager.
+   * @param {Routing} routingTable - Element that supplies a default list of node(s) .
+   * @param {IKVStore} store - KVStore implementation.
+   * @memberof SessionManager
+   */
   constructor(routingTable: Routing, store: IKVStore = new InMemoryKVStore()) {
     this.store = store
     this.routingTable = routingTable
@@ -33,9 +39,15 @@ export class SessionManager {
     if(this.store.has(this.sessionMapKey)){
       this.sessionMap = this.store.get(this.sessionMapKey)
     }
-
   }
 
+  /**
+   * Request a new session object. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
+   * @param {SessionHeader} header - SessionHeader object.
+   * @param {Configuration} configuration - Configuration object.
+   * @returns {Promise}
+   * @memberof SessionManager
+   */
   public async requestCurrentSession(
     header: SessionHeader,
     configuration: Configuration
@@ -82,6 +94,13 @@ export class SessionManager {
     }
   }
 
+  /**
+   * Returns the current session for an specific Blockchain. Request a new session object if there's no an active Session for the specified blockchain. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
+   * @param {SessionHeader} header - SessionHeader object.
+   * @param {Configuration} configuration - Configuration object.
+   * @returns {Promise}
+   * @memberof SessionManager
+   */
   public async getCurrentSession(header: SessionHeader, configuration: Configuration): Promise<Session | RpcErrorResponse> {
 
     if(!this.sessionMap.has(header.chain)){
@@ -96,10 +115,21 @@ export class SessionManager {
     return new RpcErrorResponse("500", "Session not found")
   }
 
+  /**
+   * Removes the first Session in the queue for the specified blockchain.
+   * @param {string} chain - Name of the Blockchain.
+   * @memberof SessionManager
+   */
   public destroySession(chain: string) {
     (this.sessionMap.get(chain) as Queue<Session>).dequeue()
   }
 
+  /**
+   * Save every new Session inside of the KVStore object. All the Sessions saved using this method can be recover if the current execution of the application is terminated.
+   * @param {SessionHeader} header - SessionHeader object.
+   * @param {Configuration} configuration - Configuration object
+   * @memberof SessionManager
+   */
   private saveCurrentSession(header: SessionHeader, configuration: Configuration) {
     this.getCurrentSession(header, configuration).then(currentSession => {
       switch(true) {
