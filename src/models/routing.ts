@@ -40,8 +40,13 @@ export class Routing {
    * Returns the stored nodes count
    * @memberof Routing
    */
-  public get nodesCount() { 
-    return this.store.getItems.length
+  public get nodesCount(): number { 
+    const result = this.store.get(this.nodesKey)
+    if (result !== undefined && Array.isArray(result) ) {
+      return result.length
+    }else{
+      return 0
+    }
   } 
 
   /**
