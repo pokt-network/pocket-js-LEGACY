@@ -19,7 +19,7 @@ const applicationPrivateKey = '15f53145bfa6efdde6e65ce5ebfd330ac0a2591ae451a8a03
 const applicationSignature = '7c3706dce9a5248187cb58cf1d65f12d93c7dfc500de8cfe76b6f925f450d1678ccba666a0374fc83f89f986fc1af640a6000a6b94dd0c9a87d9060613c6b504'
 // TODO: Add Pocket interfae tests for PocketAAT related functions, this will be done with issue:
 // https://github.com/pokt-network/pocket-js/issues/166
-//const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
+const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 const node = new Node("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c","0x1", 
 false, BondStatus.bonded, BigInt(0), "127.0.0.1:80", 
 ["eth","aion"], undefined)
@@ -43,7 +43,7 @@ describe("Pocket Interface functionalities", () => {
             const headers: Record<string, string> = {
                 "Content-Type": "application/json"
             }
-            pocket.createRelayRequest(data, "ETH", headers, node, true, "GET", "network/version").then(request => {
+            pocket.createRelayRequest(data, "ETH", headers, pocketAAT, node, true, "GET", "network/version").then(request => {
                 expect(request).to.be.an.instanceOf(RelayRequest)
                 expect(request).to.not.be.an.instanceOf(RpcErrorResponse)
             })
@@ -58,7 +58,7 @@ describe("Pocket Interface functionalities", () => {
             const headers: Record<string, string> = {
                 "Content-Type": "application/json"
             }
-            pocket.createRelayRequest(data, "ETH", headers, node, true, "GET", "network/version").then(request => {
+            pocket.createRelayRequest(data, "ETH", headers, pocketAAT, node, true, "GET", "network/version").then(request => {
                 if(request instanceof RelayRequest){
                     NockUtil.mockRelay()
                     pocket.sendRelay(request, configuration).then(relayResponse => {
@@ -243,9 +243,9 @@ describe("Pocket Interface functionalities", () => {
             const headers: Record<string, string> = {
                 "Content-Type": "application/json"
             }
-            const relayRequest = pocket.createRelayRequest(data, "ETH", headers, undefined, true, "GET", "network/version")
+            const relayRequest = pocket.createRelayRequest(data, "ETH", headers, pocketAAT, undefined, true, "GET", "network/version")
 
-            pocket.createRelayRequest(data, "ETH", headers, node, true, "GET", "network/version").then(request => {
+            pocket.createRelayRequest(data, "ETH", headers, pocketAAT, node, true, "GET", "network/version").then(request => {
                 expect(request).to.not.be.an.instanceOf(RelayRequest)
                 expect(request).to.be.an.instanceOf(RpcErrorResponse)
             })
@@ -258,7 +258,7 @@ describe("Pocket Interface functionalities", () => {
             const headers: Record<string, string> = {
                 "Content-Type": "application/json"
             }
-            pocket.createRelayRequest(data, "ETH", headers, node, true, "GET", "network/version").then(request => {
+            pocket.createRelayRequest(data, "ETH", headers, pocketAAT, node, true, "GET", "network/version").then(request => {
                 if(request instanceof RelayRequest){
                     NockUtil.mockRelay(500)
                     pocket.sendRelay(request, configuration).then(relayResponse => {

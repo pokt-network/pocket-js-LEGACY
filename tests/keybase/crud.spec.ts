@@ -28,7 +28,7 @@ describe("Keybase Crud operations", () => {
             expect(account2).to.not.to.be.a("error")
 
             const allAccountsOrError = await keybase.listAccounts()
-            let allAccounts = allAccountsOrError as Account[]
+            const allAccounts = allAccountsOrError as Account[]
             expect(allAccounts).to.be.a("array")
             expect(allAccounts.length).to.equal(2)
             expect(allAccounts[0]).to.equal(account1)
@@ -63,7 +63,7 @@ describe("Keybase Crud operations", () => {
 
             // Check internal account list to make sure account was deleted succesfully
             const allAccountsOrError = await keybase.listAccounts()
-            let allAccounts = allAccountsOrError as Account[]
+            const allAccounts = allAccountsOrError as Account[]
             expect(allAccounts.length).to.equal(0)
         }).timeout(0)
 

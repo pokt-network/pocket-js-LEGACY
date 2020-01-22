@@ -2,41 +2,17 @@ import nock from 'nock'
 import enums = require("./enums")
 
 export class NockUtil {
-
-    private static nockRoute(path: string = "", code: number = 200, data: any): nock.Scope{
-        return nock('127.0.0.1:80').get(path).reply(code, data)
-    }
-
-    private static getError(): any {
-        return {
-            code: 500,
-            message: 'Error getting information'
-        }
-    }
-
-    private static createData(code: number, payload: any): any {
-        let data: any = undefined
-        switch(true) {
-            case (code > 190 && code < 204):
-                data = payload
-            default:
-                data = this.getError()
-        }
-
-        return data
-    }
-
     public static mockRelay(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
-            signature: 'signature',
+        const data: any = this.createData(code, {
+            proof: 'proof',
             response: 'response',
-            proof: 'proof'
+            signature: 'signature'
         })
         return this.nockRoute(enums.Routes.RELAY, code, data)
     }
 
     public static mockDispatch(code: number = 200): nock.Scope {
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             header: 'header',
             key: 'key',
             nodes: 'nodes'
@@ -46,7 +22,7 @@ export class NockUtil {
     }
 
     public static mockGetBlock(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             block: 'block',
             block_meta: 'block_meta'
         })
@@ -55,7 +31,7 @@ export class NockUtil {
     }
 
     public static mockGetTx(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             hash: 'hash',
             height: 'height',
             index: 'index',
@@ -67,35 +43,35 @@ export class NockUtil {
     }
 
     public static mockGetHeight(code: number = 200): nock.Scope {
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             Height: 'Height'
         })
         return this.nockRoute(enums.RPCRoutes.QueryHeight.toString(), code, data)
     }
 
     public static mockGetBalance(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             balance: 'balance'
         })
         return this.nockRoute(enums.RPCRoutes.QueryBalance.toString(), code, data)
     }
 
     public static mockGetNodes(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             nodes: 'nodes'
         })
         return this.nockRoute(enums.RPCRoutes.QueryNodes.toString(), code, data)
     }
 
     public static mockGetNode(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             Node: 'Node'
         })
         return this.nockRoute(enums.RPCRoutes.QueryNode.toString(), code, data)
     }
 
     public static mockGetNodeParams(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             downtime_jail_duration: 'downtime_jail_duration',
             max_evidence_age: 'max_evidence_age',
             max_validator: 'max_validator',
@@ -114,14 +90,14 @@ export class NockUtil {
     }
 
     public static mockGetNodeProofs(code: number = 200): nock.Scope {
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             proofs: 'proofs'
         })
         return this.nockRoute(enums.RPCRoutes.QueryNodeProofs.toString(), code, data)
     }
 
     public static mockGetNodeProof(code: number = 200): nock.Scope {
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             servicer_address: 'servicer_address',
             session_header: 'session_header',
             total_relays: 'total_relays'
@@ -130,14 +106,14 @@ export class NockUtil {
     }
 
     public static mockGetApps(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             apps: 'apps'
         })
         return this.nockRoute(enums.RPCRoutes.QueryApps.toString(), code, data)
     }
 
     public static mockGetApp(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             address: 'address',
             chains: 'chains',
             cons_pubkey: 'cons_pubkey',
@@ -151,7 +127,7 @@ export class NockUtil {
     }
 
     public static mockGetAppParams(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             app_stake_min: 'app_stake_min',
             baseline_throughput_stake_rate: 'baseline_throughput_stake_rate',
             max_applications: 'max_applications',
@@ -163,7 +139,7 @@ export class NockUtil {
     }
 
     public static mockGetPocketParams(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             claim_expiration: 'claim_expiration',
             proof_waiting_period: 'proof_waiting_period',
             session_node_count: 'session_node_count',
@@ -173,14 +149,14 @@ export class NockUtil {
     }
 
     public static mockGetSupportedChains(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             supported_chains: 'supported_chains'
         })
         return this.nockRoute(enums.RPCRoutes.QuerySupportedChains.toString(), code, data)
     }
 
     public static mockGetSupply(code: number = 200): nock.Scope{
-        let data: any = this.createData(code, {
+        const data: any = this.createData(code, {
             appStaked: 'appStaked',
             dao: 'dao',
             nodeStaked: 'nodeStaked',
@@ -189,5 +165,28 @@ export class NockUtil {
             totalUnstaked: 'totalUnstaked'
         })
         return this.nockRoute(enums.RPCRoutes.QuerySupply.toString(), code, data)
+    }
+
+    private static nockRoute(path: string = "", code: number = 200, data: any): nock.Scope{
+        return nock('127.0.0.1:80').get(path).reply(code, data)
+    }
+
+    private static getError(): any {
+        return {
+            code: 500,
+            message: 'Error getting information'
+        }
+    }
+
+    private static createData(code: number, payload: any): any {
+        let data: any
+        switch(true) {
+            case (code > 190 && code < 204):
+                data = payload
+            default:
+                data = this.getError()
+        }
+
+        return data
     }
 }

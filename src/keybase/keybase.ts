@@ -60,7 +60,7 @@ export class Keybase {
         const result = new Array<Account>()
         let accountIndex = this.store.get(this.ACCOUNT_INDEX_KEY)
         if (typeGuard(accountIndex, Array)) {
-            accountIndex = accountIndex as String[]
+            accountIndex = accountIndex as string[]
         } else if (accountIndex === undefined) {
             accountIndex = []
         } else {
@@ -455,7 +455,7 @@ export class Keybase {
         // Add the new key into the index
         let accountIndex = this.store.get(this.ACCOUNT_INDEX_KEY)
         if (typeGuard(accountIndex, Array)) {
-            accountIndex = accountIndex as String[]
+            accountIndex = accountIndex as string[]
         } else if (accountIndex === undefined) {
             accountIndex = []
         } else {
@@ -488,7 +488,7 @@ export class Keybase {
         // Remove the account key from the index
         let accountIndex = this.store.get(this.ACCOUNT_INDEX_KEY)
         if (typeGuard(accountIndex, Array)) {
-            accountIndex = accountIndex as String[]
+            accountIndex = accountIndex as string[]
             const index = accountIndex.indexOf(account.addressHex, 0)
             if (index > -1) {
                 accountIndex.splice(index, 1)
@@ -518,7 +518,7 @@ export class Keybase {
         }
 
         // Attempt to fetch the account from the store
-        let account = this.store.get(
+        const account = this.store.get(
             this.generateAccountStoreKeyFromAddressHex(addressHex)
         )
 

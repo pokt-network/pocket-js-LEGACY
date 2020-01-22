@@ -32,6 +32,7 @@ import { QueryPocketParamsResponse } from "./models/output/query-pocket-params-r
 import { QuerySupportedChainsResponse } from "./models/output/query-supported-chains-response"
 import { QuerySupplyResponse } from "./models/output/query-supply-response"
 import { InMemoryKVStore } from "./utils"
+import { PocketAAT } from "pocket-aat-js"
 
 /**
  *
@@ -74,6 +75,7 @@ export class Pocket {
     data: string,
     blockchain: string,
     headers: RelayHeaders,
+    pocketAAT: PocketAAT,
     node?: Node,
     useMainConfig = true,
     method = "",
@@ -117,8 +119,8 @@ export class Pocket {
       sessionBlockHeightResponse.sessionBlock,
       activeNode?.address,
       blockchain,
-      JSON.parse(JSON.stringify(config.pocketAAT)),
-      config.pocketAAT.applicationSignature
+      JSON.parse(JSON.stringify(pocketAAT)),
+      pocketAAT.applicationSignature
     )
     // Create relay Request
     const relayRequest = new RelayRequest(relayPayload, relayProof)
@@ -775,7 +777,8 @@ export class Pocket {
    * @memberof Pocket
    */
   private async createSession(
-    blockchain: string
+    blockchain: string,
+    pocketAAT: PocketAAT
   ): Promise<Session | RpcErrorResponse> {
     let node: Node | RpcErrorResponse
 
@@ -795,7 +798,7 @@ export class Pocket {
     }
     // Create session header
     const header = new SessionHeader(
-      this.configuration.pocketAAT.applicationPublicKey,
+      pocketAAT.applicationPublicKey,
       blockchain,
       sessionBlockHeightResponse.sessionBlock
     )
