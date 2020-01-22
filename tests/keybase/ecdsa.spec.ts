@@ -7,12 +7,13 @@
 import { expect } from "chai"
 import { Keybase } from "../../src/keybase/keybase"
 import { Account } from "../../src/models/account"
+import { InMemoryKVStore, typeGuard } from "../../src"
 
 describe("Keybase Digital signature operations", () => {
     describe("Success scenarios", () => {
         it("should produce a valid signature for a payload given the account address and passphrase", async () => {
             // Create a new account
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
@@ -32,7 +33,7 @@ describe("Keybase Digital signature operations", () => {
 
         it("should verify a valid signature for a given a public key and payload", async () => {
             // Create a new account
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
@@ -60,7 +61,7 @@ describe("Keybase Digital signature operations", () => {
 
         it("should return a falsey result for a valid signature given the incorrect public key and/or payload", async () => {
             // Create a new account
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
@@ -106,7 +107,7 @@ describe("Keybase Digital signature operations", () => {
     describe("Error scenarios", () => {
         it("should produce an error to create a signature for a payload given an empty/non-existent address", async () => {
             // Create a new account
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
@@ -136,7 +137,7 @@ describe("Keybase Digital signature operations", () => {
 
         it("should produce an error to create a signature for a payload given a account an invalid/empty passphrase", async () => {
             // Create a new account
-            const keybase = new Keybase()
+            const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
             const accountOrError = await keybase.createAccount(passphrase)
             expect(accountOrError).not.to.be.a("error")
@@ -169,7 +170,7 @@ describe("Keybase Digital signature operations", () => {
         describe("Success scenarios", () => {
             it("should unlock an account given it's passphrase", async () => {
                 // Create a new account
-                const keybase = new Keybase()
+                const keybase = new Keybase(new InMemoryKVStore())
                 const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
@@ -178,7 +179,8 @@ describe("Keybase Digital signature operations", () => {
                 // Unlock account
                 const errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
-                    passphrase
+                    passphrase,
+                    0
                 )
                 expect(errorOrUndefined).to.be.a('undefined')
                 // Check wheter or not is unlocked
@@ -188,7 +190,7 @@ describe("Keybase Digital signature operations", () => {
 
             it("should lock an unlocked account given it's address", async () => {
                 // Create a new account
-                const keybase = new Keybase()
+                const keybase = new Keybase(new InMemoryKVStore())
                 const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
@@ -197,7 +199,8 @@ describe("Keybase Digital signature operations", () => {
                 // Unlock account
                 const errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
-                    passphrase
+                    passphrase,
+                    0
                 )
                 expect(errorOrUndefined).to.be.a('undefined')
 
@@ -214,7 +217,7 @@ describe("Keybase Digital signature operations", () => {
 
             it("should produce a valid signature for a payload given an unlocked account address", async () => {
                 // Create a new account
-                const keybase = new Keybase()
+                const keybase = new Keybase(new InMemoryKVStore())
                 const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
@@ -223,7 +226,8 @@ describe("Keybase Digital signature operations", () => {
                 // Unlock account
                 const errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
-                    passphrase
+                    passphrase,
+                    0
                 )
                 expect(errorOrUndefined).to.be.a('undefined')
                 expect(await keybase.isUnlocked(account.addressHex))
@@ -239,12 +243,42 @@ describe("Keybase Digital signature operations", () => {
                 const signature = signatureOrError as Buffer
                 expect(signature.length).to.be.greaterThan(0)
             }).timeout(0)
+
+            it("should lock an unlocked account after the given time period", (done) => {
+                // Create a new account
+                const keybase = new Keybase(new InMemoryKVStore())
+                const passphrase = "test"
+                keybase.createAccount(passphrase).then(function(account){
+                    expect(account).not.to.be.a("error")
+                    account = account as Account
+
+                    // Unlock account
+                    const waitPeriod = 1
+                    keybase.unlockAccount(
+                        account.addressHex,
+                        passphrase,
+                        waitPeriod
+                    ).then(function (errorOrUndefined) {
+                        expect(errorOrUndefined).to.be.a('undefined')
+                        expect(typeGuard(account, Account)).to.be.true
+                        account = account as Account
+
+                        // Wait for the waitPeriod and then check in the keybase if the account is unlocked
+                        setTimeout(async function (addressHex) {
+                            // Check wheter or not is unlocked
+                            const isUnlocked = await keybase.isUnlocked(addressHex)
+                            expect(isUnlocked).to.equal(false)
+                            done()
+                        }, waitPeriod, account.addressHex)
+                    })
+                })
+            }).timeout(0)
         }).timeout(0)
 
         describe("Error scenarios", () => {
             it("should fail to unlock an account given an wrong or empty passphrase", async () => {
                 // Create a new account
-                const keybase = new Keybase()
+                const keybase = new Keybase(new InMemoryKVStore())
                 const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
@@ -255,7 +289,8 @@ describe("Keybase Digital signature operations", () => {
                 expect(wrongPassphrase).to.not.equal(passphrase)
                 let errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
-                    wrongPassphrase
+                    wrongPassphrase,
+                    0
                 )
                 expect(errorOrUndefined).to.be.a("error")
                 // Check wheter or not is unlocked
@@ -267,7 +302,8 @@ describe("Keybase Digital signature operations", () => {
                 expect(emptyPassphrase).to.not.equal(passphrase)
                 errorOrUndefined = await keybase.unlockAccount(
                     account.addressHex,
-                    emptyPassphrase
+                    emptyPassphrase,
+                    0
                 )
                 expect(errorOrUndefined).to.be.a("error")
                 // Check wheter or not is unlocked
@@ -277,7 +313,7 @@ describe("Keybase Digital signature operations", () => {
 
             it("should fail to lock an account given an address that has not been unlocked yet", async () => {
                 // Create a new account
-                const keybase = new Keybase()
+                const keybase = new Keybase(new InMemoryKVStore())
                 const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
@@ -292,7 +328,7 @@ describe("Keybase Digital signature operations", () => {
 
             it("should fail to produce a valid signature for a payload given an address that has not been unlocked yet", async () => {
                 // Create a new account
-                const keybase = new Keybase()
+                const keybase = new Keybase(new InMemoryKVStore())
                 const passphrase = "test"
                 let account = await keybase.createAccount(passphrase)
                 expect(account).not.to.be.a("error")
