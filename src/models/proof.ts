@@ -1,3 +1,5 @@
+import { PocketAAT } from "pocket-aat-js"
+
 /**
  *
  *
@@ -28,7 +30,7 @@ export class Proof {
   public readonly sessionBlockHeight: BigInt
   public readonly servicePubKey: string
   public readonly blockchain: string
-  public readonly token: string
+  public readonly token: PocketAAT
   public readonly signature: string
 
   /**
@@ -38,7 +40,7 @@ export class Proof {
    * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @param {string} servicePubKey - Service Public Key.
    * @param {string} blockchain - Blockchain hash.
-   * @param {AAT} token - Application Authentication Token.
+   * @param {PocketAAT} token - Application Authentication Token object.
    * @param {string} signature - Proof's signature.
    */
   constructor(
@@ -46,7 +48,7 @@ export class Proof {
     sessionBlockHeight: BigInt,
     servicePubKey: string,
     blockchain: string,
-    token: string,
+    token: PocketAAT,
     signature: string
   ) {
     this.index = index
