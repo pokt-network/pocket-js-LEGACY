@@ -12,7 +12,6 @@ import { InMemoryKVStore } from "../utils/storage/in-memory-kv-store"
 export class Routing {
   public readonly configuration: Configuration
   public readonly localNodesFileName = ""
-  public readonly nodesCount: number = 0
   private readonly nodesKey: string = "NODES_KEY"
   private readonly store: IKVStore
   /**
@@ -35,9 +34,15 @@ export class Routing {
 
     this.configuration = configuration
     this.store = store
-    this.nodesCount = nodes.length
     this.store.add(this.nodesKey, nodes)
   }
+  /**
+   * Returns the stored nodes count
+   * @memberof Routing
+   */
+  public get nodesCount() { 
+    return this.store.getItems.length
+  } 
 
   /**
    * Reads an array of random nodes from the routing table
