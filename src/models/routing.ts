@@ -138,25 +138,4 @@ export class Routing {
     })
     return nodes
   }
-
-  /**
-   * Filter the nodes list by chain and return a random one
-   * @param {string} blockchain - Blockchain hash.
-   * @param {Node[]} nodes - Node list to filter.
-   * @returns {Node[]} - Filtered list of nodes.
-   * @memberof Routing
-   */
-  // TODO: Do round robin type selection
-  public readNodeBy(blockchain: string): Node | RpcErrorResponse {
-    const nodes = this.store.get(this.nodesKey) as Node[]
-    const filteredNodes = this.filterNodes(blockchain, nodes)
-    if (filteredNodes.length !== 0) {
-      return filteredNodes[Math.floor(Math.random() * nodes.length)]
-    } else {
-      return new RpcErrorResponse(
-        "",
-        "Failed to read node for the provided blockchain"
-      )
-    }
-  }
 }
