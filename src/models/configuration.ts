@@ -15,10 +15,11 @@ export class Configuration {
    * @param {number} maxSessions - (optional) Maximun amount of sessions to stored for the session manager, default 100.
    * @param {number} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 10000.
    */
+  // TODO: Add default values so the Configuration can be instantiated without params
   constructor(
-    maxNodes: number,
-    requestTimeOut: number,
-    maxSessions: number
+    maxNodes: number = 5,
+    requestTimeOut: number = 100,
+    maxSessions: number = 10000
   ) {
     this.maxNodes = maxNodes
     this.requestTimeOut = requestTimeOut
