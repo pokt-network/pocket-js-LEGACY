@@ -125,24 +125,34 @@ export class Pocket {
     const applicationPublicKeyBuffer = Buffer.from(pocketAAT.applicationPublicKey, 'hex')
     // Retrieve the addressHex from the publicKeyBuffer
     const addressHex = addressFromPublickey(applicationPublicKeyBuffer).toString("hex")
-    // Create a relayPayload buffer
-    // Generate sha3 hash of the aat payload object
-    const hash = sha3_256.create();
-    hash.update(JSON.stringify(relayPayload.toJSON()));
-    const relayPayloadBuffer = Buffer.from(hash.hex(), 'hex')
-    // TODO: Proof 1st parameter index value origin pending
     // Create a proof object
-    const signedPayload = await this.signWithUnlockedAccount(addressHex, relayPayloadBuffer)
+    const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
     const relayProof = new Proof(
-      BigInt(0),
+      proofIndex,
+      sessionBlockHeightResponse.sessionBlock,
+      activeNode.address,
+      blockchain,
+      pocketAAT
+    )
+    // Relay Request
+    const relayRequest = new RelayRequest(relayPayload, relayProof)
+    // Generate sha3 hash of the relay request object
+    const hash = sha3_256.create()
+    hash.update(JSON.stringify(relayRequest.toJSON()))
+    // Create a RelayRequest buffer
+    const relayPayloadBuffer = Buffer.from(hash.hex(), 'hex')
+    const signedRelayRequest = await this.signWithUnlockedAccount(addressHex, relayPayloadBuffer)
+    // Create a relay request with the new signature
+    const proof = new Proof(
+      proofIndex,
       sessionBlockHeightResponse.sessionBlock,
       activeNode.address,
       blockchain,
       pocketAAT,
-      signedPayload.toString("hex")
+      signedRelayRequest.toString("hex")
     )
-    // Relay Request
-    const relay = new RelayRequest(relayPayload, relayProof)
+    // Relay to be sent
+    const relay = new RelayRequest(relayPayload, proof)
     // Send relay
     const relayResponse = await RequestManager.relay(
       relay,
