@@ -41,7 +41,7 @@ export class Session {
     this.sessionKey = sessionKey
     this.sessionNodes = sessionNodes
   }
-    /**
+  /**
    * Returns a random session node
    * @memberof Session
    */
