@@ -49,7 +49,7 @@ export class Proof {
     servicePubKey: string,
     blockchain: string,
     token: PocketAAT,
-    signature: string
+    signature: string = ""
   ) {
     this.index = index
     this.sessionBlockHeight = sessionBlockHeight
