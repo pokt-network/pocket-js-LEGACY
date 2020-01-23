@@ -41,7 +41,17 @@ export class Session {
     this.sessionKey = sessionKey
     this.sessionNodes = sessionNodes
   }
-
+    /**
+   * Returns a random session node
+   * @memberof Session
+   */
+  public getSessionNode(): Node | Error { 
+    const nodes = this.sessionNodes
+    if (nodes !== undefined && nodes.length > 0) {
+      return nodes[Math.floor(Math.random() * nodes.length)]
+    }
+    return new Error("Failed to retrieve a Session node, list is empty")
+  } 
   /**
    *
    * Creates a JSON object with the Session properties
