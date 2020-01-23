@@ -149,20 +149,28 @@ export class Pocket {
    *
    * Query a Session Block Height
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getSessionBlockHeight(
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node,
   ): Promise<BigInt | Error> {
-    const node = this.getAnyNode()
+    let activeNode
 
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
+    
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the session block height
     const sessionBlockHeightResponse = await RequestManager.getSessionBlockHeight(
-      node,
+      activeNode,
       configuration
     )
 
@@ -175,24 +183,31 @@ export class Pocket {
    *
    * Query a Block information
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof RequestManager
    */
   public async getBlock(
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryBlockResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the block information
     const blockHeightResponse = await RequestManager.getBlock(
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -205,22 +220,29 @@ export class Pocket {
    *
    * Retrieves a transaction information
    * @param {string} txHash - Transaction hash.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getTX(
     txHash: string,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryTXResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the transaction by hash
-    const txResponse = await RequestManager.getTX(txHash, node, configuration)
+    const txResponse = await RequestManager.getTX(txHash, activeNode, configuration)
 
     if (!typeGuard(txResponse, QueryTXResponse)) {
       return new Error(txResponse.message)
@@ -230,21 +252,28 @@ export class Pocket {
   /**
    *
    * Get the current network block height
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof RequestManager
    */
   public async getHeight(
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryHeightResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the current block height
-    const queryHeightResponse = await RequestManager.getHeight(node, configuration)
+    const queryHeightResponse = await RequestManager.getHeight(activeNode, configuration)
 
     if (!typeGuard(queryHeightResponse, QueryHeightResponse)) {
       return new Error(queryHeightResponse.message)
@@ -256,26 +285,33 @@ export class Pocket {
    * Retrieves an account balance
    * @param {string} address - Account's address.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getBalance(
     address: string,
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryBalanceResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the address current balance
     const balanceResponse = await RequestManager.getBalance(
       address,
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -289,26 +325,33 @@ export class Pocket {
    * Retrieves a list of nodes
    * @param {StakingStatus} stakingStatus - Staking status.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof RequestManager
    */
   public async getNodes(
     stakingStatus: StakingStatus,
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryNodesResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve a list of nodes
     const nodesResponse = await RequestManager.getNodes(
       stakingStatus,
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -322,26 +365,33 @@ export class Pocket {
    * Query a Node information
    * @param {string} address - Node address.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getNode(
     address: string,
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryNodeResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve a node information
     const nodeResponse = await RequestManager.getNode(
       address,
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -354,24 +404,31 @@ export class Pocket {
    *
    * Retrieves the node params
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getNodeParams(
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryNodeParamsResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the node params
     const nodeParamsResponse = await RequestManager.getNodeParams(
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -385,26 +442,33 @@ export class Pocket {
    * Retrieves the node proofs information
    * @param {string} address - Node's address.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getNodeProofs(
     address: string,
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryNodeProofsResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve a node proofs
     const nodeProofsResponse = await RequestManager.getNodeProofs(
       address,
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -417,24 +481,31 @@ export class Pocket {
    *
    * Retrieves the node proof information
    * @param {NodeProof} nodeProof - Node's address.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof RequestManager
    */
   public async getNodeProof(
     nodeProof: NodeProof,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryNodeProofResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve a node proof
     const nodeProofResponse = await RequestManager.getNodeProof(
       nodeProof,
-      node,
+      activeNode,
       configuration
     )
 
@@ -448,26 +519,33 @@ export class Pocket {
    * Retrieves a list of apps
    * @param {StakingStatus} stakingStatus - Staking status.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getApps(
     stakingStatus: StakingStatus,
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryAppsResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve a list of apps
     const appsResponse = await RequestManager.getApps(
       stakingStatus,
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -481,26 +559,33 @@ export class Pocket {
    * Retrieves an app information
    * @param {string} address - Address of the app.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getApp(
     address: string,
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryAppResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve an app
     const appResponse = await RequestManager.getApp(
       address,
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -513,24 +598,31 @@ export class Pocket {
    *
    * Retrieves app params.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getAppParams(
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryAppParamsResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the app params
     const appParamsResponse = await RequestManager.getAppParams(
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -543,24 +635,31 @@ export class Pocket {
    *
    * Retrieves the pocket params.
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getPocketParams(
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QueryPocketParamsResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve the pocket params
     const pocketParamsResponse = await RequestManager.getPocketParams(
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -573,24 +672,31 @@ export class Pocket {
    *
    * Retrieves supported chains
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getSupportedChains(
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QuerySupportedChainsResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve a list of supported chains
     const supportedChainsResponse = await RequestManager.getSupportedChains(
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
@@ -603,24 +709,31 @@ export class Pocket {
    *
    * Retrieves current supply information
    * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
    * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof Pocket
    */
   public async getSupply(
     blockHeight: BigInt,
-    configuration = this.configuration
+    configuration = this.configuration,
+    node?: Node
   ): Promise<QuerySupplyResponse | Error> {
-    const node = this.getAnyNode()
+    let activeNode
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    }else{
+      activeNode = node
+    }
 
     // Check if node is Node.type
-    if (!typeGuard(node, Node)) {
-      return new Error(node.message)
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
     }
     // Retrieve a supply information
     const supplyResponse = await RequestManager.getSupply(
       blockHeight,
-      node,
+      activeNode,
       configuration
     )
 
