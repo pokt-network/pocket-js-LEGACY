@@ -928,3 +928,5 @@ export class Pocket {
     return this.routingTable.getNode()
   }
 }
+
+export * from "pocket-aat-js"
