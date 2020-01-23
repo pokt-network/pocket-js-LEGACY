@@ -63,7 +63,8 @@
         "node-localstorage": "^2.1.5",
         "pbkdf2": "^3.0.17",
         "pocket-aat-js": "github:pokt-network/pocket-aat-js#staging",
-        "seedrandom": "^3.0.5"
+        "seedrandom": "^3.0.5",
+        "js-sha3": "^0.8.0"
     },
     "devDependencies": {
         "@types/chai": "^4.2.7",
