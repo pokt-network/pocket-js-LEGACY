@@ -24,6 +24,7 @@ export class Session {
   public readonly sessionHeader: SessionHeader
   public readonly sessionKey: string
   public readonly sessionNodes: Node[]
+  public relayCount: number = 0
 
   /**
    * Request for Session.
@@ -41,6 +42,11 @@ export class Session {
     this.sessionKey = sessionKey
     this.sessionNodes = sessionNodes
   }
+  
+  public relayPlus(v: number) {
+    this.relayCount = this.relayCount + v
+  }
+  
   /**
    * Returns a random session node
    * @memberof Session

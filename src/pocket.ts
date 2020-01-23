@@ -159,6 +159,8 @@ export class Pocket {
       activeNode,
       configuration
     )
+    // Increase session relay count
+    currentSession.relayPlus(1)
     // Return response
     if (!typeGuard(relayResponse, RelayResponse)) {
       return new Error(relayResponse.message)
