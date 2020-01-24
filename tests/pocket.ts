@@ -86,25 +86,20 @@ describe("Pocket Interface functionalities", async () => {
 
         }).timeout(0)
 
-        it('should sign a relayRequest with an unlocked account', async () => {
+        it('should sign a relay proof with an unlocked account', async () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
             await pocket.importAccount(passphrase, applicationPrivateKey)
             await pocket.unlockAccount(addressHex, passphrase)
             // Create the necessary properties for the relay request
-            const headers: Record<string, string> = {
-                "Content-Type": "application/json"
-            }
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayPayload = new RelayPayload("data", "method", "path", headers)
             const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
-            const relayRequest = new RelayRequest(relayPayload, relayProof)
+            // Create a Relay Proof buffer
             const hash = sha3_256.create()
-            hash.update(JSON.stringify(relayRequest.toJSON()))
-            // Create a RelayRequest buffer
-            const relayPayloadBuffer = Buffer.from(hash.hex(), 'hex')
+            hash.update(JSON.stringify(relayProof.toJSON()))
+            const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
             // Sign the relay payload
-            const signature = await pocket.signWithUnlockedAccount(addressHex, relayPayloadBuffer)
+            const signature = await pocket.signWithUnlockedAccount(addressHex, relayProofBuffer)
 
             expect(signature).to.not.be.an.instanceof(Error)
             expect(signature).to.be.an.instanceof(Buffer)
@@ -346,19 +341,14 @@ describe("Pocket Interface functionalities", async () => {
             await pocket.importAccount(passphrase, applicationPrivateKey)
             await pocket.unlockAccount(addressHex, passphrase)
             // Create the necessary properties for the relay request
-            const headers: Record<string, string> = {
-                "Content-Type": "application/json"
-            }
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayPayload = new RelayPayload("data", "method", "path", headers)
             const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
-            const relayRequest = new RelayRequest(relayPayload, relayProof)
+            // Create a Relay Proof buffer
             const hash = sha3_256.create()
-            hash.update(JSON.stringify(relayRequest.toJSON()))
-            // Create a RelayRequest buffer
-            const relayPayloadBuffer = Buffer.from(hash.hex(), 'hex')
+            hash.update(JSON.stringify(relayProof.toJSON()))
+            const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
             // Sign the relay payload
-            const signature = await pocket.signWithUnlockedAccount(invalidAddressHex, relayPayloadBuffer)
+            const signature = await pocket.signWithUnlockedAccount(invalidAddressHex, relayProofBuffer)
 
             expect(signature).to.be.an.instanceof(Error)
             expect(signature).to.not.be.an.instanceof(Buffer)
@@ -371,19 +361,14 @@ describe("Pocket Interface functionalities", async () => {
             await pocket.importAccount(passphrase, applicationPrivateKey)
             await pocket.unlockAccount(addressHex, passphrase)
             // Create the necessary properties for the relay request
-            const headers: Record<string, string> = {
-                "Content-Type": "application/json"
-            }
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayPayload = new RelayPayload("data", "method", "path", headers)
             const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
-            const relayRequest = new RelayRequest(relayPayload, relayProof)
+            // Create a Relay Proof buffer
             const hash = sha3_256.create()
-            hash.update(JSON.stringify(relayRequest.toJSON()))
-            // Create a RelayRequest buffer
-            const relayPayloadBuffer = Buffer.from(hash.hex(), 'hex')
+            hash.update(JSON.stringify(relayProof.toJSON()))
+            const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
             // Sign the relay payload
-            const signature = await pocket.signWithUnlockedAccount(invalidAddressHex, relayPayloadBuffer)
+            const signature = await pocket.signWithUnlockedAccount(invalidAddressHex, relayProofBuffer)
 
             expect(signature).to.be.an.instanceof(Error)
             expect(signature).to.not.be.an.instanceof(Buffer)
@@ -396,19 +381,14 @@ describe("Pocket Interface functionalities", async () => {
             await pocket.importAccount(passphrase, applicationPrivateKey)
 
             // Create the necessary properties for the relay request
-            const headers: Record<string, string> = {
-                "Content-Type": "application/json"
-            }
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayPayload = new RelayPayload("data", "method", "path", headers)
             const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
-            const relayRequest = new RelayRequest(relayPayload, relayProof)
+            // Create a Relay Proof buffer
             const hash = sha3_256.create()
-            hash.update(JSON.stringify(relayRequest.toJSON()))
-            // Create a RelayRequest buffer
-            const relayPayloadBuffer = Buffer.from(hash.hex(), 'hex')
+            hash.update(JSON.stringify(relayProof.toJSON()))
+            const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
             // Sign the relay payload
-            const signature = await pocket.signWithUnlockedAccount(addressHex, relayPayloadBuffer)
+            const signature = await pocket.signWithUnlockedAccount(addressHex, relayProofBuffer)
 
             expect(signature).to.be.an.instanceof(Error)
             expect(signature).to.not.be.an.instanceof(Buffer)
