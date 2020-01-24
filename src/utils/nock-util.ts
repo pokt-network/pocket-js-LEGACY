@@ -174,7 +174,8 @@ export class NockUtil {
         })
         return this.nockRoute(enums.RPCRoutes.QuerySupply.toString(), code, data)
     }
-
+    
+    // Private functions
     private static nockRoute(path: string = "", code: number = 200, data: any): nock.Scope{
         return nock('127.0.0.1:80').get(path).reply(code, data)
     }
@@ -182,7 +183,7 @@ export class NockUtil {
     private static getError(): any {
         return {
             code: 500,
-            message: 'Error getting information'
+            message: 'Internal Server Error.'
         }
     }
 
