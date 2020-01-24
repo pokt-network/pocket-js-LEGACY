@@ -21,6 +21,14 @@ export class NockUtil {
         return this.nockRoute(enums.Routes.DISPATCH, code, data)
     }
 
+    public static mockGetSessionBlockHeight(code: number = 200): nock.Scope{
+        const data: any = this.createData(code, {
+            session_block: 'session_block'
+        })
+        
+        return this.nockRoute(enums.RPCRoutes.QueryBlock.toString().toString(), code, data)
+    }
+
     public static mockGetBlock(code: number = 200): nock.Scope{
         const data: any = this.createData(code, {
             block: 'block',
