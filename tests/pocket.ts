@@ -5,11 +5,15 @@
 // Constants
 import { expect } from 'chai'
 import { Pocket } from '../src/pocket'
-import { Configuration, RelayRequest, RpcErrorResponse, RelayResponse, QueryBlockResponse, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, Account, RelayPayload, Proof } from '../src'
-import { Node } from "../src/models/node"
-import { BondStatus } from "../src/models/output/bond-status"
+import { Configuration, RelayRequest, RelayResponse, QueryBlockResponse, QueryTXResponse, 
+    QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, 
+    QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, 
+    QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, 
+    QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, Account, 
+    RelayPayload, Proof 
+} from '../src'
 import { PocketAAT } from "pocket-aat-js"
-import { NockUtil } from '../src/utils/nock-util' 
+import { NockUtil } from '../src/utils/nock-util'
 import { sha3_256 } from "js-sha3"
 
 // For Testing we are using dummy data, none of the following information is real.
@@ -21,21 +25,18 @@ const applicationPrivateKey = '15f53145bfa6efdde6e65ce5ebfd330ac0a2591ae451a8a03
 const applicationSignature = '7c3706dce9a5248187cb58cf1d65f12d93c7dfc500de8cfe76b6f925f450d1678ccba666a0374fc83f89f986fc1af640a6000a6b94dd0c9a87d9060613c6b504'
 const alternatePublicKey = "0c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
 const alternatePrivateKey = "de54546ae6bfb7b67e74546c9a55816effa1fc8af004f9b0d231340d29d505580c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
-// TODO: Add Pocket interface tests for PocketAAT related functions, this will be done with issue:
-// https://github.com/pokt-network/pocket-js/issues/166
+
 const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
+const noSessionPocketAAT = PocketAAT.from(version, clientPublicKey, alternatePublicKey, alternatePrivateKey)
 const blockchain = "ETH04"
-const node = new Node("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c","0x1", 
-false, BondStatus.bonded, BigInt(0), "127.0.0.1:80", 
-[blockchain,"aion"], undefined)
 const configuration = new Configuration(5, 40000, 200)
 
-describe("Pocket Interface functionalities", () => {
-    describe("Success scenarios", () => {
-        it('should instantiate a Pocket instance due to a valid configuration is being used',() => {
-            
+describe("Pocket Interface functionalities", async () => {
+    describe("Success scenarios", async () => {
+        it('should instantiate a Pocket instance due to a valid configuration is being used', () => {
+
             const pocket = new Pocket(configuration)
-            
+
             expect(pocket).to.not.be.an.instanceof(Error)
             expect(pocket).to.be.an.instanceof(Pocket)
         }).timeout(0)
@@ -44,7 +45,7 @@ describe("Pocket Interface functionalities", () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
             const account = await pocket.createAccount(passphrase)
-            
+
             expect(account).to.not.be.an.instanceof(Error)
             expect(account).to.be.an.instanceof(Account)
         }).timeout(0)
@@ -53,8 +54,8 @@ describe("Pocket Interface functionalities", () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
 
-            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey )
-            
+            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
+
             expect(importedAccount).to.not.be.an.instanceof(Error)
             expect(importedAccount).to.be.an.instanceof(Account)
         }).timeout(0)
@@ -63,7 +64,7 @@ describe("Pocket Interface functionalities", () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
 
-            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey )
+            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
             const exportedAccount = await pocket.exportAccount(importedAccount as Account, passphrase)
 
             expect(exportedAccount).to.not.be.an.instanceof(Error)
@@ -74,15 +75,15 @@ describe("Pocket Interface functionalities", () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
             const account = await pocket.createAccount(passphrase)
-            
+
             expect(account).to.not.be.an.instanceof(Error)
             expect(account).to.be.an.instanceof(Account)
-            
+
             const addressHex = (account as Account).addressHex
             const result = await pocket.unlockAccount(addressHex, passphrase)
 
             expect(result).to.not.be.an.instanceof(Error)
-            
+
         }).timeout(0)
 
         it('should sign a relayRequest with an unlocked account', async () => {
@@ -144,7 +145,7 @@ describe("Pocket Interface functionalities", () => {
             NockUtil.mockGetTx()
 
             const pocket = new Pocket(configuration)
-            
+
             const txResponse = await pocket.getTX("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f")
             expect(txResponse).to.be.instanceOf(QueryTXResponse)
         }).timeout(0)
@@ -162,7 +163,7 @@ describe("Pocket Interface functionalities", () => {
             NockUtil.mockGetBalance()
 
             const pocket = new Pocket(configuration)
-            
+
             const balanceResponse = await pocket.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(5))
             expect(balanceResponse).to.be.instanceOf(QueryBalanceResponse)
         }).timeout(0)
@@ -198,7 +199,7 @@ describe("Pocket Interface functionalities", () => {
             NockUtil.mockGetNodeProofs()
 
             const pocket = new Pocket(configuration)
-            
+
             const nodeProofsResponse = await pocket.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(5))
             expect(nodeProofsResponse).to.be.instanceOf(QueryNodeProofsResponse)
         }).timeout(0)
@@ -235,7 +236,7 @@ describe("Pocket Interface functionalities", () => {
             NockUtil.mockGetAppParams()
 
             const pocket = new Pocket(configuration)
-            
+
             const appParamsResponse = await pocket.getAppParams(BigInt(5))
             expect(appParamsResponse).to.be.instanceOf(QueryAppParamsResponse)
         }).timeout(0)
@@ -253,7 +254,7 @@ describe("Pocket Interface functionalities", () => {
             NockUtil.mockGetSupportedChains()
 
             const pocket = new Pocket(configuration)
-            
+
             const supportedResponse = await pocket.getSupportedChains(BigInt(5))
             expect(supportedResponse).to.be.instanceOf(QuerySupportedChainsResponse)
         }).timeout(0)
@@ -267,13 +268,13 @@ describe("Pocket Interface functionalities", () => {
             expect(supplyResponse).to.be.instanceOf(QuerySupplyResponse)
         }).timeout(0)
     })
-
-    describe("Error scenarios", () => {
+    describe("Error scenarios", async () => {
+        // Account scenarios
         it('should fail to create an account using an empty passphrase', async () => {
             const passphrase = ""
             const pocket = new Pocket(configuration)
             const account = await pocket.createAccount(passphrase)
-            
+
             expect(account).to.not.be.an.instanceof(Account)
             expect(account).to.be.an.instanceof(Error)
         }).timeout(0)
@@ -282,8 +283,8 @@ describe("Pocket Interface functionalities", () => {
             const passphrase = ""
             const pocket = new Pocket(configuration)
 
-            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey )
-            
+            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
+
             expect(importedAccount).to.not.be.an.instanceof(Account)
             expect(importedAccount).to.be.an.instanceof(Error)
         }).timeout(0)
@@ -292,18 +293,18 @@ describe("Pocket Interface functionalities", () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
             const invalidPrivateKey = applicationPrivateKey.slice(0, -5)
-            const importedAccount = await pocket.importAccount(passphrase, invalidPrivateKey )
-            
+            const importedAccount = await pocket.importAccount(passphrase, invalidPrivateKey)
+
             expect(importedAccount).to.not.be.an.instanceof(Account)
             expect(importedAccount).to.be.an.instanceof(Error)
         }).timeout(0)
 
         it('should fail to export an already imported account using an invalid passphrase', async () => {
             const passphrase = "passphrase123"
-            const invalidPassphrase = passphrase+"4567890"
+            const invalidPassphrase = passphrase + "4567890"
             const pocket = new Pocket(configuration)
 
-            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey )
+            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
             const exportedAccount = await pocket.exportAccount(importedAccount as Account, invalidPassphrase)
 
             expect(exportedAccount).to.not.be.an.instanceof(Buffer)
@@ -324,23 +325,23 @@ describe("Pocket Interface functionalities", () => {
 
         it('should fail to unlock an account using an invalid passphrase', async () => {
             const passphrase = "passphrase123"
-            const invalidPassphrase = passphrase+"4567890"
+            const invalidPassphrase = passphrase + "4567890"
             const pocket = new Pocket(configuration)
             const account = await pocket.createAccount(passphrase)
-            
+
             expect(account).to.not.be.an.instanceof(Error)
             expect(account).to.be.an.instanceof(Account)
-            
+
             const addressHex = (account as Account).addressHex
             const result = await pocket.unlockAccount(addressHex, invalidPassphrase)
 
             expect(result).to.not.be.an.instanceof(Buffer)
             expect(result).to.be.an.instanceof(Error)
         }).timeout(0)
-        
+
         it('should fail to sign a relayRequest with an invalid addressHex length', async () => {
             const passphrase = "passphrase123"
-            const invalidAddressHex = addressHex+"EED"
+            const invalidAddressHex = addressHex + "EED"
             const pocket = new Pocket(configuration)
             await pocket.importAccount(passphrase, applicationPrivateKey)
             await pocket.unlockAccount(addressHex, passphrase)
@@ -393,7 +394,7 @@ describe("Pocket Interface functionalities", () => {
 
             const pocket = new Pocket(configuration)
             await pocket.importAccount(passphrase, applicationPrivateKey)
-            
+
             // Create the necessary properties for the relay request
             const headers: Record<string, string> = {
                 "Content-Type": "application/json"
@@ -413,187 +414,231 @@ describe("Pocket Interface functionalities", () => {
             expect(signature).to.not.be.an.instanceof(Buffer)
         }).timeout(0)
 
-        // it('should fail to send a relay due to no nodes available for the network', async () => {
-        //     const pocket = new Pocket(configuration)
+        // Relay and RPC calls scenarios
 
-        //     const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
-        //     const headers: Record<string, string> = {
-        //         "Content-Type": "application/json"
-        //     }
-            
-        //     const response = await pocket.sendRelay(data, blockchain, headers, pocketAAT)
+        it('should fail to send a relay due to no sessions found', async () => {
+            const pocket = new Pocket(configuration)
 
-        //     expect(response).to.be.instanceOf(RelayResponse)
-        // }).timeout(0)
+            const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json"
+            }
+            NockUtil.mockRelay(500)
+            const response = await pocket.sendRelay(data, blockchain, headers, noSessionPocketAAT)
 
-        // it('should error to send a relay due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     const pocket = new Pocket(configuration)
+            expect(response).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
-        //     const headers: Record<string, string> = {
-        //         "Content-Type": "application/json"
-        //     }
-        //     pocket.createRelayRequest(data, blockchain, headers, pocketAAT, node, true, "GET", "network/version").then(request => {
-        //         if(request instanceof RelayRequest){
-        //             NockUtil.mockRelay(500)
-        //             pocket.sendRelay(request, configuration).then(relayResponse => {
-        //                 expect(relayResponse).to.be.instanceOf(RpcErrorResponse)
-        //             })
-        //         }
-        //     })
-        // }).timeout(0)
+        it('should fail to send a relay due to no stake amount', async () => {
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get a block due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetBlock(500)
+            const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json"
+            }
+            NockUtil.mockRelay(500)
+            const response = await pocket.sendRelay(data, blockchain, headers, noSessionPocketAAT)
 
-        //     const pocket = new Pocket(configuration)
-            
-        //     pocket.getBlock(BigInt(5), true).then(blockResponse => {
-        //         expect(blockResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            expect(response).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        // it('should returns an error trying to get a transaction due to an address is not being sent. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetTx(500)
+        it('should returns an error trying to get a block due block height lower than 0.', async () => {
+            NockUtil.mockGetBlock(500)
 
-        //     const pocket = new Pocket(configuration)
-        //     pocket.getTX("", true).then(txResponse => {
-        //         expect(txResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get the height due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetHeight(500)
+            const blockResponse = await pocket.getBlock(BigInt(-1), configuration)
+            expect(blockResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
-            
-        //     pocket.getHeight(true).then(heightResponse => {
-        //         expect(heightResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+        it('should returns an error trying to get a transaction due to an invalid address hex.', async () => {
+            NockUtil.mockGetTx(500)
 
-        // it('should returns an error trying to get the balance due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetBalance(500)
+            const pocket = new Pocket(configuration)
 
-        //     const pocket = new Pocket(configuration)
-        
-        //     pocket.getBalance("0xa", BigInt(5), true).then(balanceResponse => {
-        //         expect(balanceResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const txResponse = await pocket.getTX("0xw892400Dc3C5a5eeBc96070ccd575D6A720F0F9z")
+            expect(txResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        // it('should returns an error trying to get a list of nodes due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetNodes(500)
+        it('should returns an error trying to get a transaction due to an empty address hex.', async () => {
+            NockUtil.mockGetTx(500)
 
-        //     const pocket = new Pocket(configuration)
-            
-        //     pocket.getNodes(StakingStatus.Staked, BigInt(5), true).then(nodesResponse => {
-        //         expect(nodesResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get a node due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetNode(500)
+            const txResponse = await pocket.getTX("")
+            expect(txResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
-            
+        it('should returns an error trying to get the height due to internal server error.', async () => {
+            NockUtil.mockGetHeight(500)
 
-        //     pocket.getNode("0xa", BigInt(5), true).then(nodeResponse => {
-        //         expect(nodeResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get the node params due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetNodeParams(500)
+            const heightResponse = await pocket.getHeight()
+            expect(heightResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
+        it('should returns an error trying to get the balance due to an invalid address.', async () => {
+            NockUtil.mockGetBalance(500)
 
-        //     pocket.getNodeParams(BigInt(5), true).then(nodeParamsResponse => {
-        //         expect(nodeParamsResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get a list of proofs of a node due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetNodeProofs(500)
+            const balanceResponse = await pocket.getBalance("0xz892400Dc3C5a5eeBc96070ccd575D6A720F0F9wee", BigInt(5))
+            expect(balanceResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
+        it('should returns an error trying to get the balance due to an empty address.', async () => {
+            NockUtil.mockGetBalance(500)
 
-        //     pocket.getNodeProofs("0xa", BigInt(5), true).then(nodeProofsResponse => {
-        //         expect(nodeProofsResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get a proof of a node due to a invalid NodeProof is being used. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetNodeProof(500)
+            const balanceResponse = await pocket.getBalance("", BigInt(5))
+            expect(balanceResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const nodeProof = new NodeProof(")x0", "ETH10", "0x1", BigInt(0), BigInt(0))
-        //     const pocket = new Pocket(configuration)
-            
+        it('should returns an error trying to get the balance due to the block height less than 0.', async () => {
+            NockUtil.mockGetBalance(500)
 
-        //     pocket.getNodeProof(nodeProof, true).then(nodeProofResponse => {
-        //         expect(nodeProofResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get a list of apps due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetApps(500)
+            const balanceResponse = await pocket.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(-1))
+            expect(balanceResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
+        it('should returns an error trying to get a list of nodes due to the block height less than 0.', async () => {
+            NockUtil.mockGetNodes(500)
 
-        //     pocket.getApps(StakingStatus.Staked, BigInt(5), true).then(appsResponse => {
-        //         expect(appsResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get an app due to an invalid address is being sent. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetApp(500)
+            const nodeResponse = await pocket.getNodes(StakingStatus.Staked, BigInt(-1))
+            expect(nodeResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
-            
+        it('should returns an error trying to get a node due to an invalid address.', async () => {
+            NockUtil.mockGetNode(500)
 
-        //     pocket.getApp("0x1", BigInt(5), true).then(appResponse => {
-        //         expect(appResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get an app params due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetAppParams(500)
+            const nodeResponse = await pocket.getNode("0xzA0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            expect(nodeResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
+        it('should returns an error trying to get a node due to an empty address.', async () => {
+            NockUtil.mockGetNode(500)
 
-        //     pocket.getAppParams(BigInt(5), true).then(appParamsResponse => {
-        //         expect(appParamsResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get the pocket params due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetPocketParams(500)
+            const nodeResponse = await pocket.getNode("", BigInt(5))
+            expect(nodeResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
+        it('should returns an error trying to get a node due to the block height is less than 0.', async () => {
+            NockUtil.mockGetNode(500)
 
-        //     pocket.getPocketParams(BigInt(5), true).then(pocketParamsResponse => {
-        //         expect(pocketParamsResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get the supported chains due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetSupportedChains(500)
+            const nodeResponse = await pocket.getNode("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-1))
+            expect(nodeResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
+        it('should returns an error trying to get the node params due to the block height is less than 0.', async () => {
+            NockUtil.mockGetNodeParams(500)
 
-        //     pocket.getSupportedChains(BigInt(5), true).then(supportedResponse => {
-        //         expect(supportedResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
+            const pocket = new Pocket(configuration)
 
-        // it('should returns an error trying to get the supply due to the lack of a valid node. An RpcErrorResponse is expected', () => {
-        //     NockUtil.mockGetSupply(500)
+            const nodeParamsResponse = await pocket.getNodeParams(BigInt(-1))
+            expect(nodeParamsResponse).to.be.instanceOf(Error)
+        }).timeout(0)
 
-        //     const pocket = new Pocket(configuration)
+        it('should returns an error trying to get a node proofs list of proofs due to an invalid address.', async () => {
+            NockUtil.mockGetNodeProofs(500)
 
-        //     pocket.getSupply(BigInt(5), true).then(supplyResponse => {
-        //         expect(supplyResponse).to.be.instanceOf(RpcErrorResponse)
-        //     })
-        // }).timeout(0)
-    }) 
+            const pocket = new Pocket(configuration)
+
+            const nodeProofsResponse = await pocket.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            expect(nodeProofsResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get a node proofs list of proofs due to the block height being less than 0.', async () => {
+            NockUtil.mockGetNodeProofs(500)
+
+            const pocket = new Pocket(configuration)
+
+            const nodeProofsResponse = await pocket.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-1))
+            expect(nodeProofsResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get a proof of a node due to internal server error.', async () => {
+            NockUtil.mockGetNodeProof(500)
+
+            const nodeProof = new NodeProof("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
+            const pocket = new Pocket(configuration)
+
+            const nodeProofResponse = await pocket.getNodeProof(nodeProof)
+            expect(nodeProofResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get a list of apps due to the block height being less than 0.', async () => {
+            NockUtil.mockGetApps(500)
+
+            const pocket = new Pocket(configuration)
+
+            const appsResponse = await pocket.getApps(StakingStatus.Staked, BigInt(-1))
+            expect(appsResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get an app due to an invalid address.', async () => {
+            NockUtil.mockGetApp(500)
+
+            const pocket = new Pocket(configuration)
+
+            const appResponse = await pocket.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            expect(appResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get an app due to block height being less than 0.', async () => {
+            NockUtil.mockGetApp(500)
+
+            const pocket = new Pocket(configuration)
+
+            const appResponse = await pocket.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-5))
+            expect(appResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get an app params due block height being less than 0.', async () => {
+            NockUtil.mockGetAppParams(500)
+
+            const pocket = new Pocket(configuration)
+
+            const appParamsResponse = await pocket.getAppParams(BigInt(-5))
+            expect(appParamsResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get the pocket params due block height being less than 0.', async () => {
+            NockUtil.mockGetPocketParams(500)
+
+            const pocket = new Pocket(configuration)
+
+            const pocketParamsResponse = await pocket.getPocketParams(BigInt(-5))
+            expect(pocketParamsResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get the supported chains due block height being less than 0.', async () => {
+            NockUtil.mockGetSupportedChains(500)
+
+            const pocket = new Pocket(configuration)
+
+            const supportedResponse = await pocket.getSupportedChains(BigInt(-5))
+            expect(supportedResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+
+        it('should returns an error trying to get the supply due block height being less than 0.', async () => {
+            NockUtil.mockGetSupply(500)
+
+            const pocket = new Pocket(configuration)
+
+            const supplyResponse = await pocket.getSupply(BigInt(-5))
+            expect(supplyResponse).to.be.instanceOf(Error)
+        }).timeout(0)
+    })
 })
