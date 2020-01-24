@@ -31,7 +31,7 @@ import { QueryAppParamsResponse } from "./models/output/query-app-params-respons
 import { QueryPocketParamsResponse } from "./models/output/query-pocket-params-response"
 import { QuerySupportedChainsResponse } from "./models/output/query-supported-chains-response"
 import { QuerySupplyResponse } from "./models/output/query-supply-response"
-import { InMemoryKVStore, addressFromPublickey } from "./utils"
+import { InMemoryKVStore, addressFromPublickey, Hex } from "./utils"
 import { PocketAAT } from "pocket-aat-js"
 import { sha3_256 } from "js-sha3"
 
@@ -257,6 +257,9 @@ export class Pocket {
     node?: Node
   ): Promise<QueryTXResponse | Error> {
     let activeNode
+    if (!Hex.isHex(txHash) && Hex.byteLength(txHash) !== 20) {
+      return new Error("Invalid Address Hex")
+    }
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
@@ -323,6 +326,10 @@ export class Pocket {
     node?: Node
   ): Promise<QueryBalanceResponse | Error> {
     let activeNode
+
+    if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
+      return new Error("Invalid Address Hex")
+    }
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
@@ -404,6 +411,10 @@ export class Pocket {
   ): Promise<QueryNodeResponse | Error> {
     let activeNode
 
+    if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
+      return new Error("Invalid Address Hex")
+    }
+
     if (node === undefined) {
       activeNode = this.getAnyNode()
     }else{
@@ -481,6 +492,10 @@ export class Pocket {
   ): Promise<QueryNodeProofsResponse | Error> {
     let activeNode
 
+    if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
+      return new Error("Invalid Address Hex")
+    }
+
     if (node === undefined) {
       activeNode = this.getAnyNode()
     }else{
@@ -518,6 +533,10 @@ export class Pocket {
     node?: Node
   ): Promise<QueryNodeProofResponse | Error> {
     let activeNode
+
+    if (!nodeProof.isValid()) {
+      return new Error("Invalid Address Hex")
+    }
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
@@ -597,6 +616,10 @@ export class Pocket {
     node?: Node
   ): Promise<QueryAppResponse | Error> {
     let activeNode
+
+    if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
+      return new Error("Invalid Address Hex")
+    }
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
