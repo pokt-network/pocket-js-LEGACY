@@ -55,6 +55,21 @@ export class Hex {
     return false
   }
 
+  /**
+   * referenced from https://stackoverflow.com/a/10121740
+   * Checks the lenght of a provided string
+   * @param {string} str - Provided string.
+   * @returns {number} - The string lenght in bytes.
+   * @memberof Hex
+   */
+  public static byteLength(str: string): number {
+    const a = []
+    for (let i = 0; i < str.length; i += 2) {
+      a.push(str.substr(i, 2))
+    }
+    return a.length
+  }
+
   private static readonly alphabet: string[] = [
     "0",
     "1",
@@ -73,22 +88,6 @@ export class Hex {
     "e",
     "f"
   ]
-
-  /**
-   * referenced from https://stackoverflow.com/a/10121740
-   * Checks the lenght of a provided string
-   * @param {string} str - Provided string.
-   * @returns {number} - The string lenght in bytes.
-   * @memberof Hex
-   */
-  private static byteLength(str: string): number {
-    const a = []
-    for (let i = 0; i < str.length; i += 2) {
-      a.push(str.substr(i, 2))
-    }
-
-    return a.length
-  }
   /**
    *
    *  Encodes a decoded value.

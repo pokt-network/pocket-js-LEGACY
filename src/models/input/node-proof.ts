@@ -1,3 +1,5 @@
+import { Hex } from "../../utils"
+
 /**
  *
  *
@@ -76,13 +78,17 @@ export class NodeProof {
    * @returns {boolean} - True or false.
    * @memberof NodeProof
    */
-  private isValid(): boolean {
+  public isValid(): boolean {
+    const sessionBlockHeight = Number(this.SBlockHeight.toString(16))
+    const height = Number(this.height.toString(16))
     return (
-      this.address.length !== 0 &&
+      Hex.isHex(this.address) && 
+      Hex.byteLength(this.address) === 20 &&
       this.blockchain.length !== 0 &&
-      this.appPubKey.length !== 0 &&
-      this.SBlockHeight !== undefined &&
-      this.height !== undefined
+      Hex.isHex(this.appPubKey) &&
+      Hex.byteLength(this.appPubKey) === 32 &&
+      sessionBlockHeight >= 0 &&
+      height >= 0 
     )
   }
 }

@@ -165,6 +165,9 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryBlockResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
       const payload = JSON.stringify({ Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -292,6 +295,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryBalanceResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = { "address": address, "height": blockHeight }
 
       const response = await RequestManager.send(
@@ -337,6 +344,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryNodesResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = {
         "height": blockHeight,
         "stakingStatus": stakingStatus
@@ -385,6 +396,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryNodeResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Address: address, Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -428,6 +443,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryNodeParamsResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -473,6 +492,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryNodeProofsResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Address: address, Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -561,10 +584,14 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryAppsResponse | RpcErrorResponse> {
     try {
-      const payload = {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+      
+      const payload = JSON.stringify({
         "height": blockHeight,
         "stakingStatus": stakingStatus
-      }
+      })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryApps.toString(),
@@ -609,6 +636,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryAppResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Address: address, Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -652,6 +683,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryAppParamsResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -695,6 +730,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QueryPocketParamsResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -738,6 +777,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QuerySupportedChainsResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -781,6 +824,10 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<QuerySupplyResponse | RpcErrorResponse> {
     try {
+      if (Number(blockHeight.toString(16)) < 0 ) {
+        return new RpcErrorResponse("101", "block height can't be lower than 0")
+      }
+
       const payload = JSON.stringify({ Height: blockHeight })
 
       const response = await RequestManager.send(
@@ -827,6 +874,7 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<SendResponse | RpcErrorResponse> {
     try {
+      
       const axiosInstance = axios.create({
         headers: {
           "Content-Type": "application/json"
