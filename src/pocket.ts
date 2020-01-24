@@ -134,14 +134,12 @@ export class Pocket {
       blockchain,
       pocketAAT
     )
-    // Relay Request
-    const relayRequest = new RelayRequest(relayPayload, relayProof)
-    // Generate sha3 hash of the relay request object
+    // Generate sha3 hash of the relay proof object
     const hash = sha3_256.create()
-    hash.update(JSON.stringify(relayRequest.toJSON()))
-    // Create a RelayRequest buffer
-    const relayPayloadBuffer = Buffer.from(hash.hex(), 'hex')
-    const signedRelayRequest = await this.signWithUnlockedAccount(addressHex, relayPayloadBuffer)
+    hash.update(JSON.stringify(relayProof.toJSON()))
+    // Create a relay proof buffer
+    const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
+    const signedRelayProof = await this.signWithUnlockedAccount(addressHex, relayProofBuffer)
     // Create a relay request with the new signature
     const proof = new Proof(
       proofIndex,
@@ -149,7 +147,7 @@ export class Pocket {
       activeNode.address,
       blockchain,
       pocketAAT,
-      signedRelayRequest.toString("hex")
+      signedRelayProof.toString("hex")
     )
     // Relay to be sent
     const relay = new RelayRequest(relayPayload, proof)
