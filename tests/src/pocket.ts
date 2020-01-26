@@ -4,16 +4,16 @@
  */
 // Constants
 import { expect } from 'chai'
-import { Pocket } from '../src/pocket'
+import { Pocket } from '../../src/pocket'
 import { Configuration, RelayRequest, RelayResponse, QueryBlockResponse, QueryTXResponse, 
     QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, 
     QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, 
     QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, 
     QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, Account, 
     RelayPayload, Proof 
-} from '../src'
+} from '../../src'
 import { PocketAAT } from "pocket-aat-js"
-import { NockUtil } from './utils/nock-util'
+import { NockUtil } from '../utils/nock-util'
 import { sha3_256 } from "js-sha3"
 
 // For Testing we are using dummy data, none of the following information is real.
