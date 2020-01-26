@@ -13,7 +13,9 @@
     },
     "scripts": {
         "test": "mocha --require ts-node/register tests/**/*.ts",
-        "build": "cti create ./src & npm run lint & tsc",
+        "build": "rm -r lib & npm run lint & tsc",
+        "prepare": "rm -r lib & npm run lint & tsc",
+        "prepackage": "rm -r lib & npm run lint & tsc",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "lint": "tslint -p tsconfig.json"
     },
