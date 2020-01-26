@@ -3,14 +3,14 @@
  * @description Unit test for the Pocket Core
  */
 // Constants
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 import { Pocket } from '../../src/pocket'
-import { Configuration, RelayRequest, RelayResponse, QueryBlockResponse, QueryTXResponse, 
+import { Configuration, Node, RelayResponse, QueryBlockResponse, QueryTXResponse, 
     QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, 
     QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, 
     QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, 
     QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, Account, 
-    RelayPayload, Proof 
+    Proof, BondStatus 
 } from '../../src'
 import { PocketAAT } from "pocket-aat-js"
 import { NockUtil } from '../utils/nock-util'
@@ -29,16 +29,19 @@ const alternatePrivateKey = "de54546ae6bfb7b67e74546c9a55816effa1fc8af004f9b0d23
 const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 const noSessionPocketAAT = PocketAAT.from(version, clientPublicKey, alternatePublicKey, alternatePrivateKey)
 const blockchain = "ETH04"
-const configuration = new Configuration(5, 40000, 200)
+const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "127.0.0.1:80")
+const configuration = new Configuration([node01],5, 40000, 200)
 
 describe("Pocket Interface functionalities", async () => {
     describe("Success scenarios", async () => {
         it('should instantiate a Pocket instance due to a valid configuration is being used', () => {
-
-            const pocket = new Pocket(configuration)
-
-            expect(pocket).to.not.be.an.instanceof(Error)
-            expect(pocket).to.be.an.instanceof(Pocket)
+            try {
+                const pocket = new Pocket(configuration)
+                expect(pocket).to.not.be.an.instanceof(Error)
+                expect(pocket).to.be.an.instanceof(Pocket)
+            } catch (error) {
+                assert.fail()
+            }
         }).timeout(0)
 
         it('should create an account using a passphrase', async () => {

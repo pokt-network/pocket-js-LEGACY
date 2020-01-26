@@ -53,10 +53,13 @@ export class Pocket {
    */
   constructor(
     configuration: Configuration,
-    optionalConfiguration?: Configuration
   ) {
     this.configuration = configuration
-    this.routingTable = new Routing([], configuration)
+    try {
+      this.routingTable = new Routing(configuration.nodes , configuration)
+    } catch (error) {
+      throw error
+    }
     this.sessionManager = new SessionManager(this.routingTable)
   }
   /**
