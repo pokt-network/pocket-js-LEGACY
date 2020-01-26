@@ -12,7 +12,7 @@
         "tests": "./tests"
     },
     "scripts": {
-        "test": "mocha --require ts-node/register tests/**/*.ts",
+        "test": "mocha --require ts-node/register tests/src/**/*.ts",
         "build": "rm -r lib & cti create ./src & npm run lint & tsc",
         "prepare": "rm -r lib & cti create ./src & npm run lint & tsc",
         "prepackage": "rm -r lib & cti create ./src & npm run lint & tsc",
