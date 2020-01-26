@@ -13,7 +13,7 @@ import { Configuration, RelayRequest, RelayResponse, QueryBlockResponse, QueryTX
     RelayPayload, Proof 
 } from '../src'
 import { PocketAAT } from "pocket-aat-js"
-import { NockUtil } from '../src/utils/nock-util'
+import { NockUtil } from './utils/nock-util'
 import { sha3_256 } from "js-sha3"
 
 // For Testing we are using dummy data, none of the following information is real.

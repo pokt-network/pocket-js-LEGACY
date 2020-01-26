@@ -1,5 +1,5 @@
 import nock from 'nock'
-import enums = require("./enums")
+import enums = require("../../src/utils/enums")
 
 export class NockUtil {
     public static mockRelay(code: number = 200): nock.Scope{
