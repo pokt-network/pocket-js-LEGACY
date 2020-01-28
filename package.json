@@ -12,7 +12,7 @@
         "tests": "./tests"
     },
     "scripts": {
-        "test": "mocha --require ts-node/register tests/src/**/*.ts",
+        "test": "nyc mocha --require ts-node/register tests/src/**/*.ts",
         "build": "rm -r lib & cti create ./src & npm run lint & tsc",
         "prepare": "rm -r lib & cti create ./src & npm run lint & tsc",
         "prepackage": "rm -r lib & cti create ./src & npm run lint & tsc",
@@ -69,6 +69,7 @@
         "js-sha3": "^0.8.0"
     },
     "devDependencies": {
+        "@istanbuljs/nyc-config-typescript": "^1.0.1",
         "@types/chai": "^4.2.7",
         "@types/ed25519": "0.0.0",
         "@types/mocha": "^5.2.7",
@@ -79,8 +80,10 @@
         "create-ts-index": "^1.12.0",
         "mocha": "^6.2.2",
         "nock": "^11.7.2",
+        "nyc": "^15.0.0",
         "prettier": "^1.19.1",
-        "ts-node": "^8.5.4",
+        "source-map-support": "^0.5.16",
+        "ts-node": "^8.6.2",
         "tslint": "^5.20.1",
         "tslint-config-prettier": "^1.18.0",
         "typescript": "^3.7.2"
