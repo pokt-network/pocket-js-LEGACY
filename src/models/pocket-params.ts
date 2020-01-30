@@ -15,7 +15,7 @@ export class PocketParams {
     const jsonObject = JSON.parse(json)
 
     return new PocketParams(
-      jsonObject.session_node_ount,
+      jsonObject.session_node_count,
       jsonObject.proof_waiting_period,
       jsonObject.supported_blockchains,
       jsonObject.claim_expiration
