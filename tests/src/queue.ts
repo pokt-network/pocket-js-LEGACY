@@ -5,7 +5,7 @@ describe('Queue Tests', () => {
     it('should create an empty queue', () => {
       const queue = new Queue<number>()
       expect(queue.length).to.equal(0)
-      expect(queue.front).to.be.null
+      expect(queue.front).to.be.undefined
     })
   
     it('should create a queue with a single value', () => {
@@ -39,7 +39,7 @@ describe('Queue Tests', () => {
     it('should enqueue a value to the back of an empty queue', () => {
       const queue = new Queue<number>()
       expect(queue.length).to.equal(0)
-      expect(queue.front).to.be.null
+      expect(queue.front).to.be.undefined
       queue.enqueue(1)
       expect(queue.length).to.equal(1)
       expect(queue.front).to.equal(1)
@@ -59,11 +59,11 @@ describe('Queue Tests', () => {
     it('should handle dequeueing a value from an empty queue', () => {
       const queue = new Queue<number>()
       expect(queue.length).to.equal(0)
-      expect(queue.front).to.be.null
-      expect(queue.tail).to.be.null
+      expect(queue.front).to.be.undefined
+      expect(queue.tail).to.be.undefined
       const val = queue.dequeue()
       expect(queue.length).to.equal(0)
-      expect(queue.front).to.be.null
+      expect(queue.front).to.be.undefined
       expect(val).to.be.undefined
     })
   
