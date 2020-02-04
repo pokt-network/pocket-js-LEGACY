@@ -1,5 +1,6 @@
 import nock from 'nock'
 import enums = require("../../src/utils/enums")
+import { Environment } from "../../src/utils/env"
 
 export class NockUtil {
     public static mockRelay(code: number = 200): nock.Scope{
@@ -177,7 +178,8 @@ export class NockUtil {
     
     // Private functions
     private static nockRoute(path: string = "", code: number = 200, data: any): nock.Scope{
-        return nock('127.0.0.1:80').get(path).reply(code, data)
+        const env = new Environment.TestNet()
+        return nock(env.getPOKTRPC()).get(path).reply(code, data)
     }
 
     private static getError(): any {

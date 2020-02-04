@@ -15,10 +15,11 @@ import { Configuration, Node, RelayResponse, QueryBlockResponse, QueryTXResponse
 import { PocketAAT } from "pocket-aat-js"
 import { NockUtil } from '../utils/nock-util'
 import { sha3_256 } from "js-sha3"
+import { Environment } from '../../src/utils/env'
 
 // For Testing we are using dummy data, none of the following information is real.
 const version = '0.0.1'
-const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
+const addressHex = "11AD05777C30F529C3FD3753AD5D0EA97192716E"
 const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5'
 const applicationPublicKey = 'd9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
 const applicationPrivateKey = '15f53145bfa6efdde6e65ce5ebfd330ac0a2591ae451a8a03ace99eff894b9eed9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
@@ -26,10 +27,11 @@ const applicationSignature = '7c3706dce9a5248187cb58cf1d65f12d93c7dfc500de8cfe76
 const alternatePublicKey = "0c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
 const alternatePrivateKey = "de54546ae6bfb7b67e74546c9a55816effa1fc8af004f9b0d231340d29d505580c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
 
+const env = new Environment.TestNet()
 const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 const noSessionPocketAAT = PocketAAT.from(version, clientPublicKey, alternatePublicKey, alternatePrivateKey)
 const blockchain = "ETH04"
-const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "127.0.0.1:80")
+const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC())
 const configuration = new Configuration([node01],5, 40000, 200)
 
 describe("Pocket Interface functionalities", async () => {
