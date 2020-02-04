@@ -49,7 +49,7 @@ export abstract class RequestManager {
   ): Promise<RelayResponse | RpcErrorResponse> {
     try {
       const response = await RequestManager.send(
-        enums.Routes.RELAY,
+        enums.Routes.RELAY.toString(),
         request.toJSON(),
         node,
         configuration
@@ -57,10 +57,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const relayResponse = RelayResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -90,7 +86,7 @@ export abstract class RequestManager {
   ): Promise<DispatchResponse | RpcErrorResponse> {
     try {
       const response = await RequestManager.send(
-        enums.Routes.DISPATCH,
+        enums.Routes.DISPATCH.toString(),
         request.toJSON(),
         node,
         configuration
@@ -98,10 +94,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const dispatchResponse = DispatchResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -145,10 +137,10 @@ export abstract class RequestManager {
       return queryNodeParamsResponse
     }
     // Create querySessionBlockResponse
+    
     const querySessionBlockResponse = new QuerySessionBlockResponse(
       queryNodeParamsResponse.nodeParams.sessionBlock
     )
-
     return querySessionBlockResponse
   }
   /**
@@ -168,21 +160,16 @@ export abstract class RequestManager {
       if (Number(blockHeight.toString(16)) < 0 ) {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
-      const payload = JSON.stringify({ Height: blockHeight })
+      const payload = JSON.stringify({ height: blockHeight.toString(16) })
 
       const response = await RequestManager.send(
-        enums.RPCRoutes.QueryBlock.toString().toString(),
+        enums.RPCRoutes.QueryBlock.toString(),
         payload,
         node,
         configuration
       )
-
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const queryBlockResponse = QueryBlockResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -222,10 +209,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const queryTXResponse = QueryTXResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -251,7 +234,7 @@ export abstract class RequestManager {
     node: Node,
     configuration: Configuration
   ): Promise<QueryHeightResponse | RpcErrorResponse> {
-    try {
+    try {   
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryHeight.toString(),
         {},
@@ -261,10 +244,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const queryHeightResponse = QueryHeightResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -298,8 +277,8 @@ export abstract class RequestManager {
       if (Number(blockHeight.toString(16)) < 0 ) {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
-
-      const payload = { "address": address, "height": blockHeight }
+      
+      const payload = { "address": address, "height": blockHeight.toString(16) }
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryBalance.toString(),
@@ -310,10 +289,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const queryBalanceResponse = QueryBalanceResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -349,7 +324,7 @@ export abstract class RequestManager {
       }
 
       const payload = {
-        "height": blockHeight,
+        "height": blockHeight.toString(16),
         "stakingStatus": stakingStatus
       }
 
@@ -362,10 +337,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const queryNodesResponse = QueryNodesResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -399,8 +370,10 @@ export abstract class RequestManager {
       if (Number(blockHeight.toString(16)) < 0 ) {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
-
-      const payload = JSON.stringify({ Address: address, Height: blockHeight })
+      const payload = JSON.stringify({ 
+        address: address, 
+        height: blockHeight.toString(16) 
+      })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryNode.toString(),
@@ -411,10 +384,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const queryNodeResponse = QueryNodeResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -447,7 +416,7 @@ export abstract class RequestManager {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
 
-      const payload = JSON.stringify({ Height: blockHeight })
+      const payload = JSON.stringify({ height: blockHeight.toString(16) })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryNodeParams.toString(),
@@ -458,10 +427,6 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const queryNodeParamsResponse = QueryNodeParamsResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -496,7 +461,10 @@ export abstract class RequestManager {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
 
-      const payload = JSON.stringify({ Address: address, Height: blockHeight })
+      const payload = JSON.stringify({ 
+        address: address, 
+        height: blockHeight.toString(16) 
+      })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryNodeProofs.toString(),
@@ -507,10 +475,7 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
+
         const queryNodeProofsResponse = QueryNodeProofsResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -550,10 +515,7 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
+
         const queryNodeProofResponse = QueryNodeProofResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -589,7 +551,7 @@ export abstract class RequestManager {
       }
       
       const payload = JSON.stringify({
-        "height": blockHeight,
+        "height": blockHeight.toString(16),
         "stakingStatus": stakingStatus
       })
 
@@ -602,10 +564,7 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
+
         const queryAppsResponse = QueryAppsResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -640,7 +599,10 @@ export abstract class RequestManager {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
 
-      const payload = JSON.stringify({ Address: address, Height: blockHeight })
+      const payload = JSON.stringify({ 
+        address: address, 
+        height: blockHeight.toString(16) 
+      })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryApp.toString(),
@@ -651,10 +613,7 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
+
         const queryAppResponse = QueryAppResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -687,7 +646,7 @@ export abstract class RequestManager {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
 
-      const payload = JSON.stringify({ Height: blockHeight })
+      const payload = JSON.stringify({ height: blockHeight.toString(16) })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryAppParams.toString(),
@@ -698,10 +657,7 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
+
         const queryAppParamsResponse = QueryAppParamsResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -734,7 +690,7 @@ export abstract class RequestManager {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
 
-      const payload = JSON.stringify({ Height: blockHeight })
+      const payload = JSON.stringify({ height: blockHeight.toString(16) })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QueryPocketParams.toString(),
@@ -745,10 +701,7 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
+
         const queryPocketParamsResponse = QueryPocketParamsResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -781,7 +734,7 @@ export abstract class RequestManager {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
 
-      const payload = JSON.stringify({ Height: blockHeight })
+      const payload = JSON.stringify({ height: blockHeight.toString(16) })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QuerySupportedChains.toString(),
@@ -792,10 +745,7 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
+
         const querySupportedChainsResponse = QuerySupportedChainsResponse.fromJSON(
           JSON.stringify(response.data)
         )
@@ -828,7 +778,7 @@ export abstract class RequestManager {
         return new RpcErrorResponse("101", "block height can't be lower than 0")
       }
 
-      const payload = JSON.stringify({ Height: blockHeight })
+      const payload = JSON.stringify({ height: blockHeight.toString(16) })
 
       const response = await RequestManager.send(
         enums.RPCRoutes.QuerySupply.toString(),
@@ -839,14 +789,9 @@ export abstract class RequestManager {
 
       // Check if response is an error
       if (!typeGuard(response, RpcErrorResponse)) {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
         const querySupplyResponse = QuerySupplyResponse.fromJSON(
-          response.data as string
+          JSON.stringify(response.data)
         )
-
         return querySupplyResponse
       } else {
         return new RpcErrorResponse(
@@ -874,18 +819,17 @@ export abstract class RequestManager {
     configuration: Configuration
   ): Promise<SendResponse | RpcErrorResponse> {
     try {
-      
       const axiosInstance = axios.create({
+        baseURL: node.serviceURL,
         headers: {
           "Content-Type": "application/json"
         },
-        timeout: configuration.requestTimeOut,
-        url: node.serviceURL // TODO: ERROR OUT NODE WITHOUT HTTPS: URI and the scheme to https
+        timeout: configuration.requestTimeOut
       })
       // Await response
       const response = await axiosInstance.post(path, payload)
       // Create SendResponse object
-      const sendResponse = SendResponse.fromJSON(JSON.stringify(response))
+      const sendResponse = SendResponse.fromJSON(JSON.stringify(response.data))
       // Check for validation
       if (sendResponse.isValid()) {
         // If successs 200
