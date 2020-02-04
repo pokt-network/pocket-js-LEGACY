@@ -15,15 +15,19 @@ export class Transaction {
    * @memberof Transaction
    */
   public static fromJSON(json: string): Transaction {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new Transaction(
-      jsonObject.hash,
-      jsonObject.height,
-      jsonObject.index,
-      jsonObject.tx,
-      TxProof.fromJSON(JSON.stringify(jsonObject.proof))
-    )
+      return new Transaction(
+        jsonObject.hash,
+        jsonObject.height,
+        jsonObject.index,
+        jsonObject.tx,
+        TxProof.fromJSON(JSON.stringify(jsonObject.proof))
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly hash: string

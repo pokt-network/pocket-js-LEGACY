@@ -13,10 +13,14 @@ export class QueryNodeProofResponse {
    * @memberof QueryNodeProofResponse
    */
   public static fromJSON(json: string): QueryNodeProofResponse {
-    const jsonObject = JSON.parse(json)
-    const storedProof = NodeProof.fromJSON(JSON.stringify(jsonObject))
-    
-    return new QueryNodeProofResponse(storedProof)
+    try {
+      const jsonObject = JSON.parse(json)
+      const storedProof = NodeProof.fromJSON(JSON.stringify(jsonObject))
+      
+      return new QueryNodeProofResponse(storedProof)
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly nodeProof: NodeProof

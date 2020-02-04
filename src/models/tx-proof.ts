@@ -15,13 +15,17 @@ export class TxProof {
    * @memberof TxProof
    */
   public static fromJSON(json: string): TxProof {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new TxProof(
-      jsonObject.root_hash,
-      jsonObject.data, 
-      SimpleProof.fromJSON(JSON.stringify(jsonObject.proof))
-    )
+      return new TxProof(
+        jsonObject.root_hash,
+        jsonObject.data, 
+        SimpleProof.fromJSON(JSON.stringify(jsonObject.proof))
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly rootHash: string
