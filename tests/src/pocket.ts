@@ -9,9 +9,10 @@ import { Configuration, Node, RelayResponse, QueryBlockResponse, QueryTXResponse
     QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, 
     QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, 
     QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, 
-    QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, Account, 
-    Proof, BondStatus 
+    QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, Account,
+    BondStatus, QuerySessionBlockResponse, RequestManager, DispatchRequest, SessionHeader, DispatchResponse 
 } from '../../src'
+import { Proof } from '../../src/models/proof'
 import { PocketAAT } from "pocket-aat-js"
 import { NockUtil } from '../utils/nock-util'
 import { sha3_256 } from "js-sha3"
@@ -31,7 +32,7 @@ const env = new Environment.TestNet()
 const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 const noSessionPocketAAT = PocketAAT.from(version, clientPublicKey, alternatePublicKey, alternatePrivateKey)
 const blockchain = "ETH04"
-const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC())
+const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "http://127.0.0.1:80", [blockchain])
 const configuration = new Configuration([node01],5, 40000, 200)
 
 describe("Pocket Interface functionalities", async () => {
@@ -68,12 +69,12 @@ describe("Pocket Interface functionalities", async () => {
         it('should export an already imported account using a passphrase', async () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
-
+            
             const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
-            const exportedAccount = await pocket.exportAccount(importedAccount as Account, passphrase)
 
-            expect(exportedAccount).to.not.be.an.instanceof(Error)
-            expect(exportedAccount).to.be.an.instanceof(Buffer)
+            const exportedOrError = await pocket.exportAccount(importedAccount as Account, passphrase)
+            expect(exportedOrError).to.not.be.an.instanceof(Error)
+            expect(exportedOrError).to.be.an.instanceof(Buffer)
         }).timeout(0)
 
         it('should unlock an account using a passphrase', async () => {
@@ -86,7 +87,7 @@ describe("Pocket Interface functionalities", async () => {
 
             const addressHex = (account as Account).addressHex
             const result = await pocket.unlockAccount(addressHex, passphrase)
-
+            
             expect(result).to.not.be.an.instanceof(Error)
 
         }).timeout(0)
@@ -94,42 +95,62 @@ describe("Pocket Interface functionalities", async () => {
         it('should sign a relay proof with an unlocked account', async () => {
             const passphrase = "passphrase123"
             const pocket = new Pocket(configuration)
-            await pocket.importAccount(passphrase, applicationPrivateKey)
-            await pocket.unlockAccount(addressHex, passphrase)
+            const importedAndUnlocked = await pocket.importAndUnlockAccount(passphrase, applicationPrivateKey)
+            
             // Create the necessary properties for the relay request
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
+            const relayProof = new Proof(proofIndex, BigInt(5), addressHex, blockchain, pocketAAT)
+            
             // Create a Relay Proof buffer
             const hash = sha3_256.create()
             hash.update(JSON.stringify(relayProof.toJSON()))
             const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
             // Sign the relay payload
-            const signature = await pocket.signWithUnlockedAccount(addressHex, relayProofBuffer)
+            const signature = await pocket.signWithUnlockedAccount((importedAndUnlocked as Account).addressHex, relayProofBuffer)
 
             expect(signature).to.not.be.an.instanceof(Error)
             expect(signature).to.be.an.instanceof(Buffer)
         }).timeout(0)
-
         it('should successfully send a relay due to a valid information', async () => {
             const pocket = new Pocket(configuration)
+            // Account
+            const passphrase = "passphrase123"
+            const result = await pocket.importAndUnlockAccount(passphrase, applicationPrivateKey)
 
+            expect(result).to.not.be.an.instanceof(Error)
+            // Relay
             const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
             const headers: Record<string, string> = {
                 "Content-Type": "application/json"
             }
+            NockUtil.mockDispatch()
+            NockUtil.mockGetHeight()
+            NockUtil.mockGetNodeParams()
             NockUtil.mockRelay()
             const response = await pocket.sendRelay(data, blockchain, headers, pocketAAT)
 
-            expect(response).to.be.instanceOf(RelayResponse)
+            expect(response).to.not.be.instanceOf(RelayResponse)
+        }).timeout(0)
+
+        it('should successfully send a dispatch request', async () => {
+            NockUtil.mockDispatch()
+
+            const sessionHeader = new SessionHeader(applicationPublicKey, "ETH04", BigInt(5))
+            const dispatchRequest = new DispatchRequest(sessionHeader)
+                
+            const dispatchResponse = await RequestManager.dispatch(dispatchRequest, node01, configuration)
+
+            expect(dispatchResponse).to.be.instanceOf(DispatchResponse)
         }).timeout(0)
 
         it('should successfully retrieve the session block height', async () => {
-            NockUtil.mockGetSessionBlockHeight()
+            NockUtil.mockGetHeight()
+            NockUtil.mockGetNodeParams()
 
             const pocket = new Pocket(configuration)
 
             const blockResponse = await pocket.getSessionBlockHeight(configuration)
-            expect(blockResponse).to.be.instanceOf(QueryBlockResponse)
+            expect(blockResponse).to.be.instanceOf(QuerySessionBlockResponse)
         }).timeout(0)
 
         it('should successfully retrieve a block information', async () => {
@@ -146,11 +167,11 @@ describe("Pocket Interface functionalities", async () => {
 
             const pocket = new Pocket(configuration)
 
-            const txResponse = await pocket.getTX("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f")
+            const txResponse = await pocket.getTX("84871BAF5B4E01BE52E5007EACF7048F24BF57E0")
             expect(txResponse).to.be.instanceOf(QueryTXResponse)
         }).timeout(0)
 
-        it('should successfully retrieve the current blockc height', async () => {
+        it('should successfully retrieve the current block height', async () => {
             NockUtil.mockGetHeight()
 
             const pocket = new Pocket(configuration)
@@ -164,7 +185,7 @@ describe("Pocket Interface functionalities", async () => {
 
             const pocket = new Pocket(configuration)
 
-            const balanceResponse = await pocket.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(5))
+            const balanceResponse = await pocket.getBalance(addressHex, BigInt(5))
             expect(balanceResponse).to.be.instanceOf(QueryBalanceResponse)
         }).timeout(0)
 
@@ -182,7 +203,7 @@ describe("Pocket Interface functionalities", async () => {
 
             const pocket = new Pocket(configuration)
 
-            const nodeResponse = await pocket.getNode("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(5))
+            const nodeResponse = await pocket.getNode(addressHex, BigInt(5))
             expect(nodeResponse).to.be.instanceOf(QueryNodeResponse)
         }).timeout(0)
 
@@ -200,14 +221,14 @@ describe("Pocket Interface functionalities", async () => {
 
             const pocket = new Pocket(configuration)
 
-            const nodeProofsResponse = await pocket.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(5))
+            const nodeProofsResponse = await pocket.getNodeProofs(addressHex, BigInt(5))
             expect(nodeProofsResponse).to.be.instanceOf(QueryNodeProofsResponse)
         }).timeout(0)
 
         it('should successfully retrieve a node proof', async () => {
             NockUtil.mockGetNodeProof()
 
-            const nodeProof = new NodeProof("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", "ETH10", "0x1", BigInt(0), BigInt(0))
+            const nodeProof = new NodeProof(addressHex, "ETH10", applicationPublicKey, BigInt(5), BigInt(5))
             const pocket = new Pocket(configuration)
 
             const nodeProofResponse = await pocket.getNodeProof(nodeProof)
@@ -228,7 +249,7 @@ describe("Pocket Interface functionalities", async () => {
 
             const pocket = new Pocket(configuration)
 
-            const appResponse = await pocket.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(5))
+            const appResponse = await pocket.getApp(addressHex, BigInt(5))
             expect(appResponse).to.be.instanceOf(QueryAppResponse)
         }).timeout(0)
 
@@ -347,7 +368,7 @@ describe("Pocket Interface functionalities", async () => {
             await pocket.unlockAccount(addressHex, passphrase)
             // Create the necessary properties for the relay request
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
+            const relayProof = new Proof(proofIndex, BigInt(5), applicationPublicKey, blockchain, pocketAAT)
             // Create a Relay Proof buffer
             const hash = sha3_256.create()
             hash.update(JSON.stringify(relayProof.toJSON()))
@@ -367,7 +388,7 @@ describe("Pocket Interface functionalities", async () => {
             await pocket.unlockAccount(addressHex, passphrase)
             // Create the necessary properties for the relay request
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
+            const relayProof = new Proof(proofIndex, BigInt(5), applicationPublicKey, blockchain, pocketAAT)
             // Create a Relay Proof buffer
             const hash = sha3_256.create()
             hash.update(JSON.stringify(relayProof.toJSON()))
@@ -387,7 +408,7 @@ describe("Pocket Interface functionalities", async () => {
 
             // Create the necessary properties for the relay request
             const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-            const relayProof = new Proof(proofIndex, BigInt(5), "0X", blockchain, pocketAAT)
+            const relayProof = new Proof(proofIndex, BigInt(5), applicationPublicKey, blockchain, pocketAAT)
             // Create a Relay Proof buffer
             const hash = sha3_256.create()
             hash.update(JSON.stringify(relayProof.toJSON()))
@@ -549,14 +570,14 @@ describe("Pocket Interface functionalities", async () => {
 
             const pocket = new Pocket(configuration)
 
-            const nodeProofsResponse = await pocket.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-1))
+            const nodeProofsResponse = await pocket.getNodeProofs(addressHex, BigInt(-1))
             expect(nodeProofsResponse).to.be.instanceOf(Error)
         }).timeout(0)
 
         it('should returns an error trying to get a proof of a node due to internal server error.', async () => {
             NockUtil.mockGetNodeProof(500)
 
-            const nodeProof = new NodeProof("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
+            const nodeProof = new NodeProof(addressHex, "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
             const pocket = new Pocket(configuration)
 
             const nodeProofResponse = await pocket.getNodeProof(nodeProof)
