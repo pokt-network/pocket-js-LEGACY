@@ -64,33 +64,30 @@ export class SessionManager {
     if(!this.sessionMap.has(header.chain)) {
       this.sessionMap.set(header.chain, new Queue())
     }
-
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await RequestManager.dispatch(dispatchRequest, node as Node, configuration)
     const sessionQueue = this.sessionMap.get(header.chain) as Queue<Session>
 
-    switch(true) {
-      case typeGuard(result, DispatchResponse):
-        const session: Session = Session.fromJSON(
-          JSON.stringify(result.toJSON())
-        )
+    if (typeGuard(result, DispatchResponse)) {
+      const session: Session = Session.fromJSON(
+        JSON.stringify(result.toJSON())
+      )
 
-        if (sessionQueue.length > configuration.maxSessions) {
-          sessionQueue.enqueue(session)
+      if (sessionQueue.length < configuration.maxSessions) {
+        sessionQueue.enqueue(session)
 
-          if (typeGuard(session, Session)) {
-            this.saveCurrentSession(header, configuration) 
-          }
-
-          return this.getCurrentSession(header, configuration)
+        if (typeGuard(session, Session)) {
+          this.saveCurrentSession(header, configuration) 
         }
-        return new RpcErrorResponse(
-          "500",
-          "You have reached the maximum number of sessions"
-        )
 
-        default:
-          return result as RpcErrorResponse
+        return this.getCurrentSession(header, configuration)
+      }
+      return new RpcErrorResponse(
+        "500",
+        "You have reached the maximum number of sessions"
+      )
+    } else {
+      return result
     }
   }
 
