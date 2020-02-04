@@ -15,13 +15,18 @@ export class Proof {
    * @memberof Proof
    */
   public static fromJSON(json: string): Proof {
-    const jsonObject = JSON.parse(json)
-
-    let pocketAAT: PocketAAT
     try {
+      const jsonObject = JSON.parse(json)
+
+      let pocketAAT: PocketAAT
+
       if (jsonObject.token !== undefined) {
-        pocketAAT = PocketAAT.from(jsonObject.version, jsonObject.clientPublicKey,
-          jsonObject.applicationPublicKey, jsonObject.privateKey)
+        pocketAAT = new PocketAAT(
+          jsonObject.token.version,
+          jsonObject.token.clientPublicKey,
+          jsonObject.token.applicationPublicKey,
+          jsonObject.token.applicationSignature
+        )
 
         return new Proof(
           jsonObject.index,
@@ -31,7 +36,7 @@ export class Proof {
           pocketAAT,
           jsonObject.signature
         )
-      }else{
+      } else {
         throw new Error("Failed to retrieve PocketAAT, property is undefined")
       }
     } catch (error) {
@@ -98,7 +103,6 @@ export class Proof {
    * @memberof Proof
    */
   public isValid(): boolean {
-    
     return this.blockchain.length !== 0 &&
       this.index !== undefined &&
       Hex.isHex(this.servicePubKey) &&
