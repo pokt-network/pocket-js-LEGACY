@@ -14,11 +14,12 @@ export class RelayResponse {
    */
   public static fromJSON(json: string): RelayResponse {
     const jsonObject = JSON.parse(json)
+    const proof = Proof.fromJSON(JSON.stringify(jsonObject.proof))
 
     return new RelayResponse(
       jsonObject.signature,
       jsonObject.response,
-      jsonObject.proof
+      proof
     )
   }
 
@@ -39,7 +40,7 @@ export class RelayResponse {
     this.proof = proof
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid RelayResponse properties.")
     }
   }
   /**

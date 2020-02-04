@@ -20,20 +20,20 @@ export class PartSetHeader {
   }
 
   public readonly total: BigInt
-  public readonly hash: Hex
+  public readonly hash: string
 
   /**
    * PartSetHeader.
    * @constructor
    * @param {BigInt} total - Total count.
-   * @param {Hex} hash - Part hash.
+   * @param {string} hash - Part hash.
    */
-  constructor(total: BigInt, hash: Hex) {
+  constructor(total: BigInt, hash: string) {
     this.total = total
     this.hash = hash
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid PartSetHeader properties.")
     }
   }
   /**
@@ -44,8 +44,8 @@ export class PartSetHeader {
    */
   public toJSON() {
     return {
-      hash: this.hash,
-      total: this.total
+      "hash": this.hash,
+      "total": this.total.toString(16)
     }
   }
   /**
@@ -55,11 +55,6 @@ export class PartSetHeader {
    * @memberof PartSetHeader
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return Hex.isHex(this.hash) && this.total !== undefined
   }
 }

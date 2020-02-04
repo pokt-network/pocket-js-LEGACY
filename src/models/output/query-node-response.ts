@@ -15,8 +15,7 @@ export class QueryNodeResponse {
    */
   public static fromJSON(json: string): QueryNodeResponse {
     const jsonObject = JSON.parse(json)
-
-    return new QueryNodeResponse(Node.fromJSON(jsonObject.node))
+    return new QueryNodeResponse(Node.fromJSON(JSON.stringify(jsonObject)))
   }
 
   public readonly node: Node

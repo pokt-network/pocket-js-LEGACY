@@ -1,4 +1,5 @@
 import { Node } from ".."
+import { SessionHeader } from "../input"
 
 /**
  *
@@ -15,32 +16,32 @@ export class DispatchResponse {
    */
   public static fromJSON(json: string): DispatchResponse {
     const jsonObject = JSON.parse(json)
-
+    const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.header))
     return new DispatchResponse(
-      jsonObject.header,
+      sessionHeader,
       jsonObject.key,
       jsonObject.nodes
     )
   }
 
-  public readonly header: string
+  public readonly header: SessionHeader
   public readonly key: string
   public readonly nodes: Node[]
 
   /**
    * Dispatch Response.
    * @constructor
-   * @param {string} header -
+   * @param {SessionHeader} header -
    * @param {string} key -
    * @param {Node[]} nodes -
    */
-  constructor(header: string, key: string, nodes: Node[]) {
+  constructor(header: SessionHeader, key: string, nodes: Node[]) {
     this.header = header
     this.key = key
     this.nodes = nodes
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid DispatchResponse properties.")
     }
   }
   /**
@@ -51,7 +52,7 @@ export class DispatchResponse {
    */
   public toJSON() {
     return {
-      header: this.header,
+      header: this.header.toJSON(),
       key: this.key,
       nodes: JSON.parse(JSON.stringify(this.nodes))
     }
@@ -63,6 +64,6 @@ export class DispatchResponse {
    * @memberof DispatchResponse
    */
   public isValid(): boolean {
-    return this.header.length !== 0 && this.key.length !== 0
+    return this.header.isValid() && this.key.length !== 0
   }
 }

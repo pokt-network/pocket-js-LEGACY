@@ -43,7 +43,7 @@ export class SimpleProof {
     this.aunts = aunts
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid SimpleProof properties length.")
     }
   }
   /**
@@ -55,9 +55,9 @@ export class SimpleProof {
   public toJSON() {
     return {
       aunts: this.aunts,
-      index: this.index,
+      index: this.index.toString(16),
       leaf_hash: this.leafHash,
-      total: this.total
+      total: this.total.toString(16)
     }
   }
   /**
@@ -67,11 +67,9 @@ export class SimpleProof {
    * @memberof SimpleProof
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.aunts.length !== 0 &&
+    this.index !== undefined &&
+    this.leafHash !== undefined &&
+    this.total !== undefined
   }
 }

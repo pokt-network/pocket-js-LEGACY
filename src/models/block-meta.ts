@@ -16,10 +16,10 @@ export class BlockMeta {
    */
   public static fromJSON(json: string): BlockMeta {
     const jsonObject = JSON.parse(json)
-
+    
     return new BlockMeta(
-      BlockID.fromJSON(jsonObject.block_id),
-      BlockHeader.fromJSON(jsonObject.header)
+      BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
+      BlockHeader.fromJSON(JSON.stringify(jsonObject.header))
     )
   }
 
@@ -37,7 +37,7 @@ export class BlockMeta {
     this.header = header
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid BlockMeta properties length.")
     }
   }
   /**
@@ -59,11 +59,6 @@ export class BlockMeta {
    * @memberof BlockMeta
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.blockID.isValid() && this.header.isValid()
   }
 }

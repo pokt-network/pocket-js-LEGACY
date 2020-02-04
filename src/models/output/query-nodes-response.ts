@@ -17,7 +17,7 @@ export class QueryNodesResponse {
     const jsonObject = JSON.parse(json)
     const nodes: Node[] = []
 
-    jsonObject.forEach(function(nodeJSON: {}) {
+    jsonObject.nodes.forEach(function(nodeJSON: {}) {
       const node = Node.fromJSON(JSON.stringify(nodeJSON))
       nodes.push(node)
     })
@@ -40,7 +40,7 @@ export class QueryNodesResponse {
     this.nodes = nodes
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid QueryNodesResponse properties length.")
     }
   }
   /**

@@ -54,7 +54,7 @@ export class NodeProof {
     this.height = height
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid NodeProof properties.")
     }
   }
   /**
@@ -68,8 +68,8 @@ export class NodeProof {
       address: this.address,
       app_pubkey: this.appPubKey,
       blockchain: this.blockchain,
-      height: this.height,
-      session_block_height: this.SBlockHeight
+      height: this.height.toString(16),
+      session_block_height: this.SBlockHeight.toString(16)
     }
   }
   /**
@@ -79,16 +79,14 @@ export class NodeProof {
    * @memberof NodeProof
    */
   public isValid(): boolean {
-    const sessionBlockHeight = Number(this.SBlockHeight.toString(16))
-    const height = Number(this.height.toString(16))
     return (
       Hex.isHex(this.address) && 
       Hex.byteLength(this.address) === 20 &&
       this.blockchain.length !== 0 &&
       Hex.isHex(this.appPubKey) &&
       Hex.byteLength(this.appPubKey) === 32 &&
-      sessionBlockHeight >= 0 &&
-      height >= 0 
+      this.SBlockHeight !== undefined &&
+      this.height !== undefined 
     )
   }
 }

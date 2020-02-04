@@ -16,7 +16,7 @@ export class QueryPocketParamsResponse {
   public static fromJSON(json: string): QueryPocketParamsResponse {
     const jsonObject = JSON.parse(json)
 
-    return new QueryPocketParamsResponse(PocketParams.fromJSON(jsonObject))
+    return new QueryPocketParamsResponse(PocketParams.fromJSON(JSON.stringify(jsonObject)))
   }
 
   public readonly pocketParams: PocketParams

@@ -16,7 +16,7 @@ export class QueryNodeParamsResponse {
   public static fromJSON(json: string): QueryNodeParamsResponse {
     const jsonObject = JSON.parse(json)
 
-    return new QueryNodeParamsResponse(NodeParams.fromJSON(jsonObject))
+    return new QueryNodeParamsResponse(NodeParams.fromJSON(JSON.stringify(jsonObject)))
   }
 
   public readonly nodeParams: NodeParams
@@ -30,7 +30,7 @@ export class QueryNodeParamsResponse {
     this.nodeParams = nodeParams
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid QueryNodeParamsResponse properties.")
     }
   }
   /**

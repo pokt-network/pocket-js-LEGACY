@@ -35,7 +35,7 @@ export class SessionHeader {
     this.sessionBlockHeight = sessionBlockHeight
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid SessionHeader properties.")
     }
   }
   /**
@@ -48,7 +48,7 @@ export class SessionHeader {
     return {
       app_pub_key: this.applicationPubKey,
       chain: this.chain,
-      session_height: this.sessionBlockHeight
+      session_height: this.sessionBlockHeight.toString(16)
     }
   }
   /**

@@ -10,32 +10,32 @@ export class BlockID {
   /**
    *
    * Creates a BlockID object using a JSON string
-   * @param {String} json - JSON string.
+   * @param {string} json - JSON string.
    * @returns {BlockID} - BlockID object.
    * @memberof BlockID
    */
   public static fromJSON(json: string): BlockID {
     const jsonObject = JSON.parse(json)
-    const parts = PartSetHeader.fromJSON(jsonObject.parts)
+    const parts = PartSetHeader.fromJSON(JSON.stringify(jsonObject.parts))
 
     return new BlockID(jsonObject.hash, parts)
   }
 
-  public readonly hash: Hex
+  public readonly hash: string
   public readonly parts: PartSetHeader
 
   /**
    * BlockID.
    * @constructor
-   * @param {Hex} hash - BlockID hash.
+   * @param {string} hash - BlockID hash.
    * @param {PartSetHeader} parts - Session BlockID Height.
    */
-  constructor(hash: Hex, parts: PartSetHeader) {
+  constructor(hash: string, parts: PartSetHeader) {
     this.hash = hash
     this.parts = parts
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid BlockID properties length.")
     }
   }
   /**
@@ -57,11 +57,6 @@ export class BlockID {
    * @memberof BlockID
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return Hex.isHex(this.hash) && this.parts.isValid()
   }
 }

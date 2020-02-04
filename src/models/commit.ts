@@ -18,8 +18,8 @@ export class Commit {
     const jsonObject = JSON.parse(json)
 
     return new Commit(
-      BlockID.fromJSON(jsonObject.block_id),
-      CommitSignature.fromJSON(jsonObject.precommits)
+      BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
+      CommitSignature.fromJSON(JSON.stringify(jsonObject.precommits))
     )
   }
 
@@ -37,7 +37,7 @@ export class Commit {
     this.precommits = precommits
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Commit properties length.")
     }
   }
   /**
@@ -59,11 +59,6 @@ export class Commit {
    * @memberof Commit
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.blockID.isValid() && this.precommits.isValid()
   }
 }

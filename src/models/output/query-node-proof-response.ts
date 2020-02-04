@@ -1,4 +1,4 @@
-import { StoredProof } from "../stored-proof"
+import { NodeProof } from "../input"
 /**
  *
  *
@@ -14,19 +14,20 @@ export class QueryNodeProofResponse {
    */
   public static fromJSON(json: string): QueryNodeProofResponse {
     const jsonObject = JSON.parse(json)
-
-    return new QueryNodeProofResponse(StoredProof.fromJSON(jsonObject))
+    const storedProof = NodeProof.fromJSON(JSON.stringify(jsonObject))
+    
+    return new QueryNodeProofResponse(storedProof)
   }
 
-  public readonly stroredProof: StoredProof
+  public readonly nodeProof: NodeProof
 
   /**
    * QueryNodeProofResponse.
    * @constructor
-   * @param {StoredProof} stroredProof - Amount staked by the node.
+   * @param {StoredProof} nodeProof - Amount staked by the node.
    */
-  constructor(stroredProof: StoredProof) {
-    this.stroredProof = stroredProof
+  constructor(nodeProof: NodeProof) {
+    this.nodeProof = nodeProof
   }
   /**
    *
@@ -35,6 +36,6 @@ export class QueryNodeProofResponse {
    * @memberof QueryNodeProofResponse
    */
   public toJSON() {
-    return this.stroredProof.toJSON()
+    return this.nodeProof.toJSON()
   }
 }

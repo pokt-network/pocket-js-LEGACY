@@ -47,7 +47,7 @@ export class PocketParams {
     this.claimExpiration = claimExpiration
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid PocketParams properties.")
     }
   }
   /**
@@ -58,9 +58,9 @@ export class PocketParams {
    */
   public toJSON() {
     return {
-      claim_expiration: this.claimExpiration,
-      proof_waiting_period: this.proofWaitingPeriod,
-      session_node_count: this.sessionNodeCount,
+      claim_expiration: this.claimExpiration.toString(16),
+      proof_waiting_period: this.proofWaitingPeriod.toString(16),
+      session_node_count: this.sessionNodeCount.toString(16),
       supported_blockchains: this.supportedBlockchains
     }
   }
@@ -71,11 +71,9 @@ export class PocketParams {
    * @memberof PocketParams
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.claimExpiration !== undefined &&
+    this.proofWaitingPeriod !== undefined &&
+    this.sessionNodeCount !== undefined &&
+    this.supportedBlockchains.length !== 0
   }
 }

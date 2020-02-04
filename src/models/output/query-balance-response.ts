@@ -38,7 +38,7 @@ export class QueryBalanceResponse {
    * @memberof QueryBalanceResponse
    */
   public toJSON() {
-    return { balance: this.balance }
+    return { balance: this.balance.toString(16) }
   }
   /**
    *

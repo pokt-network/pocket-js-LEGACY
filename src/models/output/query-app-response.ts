@@ -16,7 +16,7 @@ export class QueryAppResponse {
   public static fromJSON(json: string): QueryAppResponse {
     const jsonObject = JSON.parse(json)
 
-    return new QueryAppResponse(Application.fromJSON(jsonObject))
+    return new QueryAppResponse(Application.fromJSON(JSON.stringify(jsonObject)))
   }
 
   public readonly application: Application

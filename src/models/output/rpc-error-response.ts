@@ -31,7 +31,7 @@ export class RpcErrorResponse {
     this.message = message
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid RpcErrorResponse properties length.")
     }
   }
   /**
@@ -54,10 +54,8 @@ export class RpcErrorResponse {
    */
   public isValid(): boolean {
     return (
-      this.code.length !== 0 &&
-      this.code !== "" &&
-      this.message !== "" &&
-      this.message.length !== 0
+      this.code !== undefined && this.code.length !== 0 &&
+      this.message !== undefined && this.message.length !== 0
     )
   }
 }

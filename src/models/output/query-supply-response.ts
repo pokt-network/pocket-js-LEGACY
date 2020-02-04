@@ -64,12 +64,12 @@ export class QuerySupplyResponse {
    */
   public toJSON() {
     return {
-      appStaked: this.appStaked,
-      dao: this.dao,
-      nodeStaked: this.nodeStaked,
-      total: this.total,
-      totalStaked: this.totalStaked,
-      totalUnstaked: this.totalUnstaked
+      appStaked: this.appStaked.toString(16),
+      dao: this.dao.toString(16),
+      nodeStaked: this.nodeStaked.toString(16),
+      total: this.total.toString(16),
+      totalStaked: this.totalStaked.toString(16),
+      totalUnstaked: this.totalUnstaked.toString(16)
     }
   }
 }

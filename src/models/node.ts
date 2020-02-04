@@ -16,8 +16,8 @@ export class Node {
       jsonObject.cons_pubkey,
       jsonObject.jailed,
       status,
-      jsonObject.stakedTokens,
-      jsonObject.serviceurl,
+      jsonObject.tokens,
+      jsonObject.service_url,
       jsonObject.chains,
       jsonObject.unstaking_time
     )
@@ -52,10 +52,10 @@ export class Node {
     stakedTokens: BigInt,
     serviceURL: string,
     chains: string[] = [],
-    unstakingCompletionTime?: string
+    unstakingCompletionTime: string = ""
   ) {
-    this.address = Hex.decodeString(address)
-    this.consPubKey = Hex.decodeString(consPubKey)
+    this.address = address
+    this.consPubKey = consPubKey
     this.jailed = jailed
     this.status = status
     this.stakedTokens = stakedTokens
@@ -64,7 +64,7 @@ export class Node {
     this.unstakingCompletionTime = unstakingCompletionTime
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Node properties.")
     }
   }
   /**
@@ -80,8 +80,8 @@ export class Node {
       cons_pubkey: this.consPubKey,
       jailed: this.jailed,
       service_url: this.serviceURL,
-      status: this.status,
-      tokens: this.stakedTokens,
+      status: this.status.toString(),
+      tokens: this.stakedTokens.toString(16),
       unstaking_time: this.unstakingCompletionTime
     }
   }
@@ -92,15 +92,11 @@ export class Node {
    * @memberof Node
    */
   public isValid() {
-    for (const property in this) {
-      if(property === 'toJSON' || property === 'isValid') {
-        continue
-      }
-    
-      if (!this.hasOwnProperty(property) || property === "") {
-        return false
-      }
-    }
-    return true
+    return Hex.isHex(this.address) &&
+    Hex.isHex(this.consPubKey) &&
+    this.jailed !== undefined &&
+    this.serviceURL.length !== 0 &&
+    this.status !== undefined &&
+    this.stakedTokens !== undefined
   }
 }

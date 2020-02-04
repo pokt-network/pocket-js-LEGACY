@@ -3,6 +3,7 @@ import { Configuration } from "./configuration"
 import { RpcErrorResponse } from "./output/rpc-error-response"
 import { IKVStore } from "../utils/storage/kv-store"
 import { InMemoryKVStore } from "../utils/storage/in-memory-kv-store"
+import { typeGuard } from "../utils/type-guard"
 
 /**
  *
@@ -87,14 +88,19 @@ export class Routing {
    * @param {string} publicKey - public key attached to the node
    * @memberof Routing
    */
-  public readNode(publicKey: string): Node {
-    const nodes = this.store.get(this.nodesKey) as Node[]
+  public readNode(address: string): Node {
+    const nodes = this.store.get(this.nodesKey.toUpperCase()) as Node[]
+    let requestedNode
     nodes.forEach(function(node: Node) {
-      if (node.address === publicKey) {
-        return node
+      if (node.address.toUpperCase() === address) {
+        requestedNode = node
       }
     })
-    throw new Error("Node not found in routing table.")
+    if (typeGuard(requestedNode, Node)) {
+      return requestedNode
+    }else{
+      throw new Error("Node not found in routing table.")
+    }
   }
 
   /**

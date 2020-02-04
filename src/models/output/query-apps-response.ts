@@ -16,15 +16,15 @@ export class QueryAppsResponse {
     const jsonObject = JSON.parse(json)
     const apps: Application[] = []
 
-    jsonObject.forEach(function(appJSON: {}) {
-      const app = Application.fromJSON(JSON.stringify(appJSON))
-      apps.push(app)
-    })
-    if (apps !== undefined) {
+    if (Array.isArray(jsonObject)) {
+      jsonObject.forEach(function(appJSON: {}) {
+        const app = Application.fromJSON(JSON.stringify(appJSON))
+        apps.push(app)
+      })
       return new QueryAppsResponse(apps as Application[])
-    } else {
-      // TODO: Handle undefined scenario properly
-      return new QueryAppsResponse(jsonObject)
+    }else {
+      const app = Application.fromJSON(JSON.stringify(jsonObject))
+      return new QueryAppsResponse([app])
     }
   }
 

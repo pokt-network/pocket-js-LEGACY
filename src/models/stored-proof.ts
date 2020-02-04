@@ -17,7 +17,7 @@ export class StoredProof {
     const jsonObject = JSON.parse(json)
 
     return new StoredProof(
-      SessionHeader.fromJSON(jsonObject.session_header),
+      SessionHeader.fromJSON(JSON.stringify(jsonObject.session_header)),
       jsonObject.servicer_address,
       jsonObject.total_relays
     )
@@ -52,8 +52,19 @@ export class StoredProof {
   public toJSON() {
     return {
       servicer_address: this.servicerAddress,
-      session_header: this.sessionHeader,
-      total_relays: this.totalRelays
+      session_header: this.sessionHeader.toJSON(),
+      total_relays: this.totalRelays.toString(16)
     }
+  }
+  /**
+   *
+   * Check if the StoredProof object is valid
+   * @returns {boolean} - True or false.
+   * @memberof StoredProof
+   */
+  public isValid(): boolean {
+    return this.servicerAddress.length !== 0 &&
+    this.totalRelays !== undefined &&
+    this.sessionHeader.isValid()
   }
 }
