@@ -36,7 +36,7 @@ export class RelayRequest {
     this.proof = proof
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid RelayRequest properties.")
     }
   }
   /**

@@ -17,32 +17,31 @@ export class Block {
    */
   public static fromJSON(json: string): Block {
     const jsonObject = JSON.parse(json)
-
     return new Block(
-      jsonObject.header,
+      BlockHeader.fromJSON(JSON.stringify(jsonObject.header)),
       jsonObject.data,
       jsonObject.evidence,
-      jsonObject.last_commit
+      Commit.fromJSON(JSON.stringify(jsonObject.last_commit))
     )
   }
 
   public readonly header: BlockHeader
-  public readonly data: Hex
-  public readonly evidence: Hex
+  public readonly data: string
+  public readonly evidence: string
   public readonly lastCommit: Commit
 
   /**
    * Block
    * @constructor
    * @param {BlockHeader} header - Block header.
-   * @param {Hex} data - Data hash.
-   * @param {Hex} evidence - Evidence hash.
+   * @param {string} data - Data hash.
+   * @param {string} evidence - Evidence hash.
    * @param {Commit} lastCommit - Last commit.
    */
   constructor(
     header: BlockHeader,
-    data: Hex,
-    evidence: Hex,
+    data: string,
+    evidence: string,
     lastCommit: Commit
   ) {
     this.header = header
@@ -62,10 +61,10 @@ export class Block {
    */
   public toJSON() {
     return {
-      data: this.data,
-      evidence: this.evidence,
-      header: this.header.toJSON(),
-      lastCommit: this.lastCommit.toJSON()
+      "data": this.data,
+      "evidence": this.evidence,
+      "header": this.header.toJSON(),
+      "last_commit": this.lastCommit.toJSON()
     }
   }
   /**
@@ -75,11 +74,9 @@ export class Block {
    * @memberof Block
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.data.length !== 0 &&
+    Hex.isHex(this.evidence) &&
+    this.header.isValid() &&
+    this.lastCommit.isValid()
   }
 }

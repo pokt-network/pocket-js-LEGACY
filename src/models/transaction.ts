@@ -22,11 +22,11 @@ export class Transaction {
       jsonObject.height,
       jsonObject.index,
       jsonObject.tx,
-      jsonObject.proof
+      TxProof.fromJSON(JSON.stringify(jsonObject.proof))
     )
   }
 
-  public readonly hash: Hex
+  public readonly hash: string
   public readonly height: BigInt
   public readonly index: BigInt
   public readonly tx: Hex
@@ -35,14 +35,14 @@ export class Transaction {
   /**
    * Transaction.
    * @constructor
-   * @param {Hex} hash - Transaction hash.
+   * @param {string} hash - Transaction hash.
    * @param {BigInt} height - Session Block Height.
    * @param {BigInt} index - Transaction index in the block.
    * @param {Hex} tx - Transaction hex.
    * @param {TxProof} proof - Transaction Proof.
    */
   constructor(
-    hash: Hex,
+    hash: string,
     height: BigInt,
     index: BigInt,
     tx: Hex,
@@ -55,7 +55,7 @@ export class Transaction {
     this.proof = proof
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Transaction properties length.")
     }
   }
   /**
@@ -67,8 +67,8 @@ export class Transaction {
   public toJSON() {
     return {
       hash: this.hash,
-      height: this.height,
-      index: this.index,
+      height: this.height.toString(16),
+      index: this.index.toString(16),
       proof: this.proof.toJSON(),
       tx: this.tx
     }
@@ -80,11 +80,10 @@ export class Transaction {
    * @memberof Transaction
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return Hex.isHex(this.hash) &&
+    this.height !== undefined &&
+    this.index !== undefined &&
+    this.proof.isValid() &&
+    this.tx !== undefined
   }
 }

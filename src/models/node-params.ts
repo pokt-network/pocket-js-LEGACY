@@ -20,14 +20,14 @@ export class NodeParams {
       jsonObject.stake_denom,
       jsonObject.stake_minimum,
       jsonObject.proposer_reward_percentage,
-      jsonObject.sessionBlock,
-      jsonObject.relaysToTokens,
-      jsonObject.maxEvidenceAge,
-      jsonObject.signedBlocksWindow,
-      jsonObject.minSignedPerWindow,
-      jsonObject.downtimeJailDuration,
-      jsonObject.slashFractionDoubleSign,
-      jsonObject.slashFractionDowntime
+      jsonObject.session_block,
+      jsonObject.relays_to_tokens,
+      jsonObject.max_evidence_age,
+      jsonObject.signed_blocks_window,
+      jsonObject.min_signed_per_window,
+      jsonObject.downtime_jail_duration,
+      jsonObject.slash_fraction_double_sign,
+      jsonObject.slash_fraction_downtime
     )
   }
 
@@ -92,19 +92,19 @@ export class NodeParams {
    */
   public toJSON() {
     return {
-      downtime_jail_duration: this.downtimeJailDuration,
-      max_evidence_age: this.maxEvidenceAge,
-      max_validator: this.maxValidator,
-      min_signed_per_window: this.minSignedPerWindow,
+      downtime_jail_duration: this.downtimeJailDuration.toString(16),
+      max_evidence_age: this.maxEvidenceAge.toString(16),
+      max_validator: this.maxValidator.toString(16),
+      min_signed_per_window: this.minSignedPerWindow.toString(16),
       proposer_reward_percentage: this.proposerRewardPercentage,
-      relays_to_tokens: this.relaysToTokens,
-      session_block: this.sessionBlock,
-      signed_blocks_window: this.signedBlocksWindow,
-      slash_fraction_double_sign: this.slashFractionDoubleSign,
-      slash_fraction_downtime: this.slashFractionDowntime,
+      relays_to_tokens: this.relaysToTokens.toString(16),
+      session_block: this.sessionBlock.toString(16),
+      signed_blocks_window: this.signedBlocksWindow.toString(16),
+      slash_fraction_double_sign: this.slashFractionDoubleSign.toString(16),
+      slash_fraction_downtime: this.slashFractionDowntime.toString(16),
       stake_denom: this.stakeDenom,
-      stake_minimum: this.stakeMinimum,
-      unstaking_time: this.unstakingTime
+      stake_minimum: this.stakeMinimum.toString(16),
+      unstaking_time: this.unstakingTime.toString(16)
     }
   }
   /**
@@ -114,11 +114,7 @@ export class NodeParams {
    * @memberof NodeParams
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.proposerRewardPercentage > 0 &&
+    this.stakeDenom.length > 0
   }
 }

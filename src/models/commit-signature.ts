@@ -26,38 +26,38 @@ export class CommitSignature {
       jsonObject.type,
       jsonObject.height,
       jsonObject.round,
-      BlockID.fromJSON(jsonObject.block_id),
-      jsonObject.timestamp,
+      BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
+      jsonObject.time_stamp,
       jsonObject.validator_address,
       jsonObject.validator_index,
       jsonObject.signature
     )
   }
 
-  public readonly type: Hex
+  public readonly type: string
   public readonly height: BigInt
   public readonly round: number
   public readonly blockID: BlockID
   public readonly timeStamp: string
-  public readonly validatorAddress: Hex
+  public readonly validatorAddress: string
   public readonly validatorIndex: number
-  public readonly signature: Hex
+  public readonly signature: string
 
   /**
    * CommitSignature.
    * @constructor
-   * @param {Hex} hash - CommitSignature hash.
+   * @param {string} hash - CommitSignature hash.
    * @param {PartSetHeader} parts - Session CommitSignature Height.
    */
   constructor(
-    type: Hex,
+    type: string,
     height: BigInt,
     round: number,
     blockID: BlockID,
     timeStamp: string,
-    validatorAddress: Hex,
+    validatorAddress: string,
     validatorIndex: number,
-    signature: Hex
+    signature: string
   ) {
     this.type = type
     this.height = height
@@ -69,7 +69,7 @@ export class CommitSignature {
     this.signature = signature
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid CommitSignature properties length.")
     }
   }
   /**
@@ -80,8 +80,8 @@ export class CommitSignature {
    */
   public toJSON() {
     return {
-      block_id: this.blockID,
-      height: this.height,
+      block_id: this.blockID.toJSON(),
+      height: this.height.toString(16),
       round: this.round,
       signature: this.signature,
       time_stamp: this.timeStamp,
@@ -97,11 +97,13 @@ export class CommitSignature {
    * @memberof CommitSignature
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.blockID.isValid() &&
+    this.height !== undefined &&
+    this.round !== undefined &&
+    Hex.isHex(this.signature) &&
+    this.timeStamp.length !== 0 &&
+    this.type.length !== 0 &&
+    Hex.isHex(this.validatorAddress) &&
+    this.validatorIndex !== undefined
   }
 }

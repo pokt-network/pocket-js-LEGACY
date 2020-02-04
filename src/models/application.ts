@@ -16,7 +16,7 @@ export class Application {
       jsonObject.jailed,
       status,
       jsonObject.chains,
-      jsonObject.Tokens,
+      jsonObject.tokens,
       jsonObject.max_relays,
       jsonObject.unstaking_time
     )
@@ -51,10 +51,10 @@ export class Application {
     chains: string[] = [],
     stakedTokens: BigInt,
     maxRelays: BigInt,
-    unstakingCompletionTime?: string
+    unstakingCompletionTime: string = ""
   ) {
-    this.address = Hex.decodeString(address)
-    this.consPubKey = Hex.decodeString(consPubKey)
+    this.address = address
+    this.consPubKey = consPubKey
     this.jailed = jailed
     this.status = status
     this.chains = chains
@@ -63,7 +63,7 @@ export class Application {
     this.unstakingCompletionTime = unstakingCompletionTime
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Application properties.")
     }
   }
   /**
@@ -74,14 +74,14 @@ export class Application {
    */
   public toJSON() {
     return {
-      "address": this.address,
-      "chains": this.chains,
-      "cons_pubkey": this.consPubKey,
-      "jailed": this.jailed,
-      "max_relays": this.maxRelays,
-      "status": this.status,
-      "tokens": this.stakedTokens,
-      "unstaking_time": this.unstakingCompletionTime
+      address: this.address,
+      chains: this.chains,
+      cons_pubkey: this.consPubKey,
+      jailed: this.jailed,
+      max_relays: this.maxRelays.toString(16),
+      status: this.status,
+      tokens: this.stakedTokens.toString(16),
+      unstaking_time: this.unstakingCompletionTime
     }
   }
   /**
@@ -91,11 +91,14 @@ export class Application {
    * @memberof Application
    */
   public isValid() {
-    for (const property in this) {
-      if (!this.hasOwnProperty(property) || property === "") {
-        return false
-      }
-    }
-    return true
+    return Hex.isHex(this.address) &&
+    Hex.byteLength(this.address) === 20 &&
+    this.chains.length > 0 &&
+    Hex.isHex(this.consPubKey) &&
+    Hex.byteLength(this.consPubKey) === 32 &&
+    this.jailed !== undefined &&
+    this.maxRelays !== undefined &&
+    this.status !== undefined &&
+    this.stakedTokens !== undefined
   }
 }

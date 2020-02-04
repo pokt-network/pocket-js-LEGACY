@@ -80,7 +80,7 @@ export class SendResponse {
     return (
       this.data !== undefined &&
       this.status !== undefined &&
-      this.statusText.length !== 0 &&
+      this.statusText.length !== undefined &&
       this.headers !== undefined &&
       this.config !== undefined
     )

@@ -31,7 +31,7 @@ export class Consensus {
     this.app = app
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Consensus properties .")
     }
   }
   /**
@@ -42,8 +42,8 @@ export class Consensus {
    */
   public toJSON() {
     return {
-      app: this.app,
-      block: this.block
+      app: this.app.toString(16),
+      block: this.block.toString(16)
     }
   }
   /**
@@ -53,11 +53,6 @@ export class Consensus {
    * @memberof Consensus
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.block !== undefined && this.app !== undefined
   }
 }

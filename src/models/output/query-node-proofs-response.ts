@@ -34,7 +34,7 @@ export class QueryNodeProofsResponse {
   /**
    * QueryNodeProofsResponse.
    * @constructor
-   * @param {StoredProof[]} stroredProofs - Amount staked by the node.
+   * @param {StoredProof[]} stroredProofs - Stored proofs array.
    */
   constructor(stroredProofs: StoredProof[]) {
     this.stroredProofs = stroredProofs

@@ -38,7 +38,7 @@ export class QueryHeightResponse {
    * @memberof QueryHeightResponse
    */
   public toJSON() {
-    return { Height: this.height }
+    return { height: this.height }
   }
   /**
    *

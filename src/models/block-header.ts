@@ -1,6 +1,6 @@
 import { BlockID } from "./block-id"
-import { Hex } from "../utils/hex"
 import { Consensus } from "./consensus"
+import { Hex } from "../utils"
 
 /**
  *
@@ -19,13 +19,13 @@ export class BlockHeader {
     const jsonObject = JSON.parse(json)
 
     return new BlockHeader(
-      Consensus.fromJSON(jsonObject.version),
+      Consensus.fromJSON(JSON.stringify(jsonObject.version)),
       jsonObject.chain_id,
       jsonObject.height,
       jsonObject.time,
       jsonObject.num_txs,
       jsonObject.total_txs,
-      BlockID.fromJSON(jsonObject.last_block_id),
+      BlockID.fromJSON(JSON.stringify(jsonObject.last_block_id)),
       jsonObject.last_commit_hash,
       jsonObject.data_hash,
       jsonObject.validators_hash,
@@ -45,15 +45,15 @@ export class BlockHeader {
   public readonly numTXs: BigInt
   public readonly totalTxs: BigInt
   public readonly lastBlockID: BlockID
-  public readonly lastCommitHash: Hex
-  public readonly dataHash: Hex
-  public readonly validatorsHash: Hex
-  public readonly nextValidatorsHash: Hex
-  public readonly consensusHash: Hex
-  public readonly appHash: Hex
-  public readonly lastResultsHash: Hex
-  public readonly evidenceHash: Hex
-  public readonly proposerAddress: Hex
+  public readonly lastCommitHash: string
+  public readonly dataHash: string
+  public readonly validatorsHash: string
+  public readonly nextValidatorsHash: string
+  public readonly consensusHash: string
+  public readonly appHash: string
+  public readonly lastResultsHash: string
+  public readonly evidenceHash: string
+  public readonly proposerAddress: string
 
   /**
    * BlockHeader.
@@ -65,15 +65,15 @@ export class BlockHeader {
    * @param {BigInt} numTXs - Number of transactions in the block.
    * @param {BigInt} totalTxs - Total transaction count.
    * @param {BlockID} lastBlockID - Last block Id.
-   * @param {Hex} lastCommitHash - Last commit hash.
-   * @param {Hex} dataHash - Data hash.
-   * @param {Hex} validatorsHash - Validators hash.
-   * @param {Hex} nextValidatorsHash - Next validators hash.
-   * @param {Hex} consensusHash - Consensus hash.
-   * @param {Hex} appHash - App hash.
-   * @param {Hex} lastResultsHash - Last Results hash.
-   * @param {Hex} evidenceHash - Evidence hash.
-   * @param {Hex} proposerAddress - Proposer Address.
+   * @param {string} lastCommitHash - Last commit hash.
+   * @param {string} dataHash - Data hash.
+   * @param {string} validatorsHash - Validators hash.
+   * @param {string} nextValidatorsHash - Next validators hash.
+   * @param {string} consensusHash - Consensus hash.
+   * @param {string} appHash - App hash.
+   * @param {string} lastResultsHash - Last Results hash.
+   * @param {string} evidenceHash - Evidence hash.
+   * @param {string} proposerAddress - Proposer Address.
    */
   constructor(
     version: Consensus,
@@ -83,15 +83,15 @@ export class BlockHeader {
     numTXs: BigInt,
     totalTxs: BigInt,
     lastBlockID: BlockID,
-    lastCommitHash: Hex,
-    dataHash: Hex,
-    validatorsHash: Hex,
-    nextValidatorsHash: Hex,
-    consensusHash: Hex,
-    appHash: Hex,
-    lastResultsHash: Hex,
-    evidenceHash: Hex,
-    proposerAddress: Hex
+    lastCommitHash: string,
+    dataHash: string,
+    validatorsHash: string,
+    nextValidatorsHash: string,
+    consensusHash: string,
+    appHash: string,
+    lastResultsHash: string,
+    evidenceHash: string,
+    proposerAddress: string
   ) {
     this.version = version
     this.chainID = chainID
@@ -111,7 +111,7 @@ export class BlockHeader {
     this.proposerAddress = proposerAddress
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid BlockHeader properties length.")
     }
   }
   /**
@@ -127,17 +127,17 @@ export class BlockHeader {
       consensus_hash: this.consensusHash,
       data_hash: this.dataHash,
       evidence_hash: this.evidenceHash,
-      height: this.height,
+      height: this.height.toString(16),
       last_block_id: this.lastBlockID.toJSON(),
       last_commit_hash: this.lastCommitHash,
       last_results_hash: this.lastResultsHash,
       next_validators_hash: this.nextValidatorsHash,
-      num_txs: this.numTXs,
+      num_txs: this.numTXs.toString(16),
       proposer_address: this.proposerAddress,
       time: this.time,
-      total_txs: this.totalTxs,
+      total_txs: this.totalTxs.toString(16),
       validators_hash: this.validatorsHash,
-      version: this.version
+      version: this.version.toJSON()
     }
   }
   /**
@@ -147,11 +147,21 @@ export class BlockHeader {
    * @memberof BlockHeader
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return Hex.isHex(this.appHash) &&
+      this.chainID.length !== 0 &&
+      Hex.isHex(this.consensusHash) &&
+      Hex.isHex(this.dataHash) &&
+      Hex.isHex(this.evidenceHash) &&
+      this.height !== undefined &&
+      this.lastBlockID.isValid() &&
+      Hex.isHex(this.lastCommitHash) &&
+      Hex.isHex(this.lastResultsHash) &&
+      Hex.isHex(this.nextValidatorsHash) &&
+      Hex.isHex(this.proposerAddress) &&
+      Hex.isHex(this.validatorsHash) &&
+      this.numTXs !== undefined &&
+      this.time.length !== 0 &&
+      this.totalTxs !== undefined &&
+      this.version.isValid()
   }
 }

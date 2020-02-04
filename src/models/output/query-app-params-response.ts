@@ -16,7 +16,7 @@ export class QueryAppParamsResponse {
   public static fromJSON(json: string): QueryAppParamsResponse {
     const jsonObject = JSON.parse(json)
 
-    return new QueryAppParamsResponse(ApplicationParams.fromJSON(jsonObject))
+    return new QueryAppParamsResponse(ApplicationParams.fromJSON(JSON.stringify(jsonObject)))
   }
 
   public readonly applicationParams: ApplicationParams
@@ -30,7 +30,7 @@ export class QueryAppParamsResponse {
     this.applicationParams = applicationParams
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid QueryAppParamsResponse properties.")
     }
   }
   /**

@@ -16,7 +16,7 @@ export class RelayPayload {
    */
   public static fromJSON(json: string): RelayPayload {
     const jsonObject = JSON.parse(json)
-
+    
     return new RelayPayload(
       jsonObject.data,
       jsonObject.method,
@@ -48,10 +48,6 @@ export class RelayPayload {
     this.method = method
     this.path = path
     this.headers = headers
-
-    if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
-    }
   }
   /**
    *
@@ -75,9 +71,9 @@ export class RelayPayload {
    */
   public isValid(): boolean {
     return (
-      this.data.length !== 0 &&
-      this.method.length !== 0 &&
-      this.path.length !== 0 &&
+      this.data.length !== undefined &&
+      this.method.length !== undefined &&
+      this.path.length !== undefined &&
       this.headers !== undefined
     )
   }

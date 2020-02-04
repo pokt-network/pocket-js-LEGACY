@@ -1,4 +1,5 @@
 import { PocketAAT } from "pocket-aat-js"
+import { Hex } from "../utils"
 
 /**
  *
@@ -14,16 +15,28 @@ export class Proof {
    * @memberof Proof
    */
   public static fromJSON(json: string): Proof {
-    const jsonObject = JSON.parse(json as string)
+    const jsonObject = JSON.parse(json)
 
-    return new Proof(
-      jsonObject.index,
-      jsonObject.session_block_height,
-      jsonObject.service_pub_key,
-      jsonObject.blockchain,
-      jsonObject.token,
-      jsonObject.signature
-    )
+    let pocketAAT: PocketAAT
+    try {
+      if (jsonObject.token !== undefined) {
+        pocketAAT = PocketAAT.from(jsonObject.version, jsonObject.clientPublicKey,
+          jsonObject.applicationPublicKey, jsonObject.privateKey)
+
+        return new Proof(
+          jsonObject.index,
+          jsonObject.session_block_height,
+          jsonObject.service_pub_key,
+          jsonObject.blockchain,
+          pocketAAT,
+          jsonObject.signature
+        )
+      }else{
+        throw new Error("Failed to retrieve PocketAAT, property is undefined")
+      }
+    } catch (error) {
+      throw new Error("Failed to retrieve PocketAAT for Proof with error: " + error)
+    }
   }
 
   public readonly index: BigInt
@@ -59,7 +72,7 @@ export class Proof {
     this.signature = signature
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Proof properties.")
     }
   }
   /**
@@ -71,11 +84,11 @@ export class Proof {
   public toJSON() {
     return {
       blockchain: this.blockchain,
-      index: this.index,
+      index: this.index.toString(16),
       service_pub_key: this.servicePubKey,
-      session_block_height: this.sessionBlockHeight,
+      session_block_height: this.sessionBlockHeight.toString(16),
       signature: this.signature,
-      token: this.token
+      token: JSON.parse(JSON.stringify(this.token))
     }
   }
   /**
@@ -85,11 +98,11 @@ export class Proof {
    * @memberof Proof
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    
+    return this.blockchain.length !== 0 &&
+      this.index !== undefined &&
+      Hex.isHex(this.servicePubKey) &&
+      this.sessionBlockHeight !== undefined &&
+      this.token.isValid()
   }
 }

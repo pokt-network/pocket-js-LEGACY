@@ -9,15 +9,17 @@ import { SessionHeader } from "../input/session-header"
 export class Session {
   public static fromJSON(json: string): Session {
     const jsonObject = JSON.parse(json)
-    const sessionHeader = SessionHeader.fromJSON(jsonObject.header)
+    const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.header))
     const sessionNodes: Node[] = []
 
-    for (const sessionNodeJson in jsonObject.nodes) {
-      if (sessionNodeJson.hasOwnProperty("serviceurl")) {
-        sessionNodes.push(Node.fromJSON(sessionNodeJson))
-      }
+    if (jsonObject.nodes !== undefined && Array.isArray(jsonObject.nodes)) {
+      jsonObject.nodes.forEach((nodeObj: Node) => {
+        const node = Node.fromJSON(JSON.stringify(nodeObj))
+        if(node.serviceURL.length > 0) {
+          sessionNodes.push(node)
+        }   
+      })
     }
-
     return new Session(sessionHeader, jsonObject.key, sessionNodes)
   }
 
@@ -65,14 +67,10 @@ export class Session {
    * @memberof Session
    */
   public toJSON() {
-    const nodeListJSON: Node[] = []
-    this.sessionNodes.forEach(node => {
-      nodeListJSON.push(node)
-    })
     return {
       header: this.sessionHeader.toJSON(),
       key: this.sessionKey,
-      nodes: JSON.parse(JSON.stringify(nodeListJSON))
+      nodes: JSON.parse(JSON.stringify(this.sessionNodes))
     }
   }
   /**

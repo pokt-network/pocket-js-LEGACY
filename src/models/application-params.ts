@@ -17,7 +17,7 @@ export class ApplicationParams {
     return new ApplicationParams(
       jsonObject.unstaking_time,
       jsonObject.max_applications,
-      jsonObject.app_stake_minimum,
+      jsonObject.app_stake_min,
       jsonObject.baseline_throughput_stake_rate,
       jsonObject.staking_adjustment,
       jsonObject.participation_rate_on
@@ -53,7 +53,7 @@ export class ApplicationParams {
     this.participationRateOn = participationRateOn
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid ApplicationParams properties.")
     }
   }
   /**
@@ -64,11 +64,11 @@ export class ApplicationParams {
    */
   public toJSON() {
     return {
-      app_stake_min: this.appStakeMin,
-      baseline_throughput_stake_rate: this.baselineThroughputStakeRate,
-      max_applications: this.maxApplications,
+      app_stake_min: this.appStakeMin.toString(16),
+      baseline_throughput_stake_rate: this.baselineThroughputStakeRate.toString(16),
+      max_applications: this.maxApplications.toString(16),
       participation_rate_on: this.participationRateOn,
-      staking_adjustment: this.stakingAdjustment,
+      staking_adjustment: this.stakingAdjustment.toString(16),
       unstaking_time: this.unstakingTime
     }
   }
@@ -79,11 +79,9 @@ export class ApplicationParams {
    * @memberof ApplicationParams
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.appStakeMin !== undefined &&
+    this.baselineThroughputStakeRate !== undefined &&
+    this.maxApplications !== undefined &&
+    this.stakingAdjustment !== undefined
   }
 }

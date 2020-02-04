@@ -28,7 +28,7 @@ export class QuerySessionBlockResponse {
     this.sessionBlock = sessionBlock
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid QuerySessionBlockResponse properties.")
     }
   }
   /**
@@ -38,7 +38,7 @@ export class QuerySessionBlockResponse {
    * @memberof QuerySessionBlockResponse
    */
   public toJSON() {
-    return { session_block: this.sessionBlock }
+    return { session_block: this.sessionBlock.toString(16) }
   }
   /**
    *

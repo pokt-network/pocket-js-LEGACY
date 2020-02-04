@@ -17,27 +17,31 @@ export class TxProof {
   public static fromJSON(json: string): TxProof {
     const jsonObject = JSON.parse(json)
 
-    return new TxProof(jsonObject.root_hash, jsonObject.data, jsonObject.proof)
+    return new TxProof(
+      jsonObject.root_hash,
+      jsonObject.data, 
+      SimpleProof.fromJSON(JSON.stringify(jsonObject.proof))
+    )
   }
 
-  public readonly rootHash: Hex
-  public readonly data: Hex
+  public readonly rootHash: string
+  public readonly data: string
   public readonly proof: SimpleProof
 
   /**
    * TxProof.
    * @constructor
-   * @param {Hex} rootHash - Root hash.
-   * @param {Hex} data - Hash holding the current tx proof data.
+   * @param {string} rootHash - Root hash.
+   * @param {string} data - Hash holding the current tx proof data.
    * @param {SimpleProof} proof - Simple proof object.
    */
-  constructor(rootHash: Hex, data: Hex, proof: SimpleProof) {
+  constructor(rootHash: string, data: string, proof: SimpleProof) {
     this.rootHash = rootHash
     this.data = data
     this.proof = proof
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid TxProof properties length.")
     }
   }
   /**
@@ -60,11 +64,8 @@ export class TxProof {
    * @memberof TxProof
    */
   public isValid(): boolean {
-    for (const key in this) {
-      if (!this.hasOwnProperty(key)) {
-        return false
-      }
-    }
-    return true
+    return this.data.length !== 0 &&
+    this.proof.isValid() &&
+    this.rootHash.length !== 0
   }
 }
