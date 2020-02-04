@@ -11,7 +11,8 @@
         "only-arrow-functions": false,
         "max-classes-per-file": [true, 2],
         "forin": false,
-        "no-shadowed-variable": false
+        "no-shadowed-variable": false,
+        "object-literal-shorthand": [false, "never"]
     },
     "linterOptions": {
         "exclude": [
