@@ -12,9 +12,10 @@ export class Hex {
    * @param {string} str string to validate
    */
   public static isHex(str: string): boolean {
-    const regexp = new RegExp("/^[0-9A-F]{" + str.length + "}$/i", "gi")
-    const match = str.match(regexp)
-    return match == null ? false : match.length === str.length
+    str = str.toUpperCase()
+    const regexp = new RegExp("^[0-9a-fA-F]+$")
+    
+    return regexp.test(str)
   }
 
   /**
