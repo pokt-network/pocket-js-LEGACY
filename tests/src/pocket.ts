@@ -111,6 +111,7 @@ describe("Pocket Interface functionalities", async () => {
             expect(signature).to.not.be.an.instanceof(Error)
             expect(signature).to.be.an.instanceof(Buffer)
         }).timeout(0)
+
         it('should successfully send a relay due to a valid information', async () => {
             const pocket = new Pocket(configuration)
             // Account
@@ -128,8 +129,7 @@ describe("Pocket Interface functionalities", async () => {
             NockUtil.mockGetNodeParams()
             NockUtil.mockRelay()
             const response = await pocket.sendRelay(data, blockchain, headers, pocketAAT)
-
-            expect(response).to.not.be.instanceOf(RelayResponse)
+            expect(response).to.not.be.instanceOf(Error)
         }).timeout(0)
 
         it('should successfully send a dispatch request', async () => {

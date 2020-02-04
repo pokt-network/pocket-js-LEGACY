@@ -13,19 +13,22 @@ export class QueryNodeProofsResponse {
    * @memberof QueryNodeProofsResponse
    */
   public static fromJSON(json: string): QueryNodeProofsResponse {
-    const jsonObject = JSON.parse(json)
-
-    const proofs: StoredProof[] = []
-
-    jsonObject.forEach(function(proofJSON: {}) {
-      const proof = StoredProof.fromJSON(JSON.stringify(proofJSON))
-      proofs.push(proof)
-    })
-    if (proofs !== undefined) {
-      return new QueryNodeProofsResponse(proofs as StoredProof[])
-    } else {
-      // TODO: Handle undefined scenario properly
-      return new QueryNodeProofsResponse(jsonObject)
+    try {
+      const jsonObject = JSON.parse(json)
+      const proofs: StoredProof[] = []
+  
+      jsonObject.forEach(function(proofJSON: {}) {
+        const proof = StoredProof.fromJSON(JSON.stringify(proofJSON))
+        proofs.push(proof)
+      })
+      if (proofs !== undefined) {
+        return new QueryNodeProofsResponse(proofs as StoredProof[])
+      } else {
+        // TODO: Handle undefined scenario properly
+        return new QueryNodeProofsResponse(jsonObject)
+      }
+    } catch (error) {
+      throw error
     }
   }
 

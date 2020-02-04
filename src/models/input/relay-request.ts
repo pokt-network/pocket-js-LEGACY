@@ -14,12 +14,15 @@ export class RelayRequest {
    * @memberof RelayRequest
    */
   public static fromJSON(json: string): RelayRequest {
-    const jsonObject = JSON.parse(json)
-
-    return new RelayRequest(
-      RelayPayload.fromJSON(JSON.stringify(jsonObject.payload)),
-      Proof.fromJSON(JSON.stringify(jsonObject.proof))
-    )
+    try {
+      const jsonObject = JSON.parse(json)
+      return new RelayRequest(
+        RelayPayload.fromJSON(JSON.stringify(jsonObject.payload)),
+        Proof.fromJSON(JSON.stringify(jsonObject.proof))
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly payload: RelayPayload

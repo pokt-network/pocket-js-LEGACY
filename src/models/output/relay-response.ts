@@ -13,14 +13,18 @@ export class RelayResponse {
    * @memberof RelayResponse
    */
   public static fromJSON(json: string): RelayResponse {
-    const jsonObject = JSON.parse(json)
-    const proof = Proof.fromJSON(JSON.stringify(jsonObject.proof))
-
-    return new RelayResponse(
-      jsonObject.signature,
-      jsonObject.response,
-      proof
-    )
+    try {
+      const jsonObject = JSON.parse(json)
+      const proof = Proof.fromJSON(JSON.stringify(jsonObject.proof))
+  
+      return new RelayResponse(
+        jsonObject.signature,
+        jsonObject.response,
+        proof
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly signature: string
