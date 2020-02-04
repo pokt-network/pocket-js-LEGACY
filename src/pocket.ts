@@ -86,87 +86,94 @@ export class Pocket {
     method = "",
     path = ""
   ): Promise<RelayResponse | Error> {
-    // Relay Payload
-    const relayPayload = new RelayPayload(data, method, path, headers)
-    let activeNode
-    
-    if (node === undefined) {
-      activeNode = this.getAnyNode()
-    }else{
-      activeNode = node
-    }
+    try {
+      // Relay Payload
+      const relayPayload = new RelayPayload(data, method, path, headers)
+      let activeNode
 
-    if (!typeGuard(activeNode, Node)) {
-      return new Error(activeNode.message)
-    }
-    // Get session block height
-    const sessionBlockHeightResponse = await RequestManager.getSessionBlockHeight(
-      activeNode,
-      configuration
-    )
-    if (!typeGuard(sessionBlockHeightResponse, QuerySessionBlockResponse)) {
-      return new Error(sessionBlockHeightResponse.message)
-    }
-    // Get current session
-    const sessionHeader = new SessionHeader(pocketAAT.applicationPublicKey, blockchain, sessionBlockHeightResponse.sessionBlock)
-    const currentSession = await this.sessionManager.getCurrentSession(sessionHeader, configuration)
-    if (!typeGuard(currentSession, Session)) {
-      return new Error(currentSession.message)
-    }
-
-    // Check if node is provided or retrieve one
-    if (node !== undefined) {
-      activeNode = node
-    } else {
-      // Session Node
-      activeNode = currentSession.getSessionNode()
-      if (!typeGuard(activeNode, Node)) {
-        return activeNode
+      if (node === undefined) {
+        activeNode = this.getAnyNode()
+      } else {
+        activeNode = node
       }
+
+      if (!typeGuard(activeNode, Node)) {
+        return new Error(activeNode.message)
+      }
+      // Get session block height
+      const sessionBlockHeightResponse = await RequestManager.getSessionBlockHeight(
+        activeNode,
+        configuration
+      )
+
+      if (!typeGuard(sessionBlockHeightResponse, QuerySessionBlockResponse)) {
+        return new Error(sessionBlockHeightResponse.message)
+      }
+      // Get current session
+      const sessionHeader = new SessionHeader(pocketAAT.applicationPublicKey, blockchain, sessionBlockHeightResponse.sessionBlock)
+      const currentSession = await this.sessionManager.getCurrentSession(sessionHeader, configuration)
+
+      if (!typeGuard(currentSession, Session)) {
+        return new Error(currentSession.message)
+      }
+
+      // Check if node is provided or retrieve one
+      if (node !== undefined) {
+        activeNode = node
+      } else {
+        // Session Node
+        activeNode = currentSession.getSessionNode()
+        if (!typeGuard(activeNode, Node)) {
+          return activeNode
+        }
+      }
+
+      // Create a Buffer from the applicationPublicKey in the pocketAAT
+      const applicationPublicKeyBuffer = Buffer.from(pocketAAT.applicationPublicKey, 'hex')
+      // Retrieve the addressHex from the publicKeyBuffer
+      const addressHex = addressFromPublickey(applicationPublicKeyBuffer).toString("hex")
+      // Create a proof object
+      const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
+      const relayProof = new Proof(
+        proofIndex,
+        sessionBlockHeightResponse.sessionBlock,
+        activeNode.address,
+        blockchain,
+        pocketAAT
+      )
+      // Generate sha3 hash of the relay proof object
+      const hash = sha3_256.create()
+      hash.update(JSON.stringify(relayProof.toJSON()))
+      // Create a relay proof buffer
+      const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
+      const signedRelayProof = await this.signWithUnlockedAccount(addressHex, relayProofBuffer)
+      // Create a relay request with the new signature
+      const proof = new Proof(
+        proofIndex,
+        sessionBlockHeightResponse.sessionBlock,
+        activeNode.address,
+        blockchain,
+        pocketAAT,
+        signedRelayProof.toString("hex")
+      )
+
+      // Relay to be sent
+      const relay = new RelayRequest(relayPayload, proof)
+      // Send relay
+      const relayResponse = await RequestManager.relay(
+        relay,
+        activeNode,
+        configuration
+      )
+      // Increase session relay count
+      // Return response
+      if (!typeGuard(relayResponse, RelayResponse)) {
+        return new Error(relayResponse.message)
+      }
+      return relayResponse
+    } catch (error) {
+      return error
     }
-    // Create a Buffer from the applicationPublicKey in the pocketAAT
-    const applicationPublicKeyBuffer = Buffer.from(pocketAAT.applicationPublicKey, 'hex')
-    // Retrieve the addressHex from the publicKeyBuffer
-    const addressHex = addressFromPublickey(applicationPublicKeyBuffer).toString("hex")
-    // Create a proof object
-    const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-    const relayProof = new Proof(
-      proofIndex,
-      sessionBlockHeightResponse.sessionBlock,
-      activeNode.address,
-      blockchain,
-      pocketAAT
-    )
-    // Generate sha3 hash of the relay proof object
-    const hash = sha3_256.create()
-    hash.update(JSON.stringify(relayProof.toJSON()))
-    // Create a relay proof buffer
-    const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
-    const signedRelayProof = await this.signWithUnlockedAccount(addressHex, relayProofBuffer)
-    // Create a relay request with the new signature
-    const proof = new Proof(
-      proofIndex,
-      sessionBlockHeightResponse.sessionBlock,
-      activeNode.address,
-      blockchain,
-      pocketAAT,
-      signedRelayProof.toString("hex")
-    )
-    // Relay to be sent
-    const relay = new RelayRequest(relayPayload, proof)
-    // Send relay
-    const relayResponse = await RequestManager.relay(
-      relay,
-      activeNode,
-      configuration
-    )
-    // Increase session relay count
-    currentSession.relayPlus(1)
-    // Return response
-    if (!typeGuard(relayResponse, RelayResponse)) {
-      return new Error(relayResponse.message)
-    }
-    return relayResponse
   }
 
   //
@@ -183,7 +190,7 @@ export class Pocket {
   public async getSessionBlockHeight(
     configuration = this.configuration,
     node?: Node,
-  ): Promise<BigInt | Error> {
+  ): Promise<QuerySessionBlockResponse | Error> {
     let activeNode
 
     if (node === undefined) {
@@ -205,7 +212,7 @@ export class Pocket {
     if (!typeGuard(sessionBlockHeightResponse, QuerySessionBlockResponse)) {
       return new Error(sessionBlockHeightResponse.message)
     }
-    return sessionBlockHeightResponse.sessionBlock
+    return sessionBlockHeightResponse
   }
   /**
    *
@@ -292,7 +299,7 @@ export class Pocket {
     node?: Node
   ): Promise<QueryHeightResponse | Error> {
     let activeNode
-
+    
     if (node === undefined) {
       activeNode = this.getAnyNode()
     }else{
@@ -881,8 +888,7 @@ export class Pocket {
     passphrase: string,
     privateKey: string
   ): Promise<Account | Error> {
-    const keybase = new Keybase(new InMemoryKVStore())
-    const importedAccountOrError = await keybase.importAccount(
+    const importedAccountOrError = await this.keybase.importAccount(
       Buffer.from(privateKey, "hex"),
       passphrase
     )
@@ -899,7 +905,7 @@ export class Pocket {
     passphrase: string,
     privateKey: string,
     unlockPeriod = 600000
-  ): Promise<undefined | Error> {
+  ): Promise<Account | Error> {
     // Import account
     const importedAccount = await this.importAccount(passphrase, privateKey)
     // Check if importedAccount is not an Account type
@@ -910,11 +916,11 @@ export class Pocket {
     // Unlock account
     const unlockAccount = await this.unlockAccount(importedAccount.addressHex, passphrase, unlockPeriod)
     // Check if unlockAccount is not an Account type
-    if (typeGuard(importedAccount, Error)) {
+    if (typeGuard(unlockAccount, Error)) {
       // return error
-      return importedAccount
+      return unlockAccount
     }
-    return undefined
+    return importedAccount
   }
   /**
    * Export account to retrieve the private key.
@@ -927,10 +933,9 @@ export class Pocket {
     account: Account,
     passphrase: string
   ): Promise<Buffer | Error> {
-    const keybase = new Keybase(new InMemoryKVStore())
 
     // Export the private key
-    const privateKey = await keybase.exportAccount(
+    const privateKey = await this.keybase.exportAccount(
       account.addressHex,
       passphrase
     )
