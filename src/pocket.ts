@@ -34,6 +34,16 @@ import { QuerySupplyResponse } from "./models/output/query-supply-response"
 import { InMemoryKVStore, addressFromPublickey, Hex } from "./utils"
 import { PocketAAT } from "pocket-aat-js"
 import { sha3_256 } from "js-sha3"
+import { RawTxResponse } from "./models/output/raw-tx-response"
+import { CoinDenom } from "./models/coin-denom"
+import { MsgSend, MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, MsgNodeUnstake, MsgNodeUnjail } from "./models/amino/msgs"
+import { StdSignDoc } from "./models/amino/std-sign-doc"
+import { TxSignature } from "./models/amino/tx-signature"
+import { publicKeyFromPrivate, UnlockedAccount, validatePrivateKey } from "../lib/src"
+import { StdTx } from "./models/amino/std-tx"
+import { TxMsg } from "./models/amino/tx-msg"
+import { ITransactionSender } from "./transactions/transaction-sender"
+import { TransactionSignature, TransactionSigner } from "./transactions/transaction-signer"
 
 /**
  *
@@ -41,10 +51,10 @@ import { sha3_256 } from "js-sha3"
  * @class Pocket
  */
 export class Pocket {
-  public readonly sessionManager: SessionManager
+  private readonly sessionManager: SessionManager
   public readonly configuration: Configuration
-  public readonly routingTable: Routing
-  public readonly keybase: Keybase = new Keybase(new InMemoryKVStore())
+  private readonly routingTable: Routing
+  private readonly keybase: Keybase = new Keybase(new InMemoryKVStore())
 
   /**
    * Creates an instance of Pocket.
@@ -56,12 +66,26 @@ export class Pocket {
   ) {
     this.configuration = configuration
     try {
-      this.routingTable = new Routing(configuration.nodes , configuration)
+      this.routingTable = new Routing(configuration.nodes, configuration)
     } catch (error) {
       throw error
     }
     this.sessionManager = new SessionManager(this.routingTable)
   }
+
+  // getSessionManager(): SessionManager {
+  //   return this.sessionManager
+  // }
+  // getConfiguration(): Configuration {
+  //   return this.configuration
+  // }
+  // getRoutingTable(): Routing {
+  //   return this.routingTable
+  // }
+  // getKeybase(): Keybase {
+  //   return this.keybase
+  // }
+
   /**
    *
    * Sends a Relay Request
@@ -195,10 +219,10 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
-    
+
     // Check if node is Node.type
     if (!typeGuard(activeNode, Node)) {
       return new Error(activeNode.message)
@@ -231,7 +255,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -271,7 +295,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -302,7 +326,7 @@ export class Pocket {
     
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -341,7 +365,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -381,7 +405,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -425,7 +449,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -463,7 +487,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -506,7 +530,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -548,7 +572,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -587,7 +611,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -631,7 +655,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -669,7 +693,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -706,7 +730,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -743,7 +767,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -780,7 +804,7 @@ export class Pocket {
 
     if (node === undefined) {
       activeNode = this.getAnyNode()
-    }else{
+    } else {
       activeNode = node
     }
 
@@ -800,9 +824,272 @@ export class Pocket {
     }
     return supplyResponse
   }
-  //
-  // Account management
-  //
+
+  /**
+   * Submits a Raw Encoded and Amino Signed transaction to the network
+   * @param fromAddress {Buffer | string} The address of the sender
+   * @param tx {Buffer | string} The amino encoded transaction bytes
+   * @param node {Node}
+   * @param configuration {Configuration | undefined}
+   * @memberof Pocket
+   */
+  public async sendRawTx(
+    fromAddress: Buffer | string,
+    tx: Buffer | string,
+    node: Node,
+    configuration?: Configuration
+  ): Promise<RawTxResponse | RpcErrorResponse> {
+    return RequestManager.sendRawTx(fromAddress, tx, node, configuration ? configuration : this.configuration)
+  }
+
+  /**
+   * Creates an ITransactionSender given a private key
+   * @param privateKey {Buffer | string}
+   */
+  public withPrivateKey(privateKey: Buffer | string): ITransactionSender | Error {
+    try {
+      const privKeyBuffer = typeGuard(privateKey, Buffer) ? privateKey as Buffer : Buffer.from(privateKey as string, 'hex')
+      if (!validatePrivateKey(privKeyBuffer)) {
+        throw new Error("Invalid private key")
+      }
+      const pubKey = publicKeyFromPrivate(privKeyBuffer)
+      const unlockedAccount = new UnlockedAccount(new Account(pubKey, ''), privKeyBuffer)
+      return new Pocket.TransactionSender(this, unlockedAccount)
+    } catch (err) {
+      return err
+    }
+  }
+
+  /**
+   * Creates an ITransactionSender given an already imported account into this instanc keybase
+   * @param address {Buffer | string} address of the account
+   * @param passphrase {string} passphrase for the account
+   */
+  public async withImportedAccount(address: Buffer | string, passphrase: string): Promise<ITransactionSender | Error> {
+    const unlockedAccountOrError = await this.keybase.getUnlockedAccount(
+      typeGuard(address, "string") ? address as string : (address as Buffer).toString("hex"),
+      passphrase)
+
+    if (typeGuard(unlockedAccountOrError, Error)) {
+      return unlockedAccountOrError as Error
+    } else {
+      return new Pocket.TransactionSender(this, (unlockedAccountOrError as UnlockedAccount))
+    }
+  }
+
+  /**
+   * Creates an ITransactionSender given a {TransactionSigner} function
+   * @param txSigner {TransactionSigner} Function which will sign the transaction bytes
+   */
+  public withTxSigner(txSigner: TransactionSigner): ITransactionSender | Error {
+    try {
+      return new Pocket.TransactionSender(this, undefined, txSigner)
+    } catch (err) {
+      return err
+    }
+  }
+
+  /**
+   * Annonymous class which handles TxMsg encoding and Transaciton submission to the Network
+   */
+  private static TransactionSender = class implements ITransactionSender {
+    private txMgs: TxMsg[] = []
+    private unlockedAccount?: UnlockedAccount
+    private pocket: Pocket
+    private txSigner?: TransactionSigner
+
+    /**
+     * Constructor for this class. Requires either an unlockedAccount or txSigner
+     * @param pocket {Pocket}
+     * @param unlockedAccount {UnlockedAccount} 
+     * @param txSigner {TransactionSigner}
+     */
+    public constructor(pocket: Pocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
+      this.unlockedAccount = unlockedAccount
+      this.txSigner = txSigner
+      this.pocket = pocket
+
+      if (this.unlockedAccount === undefined && this.txSigner === undefined) {
+        throw new Error("Need to define unlockedAccount or txSigner")
+      }
+    }
+
+    /**
+     * Signs using the unlockedAccount attribute of this class
+     * @param bytesToSign {Buffer}
+     * @param unlockedAccount {UnlockedAccount}
+     */
+    private signWithUnlockedAccount(bytesToSign: Buffer, unlockedAccount: UnlockedAccount): TxSignature | Error {
+      const signatureOrError = Keybase.signWith(unlockedAccount.privateKey, bytesToSign)
+      if (typeGuard(signatureOrError, Error)) {
+        return signatureOrError as Error
+      }
+      return new TxSignature(unlockedAccount.publicKey, signatureOrError as Buffer)
+    }
+
+    /**
+    * Signs using the txSigner attribute of this class
+    * @param bytesToSign {Buffer}
+    * @param unlockedAccount {TransactionSigner}
+    */
+    private signWithTrasactionSigner(bytesToSign: Buffer, txSigner: TransactionSigner): TxSignature | Error {
+      const transactionSignatureOrError = txSigner(bytesToSign)
+      if (typeGuard(transactionSignatureOrError, Error)) {
+        return transactionSignatureOrError as Error
+      }
+      const txSignature = transactionSignatureOrError as TransactionSignature
+      return new TxSignature(txSignature.publicKey, txSignature.signature)
+    }
+
+    /**
+     * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
+     * @param accountNumber {string} Account number for this account
+     * @param sequence {string} Sequence of transactions (or Nonce)
+     * @param chainId {string} The chainId of the network to be sent to
+     * @param node {Node} the Node object to send the transaction to
+     * @param fee {string} The amount to pay as a fee for executing this transaction
+     * @param feeDenom {CoinDenom | undefined} The denomination of the fee amount 
+     * @param memo {string | undefined} The memo field for this account
+     * @param configuration {Configuration | undefined} Alternative configuration to be used
+     */
+    public async submit(
+      accountNumber: string,
+      sequence: string,
+      chainId: string,
+      node: Node,
+      fee: string,
+      feeDenom?: CoinDenom,
+      memo?: string,
+      configuration?: Configuration
+    ): Promise<RawTxResponse | RpcErrorResponse> {
+      try {
+        if (this.txMgs.length === 0) {
+          return new RpcErrorResponse("0", "No messages configured for this transaction")
+        }
+        const stdSignDoc = new StdSignDoc(accountNumber, sequence, chainId, this.txMgs, fee, feeDenom, memo)
+        let txSignatureOrError
+        const bytesToSign = stdSignDoc.marshalAmino()
+        if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
+          txSignatureOrError = this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
+        } else if (this.txSigner !== undefined) {
+          txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
+        } else {
+          return new RpcErrorResponse("0", "No account or TransactionSigner specified")
+        }
+
+        if (!typeGuard(txSignatureOrError, TxSignature)) {
+          return new RpcErrorResponse("0", "Error generating signature for transaction")
+        }
+
+        const txSignature = txSignatureOrError as TxSignature
+        const addressHex = addressFromPublickey(txSignature.pubKey)
+        const transaction = new StdTx(stdSignDoc, [txSignature])
+        const encodedTxBytes = transaction.marshalAmino()
+        // Clean messages accumulated on submit
+        this.txMgs = []
+        return this.pocket.sendRawTx(addressHex, encodedTxBytes, node, configuration)
+      } catch (error) {
+        return error
+      }
+    }
+
+    /**
+     * Adds a MsgSend TxMsg for this transaction
+     * @param fromAddress {string}
+     * @param toAddress {string}
+     * @param amount {string} Needs to be a valid number greater than 0
+     * @param amountDenom {CoinDenom | undefined}
+     */
+    public send(
+      fromAddress: string,
+      toAddress: string,
+      amount: string,
+      amountDenom?: CoinDenom
+    ): ITransactionSender {
+      this.txMgs.push(new MsgSend(fromAddress, toAddress, amount, amountDenom))
+      return this
+    }
+
+
+    /**
+     * Adds a MsgAppStake TxMsg for this transaction
+     * @param appPubKey {string}
+     * @param chains {string[]} Network identifier list to be requested by this app
+     * @param amount {string} the amount to stake, must be greater than 0
+     */
+    public appStake(
+      appPubKey: string,
+      chains: string[],
+      amount: string
+    ): ITransactionSender {
+      this.txMgs.push(new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount))
+      return this
+    }
+
+    /**
+     * Adds a MsgBeginAppUnstake TxMsg for this transaction
+     * @param address {string} Address of the Application to unstake for
+     */
+    public appUnstake(
+      address: string
+    ): ITransactionSender {
+      this.txMgs.push(new MsgAppUnstake(address))
+      return this
+    }
+
+    /**
+     * Adds a MsgAppUnjail TxMsg for this transaction
+     * @param address {string} Address of the Application to unjail
+     */
+    public appUnjail(
+      address: string
+    ): ITransactionSender {
+      this.txMgs.push(new MsgAppUnjail(address))
+      return this
+    }
+
+
+    /**
+     * Adds a MsgAppStake TxMsg for this transaction
+     * @param nodePubKey {string}
+     * @param chains {string[]} Network identifier list to be serviced by this node
+     * @param amount {string} the amount to stake, must be greater than 0
+     * @param serviceURL {URL}
+     */
+    public nodeStake(
+      nodePubKey: string,
+      chains: string[],
+      amount: string,
+      serviceURL: URL
+    ): ITransactionSender {
+      this.txMgs.push(new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL))
+      return this
+    }
+
+    /**
+     * Adds a MsgBeginUnstake TxMsg for this transaction
+     * @param address {string} Address of the Node to unstake for
+     */
+    public nodeUnstake(
+      address: string
+    ): ITransactionSender {
+      this.txMgs.push(new MsgNodeUnstake(address))
+      return this
+    }
+
+
+    /**
+     * Adds a MsgUnjail TxMsg for this transaction
+     * @param address {string} Address of the Node to unjail
+     */
+    public nodeUnjail(
+      address: string
+    ): ITransactionSender {
+      this.txMgs.push(new MsgNodeUnjail(address))
+      return this
+    }
+  }
+
   /**
    * Creates an account
    * @param {string} passphrase - Account passphrase.
