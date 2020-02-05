@@ -23,6 +23,7 @@ import { BlockMeta } from '../../src/models/block-meta'
 import { SessionHeader } from '../../src/models/input/session-header'
 import { Proof } from '../../src/models/proof'
 
+const env = new Environment.LocalNet()
 const version = '0.0.1'
 const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5'
@@ -245,7 +246,7 @@ export class NockUtil {
     }
 
     private static nockRoute(path: string = "", code: number = 200, data: any): nock.Scope {
-        return nock('http://127.0.0.1:80').post(path).reply(code, data)
+        return nock(env.getPOKTRPC()).post(path).reply(code, data)
     }
 
     private static getError(): any {
