@@ -1,4 +1,4 @@
-import { Hex, validateAddressHex, typeGuard } from "../../../lib/src"
+import { Hex, validateAddressHex, typeGuard } from "../../utils"
 
 /**
  * Represents a /v1/rawtx RPC request

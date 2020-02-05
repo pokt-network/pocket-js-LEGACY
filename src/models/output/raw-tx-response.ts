@@ -1,5 +1,5 @@
-import { typeGuard } from "../../../lib/src"
 import { TxLog } from "./tx-log"
+import { typeGuard } from "../../utils"
 
 /**
  * Represents a /v1/rawtx RPC response
