@@ -28,11 +28,11 @@ const applicationSignature = '7c3706dce9a5248187cb58cf1d65f12d93c7dfc500de8cfe76
 const alternatePublicKey = "0c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
 const alternatePrivateKey = "de54546ae6bfb7b67e74546c9a55816effa1fc8af004f9b0d231340d29d505580c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
 
-const env = new Environment.TestNet()
+const env = new Environment.LocalNet()
 const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 const noSessionPocketAAT = PocketAAT.from(version, clientPublicKey, alternatePublicKey, alternatePrivateKey)
 const blockchain = "ETH04"
-const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "http://127.0.0.1:80", [blockchain])
+const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), [blockchain])
 const configuration = new Configuration([node01],5, 40000, 200)
 
 describe("Pocket Interface functionalities", async () => {
