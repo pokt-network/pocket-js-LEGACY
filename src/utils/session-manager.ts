@@ -127,23 +127,20 @@ export class SessionManager {
    * @param {Configuration} configuration - Configuration object
    * @memberof SessionManager
    */
-  private saveCurrentSession(header: SessionHeader, configuration: Configuration) {
-    this.getCurrentSession(header, configuration).then(currentSession => {
-      switch(true) {
-        case typeGuard(currentSession, Session):
+  private async saveCurrentSession(header: SessionHeader, configuration: Configuration): Promise< RpcErrorResponse | undefined > {
+    const currentSession = await this.getCurrentSession(header, configuration)
 
-
-          if(!this.store.has(this.sessionMapKey)) {
-            const map: Map<string, Queue<Session>> = new Map()
-            map.set(header.chain, new Queue<Session>())
-            this.store.add(this.sessionMapKey, map)
-          }
-          ((this.store.get(this.sessionMapKey) as Map<string, Queue<Session>>)
-          .get(header.chain) as Queue<Session>).enqueue(currentSession as Session)
-        
-        default:
-          throw currentSession as RpcErrorResponse
+    if (typeGuard(currentSession, Session)) {
+      if(!this.store.has(this.sessionMapKey)) {
+        const map: Map<string, Queue<Session>> = new Map()
+        map.set(header.chain, new Queue<Session>())
+        this.store.add(this.sessionMapKey, map)
       }
-    })
+      ((this.store.get(this.sessionMapKey) as Map<string, Queue<Session>>)
+      .get(header.chain) as Queue<Session>).enqueue(currentSession as Session)
+      return undefined
+    }else{
+      return currentSession as RpcErrorResponse
+    }
   }
 }
