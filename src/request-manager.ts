@@ -27,6 +27,9 @@ import { DispatchRequest } from "./models/input/dispatch-request"
 import { typeGuard } from "./utils/type-guard"
 import { SendResponse } from "./models/output/send-response"
 import { QuerySessionBlockResponse } from "./models/output/query-session-block-response"
+import { RawTxRequest } from "./models/input/raw-tx-request"
+import { RawTxResponse } from "./models/output/raw-tx-response"
+import { type } from "os"
 
 /**
  *
@@ -803,6 +806,51 @@ export abstract class RequestManager {
       return new RpcErrorResponse("0", err)
     }
   }
+  
+  /**
+   * Method to call the v1/client/rawtx endpoint of a given node
+   * @param fromAddress {Buffer | string} The address of the sender
+   * @param tx {Buffer | string} The amino encoded transaction bytes
+   * @param node {Node}
+   * @param configuration {Configuration}
+   */
+  public static async sendRawTx(
+    fromAddress: Buffer | string,
+    tx: Buffer | string,
+    node: Node,
+    configuration: Configuration
+  ): Promise<RawTxResponse | RpcErrorResponse> {
+    try {
+      const request = new RawTxRequest(fromAddress.toString('hex'), tx.toString('hex'))
+      const payload = JSON.stringify(request.toJSON())
+      const response = await RequestManager.send(
+        enums.RPCRoutes.QuerySupply.toString(),
+        payload,
+        node,
+        configuration
+      )
+
+      // Check if response is an error
+      if(typeGuard(response, RpcErrorResponse)) {
+        return response as RpcErrorResponse
+      } else {
+        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
+        if (error.isValid()) {
+          return error
+        }
+
+        const rawTxResponse = RawTxResponse.fromJSON(response.data as string)
+        if(typeGuard(rawTxResponse, Error)) {
+          return RpcErrorResponse.fromError(rawTxResponse as Error)
+        } else {
+          return rawTxResponse as RawTxResponse
+        }
+      }
+    } catch (err) {
+      return RpcErrorResponse.fromError(err)
+    }
+  }
+
   /**
    *
    * Sends a request
