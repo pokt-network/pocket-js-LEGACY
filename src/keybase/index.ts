@@ -1,1 +1,3 @@
-export * from "./keybase"
+// created from 'create-ts-index'
+
+export * from './keybase';

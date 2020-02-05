@@ -8,3 +8,4 @@ export * from './hex';
 export * from './key-pair';
 export * from './session-manager';
 export * from './type-guard';
+export * from './url';

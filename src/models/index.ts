@@ -1,5 +1,6 @@
 // created from 'create-ts-index'
 
+export * from './amino';
 export * from './input';
 export * from './output';
 export * from './account';
@@ -9,6 +10,7 @@ export * from './block-header';
 export * from './block-id';
 export * from './block-meta';
 export * from './block';
+export * from './coin-denom';
 export * from './commit-signature';
 export * from './commit';
 export * from './configuration';
