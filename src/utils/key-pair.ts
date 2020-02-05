@@ -41,3 +41,11 @@ export function validateAddressHex(addressHex: string): Error | undefined {
   }
   return undefined
 }
+
+/**
+ * Validates an ed25519 public key structure
+ * @param pubKey 
+ */
+export function validatePublicKey(pubKey: Buffer): boolean {
+  return pubKey.length === 32
+}
