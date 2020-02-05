@@ -1,7 +1,6 @@
 import { TxMsg } from "./tx-msg";
 import { CoinDenom } from "../coin-denom";
-import { validatePublicKey } from "../../utils/key-pair"
-import { validateAddressHex } from "../../../lib/src";
+import { validatePublicKey, validateAddressHex } from "../../utils/key-pair"
 import { validateServiceURL } from "../../utils/url";
 
 /**

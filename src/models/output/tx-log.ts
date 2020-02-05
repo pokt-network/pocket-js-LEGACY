@@ -1,4 +1,4 @@
-import { typeGuard } from "../../../lib/src"
+import { typeGuard } from "../../utils"
 
 /**
  * A model representing a log generated from a Transaction

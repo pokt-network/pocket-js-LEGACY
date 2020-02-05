@@ -31,7 +31,7 @@ import { QueryAppParamsResponse } from "./models/output/query-app-params-respons
 import { QueryPocketParamsResponse } from "./models/output/query-pocket-params-response"
 import { QuerySupportedChainsResponse } from "./models/output/query-supported-chains-response"
 import { QuerySupplyResponse } from "./models/output/query-supply-response"
-import { InMemoryKVStore, addressFromPublickey, Hex } from "./utils"
+import { InMemoryKVStore, addressFromPublickey, Hex, validatePrivateKey, publicKeyFromPrivate } from "./utils"
 import { PocketAAT } from "pocket-aat-js"
 import { sha3_256 } from "js-sha3"
 import { RawTxResponse } from "./models/output/raw-tx-response"
@@ -39,11 +39,11 @@ import { CoinDenom } from "./models/coin-denom"
 import { MsgSend, MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, MsgNodeUnstake, MsgNodeUnjail } from "./models/amino/msgs"
 import { StdSignDoc } from "./models/amino/std-sign-doc"
 import { TxSignature } from "./models/amino/tx-signature"
-import { publicKeyFromPrivate, UnlockedAccount, validatePrivateKey } from "../lib/src"
 import { StdTx } from "./models/amino/std-tx"
 import { TxMsg } from "./models/amino/tx-msg"
 import { ITransactionSender } from "./transactions/transaction-sender"
 import { TransactionSignature, TransactionSigner } from "./transactions/transaction-signer"
+import { UnlockedAccount } from "./models"
 
 /**
  *
@@ -72,19 +72,6 @@ export class Pocket {
     }
     this.sessionManager = new SessionManager(this.routingTable)
   }
-
-  // getSessionManager(): SessionManager {
-  //   return this.sessionManager
-  // }
-  // getConfiguration(): Configuration {
-  //   return this.configuration
-  // }
-  // getRoutingTable(): Routing {
-  //   return this.routingTable
-  // }
-  // getKeybase(): Keybase {
-  //   return this.keybase
-  // }
 
   /**
    *

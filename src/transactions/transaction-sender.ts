@@ -1,7 +1,7 @@
 import { CoinDenom } from "../models/coin-denom";
-import { Configuration, RpcErrorResponse } from "../../lib/src";
 import { RawTxResponse } from "../models/output/raw-tx-response";
 import { Node } from "../models/node"
+import { Configuration, RpcErrorResponse } from "../models";
 
 export interface ITransactionSender {
     submit(

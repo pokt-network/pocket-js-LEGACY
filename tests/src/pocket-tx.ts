@@ -1,11 +1,11 @@
 import { expect, assert } from 'chai'
 import { Pocket } from '../../src/pocket'
 import {
-    Configuration, BondStatus, Node, Account, ITransactionSender
+    Configuration, BondStatus, Node, Account, ITransactionSender, typeGuard, RpcErrorResponse
 } from '../../src'
-import { typeGuard, RpcErrorResponse } from '../../lib/src'
 import { CoinDenom } from '../../src/models/coin-denom'
 import { RawTxResponse } from '../../src/models/output/raw-tx-response'
+import { NockUtil } from '../utils/nock-util'
 
 const nodeAddress = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const nodePublicKey = "d9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb"
@@ -24,6 +24,10 @@ function createPocketInstance(configuration?: Configuration): Pocket {
 }
 
 describe("Pocket Transactions Tests", function() {
+    this.beforeAll(function() {
+        NockUtil.mockRawTx()
+    })
+
     describe("Sending raw transactions", function() {
         describe("Success scenarios", function() {
             it("should succesfully send a raw transaction given a fromAddress, tx hex and Node", async () => {

@@ -31,6 +31,17 @@ const applicationPublicKey = 'd9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa
 const applicationPrivateKey = '15f53145bfa6efdde6e65ce5ebfd330ac0a2591ae451a8a03ace99eff894b9eed9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
 
 export class NockUtil {
+    public static mockRawTx(code: number = 200): nock.Scope {
+        const data: any = this.createData(code, {
+            "height": "0",
+            "txhash": "1DE7AF0CDEF19B21D6BDE602A4916186E40D86854B2E747A464BD32C7616B5A2",
+            "raw_log": "[{\\\"msg_index\\\":0,\\\"success\\\":true,\\\"log\\\":\\\"\\\",\\\"events\\\":[{\\\"type\\\":\\\"message\\\",\\\"attributes\\\":[{\\\"key\\\":\\\"action\\\",\\\"value\\\":\\\"send\\\"}]}]}]\",\"logs\":[{\"msg_index\":0,\"success\":true,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"send\"}]}]}]"
+        })
+
+        const response = this.getResponseObject(data, code)
+        return this.nockRoute(enums.Routes.RELAY.toString(), code, response)
+    }
+
     public static mockRelay(code: number = 200): nock.Scope {
         const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
         const proof = new Proof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
