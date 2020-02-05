@@ -129,7 +129,9 @@ describe("Pocket Interface functionalities", async () => {
             NockUtil.mockGetNodeParams()
             NockUtil.mockRelay()
             const response = await pocket.sendRelay(data, blockchain, headers, pocketAAT)
+
             expect(response).to.not.be.instanceOf(Error)
+            expect(response).to.not.be.undefined
         }).timeout(0)
 
         it('should successfully send a dispatch request', async () => {
