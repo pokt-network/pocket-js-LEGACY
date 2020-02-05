@@ -86,6 +86,16 @@ export class Keybase {
     }
 
     /**
+     * Generates a one time use UnlockedAccount from a persisted Account
+     * @param addressHex {string} The address hex for the account
+     * @param passphrase {string} The passphrase for the account
+     * @returns {Promise<UnlockedAccount | Error>} The UnlockedAccount object or an Error
+     */
+    public async getUnlockedAccount(addressHex: string, passphrase: string): Promise<UnlockedAccount | Error> {
+        return this.unlockAccountFromPersistence(addressHex, passphrase)
+    }
+
+    /**
      * @description Deletes an account stored in the keybase
      * @param addressHex The address of the account to delete in hex string format
      * @param passphrase The passphrase for the account in this keybase
@@ -184,6 +194,23 @@ export class Keybase {
         const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         try {
             return ed25519.Sign(payload, unlockedAccount.privateKey)
+        } catch (err) {
+            return err
+        }
+    }
+
+    /**
+     * Utility function to sign an arbitrary payload with a valid ed25519 private key
+     * @param privateKey {Buffer} the private key to sign with
+     * @param payload {Buffer} arbitrary payload to sign
+     * @returns {Buffer | Error} The signature or an Error
+     */
+    public static signWith(
+        privateKey: Buffer,
+        payload: Buffer
+    ): Buffer | Error {
+        try {
+            return ed25519.Sign(payload, privateKey)
         } catch (err) {
             return err
         }
