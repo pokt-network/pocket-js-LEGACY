@@ -4,18 +4,6 @@
  * @class RpcErrorResponse
  */
 export class RpcErrorResponse {
-  /**
-   *
-   * Creates a RpcErrorResponse object using a JSON string
-   * @param {string} json - JSON string.
-   * @returns {RpcErrorResponse} - RpcErrorResponse object.
-   * @memberof RpcErrorResponse
-   */
-  public static fromJSON(json: string): RpcErrorResponse {
-    const jsonObject = JSON.parse(json)
-
-    return new RpcErrorResponse(jsonObject.code, jsonObject.message)
-  }
 
   public readonly code: string
   public readonly message: string
@@ -34,6 +22,28 @@ export class RpcErrorResponse {
       throw new TypeError("Invalid RpcErrorResponse properties length.")
     }
   }
+
+  /**
+   * Creates a RpcErrorResponse from an Error object
+   * @param error 
+   */
+  public static fromError(error: Error): RpcErrorResponse {
+    return new RpcErrorResponse("0", error.message)
+  }
+
+  /**
+   *
+   * Creates a RpcErrorResponse object using a JSON string
+   * @param {string} json - JSON string.
+   * @returns {RpcErrorResponse} - RpcErrorResponse object.
+   * @memberof RpcErrorResponse
+   */
+  public static fromJSON(json: string): RpcErrorResponse {
+    const jsonObject = JSON.parse(json)
+
+    return new RpcErrorResponse(jsonObject.code, jsonObject.message)
+  }
+
   /**
    *
    * Creates a JSON object with the RpcErrorResponse properties
