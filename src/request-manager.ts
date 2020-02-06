@@ -824,7 +824,7 @@ export abstract class RequestManager {
       const request = new RawTxRequest(fromAddress.toString('hex'), tx.toString('hex'))
       const payload = JSON.stringify(request.toJSON())
       const response = await RequestManager.send(
-        enums.RPCRoutes.QuerySupply.toString(),
+        enums.RPCRoutes.ClientRawTx.toString(),
         payload,
         node,
         configuration
@@ -834,12 +834,9 @@ export abstract class RequestManager {
       if(typeGuard(response, RpcErrorResponse)) {
         return response as RpcErrorResponse
       } else {
-        const error = RpcErrorResponse.fromJSON(JSON.stringify(response.data))
-        if (error.isValid()) {
-          return error
-        }
-
-        const rawTxResponse = RawTxResponse.fromJSON(response.data as string)
+        const rawTxResponse = RawTxResponse.fromJSON(
+          JSON.stringify(response.data)
+        )
         if(typeGuard(rawTxResponse, Error)) {
           return RpcErrorResponse.fromError(rawTxResponse as Error)
         } else {
