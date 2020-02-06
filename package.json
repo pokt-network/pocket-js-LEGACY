@@ -57,7 +57,7 @@
         }
     ],
     "dependencies": {
-        "@tendermint/amino-js": "github:pokt-network/amino-js#hub-3-gaia-2-alpha",
+        "@pokt-network/amino-js": "0.7.1-alpha.1",
         "@tendermint/belt": "^0.2.1",
         "@types/aes-js": "^3.1.0",
         "aes-js": "^3.1.2",

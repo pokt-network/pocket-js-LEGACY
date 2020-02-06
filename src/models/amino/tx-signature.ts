@@ -1,5 +1,5 @@
 import { bytesToBase64 } from "@tendermint/belt"
-import { PosmintStdSignature } from "@tendermint/amino-js/types/src/types/pocket"
+import { PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pocket"
 
 /**
  * Represents a given signature for a Transaction

@@ -1,8 +1,8 @@
 import { IAminoEncodable } from "./amino-encodable";
 import { StdSignDoc } from "./std-sign-doc";
 import { TxSignature } from "./tx-signature";
-import { PosmintStdTx, PosmintMsg, PosmintStdSignature } from "@tendermint/amino-js/types/src/types/pocket";
-import { marshalPosmintTx } from "@tendermint/amino-js";
+import { PosmintStdTx, PosmintMsg, PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pocket";
+import { marshalPosmintTx } from "@pokt-network/amino-js";
 
 /**
  * Represents a StdTx object to send a Transaction
