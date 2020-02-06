@@ -5,24 +5,6 @@
  */
 export class RpcErrorResponse {
 
-  public readonly code: string
-  public readonly message: string
-
-  /**
-   * Relay Response.
-   * @constructor
-   * @param {string} code - Error code.
-   * @param {string} message - Error message.
-   */
-  constructor(code: string, message: string) {
-    this.code = code
-    this.message = message
-
-    if (!this.isValid()) {
-      throw new TypeError("Invalid RpcErrorResponse properties length.")
-    }
-  }
-
   /**
    * Creates a RpcErrorResponse from an Error object
    * @param error 
@@ -42,6 +24,24 @@ export class RpcErrorResponse {
     const jsonObject = JSON.parse(json)
 
     return new RpcErrorResponse(jsonObject.code, jsonObject.message)
+  }
+
+  public readonly code: string
+  public readonly message: string
+
+  /**
+   * Relay Response.
+   * @constructor
+   * @param {string} code - Error code.
+   * @param {string} message - Error message.
+   */
+  constructor(code: string, message: string) {
+    this.code = code
+    this.message = message
+
+    if (!this.isValid()) {
+      throw new TypeError("Invalid RpcErrorResponse properties length.")
+    }
   }
 
   /**

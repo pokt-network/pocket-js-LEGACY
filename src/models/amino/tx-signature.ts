@@ -5,9 +5,9 @@ import { PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pock
  * Represents a given signature for a Transaction
  */
 export class TxSignature {
-    private readonly PUBLIC_KEY_TYPE: string = "crypto/ed25519_public_key"
     public readonly pubKey: Buffer 
     public readonly signature: Buffer
+    private readonly PUBLIC_KEY_TYPE: string = "crypto/ed25519_public_key"
 
     /**
      * @param pubKey {Buffer} public key of the signer

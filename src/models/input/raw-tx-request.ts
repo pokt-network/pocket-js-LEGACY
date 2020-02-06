@@ -4,6 +4,18 @@ import { Hex, validateAddressHex, typeGuard } from "../../utils"
  * Represents a /v1/rawtx RPC request
  */
 export class RawTxRequest {
+    /**
+     * Util function to create a RawTxRequest using Buffer or strings
+     * @param address {Buffer | string} The address hex of the sender
+     * @param tx {Buffer | string} The transaction bytes
+     * @returns {RawTxRequest}
+     */
+    public static with(address: Buffer | string, tx: Buffer | string): RawTxRequest {
+        const addrParam: string = typeGuard(address, Buffer) ? (address as Buffer).toString('hex') : (address as string)
+        const txParam: string = typeGuard(tx, Buffer) ? (tx as Buffer).toString('hex') : (tx as string)
+        return new RawTxRequest(addrParam, txParam)
+    }
+
     public readonly address: string
     public readonly txHex: string
 
@@ -22,18 +34,6 @@ export class RawTxRequest {
         } else if (!Hex.isHex(txHex)) {
             throw new Error("Invalid transaction hex")
         }
-    }
-
-    /**
-     * Util function to create a RawTxRequest using Buffer or strings
-     * @param address {Buffer | string} The address hex of the sender
-     * @param tx {Buffer | string} The transaction bytes
-     * @returns {RawTxRequest}
-     */
-    public static with(address: Buffer | string, tx: Buffer | string): RawTxRequest {
-        const addrParam: string = typeGuard(address, Buffer) ? (address as Buffer).toString('hex') : (address as string)
-        const txParam: string = typeGuard(tx, Buffer) ? (tx as Buffer).toString('hex') : (tx as string)
-        return new RawTxRequest(addrParam, txParam)
     }
 
     /**

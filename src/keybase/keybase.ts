@@ -19,6 +19,23 @@ import {
  * @description The Keybase class allows storage, operations and persistence of accounts.
  */
 export class Keybase {
+    /**
+     * Utility function to sign an arbitrary payload with a valid ed25519 private key
+     * @param privateKey {Buffer} the private key to sign with
+     * @param payload {Buffer} arbitrary payload to sign
+     * @returns {Buffer | Error} The signature or an Error
+     */
+    public static signWith(
+        privateKey: Buffer,
+        payload: Buffer
+    ): Buffer | Error {
+        try {
+            return ed25519.Sign(payload, privateKey)
+        } catch (err) {
+            return err
+        }
+    }
+
     private ACCOUNT_STORE_PREFIX = "account_"
     private ACCOUNT_INDEX_KEY = "account_index"
     private store: IKVStore
@@ -200,23 +217,6 @@ export class Keybase {
     }
 
     /**
-     * Utility function to sign an arbitrary payload with a valid ed25519 private key
-     * @param privateKey {Buffer} the private key to sign with
-     * @param payload {Buffer} arbitrary payload to sign
-     * @returns {Buffer | Error} The signature or an Error
-     */
-    public static signWith(
-        privateKey: Buffer,
-        payload: Buffer
-    ): Buffer | Error {
-        try {
-            return ed25519.Sign(payload, privateKey)
-        } catch (err) {
-            return err
-        }
-    }
-
-    /**
      * @description Signs a payload with an unlocked account stored in this keybase
      * @param addressHex The address of the account that will sign the payload in hex string format
      * @param payload The payload to be signed
@@ -284,7 +284,7 @@ export class Keybase {
 
         if (unlockPeriod > 0) {
             setTimeout(
-                function(keybase, addressHex) {
+                function (keybase, addressHex) {
                     keybase.lockAccount(addressHex)
                 },
                 unlockPeriod,

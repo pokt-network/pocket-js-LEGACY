@@ -7,4 +7,4 @@ export class TransactionSignature {
         this.signature = signature
     }
 }
-export type TransactionSigner = (encodedTxBytes: Buffer) => TransactionSignature | Error;
+export type TransactionSigner = (encodedTxBytes: Buffer) => TransactionSignature | Error
