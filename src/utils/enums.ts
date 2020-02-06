@@ -20,7 +20,8 @@ export enum RPCRoutes {
   QueryAppParams = Routes.VERSION + "/query/appparams",
   QueryPocketParams = Routes.VERSION + "/query/pocketparams",
   QuerySupportedChains = Routes.VERSION + "/query/supportedchains",
-  QuerySupply = Routes.VERSION + "/query/supply"
+  QuerySupply = Routes.VERSION + "/query/supply",
+  ClientRawTx = Routes.VERSION + "/client/rawtx"
 }
 
 export enum StakingStatus {
