@@ -38,10 +38,21 @@ export class StdSignDoc implements IAminoEncodable{
         this.feeDenom = feeDenom ? feeDenom : CoinDenom.Upokt
         this.memo = memo ? memo : ""
 
-        if(msgs.length == 0) {
+        // Number parsing
+        const accountNumb = Number(this.accountNumber) || -1;
+        const sequenceNumber = Number(this.sequence);
+        const feeNumber = Number(this.fee) || -1;
+        
+        if (isNaN(accountNumb) || accountNumb < 0) {
+            throw new Error("Invalid accountNumber or < 0")
+        } else if (isNaN(sequenceNumber) || sequenceNumber < 0) {
+            throw new Error("Invalid sequence or < 0")
+        } else if (isNaN(feeNumber) || feeNumber < 0) {
+            throw new Error("Invalid fee or < 0")
+        } else if (msgs.length == 0) {
             throw new Error("No messages found in the msgs list")
-        } else if (isNaN(this.fee as any)) {
-            throw new Error("Fee is not a valid number")
+        } else if (this.chaindId.length === 0) {
+            throw new Error("Empty chain id")
         }
     }
 
@@ -52,8 +63,8 @@ export class StdSignDoc implements IAminoEncodable{
                 account_number: this.accountNumber,
                 chain_id: this.chaindId,
                 fee: {
-                    denom: this.feeDenom,
-                    amount: this.fee
+                    amount: this.fee,
+                    denom: this.feeDenom
                 },
                 memo: this.memo,
                 msgs: this.msgs.map((value) => {
@@ -62,6 +73,10 @@ export class StdSignDoc implements IAminoEncodable{
                 sequence: this.sequence
             }
         }
-        return new Buffer(marshalPosmintStdSignDoc(posmintStdSignDoc, true))
+        try {
+            return Buffer.from(marshalPosmintStdSignDoc(posmintStdSignDoc, true))
+        } catch(err) {
+            throw err
+        }
     }
 }
