@@ -5,45 +5,6 @@ import { typeGuard } from "../../utils"
  * Represents a /v1/rawtx RPC response
  */
 export class RawTxResponse {
-    // Required fields
-    public readonly height: BigInt
-    public readonly hash: string
-    // Optional fields
-    public readonly code?: BigInt
-    public readonly data?: string
-    public readonly rawLog?: string
-    public readonly logs?: TxLog[] 
-    public readonly info?: string
-    public readonly codeSpace?: string
-    public readonly tx?: string
-    public readonly timestamp?: string
-
-    /**
-     * Constructor for this class
-     * @param height {BigInt} The height for this Transaction
-     * @param hash {string} The transaction hash in hex format
-     * @param code {BigInt} The code for this tx
-     * @param data {string} Data hex for this tranaction
-     * @param rawLog {string} Dumped logs in string format
-     * @param logs {TxLog[]} Logs for this transaction
-     * @param info {string}
-     * @param codeSpace {string}
-     * @param tx {string}
-     * @param timestamp {string}
-     */
-    public constructor(height: BigInt, hash: string, code?: BigInt, data?: string, rawLog?: string, logs?: TxLog[], info?: string, codeSpace?: string, tx?: string, timestamp?: string) {
-        this.height = height
-        this.hash = hash
-        this.code = code
-        this.data = data
-        this.rawLog = rawLog
-        this.logs = logs
-        this.info = info
-        this.codeSpace = codeSpace
-        this.tx = tx
-        this.timestamp = timestamp
-    }
-
     /**
      * Construct this model from it's JSON representation
      * @param jsonStr {string}
@@ -54,7 +15,7 @@ export class RawTxResponse {
             const rawTxResObj = JSON.parse(jsonStr)
             let height: BigInt
             let hash: string
-            let logs: TxLog[] = []
+            const logs: TxLog[] = []
             if (rawTxResObj.height) {
                 height = BigInt(rawTxResObj.height)
             } else {
@@ -92,5 +53,44 @@ export class RawTxResponse {
         } catch (err) {
             return err
         }
+    }
+
+    // Required fields
+    public readonly height: BigInt
+    public readonly hash: string
+    // Optional fields
+    public readonly code?: BigInt
+    public readonly data?: string
+    public readonly rawLog?: string
+    public readonly logs?: TxLog[] 
+    public readonly info?: string
+    public readonly codeSpace?: string
+    public readonly tx?: string
+    public readonly timestamp?: string
+
+    /**
+     * Constructor for this class
+     * @param height {BigInt} The height for this Transaction
+     * @param hash {string} The transaction hash in hex format
+     * @param code {BigInt} The code for this tx
+     * @param data {string} Data hex for this tranaction
+     * @param rawLog {string} Dumped logs in string format
+     * @param logs {TxLog[]} Logs for this transaction
+     * @param info {string}
+     * @param codeSpace {string}
+     * @param tx {string}
+     * @param timestamp {string}
+     */
+    public constructor(height: BigInt, hash: string, code?: BigInt, data?: string, rawLog?: string, logs?: TxLog[], info?: string, codeSpace?: string, tx?: string, timestamp?: string) {
+        this.height = height
+        this.hash = hash
+        this.code = code
+        this.data = data
+        this.rawLog = rawLog
+        this.logs = logs
+        this.info = info
+        this.codeSpace = codeSpace
+        this.tx = tx
+        this.timestamp = timestamp
     }
 }

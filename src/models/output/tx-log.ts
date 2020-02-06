@@ -4,28 +4,11 @@ import { typeGuard } from "../../utils"
  * A model representing a log generated from a Transaction
  */
 export class TxLog {
-
-    public readonly msgIndex: BigInt
-    public readonly success: boolean
-    public readonly log: string
-
     /**
-     * Constructor for this class
-     * @param msgIndex {BigInt} index for this log in the logs list
-     * @param success {boolean} whether or not this message was processed succesfully
-     * @param log {string} The content of the log message
+     * Construct this object from it's JSON representation
+     * @param txLogObj {any}
+     * @returns {TxLog | Error}
      */
-    public constructor(msgIndex: BigInt, success: boolean, log: string) {
-        this.msgIndex = msgIndex
-        this.success = success
-        this.log = log
-    }
-
-    /**
-    * Construct this object from it's JSON representation
-    * @param txLogObj {any}
-    * @returns {TxLog | Error}
-    */
     public static fromJSONObj(txLogObj: any): TxLog | Error {
         let msgIndex: BigInt
         let success: boolean
@@ -50,5 +33,21 @@ export class TxLog {
         }
 
         return new TxLog(msgIndex, success, log)
+    }
+
+    public readonly msgIndex: BigInt
+    public readonly success: boolean
+    public readonly log: string
+
+    /**
+     * Constructor for this class
+     * @param msgIndex {BigInt} index for this log in the logs list
+     * @param success {boolean} whether or not this message was processed succesfully
+     * @param log {string} The content of the log message
+     */
+    public constructor(msgIndex: BigInt, success: boolean, log: string) {
+        this.msgIndex = msgIndex
+        this.success = success
+        this.log = log
     }
 }

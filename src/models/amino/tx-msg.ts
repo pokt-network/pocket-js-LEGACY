@@ -3,8 +3,8 @@
  * Parent class to all Msg to be sent over inside Transactions
  */
 export abstract class TxMsg {
-    abstract getMsgTypeKey(): string;
-    abstract getMsgValueObj(): {};
+    public abstract getMsgTypeKey(): string
+    public abstract getMsgValueObj(): {}
 
     /**
      * Amino encodable structure

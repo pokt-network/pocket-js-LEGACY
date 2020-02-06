@@ -1,15 +1,14 @@
-import { IAminoEncodable } from "./amino-encodable";
+import { IAminoEncodable } from "./amino-encodable"
 import { PosmintStdSignDoc } from "@pokt-network/amino-js/types/src/types/pocket"
 import { TxMsg } from "./tx-msg"
-import { CoinDenom } from "../coin-denom";
-import { marshalPosmintStdSignDoc } from "@pokt-network/amino-js";
+import { CoinDenom } from "../coin-denom"
+import { marshalPosmintStdSignDoc } from "@pokt-network/amino-js"
 
 /**
  * Model to represent a StdSignDoc which produces the bytes to sign for a given Transaction
  */
 export class StdSignDoc implements IAminoEncodable{
 
-    private readonly AMINO_TYPE: string = "posmint/StdSignDoc"
     public readonly accountNumber: string 
     public readonly sequence: string
     public readonly chaindId: string
@@ -17,6 +16,7 @@ export class StdSignDoc implements IAminoEncodable{
     public readonly fee: string
     public readonly feeDenom: CoinDenom
     public readonly memo: string
+    private readonly AMINO_TYPE: string = "posmint/StdSignDoc"
 
     /**
      * Constructor for the StdSignDoc class
@@ -39,9 +39,9 @@ export class StdSignDoc implements IAminoEncodable{
         this.memo = memo ? memo : ""
 
         // Number parsing
-        const accountNumb = Number(this.accountNumber) || -1;
-        const sequenceNumber = Number(this.sequence);
-        const feeNumber = Number(this.fee) || -1;
+        const accountNumb = Number(this.accountNumber) || -1
+        const sequenceNumber = Number(this.sequence)
+        const feeNumber = Number(this.fee) || -1
         
         if (isNaN(accountNumb) || accountNumb < 0) {
             throw new Error("Invalid accountNumber or < 0")
@@ -49,14 +49,14 @@ export class StdSignDoc implements IAminoEncodable{
             throw new Error("Invalid sequence or < 0")
         } else if (isNaN(feeNumber) || feeNumber < 0) {
             throw new Error("Invalid fee or < 0")
-        } else if (msgs.length == 0) {
+        } else if (msgs.length === 0) {
             throw new Error("No messages found in the msgs list")
         } else if (this.chaindId.length === 0) {
             throw new Error("Empty chain id")
         }
     }
 
-    marshalAmino(): Buffer {
+    public marshalAmino(): Buffer {
         const posmintStdSignDoc: PosmintStdSignDoc = {
             type: this.AMINO_TYPE,
             value: {

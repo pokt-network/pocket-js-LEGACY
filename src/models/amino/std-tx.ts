@@ -1,8 +1,8 @@
-import { IAminoEncodable } from "./amino-encodable";
-import { StdSignDoc } from "./std-sign-doc";
-import { TxSignature } from "./tx-signature";
-import { PosmintStdTx, PosmintMsg, PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pocket";
-import { marshalPosmintTx } from "@pokt-network/amino-js";
+import { IAminoEncodable } from "./amino-encodable"
+import { StdSignDoc } from "./std-sign-doc"
+import { TxSignature } from "./tx-signature"
+import { PosmintStdTx, PosmintMsg, PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pocket"
+import { marshalPosmintTx } from "@pokt-network/amino-js"
 
 /**
  * Represents a StdTx object to send a Transaction
@@ -23,7 +23,7 @@ export class StdTx implements IAminoEncodable{
     
     public marshalAmino(): Buffer {
         // Parse PosmintMsg list
-        let msgList: PosmintMsg[] = []
+        const msgList: PosmintMsg[] = []
         this.stdSignDoc.msgs.forEach(txMsg => {
             msgList.push({
                 type: txMsg.getMsgTypeKey(),
@@ -32,20 +32,20 @@ export class StdTx implements IAminoEncodable{
         })
 
         // Parse PosmintStdSignature list
-        let signatureList: PosmintStdSignature[] = []
+        const signatureList: PosmintStdSignature[] = []
         this.signatures.forEach(txSignature => {
             signatureList.push(txSignature.toPosmintStdSignature())
         })
 
         // Create StdTx object
         const stdTx: PosmintStdTx = {
-            msg: msgList,
             fee: [{
-                denom: this.stdSignDoc.feeDenom,
-                amount: this.stdSignDoc.fee
+                amount: this.stdSignDoc.fee,
+                denom: this.stdSignDoc.feeDenom
             }],
-            signatures: signatureList,
-            memo: this.stdSignDoc.memo
+            memo: this.stdSignDoc.memo,
+            msg: msgList,
+            signatures: signatureList
         }
 
         // Marshal PosmintTx

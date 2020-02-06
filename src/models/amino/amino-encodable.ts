@@ -7,5 +7,5 @@ export interface IAminoEncodable {
      * Returns the Amino-encoded bytes representation of the class implementing the interface
      * @returns {Buffer}
      */
-    marshalAmino(): Buffer;
+    marshalAmino(): Buffer
 }

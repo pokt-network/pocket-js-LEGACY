@@ -1,6 +1,6 @@
 import nock from 'nock'
 import enums = require("../../src/utils/enums")
-import { Environment } from "../../src/utils/env"
+import { LocalNet } from "../../src/utils/env"
 import {
     Block,
     Consensus, BlockID, PartSetHeader, Commit,
@@ -23,7 +23,7 @@ import { BlockMeta } from '../../src/models/block-meta'
 import { SessionHeader } from '../../src/models/input/session-header'
 import { Proof } from '../../src/models/proof'
 
-const env = new Environment.LocalNet()
+const env = new LocalNet()
 const version = '0.0.1'
 const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5'
@@ -34,8 +34,8 @@ export class NockUtil {
     public static mockRawTx(code: number = 200): nock.Scope {
         const data: any = this.createData(code, {
             height: "0",
-            txhash: "1DE7AF0CDEF19B21D6BDE602A4916186E40D86854B2E747A464BD32C7616B5A2",
-            raw_log: "[{\\\"msg_index\\\":0,\\\"success\\\":true,\\\"log\\\":\\\"\\\",\\\"events\\\":[{\\\"type\\\":\\\"message\\\",\\\"attributes\\\":[{\\\"key\\\":\\\"action\\\",\\\"value\\\":\\\"send\\\"}]}]}]\",\"logs\":[{\"msg_index\":0,\"success\":true,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"send\"}]}]}]"
+            raw_log: "[{\\\"msg_index\\\":0,\\\"success\\\":true,\\\"log\\\":\\\"\\\",\\\"events\\\":[{\\\"type\\\":\\\"message\\\",\\\"attributes\\\":[{\\\"key\\\":\\\"action\\\",\\\"value\\\":\\\"send\\\"}]}]}]\",\"logs\":[{\"msg_index\":0,\"success\":true,\"log\":\"\",\"events\":[{\"type\":\"message\",\"attributes\":[{\"key\":\"action\",\"value\":\"send\"}]}]}]",
+            txhash: "1DE7AF0CDEF19B21D6BDE602A4916186E40D86854B2E747A464BD32C7616B5A2"
         })
 
         const response = this.getResponseObject(data, code)
