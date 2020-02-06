@@ -50,43 +50,47 @@ export class RawTxResponse {
      * @returns {RawTxResponse | Error}
      */
     public static fromJSON(jsonStr: string): RawTxResponse | Error {
-        const rawTxResObj = JSON.parse(jsonStr)
-        let height: BigInt
-        let hash: string
-        let logs: TxLog[] = []
-        if(rawTxResObj.height) {
-            height = BigInt(rawTxResObj.height)
-        } else {
-            return new Error("Invalid height: " + rawTxResObj.height)
-        }
-
-        if (rawTxResObj.txhash && typeGuard(rawTxResObj.txhash, "string")) {
-            hash = rawTxResObj.txhash as string
-        } else {
-            return new Error("Invalid tx hash: " + rawTxResObj.txhash)
-        }
-
-        if (rawTxResObj.logs && typeGuard(rawTxResObj.logs, Array)) {
-            const rawLogObjs = rawTxResObj.logs as Array<{}>
-            for (const rawLogObj in rawLogObjs) {
-                const txLogOrError = TxLog.fromJSONObj(rawLogObj)
-                if(typeGuard(txLogOrError, Error)) {
-                    return txLogOrError as Error
-                }
-                logs.push(txLogOrError as TxLog)
+        try {
+            const rawTxResObj = JSON.parse(jsonStr)
+            let height: BigInt
+            let hash: string
+            let logs: TxLog[] = []
+            if (rawTxResObj.height) {
+                height = BigInt(rawTxResObj.height)
+            } else {
+                return new Error("Invalid height: " + rawTxResObj.height)
             }
-        }
 
-        return new RawTxResponse(
-            height, hash,
-            rawTxResObj.code ? BigInt(rawTxResObj.code) : undefined,
-            rawTxResObj.data ? rawTxResObj.data : undefined,
-            rawTxResObj.raw_log ? rawTxResObj.raw_log : undefined,
-            logs,
-            rawTxResObj.info ? rawTxResObj.info : undefined,
-            rawTxResObj.codespace ? rawTxResObj.codespace : undefined,
-            rawTxResObj.tx ? rawTxResObj.tx : undefined,
-            rawTxResObj.timestamp ? rawTxResObj.timestamp : undefined
-        )
+            if (rawTxResObj.txhash && typeGuard(rawTxResObj.txhash, "string")) {
+                hash = rawTxResObj.txhash as string
+            } else {
+                return new Error("Invalid tx hash: " + rawTxResObj.txhash)
+            }
+
+            if (rawTxResObj.logs && typeGuard(rawTxResObj.logs, Array)) {
+                const rawLogObjs = rawTxResObj.logs as Array<{}>
+                for (const rawLogObj in rawLogObjs) {
+                    const txLogOrError = TxLog.fromJSONObj(rawLogObj)
+                    if (typeGuard(txLogOrError, Error)) {
+                        return txLogOrError as Error
+                    }
+                    logs.push(txLogOrError as TxLog)
+                }
+            }
+
+            return new RawTxResponse(
+                height, hash,
+                rawTxResObj.code ? BigInt(rawTxResObj.code) : undefined,
+                rawTxResObj.data ? rawTxResObj.data : undefined,
+                rawTxResObj.raw_log ? rawTxResObj.raw_log : undefined,
+                logs,
+                rawTxResObj.info ? rawTxResObj.info : undefined,
+                rawTxResObj.codespace ? rawTxResObj.codespace : undefined,
+                rawTxResObj.tx ? rawTxResObj.tx : undefined,
+                rawTxResObj.timestamp ? rawTxResObj.timestamp : undefined
+            )
+        } catch (err) {
+            return err
+        }
     }
 }

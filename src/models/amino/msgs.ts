@@ -2,6 +2,8 @@ import { TxMsg } from "./tx-msg";
 import { CoinDenom } from "../coin-denom";
 import { validatePublicKey, validateAddressHex } from "../../utils/key-pair"
 import { validateServiceURL } from "../../utils/url";
+import { typeGuard } from "../../utils";
+import { bytesToBase64 } from "@tendermint/belt";
 
 /**
  * Model representing a MsgSend to send POKT from one account to another
@@ -70,7 +72,7 @@ export class MsgAppStake extends TxMsg {
         this.amount = amount
         const amountNumber = Number(this.amount) || -1;
         if (isNaN(amountNumber)) {
-            throw new Error("Fee is not a valid number")
+            throw new Error("Amount is not a valid number")
         } else if (amountNumber < 0) {
             throw new Error("Amount < 0")
         } else if (this.chains.length === 0) {
@@ -85,7 +87,10 @@ export class MsgAppStake extends TxMsg {
     }    
     getMsgValueObj(): {} {
         return {
-            pubkey: this.pubKey.toString('hex'),
+            pubkey: {
+                type: "crypto/ed25519_public_key",
+                value: bytesToBase64(this.pubKey)
+            },
             chains: this.chains,
             value: this.amount
         }
@@ -107,8 +112,9 @@ export class MsgAppUnstake extends TxMsg {
         super()
         this.appAddress = appAddress
 
-        if (!validateAddressHex(this.appAddress)) {
-            throw new Error("Invalid address hex")
+        let errorOrUndefined = validateAddressHex(this.appAddress)
+        if (typeGuard(errorOrUndefined, Error)) {
+            throw errorOrUndefined as Error
         }
     }
 
@@ -137,8 +143,9 @@ export class MsgAppUnjail extends TxMsg {
         super()
         this.address = address
 
-        if (!validateAddressHex(this.address)) {
-            throw new Error("Invalid address hex")
+        let errorOrUndefined = validateAddressHex(this.address)
+        if (typeGuard(errorOrUndefined, Error)) {
+            throw errorOrUndefined as Error
         }
     }
 
@@ -175,9 +182,11 @@ export class MsgNodeStake extends TxMsg {
         this.chains = chains
         this.amount = amount
         this.serviceURL = serviceURL
-
-        if (isNaN(this.amount as any)) {
-            throw new Error("Fee is not a valid number")
+        const amountNumber = Number(this.amount) || -1;
+        if (isNaN(amountNumber)) {
+            throw new Error("Amount is not a valid number")
+        } else if (amountNumber < 0) {
+            throw new Error("Amount < 0")
         } else if (this.chains.length === 0) {
             throw new Error("Chains is empty")
         } else if (!validatePublicKey(this.pubKey)) {
@@ -192,7 +201,10 @@ export class MsgNodeStake extends TxMsg {
     }
     getMsgValueObj(): {} {
         return {
-            public_key: this.pubKey.toString('hex'),
+            public_key: {
+                type: "crypto/ed25519_public_key",
+                value: bytesToBase64(this.pubKey)
+            },
             chains: this.chains,
             value: this.amount,
             service_url: this.serviceURL.toString()
@@ -214,8 +226,9 @@ export class MsgNodeUnstake extends TxMsg {
         super()
         this.nodeAddress = nodeAddress
 
-        if (!validateAddressHex(this.nodeAddress)) {
-            throw new Error("Invalid address hex")
+        let errorOrUndefined = validateAddressHex(this.nodeAddress)
+        if (typeGuard(errorOrUndefined, Error)) {
+            throw errorOrUndefined as Error
         }
     }
 
@@ -243,8 +256,9 @@ export class MsgNodeUnjail extends TxMsg {
         super()
         this.address = address
 
-        if (!validateAddressHex(this.address)) {
-            throw new Error("Invalid address hex")
+        let errorOrUndefined = validateAddressHex(this.address)
+        if (typeGuard(errorOrUndefined, Error)) {
+            throw errorOrUndefined as Error
         }
     }
 

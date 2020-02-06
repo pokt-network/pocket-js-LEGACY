@@ -16,8 +16,9 @@ export class RawTxRequest {
         this.address = address
         this.txHex = txHex
 
-        if(!Hex.isHex(address) || !validateAddressHex(address)) {
-            throw new Error("Invalid address hex")
+        const errorOrUndefined = validateAddressHex(address)
+        if (typeGuard(errorOrUndefined, Error)) {
+            throw errorOrUndefined as Error
         } else if (!Hex.isHex(txHex)) {
             throw new Error("Invalid transaction hex")
         }
