@@ -14,7 +14,6 @@ export class Hex {
   public static isHex(str: string): boolean {
     str = str.toUpperCase()
     const regexp = new RegExp("^[0-9a-fA-F]+$")
-    
     return regexp.test(str)
   }
 

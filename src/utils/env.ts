@@ -30,7 +30,7 @@ export namespace Environment {
 
     export class TestNet extends Environment {
 
-        private readonly ip: string = '35.236.208.175'
+        private readonly ip: string = 'http://35.236.208.175'
 
         getTendermintRPC(): string {
             return this.ip + ':26657'
@@ -44,7 +44,7 @@ export namespace Environment {
     }
 
     export class MainNet extends Environment {
-        private readonly ip: string = '35.236.208.175'
+        private readonly ip: string = 'http://35.236.208.175'
 
         getTendermintRPC(): string {
             return this.ip + ':26657'
