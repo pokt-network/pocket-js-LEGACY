@@ -1,5 +1,5 @@
 import { bytesToBase64 } from "@tendermint/belt"
-import { TxMsg } from ".."
+import { TxMsg } from "./tx-msg"
 import { validatePublicKey } from "../../.."
 
 /**
@@ -38,7 +38,7 @@ export class MsgAppStake extends TxMsg {
         return this.AMINO_KEY
     }
 
-    public getMsgValueObj(): {} {
+    public getMsgValueObj(): object {
         return {
             chains: this.chains,
             pubkey: {

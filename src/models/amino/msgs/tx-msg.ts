@@ -4,12 +4,12 @@
  */
 export abstract class TxMsg {
     public abstract getMsgTypeKey(): string
-    public abstract getMsgValueObj(): {}
+    public abstract getMsgValueObj(): object
 
     /**
      * Amino encodable structure
      */
-    public toMsgObj(): {} {
+    public toMsgObj(): object {
         return {
             type: this.getMsgTypeKey(),
             value: this.getMsgValueObj()

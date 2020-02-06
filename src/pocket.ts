@@ -40,7 +40,7 @@ import { MsgSend, MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, MsgNod
 import { StdSignDoc } from "./models/amino/std-sign-doc"
 import { TxSignature } from "./models/amino/tx-signature"
 import { StdTx } from "./models/amino/std-tx"
-import { TxMsg } from "./models/amino/tx-msg"
+import { TxMsg } from "./models/amino/msgs/tx-msg"
 import { ITransactionSender } from "./transactions/transaction-sender"
 import { TransactionSignature, TransactionSigner } from "./transactions/transaction-signer"
 import { UnlockedAccount } from "./models"

@@ -1,4 +1,4 @@
-import { expect, assert } from 'chai'
+import { expect } from 'chai'
 import { Pocket } from '../../src/pocket'
 import {
     Configuration, BondStatus, Node, Account, ITransactionSender, typeGuard, RpcErrorResponse

@@ -1,6 +1,6 @@
 import { IAminoEncodable } from "./amino-encodable"
 import { PosmintStdSignDoc } from "@pokt-network/amino-js/types/src/types/pocket"
-import { TxMsg } from "./tx-msg"
+import { TxMsg } from "./msgs/tx-msg"
 import { CoinDenom } from "../coin-denom"
 import { marshalPosmintStdSignDoc } from "@pokt-network/amino-js"
 
