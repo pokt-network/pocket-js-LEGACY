@@ -884,6 +884,7 @@ export class Pocket {
     private unlockedAccount?: UnlockedAccount
     private pocket: Pocket
     private txSigner?: TransactionSigner
+    private txMsgErrors: Error[] = []
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
@@ -950,6 +951,12 @@ export class Pocket {
       configuration?: Configuration
     ): Promise<RawTxResponse | RpcErrorResponse> {
       try {
+        if (this.txMsgErrors.length === 1) {
+          return RpcErrorResponse.fromError(this.txMsgErrors[0])
+        } else if (this.txMsgErrors.length > 1) {
+          return new RpcErrorResponse("0", this.txMsgErrors[0].message + " and another " + (this.txMsgErrors.length - 1) + " errors")
+        }
+
         if (this.txMgs.length === 0) {
           return new RpcErrorResponse("0", "No messages configured for this transaction")
         }
@@ -993,7 +1000,11 @@ export class Pocket {
       amount: string,
       amountDenom?: CoinDenom
     ): ITransactionSender {
-      this.txMgs.push(new MsgSend(fromAddress, toAddress, amount, amountDenom))
+      try {
+        this.txMgs.push(new MsgSend(fromAddress, toAddress, amount, amountDenom))
+      } catch (error) {
+        this.txMsgErrors.push(error)
+      }
       return this
     }
 
@@ -1009,7 +1020,11 @@ export class Pocket {
       chains: string[],
       amount: string
     ): ITransactionSender {
-      this.txMgs.push(new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount))
+      try {
+        this.txMgs.push(new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount))
+      } catch (error) {
+        this.txMsgErrors.push(error)
+      }
       return this
     }
 
@@ -1020,7 +1035,11 @@ export class Pocket {
     public appUnstake(
       address: string
     ): ITransactionSender {
-      this.txMgs.push(new MsgAppUnstake(address))
+      try {
+        this.txMgs.push(new MsgAppUnstake(address))
+      } catch (error) {
+        this.txMsgErrors.push(error)
+      }
       return this
     }
 
@@ -1031,7 +1050,11 @@ export class Pocket {
     public appUnjail(
       address: string
     ): ITransactionSender {
-      this.txMgs.push(new MsgAppUnjail(address))
+      try {
+        this.txMgs.push(new MsgAppUnjail(address))
+      } catch (error) {
+        this.txMsgErrors.push(error)
+      }
       return this
     }
 
@@ -1049,7 +1072,11 @@ export class Pocket {
       amount: string,
       serviceURL: URL
     ): ITransactionSender {
-      this.txMgs.push(new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL))
+      try {
+        this.txMgs.push(new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL))
+      } catch (error) {
+        this.txMsgErrors.push(error)
+      }
       return this
     }
 
@@ -1060,7 +1087,11 @@ export class Pocket {
     public nodeUnstake(
       address: string
     ): ITransactionSender {
-      this.txMgs.push(new MsgNodeUnstake(address))
+      try {
+        this.txMgs.push(new MsgNodeUnstake(address))
+      } catch (error) {
+        this.txMsgErrors.push(error)
+      }
       return this
     }
 
@@ -1072,7 +1103,11 @@ export class Pocket {
     public nodeUnjail(
       address: string
     ): ITransactionSender {
-      this.txMgs.push(new MsgNodeUnjail(address))
+      try {
+        this.txMgs.push(new MsgNodeUnjail(address))
+      } catch (error) {
+        this.txMsgErrors.push(error)
+      }
       return this
     }
   }
