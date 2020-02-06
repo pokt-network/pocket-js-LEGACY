@@ -1,4 +1,4 @@
-import { TxMsg } from ".."
+import { TxMsg } from "./tx-msg"
 import { CoinDenom } from "../.."
 
 /**
@@ -34,7 +34,7 @@ export class MsgSend extends TxMsg {
     public getMsgTypeKey(): string {
         return this.AMINO_KEY
     }
-    public getMsgValueObj(): {} {
+    public getMsgValueObj(): object {
         return {
             amount: [{
                 amount: this.amount,

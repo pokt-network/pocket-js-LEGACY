@@ -1,4 +1,4 @@
-import { TxMsg } from ".."
+import { TxMsg } from "./tx-msg"
 import { typeGuard, validateAddressHex } from "../../.."
 
 /**
@@ -26,7 +26,7 @@ export class MsgAppUnjail extends TxMsg {
         return this.AMINO_KEY
     }
 
-    public getMsgValueObj(): {} {
+    public getMsgValueObj(): object {
         return {
             address: this.address
         }
