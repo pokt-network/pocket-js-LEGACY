@@ -36,7 +36,10 @@ export function validatePrivateKey(privateKey: Buffer): boolean {
  * @param addressHex
  */
 export function validateAddressHex(addressHex: string): Error | undefined {
-  if (Hex.isHex(addressHex) && addressHex.length !== 40) {
+
+  if (!Hex.isHex(addressHex)) {
+    return new Error("Invalid string is not hex: " + addressHex)
+  } else if (addressHex.length !== 40) {
     return new Error("Invalid address length (should be 20 bytes)")
   }
   return undefined
