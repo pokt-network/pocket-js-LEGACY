@@ -180,7 +180,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")   
+                        .submit("0", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")   
                     expect(typeGuard(rawTxResponse, RpcErrorResponse)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
