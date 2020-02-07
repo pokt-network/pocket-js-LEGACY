@@ -12,7 +12,8 @@
         "max-classes-per-file": [true, 2],
         "forin": false,
         "no-shadowed-variable": false,
-        "object-literal-shorthand": [false, "never"]
+        "object-literal-shorthand": [false, "never"],
+        "object-literal-sort-keys": false
     },
     "linterOptions": {
         "exclude": [
