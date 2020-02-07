@@ -44,6 +44,7 @@ import { TxMsg } from "./models/amino/msgs/tx-msg"
 import { ITransactionSender } from "./transactions/transaction-sender"
 import { TransactionSignature, TransactionSigner } from "./transactions/transaction-signer"
 import { UnlockedAccount } from "./models"
+import { QueryAccountResponse } from "./models/output/query-account-response"
 
 /**
  *
@@ -346,17 +347,17 @@ export class Pocket {
       if (!typeGuard(activeNode, Node)) {
         return new Error(activeNode.message)
       }
-      // Get session block height
-      const sessionBlockHeightResponse = await RequestManager.getSessionBlockHeight(
+      // Get block height
+      const blockHeightResponse = await RequestManager.getHeight(
         activeNode,
         configuration
       )
 
-      if (!typeGuard(sessionBlockHeightResponse, QuerySessionBlockResponse)) {
-        return new Error(sessionBlockHeightResponse.message)
+      if (!typeGuard(blockHeightResponse, QueryHeightResponse)) {
+        return new Error(blockHeightResponse.message)
       }
       // Get current session
-      const sessionHeader = new SessionHeader(pocketAAT.applicationPublicKey, blockchain, sessionBlockHeightResponse.sessionBlock)
+      const sessionHeader = new SessionHeader(pocketAAT.applicationPublicKey, blockchain, blockHeightResponse.height)
       const currentSession = await this.sessionManager.getCurrentSession(sessionHeader, configuration)
 
       if (!typeGuard(currentSession, Session)) {
@@ -382,7 +383,7 @@ export class Pocket {
       const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
       const relayProof = new Proof(
         proofIndex,
-        sessionBlockHeightResponse.sessionBlock,
+        currentSession.sessionHeader.sessionBlockHeight,
         activeNode.address,
         blockchain,
         pocketAAT
@@ -396,7 +397,7 @@ export class Pocket {
       // Create a relay request with the new signature
       const proof = new Proof(
         proofIndex,
-        sessionBlockHeightResponse.sessionBlock,
+        currentSession.sessionHeader.sessionBlockHeight,
         activeNode.address,
         blockchain,
         pocketAAT,
@@ -426,40 +427,6 @@ export class Pocket {
   // RPC Calls
   //
 
-  /**
-   *
-   * Query a Session Block Height
-   * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
-   * @param {Node} node - (Optional) Session node which will receive the Relay.
-   * @memberof Pocket
-   */
-  public async getSessionBlockHeight(
-    configuration = this.configuration,
-    node?: Node,
-  ): Promise<QuerySessionBlockResponse | Error> {
-    let activeNode
-
-    if (node === undefined) {
-      activeNode = this.getAnyNode()
-    } else {
-      activeNode = node
-    }
-
-    // Check if node is Node.type
-    if (!typeGuard(activeNode, Node)) {
-      return new Error(activeNode.message)
-    }
-    // Retrieve the session block height
-    const sessionBlockHeightResponse = await RequestManager.getSessionBlockHeight(
-      activeNode,
-      configuration
-    )
-
-    if (!typeGuard(sessionBlockHeightResponse, QuerySessionBlockResponse)) {
-      return new Error(sessionBlockHeightResponse.message)
-    }
-    return sessionBlockHeightResponse
-  }
   /**
    *
    * Query a Block information
@@ -511,6 +478,7 @@ export class Pocket {
     node?: Node
   ): Promise<QueryTXResponse | Error> {
     let activeNode
+    
     if (!Hex.isHex(txHash) && Hex.byteLength(txHash) !== 20) {
       return new Error("Invalid Address Hex")
     }
@@ -532,6 +500,42 @@ export class Pocket {
       return new Error(txResponse.message)
     }
     return txResponse
+  }
+  /**
+   *
+   * Get the specified account information
+   * @param {Configuration} configuration - (Optional )Configuration object containing preferences information.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
+   * @memberof RequestManager
+   */
+  public async queryGetAccount(
+    address: string,
+    configuration = this.configuration,
+    node?: Node
+  ): Promise<QueryAccountResponse | Error> {
+    let activeNode
+
+    if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
+      return new Error("Invalid Address Hex")
+    }
+
+    if (node === undefined) {
+      activeNode = this.getAnyNode()
+    } else {
+      activeNode = node
+    }
+
+    // Check if node is Node.type
+    if (!typeGuard(activeNode, Node)) {
+      return new Error(activeNode.message)
+    }
+    // Retrieve the account information
+    const queryAccountResponse = await RequestManager.getAccount(address, activeNode, configuration)
+
+    if (!typeGuard(queryAccountResponse, QueryAccountResponse)) {
+      return new Error(queryAccountResponse.message)
+    }
+    return queryAccountResponse
   }
   /**
    *
