@@ -39,7 +39,7 @@ export class StdSignDoc implements IAminoEncodable{
         this.memo = memo ? memo : ""
 
         // Number parsing
-        const accountNumb = Number(this.accountNumber) || -1
+        const accountNumb = Number(this.accountNumber)
         const sequenceNumber = Number(this.sequence)
         const feeNumber = Number(this.fee) || -1
         
