@@ -12,15 +12,46 @@ export class SendResponse {
    * @memberof SendResponse
    */
   public static fromJSON(json: string): SendResponse {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new SendResponse(
-      jsonObject.data,
-      jsonObject.status,
-      jsonObject.statusText,
-      jsonObject.headers,
-      jsonObject.config
-    )
+      return new SendResponse(
+        jsonObject.data,
+        jsonObject.status,
+        jsonObject.statusText,
+        jsonObject.headers,
+        jsonObject.config
+      )
+    } catch (error) {
+      throw error
+    }
+  }
+    /**
+   *
+   * Creates a SendResponse object using Axios response
+   * @param {any} response - Axios response.
+   * @returns {SendResponse} - SendResponse object.
+   * @memberof SendResponse
+   */
+  public static fromAxiosResponse(response: any): SendResponse {
+    try {
+      const responseObj = {
+        status: response.status,
+        statusText: response.statusText,
+        data: response.data,
+        headers: response.headers,
+        config: response.config
+      }
+      return new SendResponse(
+        responseObj.data,
+        responseObj.status,
+        responseObj.statusText,
+        responseObj.headers,
+        responseObj.config
+      )
+    } catch (error){
+      throw error
+    }
   }
 
   public readonly data: {}
@@ -52,7 +83,7 @@ export class SendResponse {
     this.config = config
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid SendResponse properties length.")
     }
   }
   /**
