@@ -5,41 +5,30 @@
 // Constants
 import { expect, assert } from 'chai'
 import { Pocket } from '../../src/pocket'
-// import {RelayResponse, QueryBlockResponse, QueryTXResponse, 
-//     QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, 
-//     QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, 
-//     QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, 
-//     QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, Account, 
-//     QuerySessionBlockResponse, DispatchResponse 
-// } from '../../src'
 import { Node } from '../../src/models/node'
 import { Configuration } from '../../src/models/configuration'
-
-
+import { QueryBlockResponse } from '../../src/models/output'
+import { QueryHeightResponse } from '../../src/models/output'
+import { QueryBalanceResponse } from '../../src/models/output'
+import { StakingStatus } from '../../src/utils/enums'
 import { BondStatus } from '../../src/models/output/bond-status'
+import { QueryNodesResponse } from '../../src/models/output'
+import { QueryNodeResponse } from '../../src/models/output'
+import { QueryNodeParamsResponse } from '../../src/models/output'
+import { QueryAppsResponse } from '../../src/models/output'
+import { QueryAppResponse } from '../../src/models/output'
+import { QueryAppParamsResponse } from '../../src/models/output'
+import { QueryPocketParamsResponse } from '../../src/models/output'
+import { QuerySupportedChainsResponse } from '../../src/models/output'
+import { QueryAccountResponse } from '../../src/models/output'
 import { Proof } from '../../src/models/proof'
 import { PocketAAT } from "pocket-aat-js"
-import { NockUtil } from '../utils/nock-util'
 import { sha3_256 } from "js-sha3"
 import { TestNet } from '../../src/utils/env'
-import { QueryAccountResponse } from '../../src/models/output/query-account-response'
-import {SessionHeader} from '../../src/models/input/session-header'
-import {DispatchRequest} from '../../src/models/input/dispatch-request'
-import {RequestManager} from '../../src/request-manager'
-import { QueryBlockResponse } from '../../src/models/output/query-block-response'
-import { QueryTXResponse } from '../../src/models/output/query-tx-response'
-import { QueryHeightResponse } from '../../src/models/output/query-height-response'
-import { QueryBalanceResponse } from '../../src/models/output/query-balance-response'
-import { StakingStatus } from '../../src/utils/enums'
-import { QueryNodesResponse } from '../../src/models/output/query-nodes-response'
-import { QueryNodeResponse } from '../../src/models/output/query-node-response'
-import { QueryNodeParamsResponse } from '../../src/models/output/query-node-params-response'
-import { QueryNodeProofsResponse } from '../../src/models/output/query-node-proofs-response'
-import { QueryNodeProofResponse } from '../../src/models/output/query-node-proof-response'
-import { NodeProof } from '../../src/models/input/node-proof'
-import { QueryAppsResponse } from '../../src/models/output/query-apps-response'
-import { QueryAppResponse } from '../../src/models/output/query-app-response'
-import { QueryAppParamsResponse } from '../../src/models/output/query-app-params-response'
+import { Account } from '../../src/models/account'
+import { NockUtil } from '../utils/nock-util'
+import { RelayResponse, QueryTXResponse, QueryNodeProofsResponse, NodeProof, 
+    QueryNodeProofResponse, QuerySupplyResponse} from '../../src/models'
 
 // For Testing we are using dummy data, none of the following information is real.
 const version = '0.0.1'
@@ -57,6 +46,7 @@ const noSessionPocketAAT = PocketAAT.from(version, clientPublicKey, alternatePub
 const blockchain = "6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8"
 const ethBlockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
 const blockchains = [ethBlockchain]
+const nodeAddress = "E9769C199E5A35A64CE342493F351DEBDD0E4633"
 const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "http://35.236.208.175:8081", blockchains)
 const node02 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "http://35.245.90.148:8081", blockchains)
 const node03 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "http://35.236.203.13:8081", blockchains)
@@ -65,82 +55,83 @@ const configuration = new Configuration([node01],5, 40000, 200)
 
 describe("Pocket Interface functionalities", async () => {
     describe("Success scenarios", async () => {
-        // it('should instantiate a Pocket instance due to a valid configuration is being used', () => {
-        //     try {
-        //         const pocket = new Pocket(configuration)
-        //         expect(pocket).to.not.be.an.instanceof(Error)
-        //         expect(pocket).to.be.an.instanceof(Pocket)
-        //     } catch (error) {
-        //         assert.fail()
-        //     }
-        // }).timeout(0)
+        it('should instantiate a Pocket instance due to a valid configuration is being used', () => {
+            try {
+                const pocket = new Pocket(configuration)
+                expect(pocket).to.not.be.an.instanceof(Error)
+                expect(pocket).to.be.an.instanceof(Pocket)
+            } catch (error) {
+                assert.fail()
+            }
+        }).timeout(0)
 
-        // it('should create an account using a passphrase', async () => {
-        //     const passphrase = "passphrase123"
-        //     const pocket = new Pocket(configuration)
-        //     const account = await pocket.createAccount(passphrase)
+        it('should create an account using a passphrase', async () => {
+            const passphrase = "passphrase123"
+            const pocket = new Pocket(configuration)
+            const account = await pocket.createAccount(passphrase)
 
-        //     expect(account).to.not.be.an.instanceof(Error)
-        //     expect(account).to.be.an.instanceof(Account)
-        // }).timeout(0)
+            expect(account).to.not.be.an.instanceof(Error)
+            expect(account).to.be.an.instanceof(Account)
+        }).timeout(0)
 
-        // it('should import an account using a passphrase', async () => {
-        //     const passphrase = "passphrase123"
-        //     const pocket = new Pocket(configuration)
+        it('should import an account using a passphrase', async () => {
+            const passphrase = "passphrase123"
+            const pocket = new Pocket(configuration)
 
-        //     const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
+            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
 
-        //     expect(importedAccount).to.not.be.an.instanceof(Error)
-        //     expect(importedAccount).to.be.an.instanceof(Account)
-        // }).timeout(0)
+            expect(importedAccount).to.not.be.an.instanceof(Error)
+            expect(importedAccount).to.be.an.instanceof(Account)
+        }).timeout(0)
 
-        // it('should export an already imported account using a passphrase', async () => {
-        //     const passphrase = "passphrase123"
-        //     const pocket = new Pocket(configuration)
+        it('should export an already imported account using a passphrase', async () => {
+            const passphrase = "passphrase123"
+            const pocket = new Pocket(configuration)
             
-        //     const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
+            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
 
-        //     const exportedOrError = await pocket.exportAccount(importedAccount as Account, passphrase)
-        //     expect(exportedOrError).to.not.be.an.instanceof(Error)
-        //     expect(exportedOrError).to.be.an.instanceof(Buffer)
-        // }).timeout(0)
+            const exportedOrError = await pocket.exportAccount(importedAccount as Account, passphrase)
+            expect(exportedOrError).to.not.be.an.instanceof(Error)
+            expect(exportedOrError).to.be.an.instanceof(Buffer)
+        }).timeout(0)
 
-        // it('should unlock an account using a passphrase', async () => {
-        //     const passphrase = "passphrase123"
-        //     const pocket = new Pocket(configuration)
-        //     const account = await pocket.createAccount(passphrase)
+        it('should unlock an account using a passphrase', async () => {
+            const passphrase = "passphrase123"
+            const pocket = new Pocket(configuration)
+            const account = await pocket.createAccount(passphrase)
 
-        //     expect(account).to.not.be.an.instanceof(Error)
-        //     expect(account).to.be.an.instanceof(Account)
+            expect(account).to.not.be.an.instanceof(Error)
+            expect(account).to.be.an.instanceof(Account)
 
-        //     const addressHex = (account as Account).addressHex
-        //     const result = await pocket.unlockAccount(addressHex, passphrase)
+            const addressHex = (account as Account).addressHex
+            const result = await pocket.unlockAccount(addressHex, passphrase)
             
-        //     expect(result).to.not.be.an.instanceof(Error)
+            expect(result).to.not.be.an.instanceof(Error)
 
-        // }).timeout(0)
+        }).timeout(0)
 
-        // it('should sign a relay proof with an unlocked account', async () => {
-        //     const passphrase = "passphrase123"
-        //     const pocket = new Pocket(configuration)
-        //     const importedAndUnlocked = await pocket.importAndUnlockAccount(passphrase, applicationPrivateKey)
+        it('should sign a relay proof with an unlocked account', async () => {
+            const passphrase = "passphrase123"
+            const pocket = new Pocket(configuration)
+            const importedAndUnlocked = await pocket.importAndUnlockAccount(passphrase, applicationPrivateKey)
             
-        //     // Create the necessary properties for the relay request
-        //     const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
-        //     const relayProof = new Proof(proofIndex, BigInt(5), addressHex, blockchain, pocketAAT)
+            // Create the necessary properties for the relay request
+            const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
+            const relayProof = new Proof(proofIndex, BigInt(5), addressHex, blockchain, pocketAAT)
             
-        //     // Create a Relay Proof buffer
-        //     const hash = sha3_256.create()
-        //     hash.update(JSON.stringify(relayProof.toJSON()))
-        //     const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
-        //     // Sign the relay payload
-        //     const signature = await pocket.signWithUnlockedAccount((importedAndUnlocked as Account).addressHex, relayProofBuffer)
+            // Create a Relay Proof buffer
+            const hash = sha3_256.create()
+            hash.update(JSON.stringify(relayProof.toJSON()))
+            const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
+            // Sign the relay payload
+            const signature = await pocket.signWithUnlockedAccount((importedAndUnlocked as Account).addressHex, relayProofBuffer)
 
-        //     expect(signature).to.not.be.an.instanceof(Error)
-        //     expect(signature).to.be.an.instanceof(Buffer)
-        // }).timeout(0)
+            expect(signature).to.not.be.an.instanceof(Error)
+            expect(signature).to.be.an.instanceof(Buffer)
+        }).timeout(0)
 
         // it('should successfully send a relay due to a valid information', async () => {
+            // TODO: Fix signing 
         //     const pocket = new Pocket(configuration)
         //     // Account
         //     const passphrase = "passphrase123"
@@ -159,88 +150,87 @@ describe("Pocket Interface functionalities", async () => {
         //     expect(response).to.not.be.undefined
         // }).timeout(0)
 
-        // it('should successfully retrieve an account information', async () => {
-        //     const pocket = new Pocket(configuration)
+        it('should successfully retrieve an account information', async () => {
+            const pocket = new Pocket(configuration)
 
-        //     const accountResponse = await pocket.queryGetAccount("E9769C199E5A35A64CE342493F351DEBDD0E4633")
-        //     expect(accountResponse).to.be.instanceOf(QueryAccountResponse)
-        // }).timeout(0)
+            const accountResponse = await pocket.queryGetAccount("E9769C199E5A35A64CE342493F351DEBDD0E4633")
+            expect(accountResponse).to.be.instanceOf(QueryAccountResponse)
+        }).timeout(0)
 
-        // it('should successfully retrieve a block information', async () => {
-        //     // NockUtil.mockGetBlock()
+        it('should successfully retrieve a block information', async () => {
+            // NockUtil.mockGetBlock()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const blockResponse = await pocket.getBlock(BigInt(5), configuration)
-        //     expect(blockResponse).to.be.instanceOf(QueryBlockResponse)
-        // }).timeout(0)
+            const blockResponse = await pocket.getBlock(BigInt(5), configuration)
+            expect(blockResponse).to.be.instanceOf(QueryBlockResponse)
+        }).timeout(0)
 
         // it('should successfully retrieve a transaction information', async () => {
         //     // NockUtil.mockGetTx()
-
+               // TODO: Get a transaction hash for testing
         //     const pocket = new Pocket(configuration)
 
         //     const txResponse = await pocket.getTX("84871BAF5B4E01BE52E5007EACF7048F24BF57E0")
         //     expect(txResponse).to.be.instanceOf(QueryTXResponse)
         // }).timeout(0)
 
-        // it('should successfully retrieve the current block height', async () => {
-        //     //NockUtil.mockGetHeight()
+        it('should successfully retrieve the current block height', async () => {
+            // NockUtil.mockGetHeight()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const heightResponse = await pocket.getHeight()
-        //     expect(heightResponse).to.be.instanceOf(QueryHeightResponse)
-        // }).timeout(0)
+            const heightResponse = await pocket.getHeight()
+            expect(heightResponse).to.be.instanceOf(QueryHeightResponse)
+        }).timeout(0)
 
-        // it('should successfully retrieve an account balance', async () => {
-        //     // NockUtil.mockGetBalance()
+        it('should successfully retrieve an account balance', async () => {
+            // NockUtil.mockGetBalance()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const balanceResponse = await pocket.getBalance(addressHex, BigInt(11521))
-        //     expect(balanceResponse).to.be.instanceOf(QueryBalanceResponse)
-        // }).timeout(0)
+            const balanceResponse = await pocket.getBalance(addressHex, BigInt(446))
+            expect(balanceResponse).to.be.instanceOf(QueryBalanceResponse)
+        }).timeout(0)
 
-        // it('should successfully retrieve a list of nodes', async () => {
-        //     // NockUtil.mockGetNodes()
+        it('should successfully retrieve a list of nodes', async () => {
+            // NockUtil.mockGetNodes()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const nodeResponse = await pocket.getNodes(StakingStatus.Staked, BigInt(11521))
-        //     expect(nodeResponse).to.be.instanceOf(QueryNodesResponse)
-        // }).timeout(0)
+            const nodeResponse = await pocket.getNodes(StakingStatus.Staked, BigInt(446))
+            expect(nodeResponse).to.be.instanceOf(QueryNodesResponse)
+        }).timeout(0)
 
-        // it('should successfully retrieve a node information', async () => {
-        //     // NockUtil.mockGetNode()
-        //     // TODO: Testnet validator node address is needed otherwise error 400 will happen
-        //     const pocket = new Pocket(configuration)
+        it('should successfully retrieve a node information', async () => {
+            // NockUtil.mockGetNode()
+            const pocket = new Pocket(configuration)
 
-        //     const nodeResponse = await pocket.getNode(addressHex, BigInt(11521))
-        //     expect(nodeResponse).to.be.instanceOf(QueryNodeResponse)
-        // }).timeout(0)
+            const nodeResponse = await pocket.getNode(nodeAddress, BigInt(446))
+            expect(nodeResponse).to.be.instanceOf(QueryNodeResponse)
+        }).timeout(0)
 
-        // it('should successfully retrieve a node params information', async () => {
-        //     // NockUtil.mockGetNodeParams()
+        it('should successfully retrieve a node params information', async () => {
+            // NockUtil.mockGetNodeParams()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const nodeParamsResponse = await pocket.getNodeParams(BigInt(11521))
-        //     expect(nodeParamsResponse).to.be.instanceOf(QueryNodeParamsResponse)
-        // }).timeout(0)
+            const nodeParamsResponse = await pocket.getNodeParams(BigInt(446))
+            expect(nodeParamsResponse).to.be.instanceOf(QueryNodeParamsResponse)
+        }).timeout(0)
 
         // it('should successfully retrieve a node proofs', async () => {
         //     // NockUtil.mockGetNodeProofs()
-        //     // TODO: Testnet validator node address is needed otherwise error 400 will happen
+        //     // TODO: Infra is crashing when calling this endpoint - status pending
         //     const pocket = new Pocket(configuration)
 
-        //     const nodeProofsResponse = await pocket.getNodeProofs(addressHex, BigInt(11521))
+        //     const nodeProofsResponse = await pocket.getNodeProofs(nodeAddress, BigInt(446))
         //     expect(nodeProofsResponse).to.be.instanceOf(QueryNodeProofsResponse)
         // }).timeout(0)
 
         // it('should successfully retrieve a node proof', async () => {
         //     // NockUtil.mockGetNodeProof()
-               // TODO: Peform testing
+               // TODO: Peform testing after the nodeProofs endpoint is fixed
         //     const nodeProof = new NodeProof(addressHex, ethBlockchain, applicationPublicKey, BigInt(5), BigInt(5))
         //     const pocket = new Pocket(configuration)
 
@@ -248,57 +238,55 @@ describe("Pocket Interface functionalities", async () => {
         //     expect(nodeProofResponse).to.be.instanceOf(QueryNodeProofResponse)
         // }).timeout(0)
 
-        // it('should successfully retrieve a list of apps', async () => {
-        //     //NockUtil.mockGetApps()
+        it('should successfully retrieve a list of apps', async () => {
+            // NockUtil.mockGetApps()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const appsResponse = await pocket.getApps(StakingStatus.Staked, BigInt(11521))
-        //     expect(appsResponse).to.be.instanceOf(QueryAppsResponse)
-        // }).timeout(0)
+            const appsResponse = await pocket.getApps(StakingStatus.Staked, BigInt(446))
+            expect(appsResponse).to.be.instanceOf(QueryAppsResponse)
+        }).timeout(0)
 
-        // it('should successfully retrieve an app information', async () => {
-        //     // NockUtil.mockGetApp()
-        //     // TODO: Get an actual app address for testing
-        //     const pocket = new Pocket(configuration)
+        it('should successfully retrieve an app information', async () => {
+            // NockUtil.mockGetApp()
+            const pocket = new Pocket(configuration)
 
-        //     const appResponse = await pocket.getApp(addressHex, BigInt(11521))
-        //     expect(appResponse).to.be.instanceOf(QueryAppResponse)
-        // }).timeout(0)
+            const appResponse = await pocket.getApp(addressHex, BigInt(446))
+            expect(appResponse).to.be.instanceOf(QueryAppResponse)
+        }).timeout(0)
 
         it('should successfully retrieve the app params', async () => {
             // NockUtil.mockGetAppParams()
-            // TODO: STOPPED HERE, infra is restarting after querying appParams
             const pocket = new Pocket(configuration)
 
-            const appParamsResponse = await pocket.getAppParams(BigInt(11521))
+            const appParamsResponse = await pocket.getAppParams(BigInt(446))
             expect(appParamsResponse).to.be.instanceOf(QueryAppParamsResponse)
         }).timeout(0)
 
-        // it('should successfully retrieve the Pocket params', async () => {
-        //     NockUtil.mockGetPocketParams()
+        it('should successfully retrieve the Pocket params', async () => {
+            // NockUtil.mockGetPocketParams()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const pocketParamsResponse = await pocket.getPocketParams(BigInt(5))
-        //     expect(pocketParamsResponse).to.be.instanceOf(QueryPocketParamsResponse)
-        // }).timeout(0)
+            const pocketParamsResponse = await pocket.getPocketParams(BigInt(446))
+            expect(pocketParamsResponse).to.be.instanceOf(QueryPocketParamsResponse)
+        }).timeout(0)
 
-        // it('should successfully retrieve the supported chains', async () => {
-        //     NockUtil.mockGetSupportedChains()
+        it('should successfully retrieve the supported chains', async () => {
+            // NockUtil.mockGetSupportedChains()
 
-        //     const pocket = new Pocket(configuration)
+            const pocket = new Pocket(configuration)
 
-        //     const supportedResponse = await pocket.getSupportedChains(BigInt(5))
-        //     expect(supportedResponse).to.be.instanceOf(QuerySupportedChainsResponse)
-        // }).timeout(0)
+            const supportedResponse = await pocket.getSupportedChains(BigInt(446))
+            expect(supportedResponse).to.be.instanceOf(QuerySupportedChainsResponse)
+        }).timeout(0)
 
         // it('should successfully retrieve the supply information', async () => {
-        //     NockUtil.mockGetSupply()
-
+        //     // NockUtil.mockGetSupply()
+        //     // TODO: Calling this endpoint is crashing the infra
         //     const pocket = new Pocket(configuration)
 
-        //     const supplyResponse = await pocket.getSupply(BigInt(5))
+        //     const supplyResponse = await pocket.getSupply(BigInt(446))
         //     expect(supplyResponse).to.be.instanceOf(QuerySupplyResponse)
         // }).timeout(0)
     })
