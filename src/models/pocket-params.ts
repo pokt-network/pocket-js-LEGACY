@@ -28,7 +28,7 @@ export class PocketParams {
 
   public readonly sessionNodeCount: BigInt
   public readonly proofWaitingPeriod: BigInt
-  public readonly supportedBlockchains: string[]
+  public readonly supportedBlockchains: string[] | null
   public readonly claimExpiration: BigInt
 
   /**
@@ -42,7 +42,7 @@ export class PocketParams {
   constructor(
     sessionNodeCount: BigInt,
     proofWaitingPeriod: BigInt,
-    supportedBlockchains: string[],
+    supportedBlockchains: string[] | null,
     claimExpiration: BigInt
   ) {
     this.sessionNodeCount = sessionNodeCount
@@ -75,9 +75,8 @@ export class PocketParams {
    * @memberof PocketParams
    */
   public isValid(): boolean {
-    return this.claimExpiration !== undefined &&
-    this.proofWaitingPeriod !== undefined &&
-    this.sessionNodeCount !== undefined &&
-    this.supportedBlockchains.length !== 0
+    return Number(this.claimExpiration.toString()) >= 0 &&
+    Number(this.proofWaitingPeriod.toString()) >= 0 &&
+    Number(this.sessionNodeCount.toString()) >= 0
   }
 }
