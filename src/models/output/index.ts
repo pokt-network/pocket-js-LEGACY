@@ -15,7 +15,6 @@ export * from './query-node-proofs-response';
 export * from './query-node-response';
 export * from './query-nodes-response';
 export * from './query-pocket-params-response';
-export * from './query-session-block-response';
 export * from './query-supply-response';
 export * from './query-supported-chains-response';
 export * from './query-tx-response';
