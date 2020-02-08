@@ -101,6 +101,6 @@ export class Node {
     this.jailed !== undefined &&
     this.serviceURL.length !== 0 &&
     this.status !== undefined &&
-    this.stakedTokens !== undefined
+    Number(this.stakedTokens.toString()) >= 0
   }
 }

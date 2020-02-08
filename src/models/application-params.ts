@@ -83,9 +83,11 @@ export class ApplicationParams {
    * @memberof ApplicationParams
    */
   public isValid(): boolean {
-    return this.appStakeMin !== undefined &&
-    this.baseRelaysPerPokt !== undefined &&
-    this.maxApplications !== undefined &&
-    this.stabilityAdjustment !== undefined
+    return Number(this.appStakeMin.toString()) >= 0 &&
+    Number(this.baseRelaysPerPokt.toString()) >= 0 &&
+    Number(this.maxApplications.toString()) >= 0 &&
+    Number(this.stabilityAdjustment.toString()) >= 0 &&
+    this.unstakingTime.length >= 0 &&
+    this.participationRateOn !== undefined
   }
 }

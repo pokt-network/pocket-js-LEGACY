@@ -68,12 +68,12 @@ export class QuerySupplyResponse {
    */
   public toJSON() {
     return {
-      appStaked: Number(this.appStaked.toString()),
+      app_staked: Number(this.appStaked.toString()),
       dao: Number(this.dao.toString()),
-      nodeStaked: Number(this.nodeStaked.toString()),
+      node_staked: Number(this.nodeStaked.toString()),
       total: Number(this.total.toString()),
-      totalStaked: Number(this.totalStaked.toString()),
-      totalUnstaked: Number(this.totalUnstaked.toString())
+      total_staked: Number(this.totalStaked.toString()),
+      total_unstaked: Number(this.totalUnstaked.toString())
     }
   }
 }

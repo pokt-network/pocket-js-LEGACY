@@ -83,8 +83,8 @@ export class Application {
       public_key: this.publicKey,
       jailed: this.jailed,
       max_relays: Number(this.maxRelays.toString()),
-      staked_tokens: this.status,
-      tokens: Number(this.stakedTokens.toString()),
+      status: this.status,
+      staked_tokens: Number(this.stakedTokens.toString()),
       unstaking_time: this.unstakingCompletionTime
     }
   }
@@ -101,8 +101,8 @@ export class Application {
     Hex.isHex(this.publicKey) &&
     Hex.byteLength(this.publicKey) === 32 &&
     this.jailed !== undefined &&
-    this.maxRelays !== undefined &&
+    Number(this.maxRelays.toString()) >= 0 &&
     this.status !== undefined &&
-    this.stakedTokens !== undefined
+    Number(this.stakedTokens.toString()) >= 0
   }
 }
