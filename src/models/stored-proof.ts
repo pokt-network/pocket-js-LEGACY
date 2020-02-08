@@ -19,7 +19,7 @@ export class StoredProof {
     return new StoredProof(
       SessionHeader.fromJSON(JSON.stringify(jsonObject.session_header)),
       jsonObject.servicer_address,
-      jsonObject.total_relays
+      BigInt(jsonObject.total_relays)
     )
   }
 
@@ -53,7 +53,7 @@ export class StoredProof {
     return {
       servicer_address: this.servicerAddress,
       session_header: this.sessionHeader.toJSON(),
-      total_relays: this.totalRelays.toString(16)
+      total_relays: Number(this.totalRelays.toString())
     }
   }
   /**
@@ -64,7 +64,7 @@ export class StoredProof {
    */
   public isValid(): boolean {
     return this.servicerAddress.length !== 0 &&
-    this.totalRelays !== undefined &&
+    Number(this.totalRelays.toString()) >= 0 &&
     this.sessionHeader.isValid()
   }
 }

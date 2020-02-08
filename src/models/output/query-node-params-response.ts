@@ -14,9 +14,11 @@ export class QueryNodeParamsResponse {
    * @memberof QueryNodeParamsResponse
    */
   public static fromJSON(json: string): QueryNodeParamsResponse {
-    const jsonObject = JSON.parse(json)
-
-    return new QueryNodeParamsResponse(NodeParams.fromJSON(JSON.stringify(jsonObject)))
+    try {
+      return new QueryNodeParamsResponse(NodeParams.fromJSON(json))
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly nodeParams: NodeParams

@@ -14,18 +14,25 @@ export class QueryNodesResponse {
    * @memberof QueryNodesResponse
    */
   public static fromJSON(json: string): QueryNodesResponse {
-    const jsonObject = JSON.parse(json)
-    const nodes: Node[] = []
-
-    jsonObject.nodes.forEach(function(nodeJSON: {}) {
-      const node = Node.fromJSON(JSON.stringify(nodeJSON))
-      nodes.push(node)
-    })
-    if (nodes !== undefined) {
-      return new QueryNodesResponse(nodes)
-    } else {
-      // TODO: Handle undefined scenario properly
-      return new QueryNodesResponse(jsonObject)
+    try {
+      const jsonObject = JSON.parse(json)
+      const nodes: Node[] = []
+      if (Array.isArray(jsonObject)) {
+        jsonObject.forEach(function(nodeJSON: {}) {
+          const node = Node.fromJSON(JSON.stringify(nodeJSON))
+          nodes.push(node)
+        })
+        if (nodes !== undefined) {
+          return new QueryNodesResponse(nodes)
+        } else {
+          throw new Error("Failed to parse the node list for QueryNodesResponse")
+        }
+      } else {
+        const node = Node.fromJSON(JSON.stringify(jsonObject))
+        return new QueryNodesResponse([node])
+      }
+    } catch (error) {
+      throw error
     }
   }
 
@@ -40,7 +47,7 @@ export class QueryNodesResponse {
     this.nodes = nodes
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid QueryNodesResponse properties length.")
+      throw new TypeError("Invalid QueryNodesResponse properties.")
     }
   }
   /**

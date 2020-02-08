@@ -12,38 +12,42 @@ export class NodeParams {
    * @memberof NodeParams
    */
   public static fromJSON(json: string): NodeParams {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new NodeParams(
-      jsonObject.unstaking_time,
-      jsonObject.max_validator,
-      jsonObject.stake_denom,
-      jsonObject.stake_minimum,
-      jsonObject.proposer_reward_percentage,
-      jsonObject.session_block,
-      jsonObject.relays_to_tokens,
-      jsonObject.max_evidence_age,
-      jsonObject.signed_blocks_window,
-      jsonObject.min_signed_per_window,
-      jsonObject.downtime_jail_duration,
-      jsonObject.slash_fraction_double_sign,
-      jsonObject.slash_fraction_downtime
-    )
+      return new NodeParams(
+        BigInt(jsonObject.dao_allocation),
+        BigInt(jsonObject.max_validators),
+        BigInt(jsonObject.proposer_allocation),
+        BigInt(jsonObject.session_block_frequency),
+        BigInt(jsonObject.unstaking_time),
+        jsonObject.stake_denom,
+        BigInt(jsonObject.stake_minimum),
+        BigInt(jsonObject.max_evidence_age),
+        BigInt(jsonObject.signed_blocks_window),
+        Number(jsonObject.min_signed_per_window),
+        BigInt(jsonObject.downtime_jail_duration),
+        Number(jsonObject.slash_fraction_double_sign),
+        Number(jsonObject.slash_fraction_downtime)
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
+  public readonly daoAllocation: BigInt
+  public readonly maxValidators: BigInt
+  public readonly proposerAllocation: BigInt
+  public readonly sessionBlockFrequency: BigInt
   public readonly unstakingTime: BigInt
-  public readonly maxValidator: BigInt
   public readonly stakeDenom: string
   public readonly stakeMinimum: BigInt
-  public readonly proposerRewardPercentage: number
-  public readonly sessionBlock: BigInt
-  public readonly relaysToTokens: BigInt
   public readonly maxEvidenceAge: BigInt
   public readonly signedBlocksWindow: BigInt
-  public readonly minSignedPerWindow: BigInt
+  public readonly minSignedPerWindow: number
   public readonly downtimeJailDuration: BigInt
-  public readonly slashFractionDoubleSign: BigInt
-  public readonly slashFractionDowntime: BigInt
+  public readonly slashFractionDoubleSign: number
+  public readonly slashFractionDowntime: number
 
   /**
    * NodeParams.
@@ -52,27 +56,27 @@ export class NodeParams {
    * @param {PartSetHeader} parts - Session NodeParams Height.
    */
   constructor(
+    daoAllocation: BigInt,
+    maxValidators: BigInt,
+    proposerAllocation: BigInt,
+    sessionBlockFrequency: BigInt,
     unstakingTime: BigInt,
-    maxValidator: BigInt,
     stakeDenom: string,
     stakeMinimum: BigInt,
-    proposerRewardPercentage: number,
-    sessionBlock: BigInt,
-    relaysToTokens: BigInt,
     maxEvidenceAge: BigInt,
     signedBlocksWindow: BigInt,
-    minSignedPerWindow: BigInt,
+    minSignedPerWindow: number,
     downtimeJailDuration: BigInt,
-    slashFractionDoubleSign: BigInt,
-    slashFractionDowntime: BigInt
+    slashFractionDoubleSign: number,
+    slashFractionDowntime: number
   ) {
+    this.daoAllocation = daoAllocation
+    this.maxValidators = maxValidators
+    this.proposerAllocation = proposerAllocation
+    this.sessionBlockFrequency = sessionBlockFrequency
     this.unstakingTime = unstakingTime
-    this.maxValidator = maxValidator
     this.stakeDenom = stakeDenom
     this.stakeMinimum = stakeMinimum
-    this.proposerRewardPercentage = proposerRewardPercentage
-    this.sessionBlock = sessionBlock
-    this.relaysToTokens = relaysToTokens
     this.maxEvidenceAge = maxEvidenceAge
     this.signedBlocksWindow = signedBlocksWindow
     this.minSignedPerWindow = minSignedPerWindow
@@ -81,7 +85,7 @@ export class NodeParams {
     this.slashFractionDowntime = slashFractionDowntime
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid NodeParams properties.")
     }
   }
   /**
@@ -92,19 +96,19 @@ export class NodeParams {
    */
   public toJSON() {
     return {
-      downtime_jail_duration: this.downtimeJailDuration.toString(16),
-      max_evidence_age: this.maxEvidenceAge.toString(16),
-      max_validator: this.maxValidator.toString(16),
-      min_signed_per_window: this.minSignedPerWindow.toString(16),
-      proposer_reward_percentage: this.proposerRewardPercentage,
-      relays_to_tokens: this.relaysToTokens.toString(16),
-      session_block: this.sessionBlock.toString(16),
-      signed_blocks_window: this.signedBlocksWindow.toString(16),
-      slash_fraction_double_sign: this.slashFractionDoubleSign.toString(16),
-      slash_fraction_downtime: this.slashFractionDowntime.toString(16),
+      dao_allocation: Number(this.daoAllocation.toString()),
+      max_validators: Number(this.maxValidators.toString()),
+      proposer_allocation: Number(this.proposerAllocation.toString()),
+      session_block_frequency: Number(this.sessionBlockFrequency.toString()),
+      downtime_jail_duration: Number(this.downtimeJailDuration.toString()),
+      max_evidence_age: Number(this.maxEvidenceAge.toString()),
+      min_signed_per_window: Number(this.minSignedPerWindow.toString()),
+      signed_blocks_window: Number(this.signedBlocksWindow.toString()),
+      slash_fraction_double_sign: Number(this.slashFractionDoubleSign.toString()),
+      slash_fraction_downtime: Number(this.slashFractionDowntime.toString()),
       stake_denom: this.stakeDenom,
-      stake_minimum: this.stakeMinimum.toString(16),
-      unstaking_time: this.unstakingTime.toString(16)
+      stake_minimum: Number(this.stakeMinimum.toString()),
+      unstaking_time: Number(this.unstakingTime.toString())
     }
   }
   /**
@@ -114,7 +118,6 @@ export class NodeParams {
    * @memberof NodeParams
    */
   public isValid(): boolean {
-    return this.proposerRewardPercentage > 0 &&
-    this.stakeDenom.length > 0
+    return this.stakeDenom.length > 0
   }
 }

@@ -12,14 +12,18 @@ export class PocketParams {
    * @memberof PocketParams
    */
   public static fromJSON(json: string): PocketParams {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new PocketParams(
-      jsonObject.session_node_count,
-      jsonObject.proof_waiting_period,
-      jsonObject.supported_blockchains,
-      jsonObject.claim_expiration
-    )
+      return new PocketParams(
+        BigInt(jsonObject.session_node_count),
+        BigInt(jsonObject.proof_waiting_period),
+        jsonObject.supported_blockchains,
+        BigInt(jsonObject.claim_expiration)
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly sessionNodeCount: BigInt
@@ -58,9 +62,9 @@ export class PocketParams {
    */
   public toJSON() {
     return {
-      claim_expiration: this.claimExpiration.toString(16),
-      proof_waiting_period: this.proofWaitingPeriod.toString(16),
-      session_node_count: this.sessionNodeCount.toString(16),
+      claim_expiration: Number(this.claimExpiration.toString()),
+      proof_waiting_period: Number(this.proofWaitingPeriod.toString()),
+      session_node_count: Number(this.sessionNodeCount.toString()),
       supported_blockchains: this.supportedBlockchains
     }
   }

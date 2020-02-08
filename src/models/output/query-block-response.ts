@@ -15,12 +15,16 @@ export class QueryBlockResponse {
    * @memberof QueryBlockResponse
    */
   public static fromJSON(json: string): QueryBlockResponse {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
     
-    return new QueryBlockResponse(
-      BlockMeta.fromJSON(JSON.stringify(jsonObject.block_meta)),
-      Block.fromJSON(JSON.stringify(jsonObject.block))
-    )
+      return new QueryBlockResponse(
+        BlockMeta.fromJSON(JSON.stringify(jsonObject.block_meta)),
+        Block.fromJSON(JSON.stringify(jsonObject.block))
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly blockMeta: BlockMeta
@@ -36,7 +40,7 @@ export class QueryBlockResponse {
     this.block = block
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid QueryBlockResponse properties length.")
+      throw new TypeError("Invalid QueryBlockResponse properties.")
     }
   }
   /**

@@ -51,7 +51,7 @@ export class RelayRequest {
   public toJSON() {
     return {
       payload: this.payload.toJSON(),
-      proof: this.proof.toJSON()
+      relayProof: this.proof.toJSON()
     }
   }
   /**

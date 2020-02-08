@@ -5,13 +5,16 @@
  */
 export class SessionHeader {
   public static fromJSON(json: string): SessionHeader {
-    const jsonObject = JSON.parse(json)
-
-    return new SessionHeader(
-      jsonObject.app_pub_key,
-      jsonObject.chain,
-      jsonObject.session_height
-    )
+    try {
+      const jsonObject = JSON.parse(json)
+      return new SessionHeader(
+        jsonObject.app_public_key,
+        jsonObject.chain,
+        BigInt(jsonObject.session_height)
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly applicationPubKey: string
@@ -46,9 +49,9 @@ export class SessionHeader {
    */
   public toJSON() {
     return {
-      app_pub_key: this.applicationPubKey,
+      app_public_key: this.applicationPubKey,
       chain: this.chain,
-      session_height: this.sessionBlockHeight.toString(16)
+      session_height: Number(this.sessionBlockHeight.toString())
     }
   }
   /**
@@ -61,7 +64,7 @@ export class SessionHeader {
     return (
       this.applicationPubKey.length !== 0 &&
       this.chain.length !== 0 &&
-      this.sessionBlockHeight !== undefined
+      Number(this.sessionBlockHeight.toString()) > 0
     )
   }
 }

@@ -14,9 +14,13 @@ export class QueryPocketParamsResponse {
    * @memberof QueryPocketParamsResponse
    */
   public static fromJSON(json: string): QueryPocketParamsResponse {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new QueryPocketParamsResponse(PocketParams.fromJSON(JSON.stringify(jsonObject)))
+      return new QueryPocketParamsResponse(PocketParams.fromJSON(JSON.stringify(jsonObject)))
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly pocketParams: PocketParams
@@ -30,7 +34,7 @@ export class QueryPocketParamsResponse {
     this.pocketParams = pocketParams
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Pocket Params properties.")
     }
   }
   /**

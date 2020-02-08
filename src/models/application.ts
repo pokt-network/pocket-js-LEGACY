@@ -7,23 +7,27 @@ import { Hex } from "../utils/hex"
  */
 export class Application {
   public static fromJSON(json: string): Application {
-    const jsonObject = JSON.parse(json)
-    const status: BondStatus = BondStatus.getStatus(jsonObject.status)
-
-    return new Application(
-      jsonObject.address,
-      jsonObject.cons_pubkey,
-      jsonObject.jailed,
-      status,
-      jsonObject.chains,
-      jsonObject.tokens,
-      jsonObject.max_relays,
-      jsonObject.unstaking_time
-    )
+    try {
+      const jsonObject = JSON.parse(json)
+      const status: BondStatus = BondStatus.getStatus(jsonObject.status)
+  
+      return new Application(
+        jsonObject.address,
+        jsonObject.public_key,
+        jsonObject.jailed,
+        status,
+        jsonObject.chains,
+        BigInt(jsonObject.staked_tokens),
+        BigInt(jsonObject.max_relays),
+        jsonObject.unstaking_time
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly address: string
-  public readonly consPubKey: string
+  public readonly publicKey: string
   public readonly jailed: boolean
   public readonly status: BondStatus
   public readonly chains: string[]
@@ -35,7 +39,7 @@ export class Application {
    * Creates a Application.
    * @constructor
    * @param {string} address - the hex address of the validator
-   * @param {string} consPubKey - the hex consensus public key of the validator.
+   * @param {string} publicKey - the hex consensus public key of the validator.
    * @param {boolean} jailed - has the validator been jailed from staked status?
    * @param {BondStatus} status - validator status
    * @param {string[]} chains - chains
@@ -45,7 +49,7 @@ export class Application {
    */
   constructor(
     address: string,
-    consPubKey: string,
+    publicKey: string,
     jailed: boolean,
     status: BondStatus,
     chains: string[] = [],
@@ -54,7 +58,7 @@ export class Application {
     unstakingCompletionTime: string = ""
   ) {
     this.address = address
-    this.consPubKey = consPubKey
+    this.publicKey = publicKey
     this.jailed = jailed
     this.status = status
     this.chains = chains
@@ -76,11 +80,11 @@ export class Application {
     return {
       address: this.address,
       chains: this.chains,
-      cons_pubkey: this.consPubKey,
+      public_key: this.publicKey,
       jailed: this.jailed,
-      max_relays: this.maxRelays.toString(16),
-      status: this.status,
-      tokens: this.stakedTokens.toString(16),
+      max_relays: Number(this.maxRelays.toString()),
+      staked_tokens: this.status,
+      tokens: Number(this.stakedTokens.toString()),
       unstaking_time: this.unstakingCompletionTime
     }
   }
@@ -94,8 +98,8 @@ export class Application {
     return Hex.isHex(this.address) &&
     Hex.byteLength(this.address) === 20 &&
     this.chains.length > 0 &&
-    Hex.isHex(this.consPubKey) &&
-    Hex.byteLength(this.consPubKey) === 32 &&
+    Hex.isHex(this.publicKey) &&
+    Hex.byteLength(this.publicKey) === 32 &&
     this.jailed !== undefined &&
     this.maxRelays !== undefined &&
     this.status !== undefined &&

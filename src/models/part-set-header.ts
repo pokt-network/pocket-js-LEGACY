@@ -14,9 +14,13 @@ export class PartSetHeader {
    * @memberof PartSetHeader
    */
   public static fromJSON(json: string): PartSetHeader {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new PartSetHeader(jsonObject.total, jsonObject.hash)
+      return new PartSetHeader(BigInt(jsonObject.total), jsonObject.hash)
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly total: BigInt
@@ -44,8 +48,8 @@ export class PartSetHeader {
    */
   public toJSON() {
     return {
-      "hash": this.hash,
-      "total": this.total.toString(16)
+      hash: this.hash,
+      total: Number(this.total.toString())
     }
   }
   /**
@@ -55,6 +59,6 @@ export class PartSetHeader {
    * @memberof PartSetHeader
    */
   public isValid(): boolean {
-    return Hex.isHex(this.hash) && this.total !== undefined
+    return Hex.isHex(this.hash) && Number(this.total.toString()) >= 0
   }
 }

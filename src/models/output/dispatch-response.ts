@@ -15,13 +15,25 @@ export class DispatchResponse {
    * @memberof DispatchResponse
    */
   public static fromJSON(json: string): DispatchResponse {
-    const jsonObject = JSON.parse(json)
-    const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.header))
-    return new DispatchResponse(
-      sessionHeader,
-      jsonObject.key,
-      jsonObject.nodes
-    )
+    try {
+      const jsonObject = JSON.parse(json)
+      const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.value.header))
+      // Handle nodes
+      const nodes: Node[] = []
+
+      jsonObject.value.nodes.forEach(function(nodeJSON: any) {
+        const node = Node.fromJSON(JSON.stringify(nodeJSON.value))
+        nodes.push(node)
+      })
+
+      return new DispatchResponse(
+        sessionHeader,
+        jsonObject.value.key,
+        nodes
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly header: SessionHeader

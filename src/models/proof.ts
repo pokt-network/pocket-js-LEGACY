@@ -29,9 +29,9 @@ export class Proof {
         )
 
         return new Proof(
-          jsonObject.index,
+          jsonObject.entropy,
           jsonObject.session_block_height,
-          jsonObject.service_pub_key,
+          jsonObject.servicer_pub_key,
           jsonObject.blockchain,
           pocketAAT,
           jsonObject.signature
@@ -44,7 +44,7 @@ export class Proof {
     }
   }
 
-  public readonly index: BigInt
+  public readonly entropy: BigInt
   public readonly sessionBlockHeight: BigInt
   public readonly servicePubKey: string
   public readonly blockchain: string
@@ -54,7 +54,7 @@ export class Proof {
   /**
    * Proof.
    * @constructor
-   * @param {BigInt} index - Index value.
+   * @param {BigInt} entropy - Index entropy value.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @param {string} servicePubKey - Service Public Key.
    * @param {string} blockchain - Blockchain hash.
@@ -62,14 +62,14 @@ export class Proof {
    * @param {string} signature - Proof's signature.
    */
   constructor(
-    index: BigInt,
+    entropy: BigInt,
     sessionBlockHeight: BigInt,
     servicePubKey: string,
     blockchain: string,
     token: PocketAAT,
     signature: string = ""
   ) {
-    this.index = index
+    this.entropy = entropy
     this.sessionBlockHeight = sessionBlockHeight
     this.servicePubKey = servicePubKey
     this.blockchain = blockchain
@@ -88,12 +88,17 @@ export class Proof {
    */
   public toJSON() {
     return {
+      entropy: Number(this.entropy.toString()),
+      session_block_height: Number(this.sessionBlockHeight.toString()),
+      servicer_pub_key: this.servicePubKey,
       blockchain: this.blockchain,
-      index: this.index.toString(16),
-      service_pub_key: this.servicePubKey,
-      session_block_height: this.sessionBlockHeight.toString(16),
       signature: this.signature,
-      token: JSON.parse(JSON.stringify(this.token))
+      aat: {
+        version: this.token.version,
+        app_address: this.token.applicationPublicKey,
+        client_pub_key: this.token.clientPublicKey,
+        signature: this.token.applicationSignature
+      }
     }
   }
   /**
@@ -104,9 +109,9 @@ export class Proof {
    */
   public isValid(): boolean {
     return this.blockchain.length !== 0 &&
-      this.index !== undefined &&
+      Number(this.entropy.toString()) !== undefined &&
       Hex.isHex(this.servicePubKey) &&
-      this.sessionBlockHeight !== undefined &&
+      Number(this.sessionBlockHeight) > 0 &&
       this.token.isValid()
   }
 }

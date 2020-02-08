@@ -14,9 +14,11 @@ export class QueryAppParamsResponse {
    * @memberof QueryAppParamsResponse
    */
   public static fromJSON(json: string): QueryAppParamsResponse {
-    const jsonObject = JSON.parse(json)
-
-    return new QueryAppParamsResponse(ApplicationParams.fromJSON(JSON.stringify(jsonObject)))
+    try {
+      return new QueryAppParamsResponse(ApplicationParams.fromJSON(json))
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly applicationParams: ApplicationParams

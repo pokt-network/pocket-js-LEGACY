@@ -20,18 +20,22 @@ export class CommitSignature {
    * @memberof CommitSignature
    */
   public static fromJSON(json: string): CommitSignature {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new CommitSignature(
-      jsonObject.type,
-      jsonObject.height,
-      jsonObject.round,
-      BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
-      jsonObject.time_stamp,
-      jsonObject.validator_address,
-      jsonObject.validator_index,
-      jsonObject.signature
-    )
+      return new CommitSignature(
+        jsonObject.type,
+        BigInt(jsonObject.height),
+        jsonObject.round,
+        BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
+        jsonObject.time_stamp,
+        jsonObject.validator_address,
+        jsonObject.validator_index,
+        jsonObject.signature
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly type: string
@@ -69,7 +73,7 @@ export class CommitSignature {
     this.signature = signature
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid CommitSignature properties length.")
+      throw new TypeError("Invalid CommitSignature properties.")
     }
   }
   /**
@@ -81,10 +85,10 @@ export class CommitSignature {
   public toJSON() {
     return {
       block_id: this.blockID.toJSON(),
-      height: this.height.toString(16),
+      height: Number(this.height.toString()),
       round: this.round,
       signature: this.signature,
-      time_stamp: this.timeStamp,
+      timestamp: this.timeStamp,
       type: this.type,
       validator_address: this.validatorAddress,
       validator_index: this.validatorIndex
@@ -98,11 +102,10 @@ export class CommitSignature {
    */
   public isValid(): boolean {
     return this.blockID.isValid() &&
-    this.height !== undefined &&
-    this.round !== undefined &&
-    Hex.isHex(this.signature) &&
+    Number(this.height.toString()) > 0 &&
+    this.round >= 0 &&
+    this.signature.length !== 0 &&
     this.timeStamp.length !== 0 &&
-    this.type.length !== 0 &&
     Hex.isHex(this.validatorAddress) &&
     this.validatorIndex !== undefined
   }

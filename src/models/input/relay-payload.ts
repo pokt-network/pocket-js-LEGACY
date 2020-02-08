@@ -15,20 +15,24 @@ export class RelayPayload {
    * @memberof RelayPayload
    */
   public static fromJSON(json: string): RelayPayload {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
     
-    return new RelayPayload(
-      jsonObject.data,
-      jsonObject.method,
-      jsonObject.path,
-      jsonObject.headers
-    )
+      return new RelayPayload(
+        jsonObject.data,
+        jsonObject.method,
+        jsonObject.path,
+        jsonObject.headers
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly data: string
   public readonly method: string
   public readonly path: string
-  public readonly headers: RelayHeaders
+  public readonly headers: RelayHeaders | null
 
   /**
    * Relay Response.
@@ -42,7 +46,7 @@ export class RelayPayload {
     data: string,
     method: string,
     path: string,
-    headers: RelayHeaders
+    headers: RelayHeaders | null
   ) {
     this.data = data
     this.method = method
@@ -73,8 +77,7 @@ export class RelayPayload {
     return (
       this.data.length !== undefined &&
       this.method.length !== undefined &&
-      this.path.length !== undefined &&
-      this.headers !== undefined
+      this.path.length !== undefined
     )
   }
 }

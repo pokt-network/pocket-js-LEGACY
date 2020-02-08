@@ -14,15 +14,19 @@ export class NodeProof {
    * @memberof NodeProof
    */
   public static fromJSON(json: string): NodeProof {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new NodeProof(
-      jsonObject.address,
-      jsonObject.blockchain,
-      jsonObject.app_pubkey,
-      jsonObject.session_block_height,
-      jsonObject.height
-    )
+      return new NodeProof(
+        jsonObject.address,
+        jsonObject.blockchain,
+        jsonObject.app_pubkey,
+        BigInt(jsonObject.session_block_height),
+        BigInt(jsonObject.height)
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly address: string
@@ -68,8 +72,8 @@ export class NodeProof {
       address: this.address,
       app_pubkey: this.appPubKey,
       blockchain: this.blockchain,
-      height: this.height.toString(16),
-      session_block_height: this.SBlockHeight.toString(16)
+      height: Number(this.height.toString()),
+      session_block_height: Number(this.SBlockHeight.toString())
     }
   }
   /**
