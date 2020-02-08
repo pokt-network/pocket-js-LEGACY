@@ -326,7 +326,7 @@ export class Pocket {
   public async sendRelay(
     data: string,
     blockchain: string,
-    headers: RelayHeaders,
+    headers: RelayHeaders | null,
     pocketAAT: PocketAAT,
     configuration: Configuration = this.configuration,
     node?: Node,
@@ -380,11 +380,11 @@ export class Pocket {
       // Retrieve the addressHex from the publicKeyBuffer
       const addressHex = addressFromPublickey(applicationPublicKeyBuffer).toString("hex")
       // Create a proof object
-      const proofIndex = BigInt(Math.floor(Math.random() * 10000000))
+      const proofIndex = BigInt(Math.floor(Math.random() * 99999999999999999))
       const relayProof = new Proof(
         proofIndex,
         currentSession.sessionHeader.sessionBlockHeight,
-        activeNode.address,
+        activeNode.publicKey,
         blockchain,
         pocketAAT
       )
@@ -398,7 +398,7 @@ export class Pocket {
       const proof = new Proof(
         proofIndex,
         currentSession.sessionHeader.sessionBlockHeight,
-        activeNode.address,
+        activeNode.publicKey,
         blockchain,
         pocketAAT,
         signedRelayProof.toString("hex")
