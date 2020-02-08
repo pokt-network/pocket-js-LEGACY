@@ -8,23 +8,27 @@ import { Hex } from "../utils/hex"
  */
 export class Node {
   public static fromJSON(json: string): Node {
-    const jsonObject = JSON.parse(json)
-    const status: BondStatus = BondStatus.getStatus(jsonObject.status)
-
-    return new Node(
-      jsonObject.address,
-      jsonObject.cons_pubkey,
-      jsonObject.jailed,
-      status,
-      jsonObject.tokens,
-      jsonObject.service_url,
-      jsonObject.chains,
-      jsonObject.unstaking_time
-    )
+    try {
+      const jsonObject = JSON.parse(json)
+      const status: BondStatus = BondStatus.getStatus(jsonObject.status)
+  
+      return new Node(
+        jsonObject.address,
+        jsonObject.public_key,
+        jsonObject.jailed,
+        status,
+        BigInt(jsonObject.tokens),
+        jsonObject.service_url,
+        jsonObject.chains,
+        jsonObject.unstaking_time
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly address: string
-  public readonly consPubKey: string
+  public readonly publicKey: string
   public readonly jailed: boolean
   public readonly status: BondStatus
   public readonly stakedTokens: BigInt
@@ -36,7 +40,7 @@ export class Node {
    * Creates a Node.
    * @constructor
    * @param {string} address - the hex address of the validator
-   * @param {string} consPubKey - the hex consensus public key of the validator.
+   * @param {string} publicKey - the hex consensus public key of the validator.
    * @param {boolean} jailed - has the validator been jailed from staked status?
    * @param {BondStatus} status - validator status
    * @param {BigInt} stakedTokens - how many staked tokens
@@ -46,7 +50,7 @@ export class Node {
    */
   constructor(
     address: string,
-    consPubKey: string,
+    publicKey: string,
     jailed: boolean,
     status: BondStatus,
     stakedTokens: BigInt,
@@ -55,7 +59,7 @@ export class Node {
     unstakingCompletionTime: string = ""
   ) {
     this.address = address
-    this.consPubKey = consPubKey
+    this.publicKey = publicKey
     this.jailed = jailed
     this.status = status
     this.stakedTokens = stakedTokens
@@ -77,11 +81,11 @@ export class Node {
     return {
       address: this.address,
       chains: this.chains,
-      cons_pubkey: this.consPubKey,
+      public_key: this.publicKey,
       jailed: this.jailed,
       service_url: this.serviceURL,
       status: this.status.toString(),
-      tokens: this.stakedTokens.toString(16),
+      tokens: Number(this.stakedTokens.toString()),
       unstaking_time: this.unstakingCompletionTime
     }
   }
@@ -93,7 +97,7 @@ export class Node {
    */
   public isValid() {
     return Hex.isHex(this.address) &&
-    Hex.isHex(this.consPubKey) &&
+    Hex.isHex(this.publicKey) &&
     this.jailed !== undefined &&
     this.serviceURL.length !== 0 &&
     this.status !== undefined &&

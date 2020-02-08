@@ -1,5 +1,4 @@
 import { BlockID } from "./block-id"
-import { Consensus } from "./consensus"
 import { Hex } from "../utils"
 
 /**
@@ -16,29 +15,31 @@ export class BlockHeader {
    * @memberof BlockHeader
    */
   public static fromJSON(json: string): BlockHeader {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new BlockHeader(
-      Consensus.fromJSON(JSON.stringify(jsonObject.version)),
-      jsonObject.chain_id,
-      jsonObject.height,
-      jsonObject.time,
-      jsonObject.num_txs,
-      jsonObject.total_txs,
-      BlockID.fromJSON(JSON.stringify(jsonObject.last_block_id)),
-      jsonObject.last_commit_hash,
-      jsonObject.data_hash,
-      jsonObject.validators_hash,
-      jsonObject.next_validators_hash,
-      jsonObject.consensus_hash,
-      jsonObject.app_hash,
-      jsonObject.last_results_hash,
-      jsonObject.evidence_hash,
-      jsonObject.proposer_address
-    )
+      return new BlockHeader(
+        jsonObject.chain_id,
+        BigInt(jsonObject.height),
+        jsonObject.time,
+        BigInt(jsonObject.num_txs),
+        BigInt(jsonObject.total_txs),
+        BlockID.fromJSON(JSON.stringify(jsonObject.last_block_id)),
+        jsonObject.last_commit_hash,
+        jsonObject.data_hash,
+        jsonObject.validators_hash,
+        jsonObject.next_validators_hash,
+        jsonObject.consensus_hash,
+        jsonObject.app_hash,
+        jsonObject.last_results_hash,
+        jsonObject.evidence_hash,
+        jsonObject.proposer_address
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
-  public readonly version: Consensus
   public readonly chainID: string
   public readonly height: BigInt
   public readonly time: string
@@ -58,7 +59,6 @@ export class BlockHeader {
   /**
    * BlockHeader.
    * @constructor
-   * @param {Consensus} version - Block version information.
    * @param {string} chainID - Blockchain ID.
    * @param {BigInt} height - Block Height.
    * @param {string} time - Date time.
@@ -76,7 +76,6 @@ export class BlockHeader {
    * @param {string} proposerAddress - Proposer Address.
    */
   constructor(
-    version: Consensus,
     chainID: string,
     height: BigInt,
     time: string,
@@ -93,7 +92,6 @@ export class BlockHeader {
     evidenceHash: string,
     proposerAddress: string
   ) {
-    this.version = version
     this.chainID = chainID
     this.height = height
     this.time = time
@@ -111,7 +109,7 @@ export class BlockHeader {
     this.proposerAddress = proposerAddress
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid BlockHeader properties length.")
+      throw new TypeError("Invalid BlockHeader properties.")
     }
   }
   /**
@@ -127,17 +125,16 @@ export class BlockHeader {
       consensus_hash: this.consensusHash,
       data_hash: this.dataHash,
       evidence_hash: this.evidenceHash,
-      height: this.height.toString(16),
+      height: Number(this.height.toString()),
       last_block_id: this.lastBlockID.toJSON(),
       last_commit_hash: this.lastCommitHash,
       last_results_hash: this.lastResultsHash,
       next_validators_hash: this.nextValidatorsHash,
-      num_txs: this.numTXs.toString(16),
+      num_txs: Number(this.numTXs.toString()),
       proposer_address: this.proposerAddress,
       time: this.time,
-      total_txs: this.totalTxs.toString(16),
-      validators_hash: this.validatorsHash,
-      version: this.version.toJSON()
+      total_txs: Number(this.totalTxs.toString()),
+      validators_hash: this.validatorsHash
     }
   }
   /**
@@ -147,21 +144,11 @@ export class BlockHeader {
    * @memberof BlockHeader
    */
   public isValid(): boolean {
-    return Hex.isHex(this.appHash) &&
-      this.chainID.length !== 0 &&
-      Hex.isHex(this.consensusHash) &&
-      Hex.isHex(this.dataHash) &&
-      Hex.isHex(this.evidenceHash) &&
-      this.height !== undefined &&
+    return this.chainID.length !== 0 &&
+      Number(this.height.toString()) > 0 &&
       this.lastBlockID.isValid() &&
-      Hex.isHex(this.lastCommitHash) &&
-      Hex.isHex(this.lastResultsHash) &&
-      Hex.isHex(this.nextValidatorsHash) &&
-      Hex.isHex(this.proposerAddress) &&
-      Hex.isHex(this.validatorsHash) &&
-      this.numTXs !== undefined &&
+      Number(this.numTXs.toString()) >= 0 &&
       this.time.length !== 0 &&
-      this.totalTxs !== undefined &&
-      this.version.isValid()
+      Number(this.totalTxs.toString()) >= 0
   }
 }

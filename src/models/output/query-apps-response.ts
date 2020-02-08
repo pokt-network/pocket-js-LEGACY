@@ -13,18 +13,22 @@ export class QueryAppsResponse {
    * @memberof QueryAppsResponse
    */
   public static fromJSON(json: string): QueryAppsResponse {
-    const jsonObject = JSON.parse(json)
-    const apps: Application[] = []
-
-    if (Array.isArray(jsonObject)) {
-      jsonObject.forEach(function(appJSON: {}) {
-        const app = Application.fromJSON(JSON.stringify(appJSON))
-        apps.push(app)
-      })
-      return new QueryAppsResponse(apps as Application[])
-    }else {
-      const app = Application.fromJSON(JSON.stringify(jsonObject))
-      return new QueryAppsResponse([app])
+    try {
+      const jsonObject = JSON.parse(json)
+      const apps: Application[] = []
+  
+      if (Array.isArray(jsonObject)) {
+        jsonObject.forEach(function(appJSON: {}) {
+          const app = Application.fromJSON(JSON.stringify(appJSON))
+          apps.push(app)
+        })
+        return new QueryAppsResponse(apps as Application[])
+      }else {
+        const app = Application.fromJSON(JSON.stringify(jsonObject))
+        return new QueryAppsResponse([app])
+      }
+    } catch (error) {
+      throw error
     }
   }
 

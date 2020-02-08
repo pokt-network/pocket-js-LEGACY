@@ -15,10 +15,14 @@ export class BlockID {
    * @memberof BlockID
    */
   public static fromJSON(json: string): BlockID {
-    const jsonObject = JSON.parse(json)
-    const parts = PartSetHeader.fromJSON(JSON.stringify(jsonObject.parts))
-
-    return new BlockID(jsonObject.hash, parts)
+    try {
+      const jsonObject = JSON.parse(json)
+      const parts = PartSetHeader.fromJSON(JSON.stringify(jsonObject.parts))
+  
+      return new BlockID(jsonObject.hash, parts)
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly hash: string
@@ -35,7 +39,7 @@ export class BlockID {
     this.parts = parts
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid BlockID properties length.")
+      throw new TypeError("Invalid BlockID properties.")
     }
   }
   /**

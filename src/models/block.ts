@@ -19,8 +19,8 @@ export class Block {
     const jsonObject = JSON.parse(json)
     return new Block(
       BlockHeader.fromJSON(JSON.stringify(jsonObject.header)),
-      jsonObject.data,
-      jsonObject.evidence,
+      JSON.stringify(jsonObject.data),
+      JSON.stringify(jsonObject.evidence),
       Commit.fromJSON(JSON.stringify(jsonObject.last_commit))
     )
   }
@@ -50,7 +50,7 @@ export class Block {
     this.lastCommit = lastCommit
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Block properties.")
     }
   }
   /**
@@ -61,10 +61,10 @@ export class Block {
    */
   public toJSON() {
     return {
-      "data": this.data,
-      "evidence": this.evidence,
-      "header": this.header.toJSON(),
-      "last_commit": this.lastCommit.toJSON()
+      data: this.data,
+      evidence: this.evidence,
+      header: this.header.toJSON(),
+      last_commit: this.lastCommit.toJSON()
     }
   }
   /**
@@ -75,7 +75,7 @@ export class Block {
    */
   public isValid(): boolean {
     return this.data.length !== 0 &&
-    Hex.isHex(this.evidence) &&
+    this.evidence.length !== 0 &&
     this.header.isValid() &&
     this.lastCommit.isValid()
   }

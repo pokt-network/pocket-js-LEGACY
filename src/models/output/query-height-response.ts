@@ -12,9 +12,13 @@ export class QueryHeightResponse {
    * @memberof QueryHeightResponse
    */
   public static fromJSON(json: string): QueryHeightResponse {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new QueryHeightResponse(jsonObject.height)
+      return new QueryHeightResponse(BigInt(jsonObject))
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly height: BigInt

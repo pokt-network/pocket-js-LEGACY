@@ -15,16 +15,44 @@ export class Commit {
    * @memberof Commit
    */
   public static fromJSON(json: string): Commit {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
+      const signatureList: CommitSignature[] = []
 
-    return new Commit(
-      BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
-      CommitSignature.fromJSON(JSON.stringify(jsonObject.precommits))
-    )
+      if (Array.isArray(jsonObject.precommits)) {
+        jsonObject.precommits.forEach((commit: any) => {
+          if (commit !== null) {
+            const commitSignature = new CommitSignature(
+              commit.type,
+              BigInt(commit.height),
+              commit.round,
+              BlockID.fromJSON(JSON.stringify(commit.block_id)),
+              commit.timestamp,
+              commit.validator_address,
+              commit.validator_index,
+              commit.signature
+            )
+            signatureList.push(commitSignature)
+          }
+        })
+        return new Commit(
+          BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
+          signatureList
+        ) 
+      }else {
+        return new Commit(
+          BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
+        [CommitSignature.fromJSON(JSON.stringify(jsonObject.precommits))]
+        ) 
+      }
+
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly blockID: BlockID
-  public readonly precommits: CommitSignature
+  public readonly precommits: CommitSignature[]
 
   /**
    * Commit.
@@ -32,12 +60,12 @@ export class Commit {
    * @param {BlockID} blockID - Commit blockID.
    * @param {CommitSignature} precommits - Commits signature.
    */
-  constructor(blockID: BlockID, precommits: CommitSignature) {
+  constructor(blockID: BlockID, precommits: CommitSignature[]) {
     this.blockID = blockID
     this.precommits = precommits
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid Commit properties length.")
+      throw new TypeError("Invalid Commit properties.")
     }
   }
   /**
@@ -47,9 +75,14 @@ export class Commit {
    * @memberof Commit
    */
   public toJSON() {
+    const signatureList: any[] = []
+    this.precommits.forEach(signature => {
+      signatureList.push(signature.toJSON())
+    })
+
     return {
       block_id: this.blockID.toJSON(),
-      precommits: this.precommits.toJSON()
+      precommits: signatureList
     }
   }
   /**
@@ -59,6 +92,6 @@ export class Commit {
    * @memberof Commit
    */
   public isValid(): boolean {
-    return this.blockID.isValid() && this.precommits.isValid()
+    return this.blockID.isValid()
   }
 }

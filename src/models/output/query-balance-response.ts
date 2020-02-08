@@ -12,9 +12,13 @@ export class QueryBalanceResponse {
    * @memberof QueryBalanceResponse
    */
   public static fromJSON(json: string): QueryBalanceResponse {
-    const jsonObject = JSON.parse(json)
-
-    return new QueryBalanceResponse(jsonObject.balance)
+    try {
+      let jsonObject = JSON.parse(json)
+      jsonObject = JSON.parse(jsonObject)
+      return new QueryBalanceResponse(BigInt(jsonObject))
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly balance: BigInt
@@ -28,7 +32,7 @@ export class QueryBalanceResponse {
     this.balance = balance
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid QueryBalanceResponse properties.")
     }
   }
   /**
@@ -38,7 +42,7 @@ export class QueryBalanceResponse {
    * @memberof QueryBalanceResponse
    */
   public toJSON() {
-    return { balance: this.balance.toString(16) }
+    return { balance: Number(this.balance.toString()) }
   }
   /**
    *

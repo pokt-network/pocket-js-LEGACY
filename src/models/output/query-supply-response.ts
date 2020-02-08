@@ -12,16 +12,20 @@ export class QuerySupplyResponse {
    * @memberof QuerySupplyResponse
    */
   public static fromJSON(json: string): QuerySupplyResponse {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new QuerySupplyResponse(
-      jsonObject.node_staked,
-      jsonObject.app_staked,
-      jsonObject.dao,
-      jsonObject.total_staked,
-      jsonObject.total_unstaked,
-      jsonObject.total
-    )
+      return new QuerySupplyResponse(
+        BigInt(jsonObject.node_staked),
+        BigInt(jsonObject.app_staked),
+        BigInt(jsonObject.dao),
+        BigInt(jsonObject.total_staked),
+        BigInt(jsonObject.total_unstaked),
+        BigInt(jsonObject.total)
+      )
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly nodeStaked: BigInt
@@ -64,12 +68,12 @@ export class QuerySupplyResponse {
    */
   public toJSON() {
     return {
-      appStaked: this.appStaked.toString(16),
-      dao: this.dao.toString(16),
-      nodeStaked: this.nodeStaked.toString(16),
-      total: this.total.toString(16),
-      totalStaked: this.totalStaked.toString(16),
-      totalUnstaked: this.totalUnstaked.toString(16)
+      appStaked: Number(this.appStaked.toString()),
+      dao: Number(this.dao.toString()),
+      nodeStaked: Number(this.nodeStaked.toString()),
+      total: Number(this.total.toString()),
+      totalStaked: Number(this.totalStaked.toString()),
+      totalUnstaked: Number(this.totalUnstaked.toString())
     }
   }
 }

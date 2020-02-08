@@ -2,6 +2,7 @@
 
 export * from './bond-status';
 export * from './dispatch-response';
+export * from './query-account-response';
 export * from './query-app-params-response';
 export * from './query-app-response';
 export * from './query-apps-response';

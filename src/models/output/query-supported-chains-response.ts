@@ -12,9 +12,13 @@ export class QuerySupportedChainsResponse {
    * @memberof QuerySupportedChainsResponse
    */
   public static fromJSON(json: string): QuerySupportedChainsResponse {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new QuerySupportedChainsResponse(jsonObject)
+      return new QuerySupportedChainsResponse(jsonObject)
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly supportedChains: string[]
@@ -28,7 +32,7 @@ export class QuerySupportedChainsResponse {
     this.supportedChains = supportedChains
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid SupportedShainsResponse properties.")
     }
   }
   /**

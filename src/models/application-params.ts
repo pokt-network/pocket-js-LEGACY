@@ -12,23 +12,27 @@ export class ApplicationParams {
    * @memberof ApplicationParams
    */
   public static fromJSON(json: string): ApplicationParams {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new ApplicationParams(
-      jsonObject.unstaking_time,
-      jsonObject.max_applications,
-      jsonObject.app_stake_min,
-      jsonObject.baseline_throughput_stake_rate,
-      jsonObject.staking_adjustment,
-      jsonObject.participation_rate_on
-    )
+      return new ApplicationParams(
+        jsonObject.unstaking_time,
+        BigInt(jsonObject.max_applications),
+        BigInt(jsonObject.app_stake_minimum),
+        BigInt(jsonObject.base_relays_per_pokt),
+        BigInt(jsonObject.stability_adjustment),
+        jsonObject.participation_rate_on
+      )
+    } catch (error) {
+      throw error
+    }
   }
-
+  
   public readonly unstakingTime: string
   public readonly maxApplications: BigInt
   public readonly appStakeMin: BigInt
-  public readonly baselineThroughputStakeRate: BigInt
-  public readonly stakingAdjustment: BigInt
+  public readonly baseRelaysPerPokt: BigInt
+  public readonly stabilityAdjustment: BigInt
   public readonly participationRateOn: boolean
 
   /**
@@ -41,15 +45,15 @@ export class ApplicationParams {
     unstakingTime: string,
     maxApplications: BigInt,
     appStakeMin: BigInt,
-    baselineThroughputStakeRate: BigInt,
-    stakingAdjustment: BigInt,
+    baseRelaysPerPokt: BigInt,
+    stabilityAdjustment: BigInt,
     participationRateOn: boolean
   ) {
     this.unstakingTime = unstakingTime
     this.maxApplications = maxApplications
     this.appStakeMin = appStakeMin
-    this.baselineThroughputStakeRate = baselineThroughputStakeRate
-    this.stakingAdjustment = stakingAdjustment
+    this.baseRelaysPerPokt = baseRelaysPerPokt
+    this.stabilityAdjustment = stabilityAdjustment
     this.participationRateOn = participationRateOn
 
     if (!this.isValid()) {
@@ -64,11 +68,11 @@ export class ApplicationParams {
    */
   public toJSON() {
     return {
-      app_stake_min: this.appStakeMin.toString(16),
-      baseline_throughput_stake_rate: this.baselineThroughputStakeRate.toString(16),
-      max_applications: this.maxApplications.toString(16),
+      app_stake_minimum: Number(this.appStakeMin.toString()),
+      base_relays_per_pokt: Number(this.baseRelaysPerPokt.toString()),
+      max_applications: Number(this.maxApplications.toString()),
       participation_rate_on: this.participationRateOn,
-      staking_adjustment: this.stakingAdjustment.toString(16),
+      stability_adjustment: Number(this.stabilityAdjustment.toString()),
       unstaking_time: this.unstakingTime
     }
   }
@@ -80,8 +84,8 @@ export class ApplicationParams {
    */
   public isValid(): boolean {
     return this.appStakeMin !== undefined &&
-    this.baselineThroughputStakeRate !== undefined &&
+    this.baseRelaysPerPokt !== undefined &&
     this.maxApplications !== undefined &&
-    this.stakingAdjustment !== undefined
+    this.stabilityAdjustment !== undefined
   }
 }

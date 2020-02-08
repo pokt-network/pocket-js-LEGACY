@@ -14,9 +14,13 @@ export class QueryAppResponse {
    * @memberof QueryAppResponse
    */
   public static fromJSON(json: string): QueryAppResponse {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new QueryAppResponse(Application.fromJSON(JSON.stringify(jsonObject)))
+      return new QueryAppResponse(Application.fromJSON(JSON.stringify(jsonObject)))
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly application: Application

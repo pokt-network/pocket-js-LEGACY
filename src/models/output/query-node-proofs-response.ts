@@ -24,8 +24,7 @@ export class QueryNodeProofsResponse {
       if (proofs !== undefined) {
         return new QueryNodeProofsResponse(proofs as StoredProof[])
       } else {
-        // TODO: Handle undefined scenario properly
-        return new QueryNodeProofsResponse(jsonObject)
+        throw new Error("Failed to parse QueryNodeProofsResponse")
       }
     } catch (error) {
       throw error

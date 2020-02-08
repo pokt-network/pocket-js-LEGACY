@@ -26,7 +26,7 @@ export class SendResponse {
       throw error
     }
   }
-    /**
+  /**
    *
    * Creates a SendResponse object using Axios response
    * @param {any} response - Axios response.
