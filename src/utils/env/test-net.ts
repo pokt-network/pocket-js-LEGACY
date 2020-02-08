@@ -11,6 +11,6 @@ export class TestNet extends Environment {
         return this.ip + ':26657'
     }
     public getPOKTRPC(): string {
-        return this.ip + ':26657'
+        return this.ip + ':8081'
     }
 }

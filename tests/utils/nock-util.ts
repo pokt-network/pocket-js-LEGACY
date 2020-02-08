@@ -72,30 +72,30 @@ export class NockUtil {
         return this.nockRoute(enums.Routes.DISPATCH.toString(), code, response)
     }
 
-    public static mockGetBlock(code: number = 200): nock.Scope {
-        // Block
-        const genericHex = "f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5"
-        const version = new Consensus(BigInt(5), BigInt(6))
-        const partSetHeader = new PartSetHeader(BigInt(1), genericHex)
-        const blockID = new BlockID(genericHex, partSetHeader)
-        const blockHeader = new BlockHeader(version, genericHex, BigInt(5), "TIME",
-            BigInt(100), BigInt(10), blockID, genericHex,
-            genericHex, genericHex, genericHex, genericHex,
-            genericHex, genericHex, genericHex, genericHex)
-        const commitSignature = new CommitSignature(genericHex, BigInt(5), 10, blockID,
-            "TIME", genericHex, 10, genericHex)
-        const commit = new Commit(blockID, commitSignature)
-        const block = new Block(blockHeader, genericHex, genericHex, commit)
-        // Block Meta
-        const blockMeta = new BlockMeta(blockID, blockHeader)
-        // Generate query block response object
-        const blockResponse = {
-            block: block.toJSON(),
-            block_meta: blockMeta.toJSON()
-        }
-        const response = this.getResponseObject(blockResponse, code)
-        return this.nockRoute(enums.RPCRoutes.QueryBlock.toString(), code, response)
-    }
+    // public static mockGetBlock(code: number = 200): nock.Scope {
+    //     // Block
+    //     const genericHex = "f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5"
+    //     const version = new Consensus(BigInt(5), BigInt(6))
+    //     const partSetHeader = new PartSetHeader(BigInt(1), genericHex)
+    //     const blockID = new BlockID(genericHex, partSetHeader)
+    //     const blockHeader = new BlockHeader(version, genericHex, BigInt(5), "TIME",
+    //         BigInt(100), BigInt(10), blockID, genericHex,
+    //         genericHex, genericHex, genericHex, genericHex,
+    //         genericHex, genericHex, genericHex, genericHex)
+    //     const commitSignature = new CommitSignature(genericHex, BigInt(5), 10, blockID,
+    //         "TIME", genericHex, 10, genericHex)
+    //     const commit = new Commit(blockID, commitSignature)
+    //     const block = new Block(blockHeader, genericHex, genericHex, commit)
+    //     // Block Meta
+    //     const blockMeta = new BlockMeta(blockID, blockHeader)
+    //     // Generate query block response object
+    //     const blockResponse = {
+    //         block: block.toJSON(),
+    //         block_meta: blockMeta.toJSON()
+    //     }
+    //     const response = this.getResponseObject(blockResponse, code)
+    //     return this.nockRoute(enums.RPCRoutes.QueryBlock.toString(), code, response)
+    // }
 
     public static mockGetTx(code: number = 200): nock.Scope {
         // Data Setup

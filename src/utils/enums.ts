@@ -6,6 +6,7 @@ export enum Routes {
 }
 
 export enum RPCRoutes {
+  QueryAccount = Routes.VERSION + "/query/account",
   QueryBlock = Routes.VERSION + "/query/block",
   QueryTX = Routes.VERSION + "/query/tx",
   QueryHeight = Routes.VERSION + "/query/height",
