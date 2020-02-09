@@ -3,7 +3,7 @@ import { Node } from "./models/node"
 import { RequestManager } from "./request-manager"
 import { RelayPayload, RelayHeaders } from "./models/input/relay-payload"
 import { RelayRequest } from "./models/input/relay-request"
-import { Proof } from "./models/proof"
+import { RelayProof } from "./models/relay-proof"
 import { typeGuard } from "./utils/type-guard"
 import { RelayResponse } from "./models/output/relay-response"
 import { SessionManager } from "./utils/session-manager"
@@ -325,98 +325,92 @@ export class Pocket {
   public async sendRelay(
     data: string,
     blockchain: string,
-    headers: RelayHeaders | null,
     pocketAAT: PocketAAT,
     configuration: Configuration = this.configuration,
-    node?: Node,
+    headers?: RelayHeaders,
     method = "",
-    path = ""
-  ): Promise<RelayResponse | Error> {
+    path = "",
+    node?: Node
+  ): Promise<RelayResponse | RpcErrorResponse> {
     try {
-      // Relay Payload
-      const relayPayload = new RelayPayload(data, method, path, headers)
-      let activeNode
+      // Get the current session
+      const currentSessionOrError = await this.sessionManager.getCurrentSession(pocketAAT.applicationPublicKey, blockchain, configuration)
 
-      if (node === undefined) {
-        activeNode = this.getAnyNode()
-      } else {
-        activeNode = node
+      if (typeGuard(currentSessionOrError, RpcErrorResponse)) {
+        return currentSessionOrError as RpcErrorResponse
       }
 
-      if (!typeGuard(activeNode, Node)) {
-        return new Error(activeNode.message)
-      }
-      // Get block height
-      const blockHeightResponse = await RequestManager.getHeight(
-        activeNode,
-        configuration
-      )
+      // Set the currentSession
+      const currentSession = currentSessionOrError as Session
 
-      if (!typeGuard(blockHeightResponse, QueryHeightResponse)) {
-        return new Error(blockHeightResponse.message)
-      }
-      // Get current session
-      const sessionHeader = new SessionHeader(pocketAAT.applicationPublicKey, blockchain, blockHeightResponse.height)
-      const currentSession = await this.sessionManager.getCurrentSession(sessionHeader, configuration)
-
-      if (!typeGuard(currentSession, Session)) {
-        return new Error(currentSession.message)
-      }
-
-      // Check if node is provided or retrieve one
+      // Determine the service node
+      let serviceNode: Node
+      // Provide a random service node from the session
       if (node !== undefined) {
-        activeNode = node
-      } else {
-        // Session Node
-        activeNode = currentSession.getSessionNode()
-        if (!typeGuard(activeNode, Node)) {
-          return activeNode
+        if (currentSession.isNodeInSession(node)) {
+          serviceNode = node as Node
+        } else {
+          return new RpcErrorResponse("0", "Provided Node is not part of the current session for this application, check your PocketAAT")
         }
+      } else {
+        const serviceNodeOrError = currentSession.getSessionNode()
+        if (typeGuard(serviceNodeOrError, Error)) {
+          return RpcErrorResponse.fromError(serviceNodeOrError as Error)
+        }
+        serviceNode = serviceNodeOrError as Node
       }
 
-      // Create a Buffer from the applicationPublicKey in the pocketAAT
-      const applicationPublicKeyBuffer = Buffer.from(pocketAAT.applicationPublicKey, 'hex')
-      // Retrieve the addressHex from the publicKeyBuffer
-      const addressHex = addressFromPublickey(applicationPublicKeyBuffer).toString("hex")
-      // Create a proof object
-      const proofIndex = BigInt(Math.floor(Math.random() * 99999999999999999))
-      const relayProof = new Proof(
-        proofIndex,
+      // Final Service Node check
+      if (serviceNode === undefined) {
+        return new RpcErrorResponse("0", "Could not determine a Service Node to submit this relay")
+      }
+
+      // Create Relay Payload
+      const relayPayload = new RelayPayload(data, method, path, headers)
+
+      // Check if account is available for signing
+      const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
+      const isUnlocked = await this.keybase.isUnlocked(clientAddressHex)
+      if (!isUnlocked) {
+        return new RpcErrorResponse("0", "Client account " + clientAddressHex + " for this AAT is not unlocked")
+      }
+
+      // Produce signature payload
+      const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
+      const proofBytes = RelayProof.bytes(
+        entropy,
         currentSession.sessionHeader.sessionBlockHeight,
-        activeNode.publicKey,
+        serviceNode.publicKey,
         blockchain,
         pocketAAT
       )
-      // Generate sha3 hash of the relay proof object
-      const hash = sha3_256.create()
-      hash.update(JSON.stringify(relayProof.toJSON()))
-      // Create a relay proof buffer
-      const relayProofBuffer = Buffer.from(hash.hex(), 'hex')
-      const signedRelayProof = await this.signWithUnlockedAccount(addressHex, relayProofBuffer)
-      // Create a relay request with the new signature
-      const proof = new Proof(
-        proofIndex,
+
+      // Sign
+      const signatureOrError = await this.keybase.signWithUnlockedAccount(clientAddressHex, proofBytes)
+      if (typeGuard(signatureOrError, Error)) {
+        return new RpcErrorResponse("0", "Error signing Relay proof")
+      }
+      const signature = signatureOrError as Buffer
+      const signatureHex = signature.toString("hex")
+
+      // Produce RelayProof
+      const relayProof = new RelayProof(
+        entropy,
         currentSession.sessionHeader.sessionBlockHeight,
-        activeNode.publicKey,
+        serviceNode.publicKey,
         blockchain,
         pocketAAT,
-        signedRelayProof.toString("hex")
+        signatureHex
       )
 
       // Relay to be sent
-      const relay = new RelayRequest(relayPayload, proof)
+      const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
-      const relayResponse = await RequestManager.relay(
+      return await RequestManager.relay(
         relay,
-        activeNode,
+        serviceNode,
         configuration
       )
-      // Increase session relay count
-      // Return response
-      if (!typeGuard(relayResponse, RelayResponse)) {
-        return new Error(relayResponse.message)
-      }
-      return relayResponse
     } catch (error) {
       return error
     }
@@ -477,7 +471,7 @@ export class Pocket {
     node?: Node
   ): Promise<QueryTXResponse | Error> {
     let activeNode
-    
+
     if (!Hex.isHex(txHash) && Hex.byteLength(txHash) !== 20) {
       return new Error("Invalid Address Hex")
     }

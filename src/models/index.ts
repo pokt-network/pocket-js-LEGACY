@@ -19,7 +19,7 @@ export * from './node-params';
 export * from './node';
 export * from './part-set-header';
 export * from './pocket-params';
-export * from './proof';
+export * from './relay-proof';
 export * from './routing';
 export * from './simple-proof';
 export * from './stored-proof';

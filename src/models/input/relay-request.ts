@@ -1,4 +1,4 @@
-import { Proof } from "../proof"
+import { RelayProof } from "../relay-proof"
 import { RelayPayload } from "./relay-payload"
 /**
  *
@@ -18,7 +18,7 @@ export class RelayRequest {
       const jsonObject = JSON.parse(json)
       return new RelayRequest(
         RelayPayload.fromJSON(JSON.stringify(jsonObject.payload)),
-        Proof.fromJSON(JSON.stringify(jsonObject.proof))
+        RelayProof.fromJSON(JSON.stringify(jsonObject.proof))
       )
     } catch (error) {
       throw error
@@ -26,15 +26,15 @@ export class RelayRequest {
   }
 
   public readonly payload: RelayPayload
-  public readonly proof: Proof
+  public readonly proof: RelayProof
 
   /**
    * Relay Request.
    * @constructor
    * @param {RelayPayload} payload - Relay payload.
-   * @param {Proof} proof - Proof object.
+   * @param {RelayProof} proof - Proof object.
    */
-  constructor(payload: RelayPayload, proof: Proof) {
+  constructor(payload: RelayPayload, proof: RelayProof) {
     this.payload = payload
     this.proof = proof
 

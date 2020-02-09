@@ -49,8 +49,10 @@ export class SessionManager {
    * @memberof SessionManager
    */
   public async requestCurrentSession(
-    header: SessionHeader,
-    configuration: Configuration
+    applicationPubKey: string, 
+    chain: string,
+    configuration: Configuration,
+    sessionBlockHeight: BigInt = BigInt(0)
   ): Promise<Session | RpcErrorResponse> {
     const node = this.routingTable.getNode()
 
@@ -61,12 +63,13 @@ export class SessionManager {
       )
     }
     
-    if(!this.sessionMap.has(header.chain)) {
-      this.sessionMap.set(header.chain, new Queue())
+    if(!this.sessionMap.has(chain)) {
+      this.sessionMap.set(chain, new Queue())
     }
+    const header = new SessionHeader(applicationPubKey, chain, sessionBlockHeight)
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await RequestManager.dispatch(dispatchRequest, node as Node, configuration)
-    const sessionQueue = this.sessionMap.get(header.chain) as Queue<Session>
+    const sessionQueue = this.sessionMap.get(chain) as Queue<Session>
 
     if (typeGuard(result, DispatchResponse)) {
       const session: Session = Session.fromJSON(
@@ -80,7 +83,7 @@ export class SessionManager {
           this.saveCurrentSession(header, configuration) 
         }
 
-        return this.getCurrentSession(header, configuration)
+        return this.getCurrentSession(applicationPubKey, chain, configuration, sessionBlockHeight)
       }
       return new RpcErrorResponse(
         "500",
@@ -98,13 +101,13 @@ export class SessionManager {
    * @returns {Promise}
    * @memberof SessionManager
    */
-  public async getCurrentSession(header: SessionHeader, configuration: Configuration): Promise<Session | RpcErrorResponse> {
+  public async getCurrentSession(applicationPubKey: string, chain: string, configuration: Configuration, sessionBlockHeight: BigInt = BigInt(0)): Promise<Session | RpcErrorResponse> {
 
-    if(!this.sessionMap.has(header.chain)){
-      return await this.requestCurrentSession(header, configuration)
+    if(!this.sessionMap.has(chain)){
+      return await this.requestCurrentSession(applicationPubKey, chain, configuration, sessionBlockHeight)
     }
 
-    const currentSession = (this.sessionMap.get(header.chain) as Queue<Session>).front
+    const currentSession = (this.sessionMap.get(chain) as Queue<Session>).front
     if (currentSession !== undefined) {
       return currentSession
     }
@@ -128,7 +131,7 @@ export class SessionManager {
    * @memberof SessionManager
    */
   private async saveCurrentSession(header: SessionHeader, configuration: Configuration): Promise< RpcErrorResponse | undefined > {
-    const currentSession = await this.getCurrentSession(header, configuration)
+    const currentSession = await this.getCurrentSession(header.applicationPubKey, header.chain, configuration, header.sessionBlockHeight)
 
     if (typeGuard(currentSession, Session)) {
       if(!this.store.has(this.sessionMapKey)) {

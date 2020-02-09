@@ -1,20 +1,21 @@
 import { PocketAAT } from "pocket-aat-js"
 import { Hex } from "../utils"
+import { sha3_256 } from "js-sha3"
 
 /**
  *
  *
  * @class Proof
  */
-export class Proof {
+export class RelayProof {
   /**
    *
    * Creates a Proof object using a JSON string
    * @param {string} json - JSON string.
-   * @returns {Proof} - Proof object.
+   * @returns {RelayProof} - Proof object.
    * @memberof Proof
    */
-  public static fromJSON(json: string): Proof {
+  public static fromJSON(json: string): RelayProof {
     try {
       const jsonObject = JSON.parse(json)
 
@@ -28,7 +29,7 @@ export class Proof {
           jsonObject.token.applicationSignature
         )
 
-        return new Proof(
+        return new RelayProof(
           jsonObject.entropy,
           jsonObject.session_block_height,
           jsonObject.servicer_pub_key,
@@ -43,6 +44,43 @@ export class Proof {
       throw new Error("Failed to retrieve PocketAAT for Proof with error: " + error)
     }
   }
+
+  public static bytes(
+    entropy: BigInt,
+    sessionBlockHeight: BigInt,
+    servicePubKey: string,
+    blockchain: string,
+    token: PocketAAT
+  ): Buffer {
+    var proofJSON = {
+      entropy: Number(entropy.toString()),
+      session_block_height: Number(sessionBlockHeight.toString()),
+      servicer_pub_key: servicePubKey,
+      blockchain: blockchain,
+      signature: "",
+      token: RelayProof.hashAAT(token)
+    }
+    var proofJSONStr = JSON.stringify(proofJSON)
+    // Hash proofJSONStr
+    const hash = sha3_256.create()
+    hash.update(proofJSONStr)
+    return Buffer.from(hash.hex(), "hex")
+  }
+
+  private static hashAAT(aat: PocketAAT): string {
+    var aatObj = {
+      version: aat.version,
+      app_address: aat.applicationPublicKey,
+      client_pub_key: aat.clientPublicKey,
+      signature: ""
+    }
+    // Generate sha3 hash of the aat payload object
+    const hash = sha3_256.create()
+    hash.update(JSON.stringify(aatObj))
+    return hash.hex()
+  }
+
+  
 
   public readonly entropy: BigInt
   public readonly sessionBlockHeight: BigInt
@@ -67,7 +105,7 @@ export class Proof {
     servicePubKey: string,
     blockchain: string,
     token: PocketAAT,
-    signature: string = ""
+    signature: string
   ) {
     this.entropy = entropy
     this.sessionBlockHeight = sessionBlockHeight
@@ -80,6 +118,7 @@ export class Proof {
       throw new TypeError("Invalid Proof properties.")
     }
   }
+
   /**
    *
    * Creates a JSON object with the Proof properties
@@ -92,13 +131,13 @@ export class Proof {
       session_block_height: Number(this.sessionBlockHeight.toString()),
       servicer_pub_key: this.servicePubKey,
       blockchain: this.blockchain,
-      signature: this.signature,
       aat: {
         version: this.token.version,
         app_address: this.token.applicationPublicKey,
         client_pub_key: this.token.clientPublicKey,
         signature: this.token.applicationSignature
-      }
+      },
+      signature: this.signature
     }
   }
   /**

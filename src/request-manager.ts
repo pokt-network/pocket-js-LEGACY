@@ -70,6 +70,7 @@ export abstract class RequestManager {
         )
       }
     } catch (err) {
+      console.dir(err, { colors: true, depth: null })
       return new RpcErrorResponse("0", err)
     }
   }
@@ -872,7 +873,9 @@ export abstract class RequestManager {
         timeout: configuration.requestTimeOut
       })
       // Await response
+      console.dir(payload, { colors: true, depth: null })
       const response = await axiosInstance.post(path, payload)
+      console.dir(response, { colors: true, depth: null })
       // Create SendResponse object
       const sendResponse = SendResponse.fromAxiosResponse(response)
       // If successs 200
@@ -885,6 +888,7 @@ export abstract class RequestManager {
         )
       }
     } catch (error) {
+      console.dir(error, { colors: true, depth: null })
       throw error
     }
   }
