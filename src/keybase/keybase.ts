@@ -1,6 +1,6 @@
-import { Account } from "../models/account"
+import { Account } from "./models/account"
 import * as ed25519 from "ed25519"
-import { UnlockedAccount } from "../models/unlocked-account"
+import { UnlockedAccount } from "./models/unlocked-account"
 import * as pbkdf2 from "pbkdf2"
 import { sha256 } from "js-sha256"
 import * as aesjs from "aes-js"
