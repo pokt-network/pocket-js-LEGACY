@@ -6,22 +6,24 @@
 // Constants
 import { expect } from 'chai'
 import { Pocket } from '../../src/pocket'
-import { Routing } from "../../src/models/routing"
+import { RoutingTable } from "../../src/models/routing"
 import { Node } from "../../src/models/node"
 import { BondStatus } from "../../src/models/output/bond-status"
 import { Configuration } from "../../src/models/configuration"
+import { InMemoryKVStore } from '../../src'
 // For Testing we are using dummy data, none of the following information is real.
 const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const applicationPublicKey = 'd9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
 const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), "http://127.0.0.1:80", ["ETH04", "ETH01"])
+const store = new InMemoryKVStore()
 
 describe('Routing Table tests',() => {
     it('should initialize a routing table', () => {
         const configuration = new Configuration([node01], 5, 40000, 200)
         
-        const routing = new Routing( [node01], configuration)
+        const routing = new RoutingTable([node01], configuration, store)
 
-        expect(routing).to.be.an.instanceof(Routing)
+        expect(routing).to.be.an.instanceof(RoutingTable)
     }).timeout(0)
 
     it('should fail to initialize a routing table due to excessive nodes', () => {
@@ -33,12 +35,12 @@ describe('Routing Table tests',() => {
             nodes.push(additionalNode)
         }
 
-        expect(() => new Routing(nodes, configuration)).to.throw("Routing table cannot contain more than the specified maxNodes per blockchain.")
+        expect(() => new RoutingTable(nodes, configuration, store)).to.throw("Routing table cannot contain more than the specified maxNodes per blockchain.")
     }).timeout(0)
 
     it('should be able to read a specific node from the routing table', () => {
         const configuration = new Configuration([node01], 5, 40000, 200)
-        const routing = new Routing([node01], configuration)
+        const routing = new RoutingTable([node01], configuration, store)
         const readNode = routing.readNode(addressHex)
         
         expect(readNode).to.be.an.instanceof(Node)
@@ -47,7 +49,7 @@ describe('Routing Table tests',() => {
     it('should be able to add a node to the routing table', () => {
         const configuration = new Configuration([node01], 5, 40000, 200)
         
-        const routing = new Routing([node01], configuration)
+        const routing = new RoutingTable([node01], configuration, store)
         const secondaryNode = new Node(
             "00071BAF5B4E01BE52E5007EACF7048F24BF5000", "ccc7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2cc",
             false, BondStatus.bonded, BigInt(0), "http://127.0.0.1:80", ["ETH04", "ETH01"]
@@ -61,7 +63,7 @@ describe('Routing Table tests',() => {
     it('should be able to delete a node from the routing table', () => {
         const configuration = new Configuration([node01], 5, 40000, 200)
 
-        const routing = new Routing([node01], configuration)
+        const routing = new RoutingTable([node01], configuration, store)
         routing.deleteNode(node01)
         
         expect(() => routing.readNode(addressHex)).to.throw("Node not found in routing table.")
@@ -70,7 +72,7 @@ describe('Routing Table tests',() => {
     it('should not allow more than the max number of nodes per blockchain to be added to the routing table', () => {
         const configuration = new Configuration([node01], 5, 40000, 200)
 
-        const routing = new Routing([node01], configuration)
+        const routing = new RoutingTable([node01], configuration, store)
         // Add more than the currently allowed since one was added already above
         for(let i = 0; i < configuration.maxNodes; i++) {
             const secondaryNode = new Node(
@@ -85,7 +87,7 @@ describe('Routing Table tests',() => {
     it('should be able to read a random node from the routing table', () => {
         const configuration = new Configuration([node01], 5, 40000, 200)
         
-        const routing = new Routing([node01], configuration)
+        const routing = new RoutingTable([node01], configuration, store)
 
         const readNode = routing.readRandomNode()
         expect(readNode).to.be.an.instanceof(Node)
@@ -95,7 +97,7 @@ describe('Routing Table tests',() => {
         const configuration = new Configuration([node01], 5, 40000, 200)
         
     
-        const routing = new Routing([node01], configuration)
+        const routing = new RoutingTable([node01], configuration, store)
 
         for(let i = 2; i <= configuration.maxNodes; i++) {
             const secondaryNode = new Node(

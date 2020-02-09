@@ -17,7 +17,7 @@
 
 //         // Generate client account
 //         const clientPassphrase = "1234"
-//         const clientAccountOrError = await pocket.createAccount(clientPassphrase)
+//         const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
 //         expect(typeGuard(clientAccountOrError, Error)).to.be.false
 //         const clientAccount = clientAccountOrError as Account
 //         const error = await pocket.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)

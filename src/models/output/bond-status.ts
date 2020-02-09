@@ -10,7 +10,7 @@ export enum BondStatus {
   unbonded
 }
 
-export namespace BondStatus {
+export namespace BondStatusUtil {
   export function getStatus(status: string): BondStatus {
     switch (status) {
       case "bonded":

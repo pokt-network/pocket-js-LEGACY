@@ -1,4 +1,4 @@
-import { BondStatus } from "./output/bond-status"
+import { BondStatus, BondStatusUtil } from "./output/bond-status"
 import { Hex } from "../utils/hex"
 
 /**
@@ -10,7 +10,7 @@ export class Node {
   public static fromJSON(json: string): Node {
     try {
       const jsonObject = JSON.parse(json)
-      const status: BondStatus = BondStatus.getStatus(jsonObject.status)
+      const status: BondStatus = BondStatusUtil.getStatus(jsonObject.status)
   
       return new Node(
         jsonObject.address,

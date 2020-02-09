@@ -1,10 +1,8 @@
 import { expect } from 'chai'
-import { Pocket } from '../../src/pocket'
 import {
-    Configuration, BondStatus, Node, Account, ITransactionSender, typeGuard, RpcErrorResponse
+    Pocket, BondStatus, Configuration, Account, ITransactionSender, 
+    typeGuard, RpcErrorResponse, Node, CoinDenom, RawTxResponse
 } from '../../src'
-import { CoinDenom } from '../../src/models/coin-denom'
-import { RawTxResponse } from '../../src/models/output/raw-tx-response'
 import { NockUtil } from '../utils/nock-util'
 import { LocalNet } from '../../src/utils/env'
 
@@ -112,7 +110,7 @@ describe("Pocket Transactions Tests", function() {
                         
                         // Create the account
                         const passphrase = "1234"
-                        const accountOrError = await pocket.createAccount(passphrase)
+                        const accountOrError = await pocket.keybase.createAccount(passphrase)
                         const account = accountOrError as Account
                         
                         // Create the transaction sender
@@ -136,7 +134,7 @@ describe("Pocket Transactions Tests", function() {
                         // Create the account
                         const passphrase = "1234"
                         const wrongPassphrase = "12345678"
-                        const accountOrError = await pocket.createAccount(passphrase)
+                        const accountOrError = await pocket.keybase.createAccount(passphrase)
                         const account = accountOrError as Account
 
                         // Create the transaction sender
@@ -150,7 +148,7 @@ describe("Pocket Transactions Tests", function() {
                         // Wrong address scenario
                         // Create the account
                         const passphrase = "1234"
-                        await pocket.createAccount(passphrase)
+                        await pocket.keybase.createAccount(passphrase)
                         const wrongAddress = "wrong"
 
                         // Create the transaction sender
@@ -173,7 +171,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -195,7 +193,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -212,7 +210,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -229,7 +227,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -246,7 +244,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -263,7 +261,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -280,7 +278,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -297,7 +295,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -318,7 +316,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -340,7 +338,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -357,7 +355,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -378,7 +376,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -400,7 +398,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -417,7 +415,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -434,7 +432,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -455,7 +453,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -477,7 +475,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -494,7 +492,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -515,7 +513,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -537,7 +535,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -554,7 +552,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -575,7 +573,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -597,7 +595,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -614,7 +612,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -631,7 +629,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -648,7 +646,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -669,7 +667,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -691,7 +689,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -708,7 +706,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -729,7 +727,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -751,7 +749,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
@@ -768,7 +766,7 @@ describe("Pocket Transactions Tests", function() {
 
                     // Create the account
                     const passphrase = "1234"
-                    const accountOrError = await pocket.createAccount(passphrase)
+                    const accountOrError = await pocket.keybase.createAccount(passphrase)
                     const account = accountOrError as Account
 
                     // Create the transaction sender
