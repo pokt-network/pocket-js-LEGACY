@@ -53,6 +53,6 @@ export class QueryAppsResponse {
     this.applications.forEach(app => {
       appListJSON.push(app)
     })
-    return { apps: JSON.parse(JSON.stringify(appListJSON)) }
+    return JSON.parse(JSON.stringify(appListJSON))
   }
 }

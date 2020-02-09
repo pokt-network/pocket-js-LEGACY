@@ -13,7 +13,31 @@ import {
     NodeProof,
     Application,
     ApplicationParams,
-    PocketParams
+    PocketParams,
+    PartSetHeader,
+    BlockID,
+    BlockHeader,
+    BlockMeta,
+    Block,
+    CommitSignature,
+    Commit,
+    QueryBlockResponse,
+    QueryAccountResponse,
+    QueryTXResponse,
+    QueryHeightResponse,
+    QueryBalanceResponse,
+    QueryNodesResponse,
+    QueryNodeResponse,
+    QueryNodeParamsResponse,
+    NodeParams,
+    QueryNodeProofsResponse,
+    QueryNodeProofResponse,
+    QueryAppsResponse,
+    QueryAppResponse,
+    QueryAppParamsResponse,
+    QueryPocketParamsResponse,
+    QuerySupportedChainsResponse,
+    QuerySupplyResponse
 } from '../../src'
 import { SessionHeader } from '../../src/rpc/models/input/session-header'
 import { RelayProof } from '../../src/rpc/models/relay-proof'
@@ -67,56 +91,68 @@ export class NockUtil {
         return this.nockRoute(enums.V1RPCRoutes.ClientDispatch.toString(), code, response)
     }
 
-    // public static mockGetBlock(code: number = 200): nock.Scope {
-    //     // Block
-    //     const genericHex = "f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5"
-    //     const version = new Consensus(BigInt(5), BigInt(6))
-    //     const partSetHeader = new PartSetHeader(BigInt(1), genericHex)
-    //     const blockID = new BlockID(genericHex, partSetHeader)
-    //     const blockHeader = new BlockHeader(version, genericHex, BigInt(5), "TIME",
-    //         BigInt(100), BigInt(10), blockID, genericHex,
-    //         genericHex, genericHex, genericHex, genericHex,
-    //         genericHex, genericHex, genericHex, genericHex)
-    //     const commitSignature = new CommitSignature(genericHex, BigInt(5), 10, blockID,
-    //         "TIME", genericHex, 10, genericHex)
-    //     const commit = new Commit(blockID, commitSignature)
-    //     const block = new Block(blockHeader, genericHex, genericHex, commit)
-    //     // Block Meta
-    //     const blockMeta = new BlockMeta(blockID, blockHeader)
-    //     // Generate query block response object
-    //     const blockResponse = {
-    //         block: block.toJSON(),
-    //         block_meta: blockMeta.toJSON()
-    //     }
-    //     const response = this.getResponseObject(blockResponse, code)
-    //     return this.nockRoute(enums.RPCRoutes.QueryBlock.toString(), code, response)
-    // }
+     public static mockGetBlock(code: number = 200): nock.Scope {
+        const genericHex = "f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5"
+        const partSetHeader = new PartSetHeader(BigInt(1), genericHex)
+        const blockID = new BlockID(genericHex, partSetHeader)
+        const blockHeader = new BlockHeader("ETH04", BigInt(5), "TIME",
+                 BigInt(100), BigInt(10), blockID, genericHex,
+                 genericHex, genericHex, genericHex, genericHex,
+                 genericHex, genericHex, genericHex, genericHex)
+        const commitSignature = new CommitSignature(genericHex, BigInt(5), 10, blockID,
+                 "TIME", genericHex, 10, genericHex)
+        const commit = new Commit(blockID, [commitSignature])
 
+
+        const blockMeta = new BlockMeta(blockID, blockHeader)
+        const block = new Block(blockHeader, genericHex, genericHex, commit)
+
+        const queryBlockResponse = new QueryBlockResponse(blockMeta, block)
+        
+        const data: any = this.createData(code, queryBlockResponse.toJSON())
+        const response = this.getResponseObject(data, code)
+
+        return this.nockRoute(enums.V1RPCRoutes.QueryBlock.toString(), code, response)
+     }
+
+    
+    public static mockGetAccount(code: number = 200): nock.Scope {
+        const queryAccountResponse = new QueryAccountResponse({
+            address: "E9769C199E5A35A64CE342493F351DEBDD0E4633"
+        })
+
+        const data: any = this.createData(code, queryAccountResponse.toJSON())
+        const response = this.getResponseObject(data, code)
+
+        return this.nockRoute(enums.V1RPCRoutes.QueryAccount.toString(), code, response)
+    }
+    
     public static mockGetTx(code: number = 200): nock.Scope {
-        // Data Setup
         const hash = "f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5"
         const txHex: Hex = hash
         const simpleProof = new SimpleProof(BigInt(10), BigInt(1), txHex, [txHex])
         const txProof = new TxProof(hash, "data", simpleProof)
         const tx = new Transaction(hash, BigInt(3), BigInt(1), txHex, txProof)
-        const data: any = this.createData(code, tx.toJSON())
 
+        const queryTXResponse = new QueryTXResponse(tx)
+
+        const data: any = this.createData(code, queryTXResponse.toJSON())
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryTX.toString(), code, response)
     }
 
     public static mockGetHeight(code: number = 200): nock.Scope {
-        const data: any = this.createData(code, {
-            height: '5n'
-        })
+        const queryHeightResponse = new QueryHeightResponse(BigInt(1))
+        const data: any = this.createData(code, queryHeightResponse.toJSON())
+
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryHeight.toString(), code, response)
     }
 
     public static mockGetBalance(code: number = 200): nock.Scope {
-        const data: any = this.createData(code, {
-            balance: '100n'
-        })
+        const queryBalanceResponse = new QueryBalanceResponse(BigInt(100))
+
+        const data: any = this.createData(code, queryBalanceResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
         return this.nockRoute(enums.V1RPCRoutes.QueryBalance.toString(), code, response)
@@ -127,9 +163,9 @@ export class NockUtil {
             BigInt(100), "http://127.0.0.1:80", ["ETH01", "ETH02"])
         const node02 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
             BigInt(100), "http://127.0.0.2:80", ["ETH01", "ETH02"])
-        const data: any = this.createData(code, {
-            nodes: [node01.toJSON(), node02.toJSON()]
-        })
+
+        const queryNodesResponse = new QueryNodesResponse([node01, node02])
+        const data: any = this.createData(code, queryNodesResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryNodes.toString(), code, response)
@@ -138,28 +174,19 @@ export class NockUtil {
     public static mockGetNode(code: number = 200): nock.Scope {
         const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
             BigInt(100), "http://127.0.0.1:80", ["ETH01", "ETH02"])
-        const data: any = this.createData(code, node01.toJSON())
+        
+        const queryNodeResponse = new QueryNodeResponse(node01)
+        const data: any = this.createData(code, queryNodeResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryNode.toString(), code, response)
     }
 
     public static mockGetNodeParams(code: number = 200): nock.Scope {
-        const data: any = this.createData(code, {
-            downtime_jail_duration: BigInt(101).toString(16),
-            max_evidence_age: BigInt(111).toString(16),
-            max_validator: BigInt(10).toString(16),
-            min_signed_per_window: BigInt(1).toString(16),
-            proposer_reward_percentage: 50,
-            relays_to_tokens: BigInt(2).toString(16),
-            session_block: BigInt(5).toString(16),
-            signed_blocks_window: BigInt(3).toString(16),
-            slash_fraction_double_sign: BigInt(1).toString(16),
-            slash_fraction_downtime: BigInt(10).toString(16),
-            stake_denom: 'stake_denom',
-            stake_minimum: BigInt(1).toString(16),
-            unstaking_time: BigInt(1000).toString(16)
-        })
+        const nodeParams = new NodeParams(BigInt(101), BigInt(10), BigInt(10), BigInt(5), BigInt(1000), 'stake_denom', BigInt(1), BigInt(111), BigInt(3), 1, BigInt(101), 1, 10)
+        const queryNodeParamsResponse = new QueryNodeParamsResponse(nodeParams)
+
+        const data: any = this.createData(code, queryNodeParamsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryNodeParams.toString(), code, response)
@@ -169,7 +196,9 @@ export class NockUtil {
         const sessionHeader = new SessionHeader(applicationPublicKey, "ETH04", BigInt(5))
         const storedProof01 = new StoredProof(sessionHeader, addressHex, BigInt(100))
         const storedProof02 = new StoredProof(sessionHeader, addressHex, BigInt(200))
-        const data: any = this.createData(code, [storedProof01.toJSON(), storedProof02.toJSON()])
+
+        const queryNodeProofsResponse = new QueryNodeProofsResponse([storedProof01, storedProof02])
+        const data: any = this.createData(code, queryNodeProofsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryNodeProofs.toString(), code, response)
@@ -177,7 +206,9 @@ export class NockUtil {
 
     public static mockGetNodeProof(code: number = 200): nock.Scope {
         const nodeProof = new NodeProof(addressHex, "ETH04", applicationPublicKey, BigInt(5), BigInt(5))
-        const data: any = this.createData(code, nodeProof.toJSON())
+        const queryNodeProofResponse = new QueryNodeProofResponse(nodeProof)
+        const data: any = this.createData(code, queryNodeProofResponse.toJSON())
+
         const response = this.getResponseObject(data, code)
 
         return this.nockRoute(enums.V1RPCRoutes.QueryNodeProof.toString(), code, response)
@@ -187,7 +218,8 @@ export class NockUtil {
         const app01 = new Application(addressHex, applicationPublicKey, false, BondStatus.bonded, ["ETH04"], BigInt(100), BigInt(1000))
         const app02 = new Application(addressHex, applicationPublicKey, false, BondStatus.unbonded, ["ETH04"], BigInt(200), BigInt(2000))
 
-        const data: any = this.createData(code, [app01.toJSON(), app02.toJSON()])
+        const queryAppsResponse = new QueryAppsResponse([app01, app02])
+        const data: any = this.createData(code, queryAppsResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
         return this.nockRoute(enums.V1RPCRoutes.QueryApps.toString(), code, response)
@@ -195,8 +227,9 @@ export class NockUtil {
 
     public static mockGetApp(code: number = 200): nock.Scope {
         const app01 = new Application(addressHex, applicationPublicKey, false, BondStatus.bonded, ["ETH04"], BigInt(100), BigInt(1000))
+        const queryAppResponse = new QueryAppResponse(app01)
 
-        const data: any = this.createData(code, app01.toJSON())
+        const data: any = this.createData(code, queryAppResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
         return this.nockRoute(enums.V1RPCRoutes.QueryApp.toString(), code, response)
@@ -204,7 +237,9 @@ export class NockUtil {
 
     public static mockGetAppParams(code: number = 200): nock.Scope {
         const appParams = new ApplicationParams("0101", BigInt(10), BigInt(1), BigInt(20), BigInt(1), true)
-        const data: any = this.createData(code, appParams.toJSON())
+        const queryAppParamsResponse = new QueryAppParamsResponse(appParams)
+
+        const data: any = this.createData(code, queryAppParamsResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
         return this.nockRoute(enums.V1RPCRoutes.QueryAppParams.toString(), code, response)
@@ -212,29 +247,25 @@ export class NockUtil {
 
     public static mockGetPocketParams(code: number = 200): nock.Scope {
         const pocketParams = new PocketParams(BigInt(50), BigInt(5), ["ETH04"], BigInt(500))
-        const data: any = this.createData(code, pocketParams.toJSON())
+        const queryPocketParamsResponse = new QueryPocketParamsResponse(pocketParams)
+        const data: any = this.createData(code, queryPocketParamsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryPocketParams.toString(), code, response)
     }
 
     public static mockGetSupportedChains(code: number = 200): nock.Scope {
-        const supportedChains = ["ETH04", "ETH01"]
-        const data: any = this.createData(code, supportedChains)
+        const querySupportedChainsResponse = new QuerySupportedChainsResponse(["ETH04", "ETH01"])
+        const data: any = this.createData(code, querySupportedChainsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QuerySupportedChains.toString(), code, response)
     }
 
     public static mockGetSupply(code: number = 200): nock.Scope {
-        const data: any = this.createData(code, {
-            app_staked: BigInt(100).toString(16),
-            dao: BigInt(2300).toString(16),
-            node_staked: BigInt(10).toString(16),
-            total: BigInt(100).toString(16),
-            total_staked: BigInt(100).toString(16),
-            total_unstaked: BigInt(10).toString(16)
-        })
+        const querySupplyResponse = new QuerySupplyResponse(BigInt(10), BigInt(100), BigInt(2300), BigInt(100), BigInt(10), BigInt(100))
+
+        const data: any = this.createData(code, querySupplyResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QuerySupply.toString(), code, response)

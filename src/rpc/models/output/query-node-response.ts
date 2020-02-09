@@ -39,7 +39,7 @@ export class QueryNodeResponse {
    * @memberof QueryNodeResponse
    */
   public toJSON() {
-    return { Node: this.node.toJSON() }
+    return this.node.toJSON()
   }
   /**
    *
