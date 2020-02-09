@@ -10,7 +10,7 @@ import { typeGuard } from "../utils/type-guard"
  *
  * @class Routing
  */
-export class Routing {
+export class RoutingTable {
   public readonly configuration: Configuration
   public readonly localNodesFileName = ""
   private readonly nodesKey: string = "NODES_KEY"
@@ -21,7 +21,7 @@ export class Routing {
    * @param {Configuration} configuration - Configuration object.
    * @memberof Routing
    */
-  constructor(nodes: Node[] = [], configuration: Configuration, store: IKVStore = new InMemoryKVStore()) {
+  constructor(nodes: Node[] = [], configuration: Configuration, store: IKVStore) {
     if (nodes.length > configuration.maxNodes) {
       throw new Error(
         "Routing table cannot contain more than the specified maxNodes per blockchain."

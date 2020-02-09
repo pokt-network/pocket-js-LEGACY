@@ -10,7 +10,7 @@ import { RequestManager } from "../request-manager"
 import { DispatchRequest } from "../models/input/dispatch-request"
 import { typeGuard } from "../utils/type-guard"
 import { Queue } from "./structure/queue"
-import { Routing } from "../models/routing"
+import { RoutingTable } from "../models/routing"
 
 /**
  *
@@ -22,16 +22,16 @@ import { Routing } from "../models/routing"
 export class SessionManager {
   private readonly store: IKVStore
   private readonly sessionMap: Map<string, Queue<Session>>
-  private readonly routingTable: Routing
+  private readonly routingTable: RoutingTable
   private readonly sessionMapKey: string = "SESSIONS_KEY"
 
   /**
    * Creates an instance of SessionManager.
-   * @param {Routing} routingTable - Element that supplies a default list of node(s) .
+   * @param {RoutingTable} routingTable - Element that supplies a default list of node(s) .
    * @param {IKVStore} store - KVStore implementation.
    * @memberof SessionManager
    */
-  constructor(routingTable: Routing, store: IKVStore = new InMemoryKVStore()) {
+  constructor(routingTable: RoutingTable, store: IKVStore) {
     this.store = store
     this.routingTable = routingTable
     this.sessionMap = new Map()

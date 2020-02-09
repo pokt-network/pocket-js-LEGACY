@@ -65,50 +65,50 @@ describe("Pocket Interface functionalities", async () => {
             }
         }).timeout(0)
 
-        it('should create an account using a passphrase', async () => {
-            const passphrase = "passphrase123"
-            const pocket = new Pocket(configuration)
-            const account = await pocket.createAccount(passphrase)
+        // it('should create an account using a passphrase', async () => {
+        //     const passphrase = "passphrase123"
+        //     const pocket = new Pocket(configuration)
+        //     const account = await pocket.keybase.createAccount(passphrase)
 
-            expect(account).to.not.be.an.instanceof(Error)
-            expect(account).to.be.an.instanceof(Account)
-        }).timeout(0)
+        //     expect(account).to.not.be.an.instanceof(Error)
+        //     expect(account).to.be.an.instanceof(Account)
+        // }).timeout(0)
 
-        it('should import an account using a passphrase', async () => {
-            const passphrase = "passphrase123"
-            const pocket = new Pocket(configuration)
+        // it('should import an account using a passphrase', async () => {
+        //     const passphrase = "passphrase123"
+        //     const pocket = new Pocket(configuration)
 
-            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
+        //     const importedAccount = await pocket.keybase.importAccount(passphrase, applicationPrivateKey)
 
-            expect(importedAccount).to.not.be.an.instanceof(Error)
-            expect(importedAccount).to.be.an.instanceof(Account)
-        }).timeout(0)
+        //     expect(importedAccount).to.not.be.an.instanceof(Error)
+        //     expect(importedAccount).to.be.an.instanceof(Account)
+        // }).timeout(0)
 
-        it('should export an already imported account using a passphrase', async () => {
-            const passphrase = "passphrase123"
-            const pocket = new Pocket(configuration)
+        // it('should export an already imported account using a passphrase', async () => {
+        //     const passphrase = "passphrase123"
+        //     const pocket = new Pocket(configuration)
             
-            const importedAccount = await pocket.importAccount(passphrase, applicationPrivateKey)
+        //     const importedAccount = await pocket.keybase.importAccount(passphrase)
 
-            const exportedOrError = await pocket.exportAccount(importedAccount as Account, passphrase)
-            expect(exportedOrError).to.not.be.an.instanceof(Error)
-            expect(exportedOrError).to.be.an.instanceof(Buffer)
-        }).timeout(0)
+        //     const exportedOrError = await pocket.keybase.exportAccount(importedAccount as Account, passphrase)
+        //     expect(exportedOrError).to.not.be.an.instanceof(Error)
+        //     expect(exportedOrError).to.be.an.instanceof(Buffer)
+        // }).timeout(0)
 
-        it('should unlock an account using a passphrase', async () => {
-            const passphrase = "passphrase123"
-            const pocket = new Pocket(configuration)
-            const account = await pocket.createAccount(passphrase)
+        // it('should unlock an account using a passphrase', async () => {
+        //     const passphrase = "passphrase123"
+        //     const pocket = new Pocket(configuration)
+        //     const account = await pocket.createAccount(passphrase)
 
-            expect(account).to.not.be.an.instanceof(Error)
-            expect(account).to.be.an.instanceof(Account)
+        //     expect(account).to.not.be.an.instanceof(Error)
+        //     expect(account).to.be.an.instanceof(Account)
 
-            const addressHex = (account as Account).addressHex
-            const result = await pocket.unlockAccount(addressHex, passphrase)
+        //     const addressHex = (account as Account).addressHex
+        //     const result = await pocket.unlockAccount(addressHex, passphrase)
             
-            expect(result).to.not.be.an.instanceof(Error)
+        //     expect(result).to.not.be.an.instanceof(Error)
 
-        }).timeout(0)
+        // }).timeout(0)
 
         // it('should sign a relay proof with an unlocked account', async () => {
         //     const passphrase = "passphrase123"
@@ -153,7 +153,7 @@ describe("Pocket Interface functionalities", async () => {
         it('should successfully retrieve an account information', async () => {
             const pocket = new Pocket(configuration)
 
-            const accountResponse = await pocket.queryGetAccount("E9769C199E5A35A64CE342493F351DEBDD0E4633")
+            const accountResponse = await pocket.getAccount("E9769C199E5A35A64CE342493F351DEBDD0E4633")
             expect(accountResponse).to.be.instanceOf(QueryAccountResponse)
         }).timeout(0)
 

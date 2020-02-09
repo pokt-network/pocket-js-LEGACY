@@ -7,12 +7,11 @@ import { RelayProof } from "./models/relay-proof"
 import { typeGuard } from "./utils/type-guard"
 import { RelayResponse } from "./models/output/relay-response"
 import { SessionManager } from "./utils/session-manager"
-import { SessionHeader } from "./models/input/session-header"
 import { RpcErrorResponse } from "./models/output/rpc-error-response"
 import { Session } from "./models/output/session"
 import { Keybase } from "./keybase/keybase"
 import { Account } from "./models/account"
-import { Routing } from "./models/routing"
+import { RoutingTable } from "./models/routing"
 import { QueryBlockResponse } from "./models/output/query-block-response"
 import { QueryTXResponse } from "./models/output/query-tx-response"
 import { QueryHeightResponse } from "./models/output/query-height-response"
@@ -30,9 +29,8 @@ import { QueryAppParamsResponse } from "./models/output/query-app-params-respons
 import { QueryPocketParamsResponse } from "./models/output/query-pocket-params-response"
 import { QuerySupportedChainsResponse } from "./models/output/query-supported-chains-response"
 import { QuerySupplyResponse } from "./models/output/query-supply-response"
-import { InMemoryKVStore, addressFromPublickey, Hex, validatePrivateKey, publicKeyFromPrivate } from "./utils"
+import { InMemoryKVStore, addressFromPublickey, Hex, validatePrivateKey, publicKeyFromPrivate, IKVStore } from "./utils"
 import { PocketAAT } from "pocket-aat-js"
-import { sha3_256 } from "js-sha3"
 import { RawTxResponse } from "./models/output/raw-tx-response"
 import { CoinDenom } from "./models/coin-denom"
 import { MsgSend, MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, MsgNodeUnstake, MsgNodeUnjail } from "./models/amino/msgs"
@@ -287,9 +285,9 @@ export class Pocket {
     }
   }
   public readonly configuration: Configuration
+  public readonly keybase: Keybase
+  private readonly routingTable: RoutingTable
   private readonly sessionManager: SessionManager
-  private readonly routingTable: Routing
-  private readonly keybase: Keybase = new Keybase(new InMemoryKVStore())
 
   /**
    * Creates an instance of Pocket.
@@ -298,14 +296,16 @@ export class Pocket {
    */
   constructor(
     configuration: Configuration,
+    store: IKVStore = new InMemoryKVStore()
   ) {
     this.configuration = configuration
     try {
-      this.routingTable = new Routing(configuration.nodes, configuration)
+      this.routingTable = new RoutingTable(configuration.nodes, configuration, store)
     } catch (error) {
       throw error
     }
-    this.sessionManager = new SessionManager(this.routingTable)
+    this.sessionManager = new SessionManager(this.routingTable, store)
+    this.keybase = new Keybase(store)
   }
 
   /**
@@ -501,7 +501,7 @@ export class Pocket {
    * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @memberof RequestManager
    */
-  public async queryGetAccount(
+  public async getAccount(
     address: string,
     configuration = this.configuration,
     node?: Node
@@ -1108,153 +1108,6 @@ export class Pocket {
     }
   }
 
-  /**
-   * Creates an account
-   * @param {string} passphrase - Account passphrase.
-   * @returns {Account} - Account.
-   * @memberof Pocket
-   */
-  public async createAccount(passphrase: string): Promise<Account | Error> {
-    return await this.keybase.createAccount(passphrase)
-  }
-  /**
-   * Unlock an account for passphrase free signing of arbitrary payloads using `signWithUnlockedAccount`
-   * @param addressHex The address of the account that will be unlocked in hex string format
-   * @param passphrase The passphrase of the account to unlock
-   * @param unlockPeriod The amount of time (in ms) the account is going to be unlocked, defaults to 10 minutes. Use 0 to keep it unlocked indefinetely
-   * @memberof Pocket
-   */
-  public async unlockAccount(
-    addressHex: string,
-    passphrase: string,
-    unlockPeriod = 600000
-  ): Promise<Error | undefined> {
-    return await this.keybase.unlockAccount(addressHex, passphrase, unlockPeriod)
-  }
-  /**
-   * Signs a payload with an unlocked account stored in this keybase
-   * @param {string} passphrase - Account passphrase.
-   * @returns {Account} - Account.
-   * @memberof Pocket
-   */
-  public async signWithUnlockedAccount(
-    addressHex: string,
-    payload: Buffer
-  ): Promise<Buffer | Error> {
-    return await this.keybase.signWithUnlockedAccount(addressHex, payload)
-  }
-  /**
-   * Lists all the accounts stored in this keybase
-   * @returns {Account} - List of Accounts.
-   * @memberof Pocket
-   */
-  public async listAccounts(): Promise<Account[] | Error> {
-    return await this.keybase.listAccounts()
-  }
-  /**
-   * Retrieves a single account from this keybase
-   * @param addressHex The address of the account to retrieve in hex string format
-   */
-  public async getAccount(addressHex: string): Promise<Account | Error> {
-    return await this.keybase.getAccount(addressHex)
-  }
-  /**
-   * Deletes an account stored in the keybase
-   * @param addressHex The address of the account to delete in hex string format
-   * @param passphrase The passphrase for the account in this keybase
-   */
-  public async deleteAccount(
-    addressHex: string,
-    passphrase: string
-  ): Promise<Error | undefined> {
-    return await this.keybase.deleteAccount(addressHex, passphrase)
-  }
-  /**
-   *
-   * @param addressHex The address of the account to update in hex string format
-   * @param passphrase The passphrase of the account
-   * @param newPassphrase The new passphrase that the account will be updated to
-   */
-  public async updateAccountPassphrase(
-    addressHex: string,
-    passphrase: string,
-    newPassphrase: string
-  ): Promise<Error | undefined> {
-    return await this.keybase.updateAccountPassphrase(addressHex, passphrase, newPassphrase)
-  }
-  /**
-   * Import account from the keybase using a passphrase.
-   * @param {string} passphrase - Account passphrase.
-   * @param {string} privateKey - Account privateKey.
-   * @returns {Account} - Account.
-   * @memberof Pocket
-   */
-  public async importAccount(
-    passphrase: string,
-    privateKey: string
-  ): Promise<Account | Error> {
-    const importedAccountOrError = await this.keybase.importAccount(
-      Buffer.from(privateKey, "hex"),
-      passphrase
-    )
-    return importedAccountOrError
-  }
-  /**
-   * Import and unlock an account.
-   * @param {string} passphrase - Account passphrase.
-   * @param {string} privateKey - Account privateKey.
-   * @returns {Account} - Account.
-   * @memberof Pocket
-   */
-  public async importAndUnlockAccount(
-    passphrase: string,
-    privateKey: string,
-    unlockPeriod = 600000
-  ): Promise<Account | Error> {
-    // Import account
-    const importedAccount = await this.importAccount(passphrase, privateKey)
-    // Check if importedAccount is not an Account type
-    if (!typeGuard(importedAccount, Account)) {
-      // return error
-      return importedAccount
-    }
-    // Unlock account
-    const unlockAccount = await this.unlockAccount(importedAccount.addressHex, passphrase, unlockPeriod)
-    // Check if unlockAccount is not an Account type
-    if (typeGuard(unlockAccount, Error)) {
-      // return error
-      return unlockAccount
-    }
-    return importedAccount
-  }
-  /**
-   * Export account to retrieve the private key.
-   * @param {Account} blockchain - Account object.
-   * @param {string} passphrase - Account passphrase.
-   * @returns {Buffer} - Private Key buffer.
-   * @memberof Pocket
-   */
-  public async exportAccount(
-    account: Account,
-    passphrase: string
-  ): Promise<Buffer | Error> {
-
-    // Export the private key
-    const privateKey = await this.keybase.exportAccount(
-      account.addressHex,
-      passphrase
-    )
-    // Check if is type Buffer
-    if (!typeGuard(privateKey, Buffer)) {
-      return privateKey
-    }
-    // Check private key length
-    if (privateKey.length === 64) {
-      return privateKey
-    } else {
-      return new Error("Failed to export account")
-    }
-  }
   /**
    * Get a node from the routing table.
    * @returns {Node} - New Node.

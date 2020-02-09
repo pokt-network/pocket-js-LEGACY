@@ -55,7 +55,7 @@ export class Session {
    * @returns {boolean} whether or not the node is part of this session
    */
   public isNodeInSession(node: Node): boolean {
-    for(var i = 0; i < this.sessionNodes.length; i++) {
+    for(let i = 0; i < this.sessionNodes.length; i++) {
       const sessionNode = this.sessionNodes[i]
       if (sessionNode.address.toUpperCase() === node.address.toUpperCase()) {
         return true

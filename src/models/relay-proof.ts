@@ -52,7 +52,7 @@ export class RelayProof {
     blockchain: string,
     token: PocketAAT
   ): Buffer {
-    var proofJSON = {
+    const proofJSON = {
       entropy: Number(entropy.toString()),
       session_block_height: Number(sessionBlockHeight.toString()),
       servicer_pub_key: servicePubKey,
@@ -60,7 +60,7 @@ export class RelayProof {
       signature: "",
       token: RelayProof.hashAAT(token)
     }
-    var proofJSONStr = JSON.stringify(proofJSON)
+    const proofJSONStr = JSON.stringify(proofJSON)
     // Hash proofJSONStr
     const hash = sha3_256.create()
     hash.update(proofJSONStr)
@@ -68,7 +68,7 @@ export class RelayProof {
   }
 
   private static hashAAT(aat: PocketAAT): string {
-    var aatObj = {
+    const aatObj = {
       version: aat.version,
       app_address: aat.applicationPublicKey,
       client_pub_key: aat.clientPublicKey,
