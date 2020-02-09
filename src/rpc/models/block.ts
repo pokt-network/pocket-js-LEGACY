@@ -1,4 +1,3 @@
-import { Hex } from "../utils/hex"
 import { BlockHeader } from "./block-header"
 import { Commit } from "./commit"
 

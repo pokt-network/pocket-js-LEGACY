@@ -1,8 +1,8 @@
 import { IAminoEncodable } from "./amino-encodable"
 import { PosmintStdSignDoc } from "@pokt-network/amino-js/types/src/types/pocket"
 import { TxMsg } from "./msgs/tx-msg"
-import { CoinDenom } from "../../models/coin-denom"
 import { marshalPosmintStdSignDoc } from "@pokt-network/amino-js"
+import { CoinDenom } from "./coin-denom"
 
 /**
  * Model to represent a StdSignDoc which produces the bytes to sign for a given Transaction

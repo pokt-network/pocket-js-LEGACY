@@ -6,13 +6,13 @@ import { sha256 } from "js-sha256"
 import * as aesjs from "aes-js"
 import seedrandom from "seedrandom"
 import { typeGuard } from "../utils/type-guard"
-import { IKVStore } from "../utils"
 import {
     addressFromPublickey,
     publicKeyFromPrivate,
     validatePrivateKey,
     validateAddressHex
 } from "../utils/key-pair"
+import { IKVStore } from ".."
 
 /**
  * @author Luis C. de León <luis@pokt.network>

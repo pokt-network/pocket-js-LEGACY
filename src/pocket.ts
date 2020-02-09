@@ -1,23 +1,13 @@
 import { Configuration } from "./config"
-import { Node } from "./rpc/models/node"
-import { RPC } from "./rpc/rpc"
-import { RelayPayload, RelayHeaders } from "./rpc/models/input/relay-payload"
-import { RelayRequest } from "./rpc/models/input/relay-request"
-import { RelayProof } from "./rpc/models/relay-proof"
-import { typeGuard } from "./utils/type-guard"
-import { RelayResponse } from "./rpc/models/output/relay-response"
+import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session } from "./rpc/models"
+import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate, typeGuard } from "./utils"
 import { SessionManager } from "./session/session-manager"
-import { RpcError } from "./rpc/errors/rpc-error"
-import { Session } from "./rpc/models/output/session"
+import { Node, RPC, IRPCProvider, RpcError } from "./rpc"
 import { Keybase } from "./keybase/keybase"
-import { Account } from "./keybase/models/account"
+import { UnlockedAccount, Account } from "./keybase/models"
 import { RoutingTable } from "./routing-table/routing-table"
-import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate } from "./utils"
 import { PocketAAT } from "pocket-aat-js"
-import { TransactionSigner, TransactionSender, ITransactionSender } from "./transactions"
-import { UnlockedAccount } from "./keybase/models"
-import { InMemoryKVStore, IKVStore } from "./storage"
-import { IRPCProvider } from "./rpc/providers"
+import { TransactionSender, TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore } from "./"
 
 /**
  *
@@ -28,16 +18,18 @@ export class Pocket {
   /**
    * Annonymous class which handles TxMsg encoding and Transaciton submission to the Network
    */
-  //private static TransactionSender = 
+  // private static TransactionSender = 
   public readonly configuration: Configuration
   public readonly keybase: Keybase
-  public readonly rpc = RPC
+  public readonly rpc: RPC
   private readonly routingTable: RoutingTable
   private readonly sessionManager: SessionManager
 
   /**
    * Creates an instance of Pocket.
-   * @param {Object} opts - Options for the initializer, devID, networkName, netIDs, maxNodes, requestTimeOut.
+   * @param {Configuration} configuration - Configuration object.
+   * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
+   * @param {IKVStore} store - Save data using a Key/Value relationship. This object save information in memory.
    * @memberof Pocket
    */
   constructor(
@@ -53,6 +45,7 @@ export class Pocket {
     }
     this.sessionManager = new SessionManager(this.routingTable, store)
     this.keybase = new Keybase(store)
+    this.rpc = new RPC(rpcProvider)
   }
 
   /**
@@ -153,10 +146,8 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
-      return await RPC.Client.relay(
-        relay,
-        serviceNode,
-        configuration
+      return await this.rpc.client.relay(
+        relay
       )
     } catch (error) {
       return error

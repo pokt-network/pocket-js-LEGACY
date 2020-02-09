@@ -18,7 +18,6 @@ export * from './part-set-header';
 export * from './pocket-params';
 export * from './relay-proof';
 export * from './routes';
-export * from './send-response';
 export * from './simple-proof';
 export * from './staking-status';
 export * from './stored-proof';

@@ -11,12 +11,12 @@ export class ClientNamespace {
     }
 
     /**
-   * Method to call the v1/client/rawtx endpoint of a given node
-   * @param fromAddress {Buffer | string} The address of the sender
-   * @param tx {Buffer | string} The amino encoded transaction bytes
-   * @param node {Node}
-   * @param configuration {Configuration}
-   */
+     * Method to call the v1/client/rawtx endpoint of a given node
+     * @param fromAddress {Buffer | string} The address of the sender
+     * @param tx {Buffer | string} The amino encoded transaction bytes
+     * @param node {Node}
+     * @param configuration {Configuration}
+     */
     public async rawtx(
         fromAddress: Buffer | string,
         tx: Buffer | string,
@@ -86,18 +86,16 @@ export class ClientNamespace {
         timeout: number = 60000
     ): Promise<DispatchResponse | RpcError> {
         try {
-            const response = await this.rpcProvider.send(V1RPCRoutes.ClientDispatch.toString(), JSON.stringify(request.toJSON()), timeout)
-            // const response = await RPC.send(
-            //     V1RPCRoutes.ClientDispatch.toString(),
-            //     request.toJSON(),
-            //     node,
-            //     configuration
-            // )
+            const response = await this.rpcProvider.send(
+                V1RPCRoutes.ClientDispatch.toString(),
+                JSON.stringify(request.toJSON()),
+                timeout
+            )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const dispatchResponse = DispatchResponse.fromJSON(
-                    response.data as string
+                    response
                 )
                 return dispatchResponse
             } else {
