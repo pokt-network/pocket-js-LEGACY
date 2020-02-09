@@ -1,5 +1,5 @@
 import { BondStatus, BondStatusUtil } from "./bond-status"
-import { Hex } from "../utils/hex"
+import { Hex } from "../.."
 /**
  *
  *

@@ -10,17 +10,15 @@ export class QueryNamespace {
     }
 
     /**
-   *
-   * Query a Block information
-   * @param {BigInt} blockHeight - Block's number.
-   * @param {Node} node - Node that will receive the relay.
-   * @param {Configuration} configuration - Configuration object containing preferences information.
-   * @memberof RequestManager
-   */
+     *
+     * Query a Block information
+     * @param {BigInt} blockHeight - Block's number.
+     * @param {Node} node - Node that will receive the relay.
+     * @param {Configuration} configuration - Configuration object containing preferences information.
+     * @memberof RequestManager
+     */
     public async getBlock(
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryBlockResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -28,16 +26,15 @@ export class QueryNamespace {
             }
             const payload = JSON.stringify({ height: Number(blockHeight.toString()) })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryBlock.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryBlockResponse = QueryBlockResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryBlockResponse
             } else {
@@ -59,9 +56,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getTX(
-        txHash: string,
-        node: Node,
-        configuration: Configuration
+        txHash: string, timeout: number = 60000
     ): Promise<QueryTXResponse | RpcError> {
         try {
             if (!Hex.isHex(txHash) && Hex.byteLength(txHash) !== 20) {
@@ -70,17 +65,16 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({ hash: txHash })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryTX.toString().toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryTXResponse = QueryTXResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryTXResponse
             } else {
@@ -100,22 +94,19 @@ export class QueryNamespace {
      * @param {Configuration} configuration - Configuration object containing preferences information.
      * @memberof RequestManager
      */
-    public async getHeight(
-        node: Node,
-        configuration: Configuration
+    public async getHeight(timeout: number = 60000
     ): Promise<QueryHeightResponse | RpcError> {
         try {
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryHeight.toString(),
-                {},
-                node,
-                configuration
+                "",
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryHeightResponse = QueryHeightResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryHeightResponse
             } else {
@@ -139,9 +130,7 @@ export class QueryNamespace {
      */
     public async getBalance(
         address: string,
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryBalanceResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -152,19 +141,18 @@ export class QueryNamespace {
                 return new RpcError("0", "Invalid Address Hex")
             }
 
-            const payload = { "address": address, "height": Number(blockHeight.toString()) }
+            const payload = JSON.stringify({ "address": address, "height": Number(blockHeight.toString()) })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryBalance.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryBalanceResponse = QueryBalanceResponse.fromJSON(
-                    response.data as string
+                    response
                 )
                 return queryBalanceResponse
             } else {
@@ -188,31 +176,28 @@ export class QueryNamespace {
      */
     public async getNodes(
         stakingStatus: StakingStatus,
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryNodesResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
                 return new RpcError("101", "block height can't be lower than 0")
             }
 
-            const payload = {
+            const payload = JSON.stringify({
                 height: Number(blockHeight.toString()),
                 staking_status: stakingStatus
-            }
+            })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodes.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryNodesResponse = QueryNodesResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryNodesResponse
             } else {
@@ -236,9 +221,7 @@ export class QueryNamespace {
      */
     public async getNode(
         address: string,
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryNodeResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -254,17 +237,16 @@ export class QueryNamespace {
                 height: Number(blockHeight.toString())
             })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNode.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryNodeResponse = QueryNodeResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryNodeResponse
             } else {
@@ -286,9 +268,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getNodeParams(
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryNodeParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -297,17 +277,16 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({ height: Number(blockHeight.toString()) })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeParams.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryNodeParamsResponse = QueryNodeParamsResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryNodeParamsResponse
             } else {
@@ -331,9 +310,7 @@ export class QueryNamespace {
      */
     public async getNodeProofs(
         address: string,
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryNodeProofsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -349,18 +326,17 @@ export class QueryNamespace {
                 height: Number(blockHeight.toString())
             })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeProofs.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
 
                 const queryNodeProofsResponse = QueryNodeProofsResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryNodeProofsResponse
             } else {
@@ -382,9 +358,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getNodeProof(
-        nodeProof: NodeProof,
-        node: Node,
-        configuration: Configuration
+        nodeProof: NodeProof, timeout: number = 60000
     ): Promise<QueryNodeProofResponse | RpcError> {
         try {
             if (!nodeProof.isValid()) {
@@ -393,18 +367,17 @@ export class QueryNamespace {
 
             const payload = JSON.stringify(nodeProof.toJSON())
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeProof.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
 
                 const queryNodeProofResponse = QueryNodeProofResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryNodeProofResponse
             } else {
@@ -428,9 +401,7 @@ export class QueryNamespace {
      */
     public async getApps(
         stakingStatus: StakingStatus,
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryAppsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -442,18 +413,17 @@ export class QueryNamespace {
                 staking_status: stakingStatus
             })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryApps.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
 
                 const queryAppsResponse = QueryAppsResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryAppsResponse
             } else {
@@ -477,9 +447,7 @@ export class QueryNamespace {
      */
     public async getApp(
         address: string,
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryAppResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -495,17 +463,16 @@ export class QueryNamespace {
                 height: Number(blockHeight.toString())
             })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryApp.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryAppResponse = QueryAppResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryAppResponse
             } else {
@@ -527,9 +494,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getAppParams(
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryAppParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -538,17 +503,16 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({ height: Number(blockHeight.toString()) })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryAppParams.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryAppParamsResponse = QueryAppParamsResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryAppParamsResponse
             } else {
@@ -570,9 +534,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getPocketParams(
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QueryPocketParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -581,18 +543,17 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({ height: Number(blockHeight.toString()) })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryPocketParams.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
 
                 const queryPocketParamsResponse = QueryPocketParamsResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return queryPocketParamsResponse
             } else {
@@ -614,9 +575,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getSupportedChains(
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QuerySupportedChainsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -625,18 +584,17 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({ height: Number(blockHeight.toString()) })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QuerySupportedChains.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
 
                 const querySupportedChainsResponse = QuerySupportedChainsResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return querySupportedChainsResponse
             } else {
@@ -658,9 +616,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getSupply(
-        blockHeight: BigInt = BigInt(0),
-        node: Node,
-        configuration: Configuration
+        blockHeight: BigInt = BigInt(0), timeout: number = 60000
     ): Promise<QuerySupplyResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -669,17 +625,16 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({ height: Number(blockHeight.toString()) })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QuerySupply.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const querySupplyResponse = QuerySupplyResponse.fromJSON(
-                    JSON.stringify(response.data)
+                    response
                 )
                 return querySupplyResponse
             } else {
@@ -702,9 +657,7 @@ export class QueryNamespace {
      * @memberof RequestManager
      */
     public async getAccount(
-        address: string,
-        node: Node,
-        configuration: Configuration
+        address: string, timeout: number = 60000
     ): Promise<QueryAccountResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -713,17 +666,16 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({ address: address })
 
-            const response = await RPC.send(
+            const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryAccount.toString(),
                 payload,
-                node,
-                configuration
+                timeout
             )
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const queryAccountResponse = QueryAccountResponse.fromJSON(
-                    response.data
+                    response
                 )
                 return queryAccountResponse
             } else {

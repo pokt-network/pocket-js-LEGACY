@@ -1,4 +1,8 @@
-import { ITransactionSender, TxMsg, TransactionSigner, CoinDenom, StdSignDoc, TxSignature, StdTx, MsgSend, MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, MsgNodeUnstake, MsgNodeUnjail, TransactionSignature } from "."
+import { TxMsg, CoinDenom, StdSignDoc, TxSignature, StdTx, MsgSend, 
+    MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, 
+    MsgNodeUnstake, MsgNodeUnjail, TransactionSignature 
+} from "./models/"
+import { ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount } from "../keybase/models"
 import { Pocket, Configuration, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase } from ".."
 import { Node } from "../rpc/models"
@@ -48,6 +52,10 @@ export class TransactionSender implements ITransactionSender {
         configuration?: Configuration
     ): Promise<RawTxResponse | RpcError> {
         try {
+            let config = this.pocket.configuration
+            if (configuration) {
+                config = configuration
+            }
             if (this.txMsgErrors.length === 1) {
                 return RpcError.fromError(this.txMsgErrors[0])
             } else if (this.txMsgErrors.length > 1) {
@@ -78,7 +86,7 @@ export class TransactionSender implements ITransactionSender {
             const encodedTxBytes = transaction.marshalAmino()
             // Clean messages accumulated on submit
             this.txMgs = []
-            return this.pocket.sendRawTx(addressHex, encodedTxBytes, node, configuration)
+            return this.pocket.rpc.client.rawtx(addressHex, encodedTxBytes, config.requestTimeOut)
         } catch (error) {
             return error
         }
@@ -104,7 +112,6 @@ export class TransactionSender implements ITransactionSender {
         }
         return this
     }
-
 
     /**
      * Adds a MsgAppStake TxMsg for this transaction

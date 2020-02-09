@@ -1,5 +1,5 @@
-import { Hex } from "../utils/hex"
 import { PartSetHeader } from "./part-set-header"
+import { Hex } from "../../utils/hex"
 
 /**
  *

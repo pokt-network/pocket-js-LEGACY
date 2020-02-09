@@ -1,5 +1,5 @@
 import { TxMsg } from "./tx-msg"
-import { CoinDenom } from "../../../models"
+import { CoinDenom } from "../coin-denom"
 
 /**
  * Model representing a MsgSend to send POKT from one account to another

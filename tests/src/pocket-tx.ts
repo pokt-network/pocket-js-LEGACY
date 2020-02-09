@@ -1,11 +1,11 @@
 import { expect } from 'chai'
 import {
-    Pocket, BondStatus, Configuration, Account, ITransactionSender, 
-    typeGuard, RpcError, Node, CoinDenom, RawTxResponse
+    Pocket, BondStatus, Configuration, ITransactionSender, 
+    typeGuard, RpcError, Node, CoinDenom, RawTxResponse, HttpRpcProvider
 } from '../../src'
 import { NockUtil } from '../utils/nock-util'
 import { LocalNet } from '../../src/utils/env'
-
+import { Account } from '../../src/keybase/models'
 const env = new LocalNet()
 const nodeAddress = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const nodePublicKey = "d9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb"
@@ -16,10 +16,15 @@ function defaultConfiguration(): Configuration {
 }
 
 function createPocketInstance(configuration?: Configuration): Pocket {
+    
     if(configuration === undefined) {
-        return new Pocket(defaultConfiguration())
+        const baseURL = new URL(defaultConfiguration().nodes[0].serviceURL)
+        const rpcProvider = new HttpRpcProvider(baseURL)
+        return new Pocket(defaultConfiguration(), rpcProvider)
     } else {
-        return new Pocket(configuration as Configuration)
+        const baseURL = new URL(configuration.nodes[0].serviceURL)
+        const rpcProvider = new HttpRpcProvider(baseURL)
+        return new Pocket(configuration, rpcProvider)
     }
 }
 
@@ -32,7 +37,7 @@ describe("Pocket Transactions Tests", function() {
                 const pocket = createPocketInstance()
                 const senderAddressHex = "11AD05777C30F529C3FD3753AD5D0EA97192716E"
                 const txHex = "c001db0b170d0a3c939866b00a1411ad05777c30f529c3fd3753ad5d0ea97192716e12149e8e373ff27ec202f82d07df64f388ff42f9516d1a0a0a04706f6b7412023130120b0a04706f6b7412033130301a690a259d54477420917fe8e7fc02ceabddfbb10168dcd6885180d9f2db8855dbe063f6c5f7f93c9c12402c40788aac1e27539647a14a447d89966ab5fa6d4380c2b24a839c91be0106fbae55b76a9168a780108a40466b85b190ef12b9b6db6a879f6daa3b70b090100a22046c6f6c6f"
-                const response = await pocket.sendRawTx(senderAddressHex, txHex, pocket.configuration.nodes[0])
+                const response = await pocket.rpc.client.rawtx(senderAddressHex, txHex, pocket.configuration.requestTimeOut)
                 expect(response).not.to.be.a('error')
             })
         })
@@ -45,13 +50,13 @@ describe("Pocket Transactions Tests", function() {
                 const pocket = createPocketInstance()
                 let senderAddressHex = "11AD05777C30F529C3FD3753AD5D0EA9719271"
                 let txHex = "c001db0b170d0a3c939866b00a1411ad05777c30f529c3fd3753ad5d0ea97192716e12149e8e373ff27ec202f82d07df64f388ff42f9516d1a0a0a04706f6b7412023130120b0a04706f6b7412033130301a690a259d54477420917fe8e7fc02ceabddfbb10168dcd6885180d9f2db8855dbe063f6c5f7f93c9c12402c40788aac1e27539647a14a447d89966ab5fa6d4380c2b24a839c91be0106fbae55b76a9168a780108a40466b85b190ef12b9b6db6a879f6daa3b70b090100a22046c6f6c6f"
-                const invalidResponse = await pocket.sendRawTx(senderAddressHex, txHex, pocket.configuration.nodes[0])
+                const invalidResponse = await pocket.rpc.client.rawtx(senderAddressHex, txHex, pocket.configuration.requestTimeOut)
                 expect(typeGuard(invalidResponse, RpcError)).to.be.true
 
                 // Empty address
                 senderAddressHex = ""
                 txHex = "c001db0b170d0a3c939866b00a1411ad05777c30f529c3fd3753ad5d0ea97192716e12149e8e373ff27ec202f82d07df64f388ff42f9516d1a0a0a04706f6b7412023130120b0a04706f6b7412033130301a690a259d54477420917fe8e7fc02ceabddfbb10168dcd6885180d9f2db8855dbe063f6c5f7f93c9c12402c40788aac1e27539647a14a447d89966ab5fa6d4380c2b24a839c91be0106fbae55b76a9168a780108a40466b85b190ef12b9b6db6a879f6daa3b70b090100a22046c6f6c6f"
-                const emptyResponse = await pocket.sendRawTx(senderAddressHex, txHex, pocket.configuration.nodes[0])
+                const emptyResponse = await pocket.rpc.client.rawtx(senderAddressHex, txHex, pocket.configuration.requestTimeOut)
                 expect(typeGuard(emptyResponse, RpcError)).to.be.true
             })
 
@@ -61,7 +66,7 @@ describe("Pocket Transactions Tests", function() {
                 const pocket = createPocketInstance()
                 const senderAddressHex = "11AD05777C30F529C3FD3753AD5D0EA9719271"
                 const txHex = ""
-                const response = await pocket.sendRawTx(senderAddressHex, txHex, pocket.configuration.nodes[0])
+                const response = await pocket.rpc.client.rawtx(senderAddressHex, txHex, pocket.configuration.requestTimeOut)
                 expect(typeGuard(response, RpcError)).to.be.true
             })
         })

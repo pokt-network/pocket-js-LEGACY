@@ -2,9 +2,6 @@ import nock from 'nock'
 import enums = require("../../src/rpc/models/routes")
 import { LocalNet } from "../../src/utils/env"
 import {
-    Block,
-    Consensus, BlockID, PartSetHeader, Commit,
-    CommitSignature,
     PocketAAT,
     Transaction,
     Hex,
@@ -18,8 +15,6 @@ import {
     ApplicationParams,
     PocketParams
 } from '../../src'
-import { BlockHeader } from '../../src/models/block-header'
-import { BlockMeta } from '../../src/models/block-meta'
 import { SessionHeader } from '../../src/rpc/models/input/session-header'
 import { RelayProof } from '../../src/rpc/models/relay-proof'
 
@@ -52,7 +47,7 @@ export class NockUtil {
         })
         
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.Routes.RELAY.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.ClientRelay.toString(), code, response)
     }
 
     public static mockDispatch(code: number = 200): nock.Scope {
@@ -69,7 +64,7 @@ export class NockUtil {
         })
         
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.Routes.DISPATCH.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.ClientDispatch.toString(), code, response)
     }
 
     // public static mockGetBlock(code: number = 200): nock.Scope {

@@ -1,4 +1,4 @@
-import { RpcError } from "../models";
+import { RpcError } from "../errors/rpc-error"
 
 /**
  * Describes a provider which will be used by the RPC class to reach out to the Pocket Core RPC interface

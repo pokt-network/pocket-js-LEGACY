@@ -1,5 +1,4 @@
 import { BlockID } from "./block-id"
-import { Hex } from "../utils"
 
 /**
  *

@@ -1,4 +1,4 @@
-import { TransactionSignature } from "./models/transaction-signature";
+import { TransactionSignature } from "./models/transaction-signature"
 
 /**
  * Interface function for custom transaction signer object

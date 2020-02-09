@@ -10,6 +10,7 @@ import { DispatchRequest } from "../rpc/models/input/dispatch-request"
 import { typeGuard } from "../utils/type-guard"
 import { Queue } from "./queue"
 import { RoutingTable } from "../routing-table/routing-table"
+import { HttpRpcProvider } from "../rpc"
 
 /**
  *
@@ -65,9 +66,10 @@ export class SessionManager {
     if(!this.sessionMap.has(chain)) {
       this.sessionMap.set(chain, new Queue())
     }
+    const rpc = new RPC(new HttpRpcProvider(new URL(node.serviceURL)))
     const header = new SessionHeader(applicationPubKey, chain, sessionBlockHeight)
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
-    const result = await RPC.Client.dispatch(dispatchRequest, node as Node, configuration)
+    const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut)
     const sessionQueue = this.sessionMap.get(chain) as Queue<Session>
 
     if (typeGuard(result, DispatchResponse)) {
