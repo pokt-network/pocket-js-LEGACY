@@ -42,9 +42,11 @@ export class QuerySupportedChainsResponse {
    * @memberof QuerySupportedChainsResponse
    */
   public toJSON() {
-    return {
-      supported_chains: this.supportedChains
-    }
+    const chainsJSON: string[] = []
+    this.supportedChains.forEach(chain => {
+      chainsJSON.push(chain)
+    })
+    return JSON.parse(JSON.stringify(chainsJSON))
   }
   /**
    *

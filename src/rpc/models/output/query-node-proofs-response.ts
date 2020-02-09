@@ -52,6 +52,6 @@ export class QueryNodeProofsResponse {
     this.stroredProofs.forEach(proof => {
       proofsListJSON.push(proof)
     })
-    return { proofs: JSON.parse(JSON.stringify(proofsListJSON)) }
+    return JSON.parse(JSON.stringify(proofsListJSON))
   }
 }
