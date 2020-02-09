@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Queue } from '../../src/utils/structure/queue'
+import { Queue } from '../../src/session/queue'
 
 describe('Queue Tests', () => {
     it('should create an empty queue', () => {

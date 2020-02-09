@@ -6,7 +6,7 @@
  */
 import { expect } from "chai"
 import { Keybase } from "../../../src/keybase/keybase"
-import { Account } from "../../../src/models/account"
+import { Account } from "../../../src/keybase/models/account"
 import { InMemoryKVStore } from "../../../src"
 
 /**

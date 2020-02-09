@@ -6,9 +6,9 @@
 // Constants
 import { expect } from 'chai'
 import { Pocket } from '../../src/pocket'
-import { RoutingTable } from "../../src/models/routing"
-import { Node } from "../../src/models/node"
-import { BondStatus } from "../../src/models/output/bond-status"
+import { RoutingTable } from "../../src/routing-table/routing-table"
+import { Node } from "../../src/rpc/models/node"
+import { BondStatus } from "../../src/models/bond-status"
 import { Configuration } from "../../src/models/configuration"
 import { InMemoryKVStore } from '../../src'
 // For Testing we are using dummy data, none of the following information is real.

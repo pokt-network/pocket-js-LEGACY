@@ -1,10 +1,6 @@
-export class TransactionSignature {
-    public readonly publicKey: Buffer
-    public readonly signature: Buffer
+import { TransactionSignature } from "./models/transaction-signature";
 
-    constructor(publicKey: Buffer, signature: Buffer) {
-        this.publicKey = publicKey
-        this.signature = signature
-    }
-}
+/**
+ * Interface function for custom transaction signer object
+ */
 export type TransactionSigner = (encodedTxBytes: Buffer) => TransactionSignature | Error
