@@ -1,4 +1,4 @@
-import { Proof } from "../proof"
+import { RelayProof } from "../relay-proof"
 /**
  *
  *
@@ -15,7 +15,7 @@ export class RelayResponse {
   public static fromJSON(json: string): RelayResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const proof = Proof.fromJSON(JSON.stringify(jsonObject.proof))
+      const proof = RelayProof.fromJSON(JSON.stringify(jsonObject.proof))
   
       return new RelayResponse(
         jsonObject.signature,
@@ -29,16 +29,16 @@ export class RelayResponse {
 
   public readonly signature: string
   public readonly response: string
-  public readonly proof: Proof
+  public readonly proof: RelayProof
 
   /**
    * Relay Response.
    * @constructor
    * @param {string} signature - Signature.
    * @param {string} response - Response string.
-   * @param {Proof} proof - Proof object.
+   * @param {RelayProof} proof - Proof object.
    */
-  constructor(signature: string, response: string, proof: Proof) {
+  constructor(signature: string, response: string, proof: RelayProof) {
     this.signature = signature
     this.response = response
     this.proof = proof

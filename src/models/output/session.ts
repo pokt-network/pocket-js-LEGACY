@@ -48,6 +48,21 @@ export class Session {
   public relayPlus(v: number) {
     this.relayCount = this.relayCount + v
   }
+
+  /**
+   * Returns whether or not a node is part of this session
+   * @param {Node} node the node to check
+   * @returns {boolean} whether or not the node is part of this session
+   */
+  public isNodeInSession(node: Node): boolean {
+    for(var i = 0; i < this.sessionNodes.length; i++) {
+      const sessionNode = this.sessionNodes[i]
+      if (sessionNode.address.toUpperCase() === node.address.toUpperCase()) {
+        return true
+      }
+    }
+    return false
+  }
   
   /**
    * Returns a random session node

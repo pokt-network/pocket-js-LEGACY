@@ -21,7 +21,7 @@ import {
 import { BlockHeader } from '../../src/models/block-header'
 import { BlockMeta } from '../../src/models/block-meta'
 import { SessionHeader } from '../../src/models/input/session-header'
-import { Proof } from '../../src/models/proof'
+import { RelayProof } from '../../src/models/relay-proof'
 
 const env = new LocalNet()
 const version = '0.0.1'
@@ -44,7 +44,7 @@ export class NockUtil {
 
     public static mockRelay(code: number = 200): nock.Scope {
         const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
-        const proof = new Proof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
+        const proof = new RelayProof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
         const data: any = this.createData(code, {
             proof: proof.toJSON(),
             response: 'response',

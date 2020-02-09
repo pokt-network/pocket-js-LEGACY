@@ -32,7 +32,7 @@ export class RelayPayload {
   public readonly data: string
   public readonly method: string
   public readonly path: string
-  public readonly headers: RelayHeaders | null
+  public readonly headers?: RelayHeaders
 
   /**
    * Relay Response.
@@ -46,7 +46,7 @@ export class RelayPayload {
     data: string,
     method: string,
     path: string,
-    headers: RelayHeaders | null
+    headers?: RelayHeaders
   ) {
     this.data = data
     this.method = method

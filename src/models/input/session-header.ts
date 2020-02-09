@@ -64,7 +64,7 @@ export class SessionHeader {
     return (
       this.applicationPubKey.length !== 0 &&
       this.chain.length !== 0 &&
-      Number(this.sessionBlockHeight.toString()) > 0
+      Number(this.sessionBlockHeight.toString()) >= 0
     )
   }
 }
