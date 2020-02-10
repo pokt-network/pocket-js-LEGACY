@@ -20,7 +20,7 @@ export class HttpRpcProvider implements IRPCProvider{
             })
             const response = await axiosInstance.post(path, payload)
             if (response.status === 200) {
-                return JSON.stringify(response.data.data)
+                return JSON.stringify(response.data)
             } else {
                 return new RpcError(response.status.toString(), JSON.stringify(response.data))
             }
