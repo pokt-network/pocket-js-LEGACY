@@ -14,7 +14,7 @@ export class QueryBalanceResponse {
   public static fromJSON(json: string): QueryBalanceResponse {
     try {
       let jsonObject = JSON.parse(json)
-      jsonObject = JSON.parse(jsonObject)
+
       return new QueryBalanceResponse(BigInt(jsonObject))
     } catch (error) {
       throw error

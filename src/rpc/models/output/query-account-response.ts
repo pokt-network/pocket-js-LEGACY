@@ -30,7 +30,7 @@ export class QueryAccountResponse {
         balance = coinObj.amount || "0"
       }
       const pubKeyObj = rawObjValue.public_key
-      const pubKeyValue = Buffer.from(base64ToBytes(pubKeyObj.value)).toString("hex")
+      const pubKeyValue = Buffer.from(pubKeyObj.value, "base64").toString("hex")
       const sequence = rawObjValue.sequence
       return new QueryAccountResponse(accountNumber, address, balance, pubKeyValue, sequence)
     } catch (error) {

@@ -52,7 +52,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a block information', async () => {
-            // NockUtil.mockGetBlock()
             const pocket = getPocketDefaultInstance()
 
             const blockResponse = await pocket.rpc.query.getBlock(BigInt(5))
@@ -60,8 +59,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a transaction information', async () => {
-            // NockUtil.mockGetTx()
-            // TODO: Get a transaction hash for testing
             const pocket = getPocketDefaultInstance()
 
             const txResponse = await pocket.rpc.query.getTX("84871BAF5B4E01BE52E5007EACF7048F24BF57E0")
@@ -69,8 +66,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve the current block height', async () => {
-            // NockUtil.mockGetHeight()
-
             const pocket = getPocketDefaultInstance()
 
             const heightResponse = await pocket.rpc.query.getHeight()
@@ -78,8 +73,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve an account balance', async () => {
-            // NockUtil.mockGetBalance()
-
             const pocket = getPocketDefaultInstance()
 
             const balanceResponse = await pocket.rpc.query.getBalance(addressHex, BigInt(446))
@@ -87,8 +80,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a list of nodes', async () => {
-            // NockUtil.mockGetNodes()
-
             const pocket = getPocketDefaultInstance()
 
             const nodeResponse = await pocket.rpc.query.getNodes(StakingStatus.Staked, BigInt(446))
@@ -96,7 +87,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a node information', async () => {
-            // NockUtil.mockGetNode()
             const pocket = getPocketDefaultInstance()
 
             const nodeResponse = await pocket.rpc.query.getNode(nodeAddress, BigInt(446))
@@ -104,8 +94,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a node params information', async () => {
-            // NockUtil.mockGetNodeParams()
-
             const pocket = getPocketDefaultInstance()
 
             const nodeParamsResponse = await pocket.rpc.query.getNodeParams(BigInt(446))
@@ -113,8 +101,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a node proofs', async () => {
-            // NockUtil.mockGetNodeProofs()
-            // TODO: Infra is crashing when calling this endpoint - status pending
             const pocket = getPocketDefaultInstance()
 
             const nodeProofsResponse = await pocket.rpc.query.getNodeProofs(nodeAddress, BigInt(446))
@@ -122,8 +108,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a node proof', async () => {
-            // NockUtil.mockGetNodeProof()
-            //    TODO: Peform testing after the nodeProofs endpoint is fixed
             const nodeProof = new NodeProof(addressHex, ethBlockchain, applicationPublicKey, BigInt(5), BigInt(5))
             const pocket = getPocketDefaultInstance()
 
@@ -132,8 +116,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a list of apps', async () => {
-            // NockUtil.mockGetApps()
-
             const pocket = getPocketDefaultInstance()
 
             const appsResponse = await pocket.rpc.query.getApps(StakingStatus.Staked, BigInt(446))
@@ -141,7 +123,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve an app information', async () => {
-            // NockUtil.mockGetApp()
             const pocket = getPocketDefaultInstance()
 
             const appResponse = await pocket.rpc.query.getApp(addressHex, BigInt(446))
@@ -149,7 +130,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve the app params', async () => {
-            // NockUtil.mockGetAppParams()
             const pocket = getPocketDefaultInstance()
 
             const appParamsResponse = await pocket.rpc.query.getAppParams(BigInt(446))
@@ -157,8 +137,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve the Pocket params', async () => {
-            // NockUtil.mockGetPocketParams()
-
             const pocket = getPocketDefaultInstance()
 
             const pocketParamsResponse = await pocket.rpc.query.getPocketParams(BigInt(446))
@@ -166,8 +144,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve the supported chains', async () => {
-            // NockUtil.mockGetSupportedChains()
-
             const pocket = getPocketDefaultInstance()
 
             const supportedResponse = await pocket.rpc.query.getSupportedChains(BigInt(446))
@@ -175,8 +151,6 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve the supply information', async () => {
-            // NockUtil.mockGetSupply()
-            // TODO: Calling this endpoint is crashing the infra
             const pocket = getPocketDefaultInstance()
 
             const supplyResponse = await pocket.rpc.query.getSupply(BigInt(446))
