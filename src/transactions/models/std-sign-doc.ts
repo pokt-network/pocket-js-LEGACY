@@ -39,8 +39,8 @@ export class StdSignDoc implements IAminoEncodable{
         this.memo = memo ? memo : ""
 
         // Number parsing
-        const accountNumb = Number(this.accountNumber)
-        const sequenceNumber = Number(this.sequence)
+        const accountNumb = this.accountNumber === "" ? -1 : Number(this.accountNumber)
+        const sequenceNumber = this.sequence === "" ? -1 : Number(this.sequence)
         const feeNumber = Number(this.fee) || -1
         
         if (isNaN(accountNumb) || accountNumb < 0) {
@@ -74,7 +74,9 @@ export class StdSignDoc implements IAminoEncodable{
             }
         }
         try {
-            return Buffer.from(marshalPosmintStdSignDoc(posmintStdSignDoc, true))
+            console.log(JSON.stringify(posmintStdSignDoc))
+            return Buffer.from(JSON.stringify(posmintStdSignDoc), "utf8")
+            // return Buffer.from(marshalPosmintStdSignDoc(posmintStdSignDoc, true))
         } catch(err) {
             throw err
         }

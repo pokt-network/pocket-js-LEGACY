@@ -16,7 +16,6 @@ function defaultConfiguration(): Configuration {
 }
 
 function createPocketInstance(configuration?: Configuration): Pocket {
-    
     if(configuration === undefined) {
         const baseURL = new URL(defaultConfiguration().nodes[0].serviceURL)
         const rpcProvider = new HttpRpcProvider(baseURL)
@@ -183,7 +182,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("0", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")   
+                        .submit("0", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")   
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -205,7 +204,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("NotANumber", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("NotANumber", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, Error)).to.be.true
                 })
 
@@ -222,8 +221,8 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
-                    expect(typeGuard(rawTxResponse, Error)).to.be.true
+                        .submit("", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
+                    expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
                 it("should fail to submit a transaction given a non-numerical sequence number", async () => {
@@ -239,7 +238,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("1234", "NotANumber", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "NotANumber", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, Error)).to.be.true
                 })
 
@@ -256,8 +255,8 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("1234", "", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
-                    expect(typeGuard(rawTxResponse, Error)).to.be.true
+                        .submit("1234", "", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
+                    expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
                 it("should fail to submit a transaction given an empty chain id", async () => {
@@ -273,7 +272,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("1234", "0", "", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, Error)).to.be.true
                 })
 
@@ -290,7 +289,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "NotANumber", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "NotANumber", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, Error)).to.be.true
                 })
 
@@ -307,7 +306,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, Error)).to.be.true
                 })
             })
@@ -328,7 +327,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10", CoinDenom.Pokt)
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -350,7 +349,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "", CoinDenom.Pokt)
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -367,7 +366,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "NotANumber", CoinDenom.Pokt)
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
             })
@@ -388,7 +387,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "15000")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -410,7 +409,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -427,7 +426,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "NotANumber")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -444,7 +443,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
             })
@@ -465,7 +464,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .appUnstake("9E8E373FF27EC202F82D07DF64F388FF42F9516D")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -487,7 +486,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .appUnstake("")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -504,7 +503,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .appUnstake("9E8E373FF27EC202")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
             })
@@ -525,7 +524,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .appUnjail("9E8E373FF27EC202F82D07DF64F388FF42F9516D")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -547,7 +546,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .appUnjail("")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -564,7 +563,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .appUnjail("9E8E373FF27EC202")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
             })
@@ -585,7 +584,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "15000", new URL("https://myawesomenode.network"))
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -607,7 +606,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "", new URL("https://myawesomenode.network"))
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -624,7 +623,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "NotANumber", new URL("https://myawesomenode.network"))
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -641,7 +640,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber", new URL("https://myawesomenode.network"))
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -658,7 +657,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber", new URL("http://myawesomenode.network"))
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
             })
@@ -679,7 +678,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .nodeUnstake("9E8E373FF27EC202F82D07DF64F388FF42F9516D")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -701,7 +700,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeUnstake("")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -718,7 +717,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeUnstake("9E8E373FF27EC202")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
             })
@@ -739,7 +738,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     let rawTxResponse = await transactionSender
                         .nodeUnjail("9E8E373FF27EC202F82D07DF64F388FF42F9516D")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                     rawTxResponse = rawTxResponse as RawTxResponse
                     expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -761,7 +760,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeUnjail("")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
 
@@ -778,7 +777,7 @@ describe("Pocket Transactions Tests", function() {
                     const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                     const rawTxResponse = await transactionSender
                         .nodeUnjail("9E8E373FF27EC202")
-                        .submit("1234", "0", "mocked-pocket-testnet", testNode, "100", CoinDenom.Pokt, "This is a test!")
+                        .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
                     expect(typeGuard(rawTxResponse, RpcError)).to.be.true
                 })
             })
