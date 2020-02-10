@@ -244,34 +244,24 @@ describe("Keybase Digital signature operations", () => {
                 expect(signature.length).to.be.greaterThan(0)
             }).timeout(0)
 
-            it("should lock an unlocked account after the given time period", (done) => {
+            it("should lock an unlocked account after the given time period", async () => {
                 // Create a new account
                 const keybase = new Keybase(new InMemoryKVStore())
                 const passphrase = "test"
-                keybase.createAccount(passphrase).then(function(account){
-                    expect(account).not.to.be.a("error")
-                    account = account as Account
-
-                    // Unlock account
-                    const waitPeriod = 1
-                    keybase.unlockAccount(
-                        account.addressHex,
-                        passphrase,
-                        waitPeriod
-                    ).then(function (errorOrUndefined) {
-                        expect(errorOrUndefined).to.be.a('undefined')
-                        expect(typeGuard(account, Account)).to.be.true
-                        account = account as Account
-
-                        // Wait for the waitPeriod and then check in the keybase if the account is unlocked
-                        setTimeout(async function (addressHex) {
-                            // Check wheter or not is unlocked
-                            const isUnlocked = await keybase.isUnlocked(addressHex)
-                            expect(isUnlocked).to.equal(false)
-                            done()
-                        }, waitPeriod, account.addressHex)
-                    })
-                })
+                let account = await keybase.createAccount(passphrase)
+                expect(typeGuard(account, Account)).to.be.true
+                account = account as Account
+                // Unlock account
+                const waitPeriod = 1
+                const errorOrUndefined = await keybase.unlockAccount(
+                    account.addressHex,
+                    passphrase,
+                    waitPeriod
+                )
+                expect(typeGuard(errorOrUndefined, Error)).to.be.false
+                // Check wheter or not is unlocked
+                const isUnlocked = await keybase.isUnlocked(account.addressHex)
+                expect(isUnlocked).to.equal(false)
             }).timeout(0)
         }).timeout(0)
 
