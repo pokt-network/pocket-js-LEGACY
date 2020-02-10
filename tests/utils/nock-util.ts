@@ -50,6 +50,25 @@ const applicationPublicKey = 'd9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa
 const applicationPrivateKey = '15f53145bfa6efdde6e65ce5ebfd330ac0a2591ae451a8a03ace99eff894b9eed9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
 
 export class NockUtil {
+    public static mockQueries() {
+        this.mockGetAccount()
+        this.mockGetApp()
+        this.mockGetAppParams()
+        this.mockGetApps()
+        this.mockGetBalance()
+        this.mockGetBlock()
+        this.mockGetHeight()
+        this.mockGetNode()
+        this.mockGetNodeParams()
+        this.mockGetNodeProof()
+        this.mockGetNodeProofs()
+        this.mockGetNodes()
+        this.mockGetPocketParams()
+        this.mockGetSupply()
+        this.mockGetSupportedChains()
+        this.mockGetTx()
+    }
+
     public static mockRawTx(code: number = 200): nock.Scope {
         const data: any = this.createData(code, {
             height: "0",
@@ -71,7 +90,7 @@ export class NockUtil {
         })
         
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.ClientRelay.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.ClientRelay.toString(), code, response.data)
     }
 
     public static mockDispatch(code: number = 200): nock.Scope {
@@ -88,7 +107,7 @@ export class NockUtil {
         })
         
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.ClientDispatch.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.ClientDispatch.toString(), code, response.data)
     }
 
      public static mockGetBlock(code: number = 200): nock.Scope {
@@ -112,19 +131,15 @@ export class NockUtil {
         const data: any = this.createData(code, queryBlockResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
-        return this.nockRoute(enums.V1RPCRoutes.QueryBlock.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryBlock.toString(), code, response.data)
      }
 
     
     public static mockGetAccount(code: number = 200): nock.Scope {
-        const queryAccountResponse = new QueryAccountResponse({
-            address: "E9769C199E5A35A64CE342493F351DEBDD0E4633"
-        })
-
+        const queryAccountResponse = new QueryAccountResponse("0", "4930289621AEFBF9252C91C4C729B7F685E44C4B", "1000", "f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa", "0")
         const data: any = this.createData(code, queryAccountResponse.toJSON())
         const response = this.getResponseObject(data, code)
-
-        return this.nockRoute(enums.V1RPCRoutes.QueryAccount.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryAccount.toString(), code, response.data)
     }
     
     public static mockGetTx(code: number = 200): nock.Scope {
@@ -138,7 +153,7 @@ export class NockUtil {
 
         const data: any = this.createData(code, queryTXResponse.toJSON())
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryTX.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryTX.toString(), code, response.data)
     }
 
     public static mockGetHeight(code: number = 200): nock.Scope {
@@ -146,7 +161,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryHeightResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryHeight.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryHeight.toString(), code, response.data)
     }
 
     public static mockGetBalance(code: number = 200): nock.Scope {
@@ -155,7 +170,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryBalanceResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
-        return this.nockRoute(enums.V1RPCRoutes.QueryBalance.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryBalance.toString(), code, response.data)
     }
 
     public static mockGetNodes(code: number = 200): nock.Scope {
@@ -168,7 +183,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryNodesResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryNodes.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryNodes.toString(), code, response.data)
     }
 
     public static mockGetNode(code: number = 200): nock.Scope {
@@ -179,7 +194,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryNodeResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryNode.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryNode.toString(), code, response.data)
     }
 
     public static mockGetNodeParams(code: number = 200): nock.Scope {
@@ -189,7 +204,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryNodeParamsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryNodeParams.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryNodeParams.toString(), code, response.data)
     }
 
     public static mockGetNodeProofs(code: number = 200): nock.Scope {
@@ -201,7 +216,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryNodeProofsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryNodeProofs.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryNodeProofs.toString(), code, response.data)
     }
 
     public static mockGetNodeProof(code: number = 200): nock.Scope {
@@ -211,7 +226,7 @@ export class NockUtil {
 
         const response = this.getResponseObject(data, code)
 
-        return this.nockRoute(enums.V1RPCRoutes.QueryNodeProof.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryNodeProof.toString(), code, response.data)
     }
 
     public static mockGetApps(code: number = 200): nock.Scope {
@@ -222,7 +237,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryAppsResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
-        return this.nockRoute(enums.V1RPCRoutes.QueryApps.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryApps.toString(), code, response.data)
     }
 
     public static mockGetApp(code: number = 200): nock.Scope {
@@ -232,7 +247,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryAppResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
-        return this.nockRoute(enums.V1RPCRoutes.QueryApp.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryApp.toString(), code, response.data)
     }
 
     public static mockGetAppParams(code: number = 200): nock.Scope {
@@ -242,7 +257,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryAppParamsResponse.toJSON())
         const response = this.getResponseObject(data, code)
 
-        return this.nockRoute(enums.V1RPCRoutes.QueryAppParams.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryAppParams.toString(), code, response.data)
     }
 
     public static mockGetPocketParams(code: number = 200): nock.Scope {
@@ -251,7 +266,7 @@ export class NockUtil {
         const data: any = this.createData(code, queryPocketParamsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryPocketParams.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QueryPocketParams.toString(), code, response.data)
     }
 
     public static mockGetSupportedChains(code: number = 200): nock.Scope {
@@ -259,7 +274,7 @@ export class NockUtil {
         const data: any = this.createData(code, querySupportedChainsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QuerySupportedChains.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QuerySupportedChains.toString(), code, response.data)
     }
 
     public static mockGetSupply(code: number = 200): nock.Scope {
@@ -268,7 +283,7 @@ export class NockUtil {
         const data: any = this.createData(code, querySupplyResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QuerySupply.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.QuerySupply.toString(), code, response.data)
     }
 
     // Private functions
