@@ -32,14 +32,12 @@ export interface ITransactionSender {
      * Adds a MsgSend TxMsg for this transaction
      * @param fromAddress {string}
      * @param toAddress {string}
-     * @param amount {string} Needs to be a valid number greater than 0
-     * @param amountDenom {CoinDenom | undefined}
+     * @param amount {string} The amount to send in uPOKT. Needs to be a valid number greater than 0
      */
     send(
         fromAddress: string,
         toAddress: string,
-        amount: string,
-        amountDenom?: CoinDenom
+        amount: string
     ): ITransactionSender
 
     /**

@@ -21,14 +21,13 @@ export class MsgAppUnjail extends TxMsg {
             throw errorOrUndefined as Error
         }
     }
-
-    public getMsgTypeKey(): string {
-        return this.AMINO_KEY
-    }
-
-    public getMsgValueObj(): object {
+    
+    public toStdSignDocMsgObj(): any {
         return {
-            address: this.address
+            type: this.AMINO_KEY,
+            value: {
+                address: this.address.toLowerCase()
+            }
         }
     }
 }

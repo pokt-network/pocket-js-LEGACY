@@ -38,14 +38,17 @@ export class MsgAppStake extends TxMsg {
         return this.AMINO_KEY
     }
 
-    public getMsgValueObj(): object {
+    public toStdSignDocMsgObj(): any {
         return {
-            chains: this.chains,
-            pubkey: {
-                type: "crypto/ed25519_public_key",
-                value: bytesToBase64(this.pubKey)
-            },
-            value: this.amount
+            type: this.AMINO_KEY,
+            value: {
+                chains: this.chains,
+                pubkey: {
+                    type: "crypto/ed25519_public_key",
+                    value: bytesToBase64(this.pubKey)
+                },
+                value: this.amount
+            }
         }
     }
 }

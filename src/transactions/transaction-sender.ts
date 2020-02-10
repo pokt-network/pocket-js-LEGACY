@@ -4,8 +4,7 @@ import { TxMsg, CoinDenom, StdSignDoc, TxSignature, StdTx, MsgSend,
 } from "./models/"
 import { ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount } from "../keybase/models"
-import { Pocket, Configuration, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase } from ".."
-import { Node } from "../rpc/models"
+import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase } from ".."
 
 export class TransactionSender implements ITransactionSender {
     private txMgs: TxMsg[] = []
@@ -97,11 +96,10 @@ export class TransactionSender implements ITransactionSender {
     public send(
         fromAddress: string,
         toAddress: string,
-        amount: string,
-        amountDenom?: CoinDenom
+        amount: string
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgSend(fromAddress, toAddress, amount, amountDenom))
+            this.txMgs.push(new MsgSend(fromAddress, toAddress, amount))
         } catch (error) {
             this.txMsgErrors.push(error)
         }

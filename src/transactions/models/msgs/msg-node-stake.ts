@@ -38,19 +38,18 @@ export class MsgNodeStake extends TxMsg {
         }
     }
 
-    public getMsgTypeKey(): string {
-        return this.AMINO_KEY
-    }
-
-    public getMsgValueObj(): object {
+    public toStdSignDocMsgObj(): any {
         return {
-            chains: this.chains,
-            public_key: {
-                type: "crypto/ed25519_public_key",
-                value: bytesToBase64(this.pubKey)
-            },
-            service_url: this.serviceURL.toString(),
-            value: this.amount
+            type: this.AMINO_KEY,
+            value: {
+                chains: this.chains,
+                public_key: {
+                    type: "crypto/ed25519_public_key",
+                    value: bytesToBase64(this.pubKey)
+                },
+                service_url: this.serviceURL.toString(),
+                value: this.amount
+            }
         }
     }
 }

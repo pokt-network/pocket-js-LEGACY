@@ -21,13 +21,12 @@ export class MsgNodeUnstake extends TxMsg {
         }
     }
 
-    public getMsgTypeKey(): string {
-        return this.AMINO_KEY
-    }
-
-    public getMsgValueObj(): object {
+    public toStdSignDocMsgObj(): any {
         return {
-            validator_address: this.nodeAddress
+            type: this.AMINO_KEY,
+            value: {
+                validator_address: this.nodeAddress.toLowerCase()
+            }
         }
     }
 }
