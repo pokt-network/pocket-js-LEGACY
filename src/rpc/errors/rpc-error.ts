@@ -36,7 +36,7 @@ export class RpcError extends Error {
     super(...arguments)
     this.code = code
     this.message = message
-    Object.setPrototypeOf(this, RpcError.prototype);
+    Object.setPrototypeOf(this, RpcError.prototype)
   }
 
   /**
