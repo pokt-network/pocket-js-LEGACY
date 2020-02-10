@@ -11,14 +11,19 @@ import { Pocket, typeGuard, QueryAccountResponse,
     QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, 
     QuerySupplyResponse, BondStatus, Configuration, HttpRpcProvider, Node,
     EnvironmentHelper,
-    RpcError
+    RpcError,
+    PocketAAT
 } from "../../src"
 import { NockUtil } from "../utils/nock-util"
 
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
-const addressHex = "175090018C3796FA05F4C0120EC61E2BBDA523F6"
-const applicationPublicKey = '633149e7e361b521e6a37f47c38b2f409fbaa0a5e5b3ad67280982a27e543bc2'
+const version = '0.0.1'
+const addressHex = "4930289621AEFBF9252C91C4C729B7F685E44C4B"
+const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5'
+const applicationPublicKey = 'f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa'
+const applicationPrivateKey = '5cdf6e47ab6c525b3f10418e557f4e2b10d486b4bb458dea1af53391c6d94664f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa'
+const applicationSignature = 'f9ef487152452ae417930a0c4144dc9d40fc95d93ebce35a95af30267f1d03d3d8db1ec8da173c144169a582836ff1a5fdf197714b6a893f5aa726edea434409'
 const ethBlockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
 const blockchains = [ethBlockchain]
 const nodeAddress = "E9769C199E5A35A64CE342493F351DEBDD0E4633"
@@ -33,8 +38,9 @@ const nodeAddress = "E9769C199E5A35A64CE342493F351DEBDD0E4633"
  */
 const env = EnvironmentHelper.getLocalNet()
 
+const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 // Instances
-const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC.toString(), blockchains)
+const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), blockchains)
 const configuration = new Configuration([node01],5, 40000, 200)
 const rpcProvider = new HttpRpcProvider(new URL(node01.serviceURL))
 
