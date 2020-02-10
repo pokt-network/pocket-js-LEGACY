@@ -2,13 +2,11 @@
  * @author Alex Firmani <alex@pokt.network>
  * @description Unit tests for the Routing Table
  */
-// Config
-// Constants
 import { expect } from 'chai'
-import { Pocket } from '../../src/pocket'
-import { RoutingTable } from "../../src/routing-table/routing-table"
-import { Node } from "../../src/rpc/models/node"
-import { InMemoryKVStore, BondStatus, Configuration } from '../../src'
+import { RoutingTable } from "../../../src/routing-table/routing-table"
+import { Node } from "../../../src/rpc/models/node"
+import { InMemoryKVStore, BondStatus, Configuration } from '../../../src'
+// Constants
 // For Testing we are using dummy data, none of the following information is real.
 const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const applicationPublicKey = 'd9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb'
