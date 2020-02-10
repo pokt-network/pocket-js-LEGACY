@@ -4,9 +4,8 @@
  */
 // Constants
 import { expect, assert } from 'chai'
-import { Node, BondStatus, Configuration, Pocket, 
-    HttpRpcProvider, typeGuard, EnvironmentHelper 
-} from '../../src'
+import { EnvironmentHelper } from '../../src/utils/env/helper'
+import { Node, BondStatus, Configuration, HttpRpcProvider, Pocket, typeGuard } from '../../src'
 
 // For Testing we are using dummy data, none of the following information is real.
 const addressHex = "4930289621AEFBF9252C91C4C729B7F685E44C4B"

@@ -3,18 +3,9 @@
  * @description Unit test for the Pocket Core Query interface
  */
 import { expect } from "chai"
-import { Pocket, typeGuard, QueryAccountResponse, 
-    QueryBlockResponse, QueryTXResponse, QueryHeightResponse, 
-    QueryBalanceResponse, StakingStatus, QueryNodesResponse, QueryNodeResponse, 
-    QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, 
-    QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, 
-    QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, 
-    QuerySupplyResponse, BondStatus, Configuration, HttpRpcProvider, Node,
-    EnvironmentHelper,
-    RpcError,
-    PocketAAT
-} from "../../../src"
 import { NockUtil } from "../../utils/nock-util"
+import { EnvironmentHelper } from "../../../src/utils/env/helper"
+import { Node, PocketAAT, BondStatus, Configuration, HttpRpcProvider, Pocket, typeGuard, QueryAccountResponse, QueryBlockResponse, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, RpcError } from "../../../src"
 
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
@@ -37,8 +28,6 @@ const nodeAddress = "E9769C199E5A35A64CE342493F351DEBDD0E4633"
  * EnvironmentHelper.get(Network.LocalNet)
  */
 const env = EnvironmentHelper.getLocalNet()
-
-const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 // Instances
 const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), blockchains)
 const configuration = new Configuration([node01],5, 40000, 200)
@@ -49,13 +38,16 @@ function getPocketDefaultInstance(): Pocket {
     return new Pocket(configuration, rpcProvider)
 }
 
+// Mocks all query routes
+NockUtil.mockQueries()
+
 describe("Pocket RPC Query Interface", async () => {
     describe("Success scenarios", async () => {
 
         it('should successfully retrieve an account information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const accountResponse = await pocket.rpc.query.getAccount("E9769C199E5A35A64CE342493F351DEBDD0E4633")
+            const accountResponse = await pocket.rpc.query.getAccount("4930289621AEFBF9252C91C4C729B7F685E44C4B")
             expect(typeGuard(accountResponse, QueryAccountResponse)).to.be.true
         }).timeout(0)
 
