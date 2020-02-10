@@ -1,4 +1,4 @@
-import { bytesToBase64 } from "@tendermint/belt"
+import { bytesToBase64, bytesToString } from "@tendermint/belt"
 import { PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pocket"
 
 /**
@@ -25,9 +25,9 @@ export class TxSignature {
         return {
             pub_key: {
                 type: this.PUBLIC_KEY_TYPE,
-                value: bytesToBase64(this.pubKey)
+                value: bytesToBase64(this.pubKey).toString()
             },
-            signature: bytesToBase64(this.signature)
+            signature: bytesToBase64(this.signature).toString()
         }
     }
 }

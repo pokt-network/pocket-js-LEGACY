@@ -22,13 +22,12 @@ export class MsgAppUnstake extends TxMsg {
         }
     }
 
-    public getMsgTypeKey(): string {
-        return this.AMINO_KEY
-    }
-
-    public getMsgValueObj(): object {
+    public toStdSignDocMsgObj(): any {
         return {
-            application_address: this.appAddress
+            type: this.AMINO_KEY,
+            value: {
+                application_address: this.appAddress.toLowerCase()
+            }
         }
     }
 }

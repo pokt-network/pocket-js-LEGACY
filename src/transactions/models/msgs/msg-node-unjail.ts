@@ -21,13 +21,12 @@ export class MsgNodeUnjail extends TxMsg {
         }
     }
 
-    public getMsgTypeKey(): string {
-        return this.AMINO_KEY
-    }
-
-    public getMsgValueObj(): object {
+    public toStdSignDocMsgObj(): any {
         return {
-            address: this.address
+            type: this.AMINO_KEY,
+            value: {
+                address: this.address.toLowerCase()
+            }
         }
     }
 }

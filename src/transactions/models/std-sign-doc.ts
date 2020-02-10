@@ -57,26 +57,21 @@ export class StdSignDoc implements IAminoEncodable{
     }
 
     public marshalAmino(): Buffer {
-        const posmintStdSignDoc: PosmintStdSignDoc = {
-            type: this.AMINO_TYPE,
-            value: {
-                account_number: this.accountNumber,
-                chain_id: this.chaindId,
-                fee: {
-                    amount: this.fee,
-                    denom: this.feeDenom
-                },
-                memo: this.memo,
-                msgs: this.msgs.map((value) => {
-                    return value.toMsgObj()
-                }),
-                sequence: this.sequence
-            }
+        const stdSignDocValue = {
+            account_number: this.accountNumber,
+            chain_id: this.chaindId,
+            fee: [{
+                amount: this.fee,
+                denom: this.feeDenom
+            }],
+            memo: this.memo,
+            msgs: this.msgs.map((value) => {
+                return value.toStdSignDocMsgObj()
+            }),
+            sequence: this.sequence
         }
         try {
-            console.log(JSON.stringify(posmintStdSignDoc))
-            return Buffer.from(JSON.stringify(posmintStdSignDoc), "utf8")
-            // return Buffer.from(marshalPosmintStdSignDoc(posmintStdSignDoc, true))
+            return Buffer.from(JSON.stringify(stdSignDocValue).replace(/\\/g, ""), "utf8")
         } catch(err) {
             throw err
         }

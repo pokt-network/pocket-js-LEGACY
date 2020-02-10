@@ -25,9 +25,10 @@ export class StdTx implements IAminoEncodable{
         // Parse PosmintMsg list
         const msgList: PosmintMsg[] = []
         this.stdSignDoc.msgs.forEach(txMsg => {
+            var stdSignMsgObj = txMsg.toStdSignDocMsgObj()
             msgList.push({
-                type: txMsg.getMsgTypeKey(),
-                value: txMsg.getMsgValueObj()
+                type: stdSignMsgObj.type,
+                value: stdSignMsgObj.value
             })
         })
 
@@ -52,7 +53,7 @@ export class StdTx implements IAminoEncodable{
         const encodedPosmintTX = marshalPosmintTx({
             type: this.AMINO_TYPE,
             value: stdTx
-        }, true)
+        })
 
         // Return buffer from marshaled PosmintTx
         return Buffer.from(encodedPosmintTX)
