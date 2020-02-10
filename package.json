@@ -12,7 +12,7 @@
         "tests": "./tests"
     },
     "scripts": {
-        "test": "nyc mocha --require ts-node/register \"tests/src/**/*.spec.ts\" --exit",
+        "test": "npm run build && nyc mocha --require ts-node/register \"tests/src/**/*.spec.ts\" --exit",
         "build": "rm -r lib & cti create ./src & npm run lint & tsc",
         "prepare": "rm -r lib & cti create ./src & npm run lint & tsc",
         "prepackage": "rm -r lib & cti create ./src & npm run lint & tsc",

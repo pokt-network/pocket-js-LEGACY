@@ -61,7 +61,9 @@ export class ClientNamespace {
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-                const relayResponse = RelayResponse.fromJSON(response)
+                const relayResponse = RelayResponse.fromJSON(
+                    response
+                )
                 return relayResponse
             } else {
                 return new RpcError(

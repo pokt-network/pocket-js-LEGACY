@@ -13,7 +13,7 @@ export class QueryBalanceResponse {
    */
   public static fromJSON(json: string): QueryBalanceResponse {
     try {
-      let jsonObject = JSON.parse(json)
+      const jsonObject = JSON.parse(json)
 
       return new QueryBalanceResponse(BigInt(jsonObject))
     } catch (error) {

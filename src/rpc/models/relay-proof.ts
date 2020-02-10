@@ -21,12 +21,12 @@ export class RelayProof {
 
       let pocketAAT: PocketAAT
 
-      if (jsonObject.token !== undefined) {
+      if (jsonObject.aat !== undefined) {
         pocketAAT = new PocketAAT(
-          jsonObject.token.version,
-          jsonObject.token.clientPublicKey,
-          jsonObject.token.applicationPublicKey,
-          jsonObject.token.applicationSignature
+          jsonObject.aat.version,
+          jsonObject.aat.client_pub_key,
+          jsonObject.aat.app_address,
+          jsonObject.aat.signature
         )
 
         return new RelayProof(

@@ -5,19 +5,22 @@
 import { expect } from "chai"
 import { NockUtil } from "../../utils/nock-util"
 import { EnvironmentHelper } from "../../../src/utils/env/helper"
-import { Node, PocketAAT, BondStatus, Configuration, HttpRpcProvider, Pocket, typeGuard, RpcError } from "../../../src"
+import { Node, PocketAAT, BondStatus, Configuration, HttpRpcProvider, Pocket, typeGuard, RpcError, Account, RelayResponse } from "../../../src"
 
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
+// Client
+const clientPublicKey = '844752953c9ee9e0cd3662383da37365c5e48dd4a02bac02f998e4817d1214de'
+const clientAddress = '5E385150EAD587352AEB2148F3B4680DEC94E8C4'
+const clientPrivateKey = 'b2c9782a1eb80d8e6a2818b8270bf59d03dec179be23e742d683f252a8299f4a844752953c9ee9e0cd3662383da37365c5e48dd4a02bac02f998e4817d1214de'
 const version = '0.0.1'
-const addressHex = "4930289621AEFBF9252C91C4C729B7F685E44C4B"
-const clientPublicKey = 'f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5'
-const applicationPublicKey = 'f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa'
-const applicationPrivateKey = '5cdf6e47ab6c525b3f10418e557f4e2b10d486b4bb458dea1af53391c6d94664f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa'
+const addressHex = "175090018C3796FA05F4C0120EC61E2BBDA523F6"
+const applicationPublicKey = '633149e7e361b521e6a37f47c38b2f409fbaa0a5e5b3ad67280982a27e543bc2'
+const applicationPrivateKey = 'e47d606d7fb38e694a7848d21f96a111e00fcb0d8e1c1dee47ee2357aada97ef633149e7e361b521e6a37f47c38b2f409fbaa0a5e5b3ad67280982a27e543bc2'
 const applicationSignature = 'f9ef487152452ae417930a0c4144dc9d40fc95d93ebce35a95af30267f1d03d3d8db1ec8da173c144169a582836ff1a5fdf197714b6a893f5aa726edea434409'
 const alternatePublicKey = "0c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
 const alternatePrivateKey = "de54546ae6bfb7b67e74546c9a55816effa1fc8af004f9b0d231340d29d505580c390b7a6c532bef52f484e3795ece973aea04776fe7d72a40e8ed6eb223fdc9"
-const ethBlockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
+const ethBlockchain = "6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8"
 const blockchains = [ethBlockchain]
 
 /** Specify the environment using using EnvironmentHelper.getLocalNet()
@@ -31,14 +34,14 @@ const blockchains = [ethBlockchain]
 const env = EnvironmentHelper.getLocalNet()
 
 // Instances
+const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
 const noSessionPocketAAT = PocketAAT.from(version, clientPublicKey, alternatePublicKey, alternatePrivateKey)
 const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), blockchains)
 const configuration = new Configuration([node01], 5, 40000, 200)
 const rpcProvider = new HttpRpcProvider(new URL(node01.serviceURL))
 const nodeAddress = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const nodePublicKey = "d9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb"
-const testNode = new Node(nodeAddress, nodePublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), ["ETH04"])
-
+const testNode = new Node(nodeAddress, nodePublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), blockchains)
 
 // Default pocket instance to reuse code
 function getPocketDefaultInstance(): Pocket {
@@ -105,25 +108,24 @@ describe("Pocket RPC Client Interface", async () => {
     })
 
     describe("Success scenarios", async () => {
-         // TODO: Fix signing
-        //  it('should successfully send a relay due to a valid information', async () => {
-        //     const pocket = getPocketDefaultInstance()
-        //     // Account
-        //     const passphrase = "passphrase123"
-        //     const result = await pocket.importAndUnlockAccount(passphrase, applicationPrivateKey)
-
-        //     expect(result).to.not.be.an.instanceof(Error)
-        //     // Relay
-        //     const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
-        //     NockUtil.mockDispatch()
-        //     NockUtil.mockGetHeight()
-        //     NockUtil.mockRelay()
-        //     const response = await pocket.sendRelay(data, blockchain, null, pocketAAT)
-        //     expect(typeGuard(response, RelayResponse)).to.be.true
-        // }).timeout(0)
+         it('should successfully send a relay due to a valid information', async () => {
+            NockUtil.mockDispatch()
+            NockUtil.mockRelay()
+            const pocket = getPocketDefaultInstance()
+            // Account
+            const passphrase = "passphrase123"
+            const account = await pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), passphrase)
+            expect(typeGuard(account, Account)).to.be.true
+            const undefinedOrError = await pocket.keybase.unlockAccount((account as Account).addressHex, passphrase, 0)
+            expect(typeGuard(undefinedOrError, Error)).to.be.false
+            // Relay
+            const data = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
+            const response = await pocket.sendRelay(data, ethBlockchain, pocketAAT)
+            expect(typeGuard(response, RelayResponse)).to.be.true
+        }).timeout(0)
     })
     describe("Error scenarios", async () => {
-        // Relay and RPC calls scenarios
+        // Relay scenarios
 
         it('should fail to send a relay due to no sessions found', async () => {
             const pocket = getPocketDefaultInstance()
