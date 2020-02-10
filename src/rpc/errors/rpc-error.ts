@@ -33,13 +33,10 @@ export class RpcError extends Error {
    * @param {string} message - Error message.
    */
   constructor(code: string, message: string) {
-    super(message)
+    super(...arguments)
     this.code = code
     this.message = message
-
-    if (!this.isValid()) {
-      throw new TypeError("Invalid RpcErrorResponse properties length.")
-    }
+    Object.setPrototypeOf(this, RpcError.prototype);
   }
 
   /**
@@ -53,17 +50,5 @@ export class RpcError extends Error {
       code: this.code,
       message: this.message
     }
-  }
-  /**
-   *
-   * Check if the RpcErrorResponse object is valid
-   * @returns {boolean} - True or false.
-   * @memberof RpcErrorResponse
-   */
-  public isValid(): boolean {
-    return (
-      this.code !== undefined && this.code.length !== 0 &&
-      this.message !== undefined && this.message.length !== 0
-    )
   }
 }

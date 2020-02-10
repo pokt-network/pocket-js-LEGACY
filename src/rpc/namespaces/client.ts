@@ -1,6 +1,7 @@
 import { IRPCProvider } from "../providers"
 import { Configuration, typeGuard } from "../.."
 import { RawTxResponse, RpcError, RawTxRequest, RPC, V1RPCRoutes, RelayRequest, RelayResponse, DispatchRequest, DispatchResponse } from ".."
+import { validateAddressHex } from "../../utils"
 
 export class ClientNamespace {
 

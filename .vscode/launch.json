@@ -27,7 +27,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${file}",
+                "${workspaceFolder}/tests/src/pocket-tx.ts",
                 "--exit"
             ],
             "console": "integratedTerminal",

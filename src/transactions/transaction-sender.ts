@@ -45,17 +45,12 @@ export class TransactionSender implements ITransactionSender {
         accountNumber: string,
         sequence: string,
         chainId: string,
-        node: Node,
         fee: string,
         feeDenom?: CoinDenom,
         memo?: string,
-        configuration?: Configuration
+        timeout?: number
     ): Promise<RawTxResponse | RpcError> {
         try {
-            let config = this.pocket.configuration
-            if (configuration) {
-                config = configuration
-            }
             if (this.txMsgErrors.length === 1) {
                 return RpcError.fromError(this.txMsgErrors[0])
             } else if (this.txMsgErrors.length > 1) {
@@ -86,9 +81,9 @@ export class TransactionSender implements ITransactionSender {
             const encodedTxBytes = transaction.marshalAmino()
             // Clean messages accumulated on submit
             this.txMgs = []
-            return this.pocket.rpc.client.rawtx(addressHex, encodedTxBytes, config.requestTimeOut)
+            return this.pocket.rpc.client.rawtx(addressHex, encodedTxBytes, timeout)
         } catch (error) {
-            return error
+            return RpcError.fromError(error)
         }
     }
 

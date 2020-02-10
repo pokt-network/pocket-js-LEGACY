@@ -7,7 +7,7 @@ import { Keybase } from "./keybase/keybase"
 import { UnlockedAccount, Account } from "./keybase/models"
 import { RoutingTable } from "./routing-table/routing-table"
 import { PocketAAT } from "pocket-aat-js"
-import { TransactionSender, TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore } from "./"
+import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, TransactionSender } from "./"
 
 /**
  *

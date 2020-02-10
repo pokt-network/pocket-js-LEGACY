@@ -22,11 +22,10 @@ export interface ITransactionSender {
         accountNumber: string,
         sequence: string,
         chainId: string,
-        node: Node,
         fee: string,
         feeDenom?: CoinDenom,
         memo?: string,
-        configuration?: Configuration
+        timeout?: number
     ): Promise<RawTxResponse | RpcError>
 
     /**
