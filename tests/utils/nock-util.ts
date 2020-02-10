@@ -58,7 +58,7 @@ export class NockUtil {
         })
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.ClientRawTx.toString(), code, response)
+        return this.nockRoute(enums.V1RPCRoutes.ClientRawTx.toString(), code, response.data)
     }
 
     public static mockRelay(code: number = 200): nock.Scope {
