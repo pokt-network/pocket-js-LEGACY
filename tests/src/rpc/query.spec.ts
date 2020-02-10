@@ -13,8 +13,8 @@ import { Pocket, typeGuard, QueryAccountResponse,
     EnvironmentHelper,
     RpcError,
     PocketAAT
-} from "../../src"
-import { NockUtil } from "../utils/nock-util"
+} from "../../../src"
+import { NockUtil } from "../../utils/nock-util"
 
 // Constants
 // For Testing we are using dummy data, none of the following information is real.

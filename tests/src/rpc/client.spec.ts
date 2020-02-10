@@ -5,8 +5,8 @@
 import { expect } from "chai"
 import { Pocket, BondStatus, Configuration, HttpRpcProvider, 
     Node, PocketAAT, EnvironmentHelper, Network, RpcError, typeGuard, RelayResponse
-} from "../../src"
-import { NockUtil } from "../utils/nock-util"
+} from "../../../src"
+import { NockUtil } from "../../utils/nock-util"
 
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
