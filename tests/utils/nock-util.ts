@@ -136,8 +136,25 @@ export class NockUtil {
 
     
     public static mockGetAccount(code: number = 200): nock.Scope {
-        const queryAccountResponse = new QueryAccountResponse("0", "4930289621AEFBF9252C91C4C729B7F685E44C4B", "1000", "f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa", "0")
-        const data: any = this.createData(code, queryAccountResponse.toJSON())
+        const jsonObject = {
+            "type": "posmint/Account",
+            "value": {
+                "account_number": "10",
+                "address": "4930289621aefbf9252c91c4c729b7f685e44c4b",
+                "coins": [
+                    {
+                        "amount": "1000001000",
+                        "denom": "upokt"
+                    }
+                ],
+                "public_key": {
+                    "type": "crypto/ed25519_public_key",
+                    "value": "9i9322nUSMG1bzVAxjPylNI8za8AK/azdtBYoAtRz6o="
+                },
+                "sequence": "0"
+            }
+        }
+        const data: any = this.createData(code, jsonObject)
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryAccount.toString(), code, response.data)
     }
@@ -157,17 +174,16 @@ export class NockUtil {
     }
 
     public static mockGetHeight(code: number = 200): nock.Scope {
-        const queryHeightResponse = new QueryHeightResponse(BigInt(1))
-        const data: any = this.createData(code, queryHeightResponse.toJSON())
+        const data: any = this.createData(code, Number(BigInt(110).toString()))
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryHeight.toString(), code, response.data)
     }
 
     public static mockGetBalance(code: number = 200): nock.Scope {
-        const queryBalanceResponse = new QueryBalanceResponse(BigInt(100))
+        const balance = Number(BigInt(100).toString())
 
-        const data: any = this.createData(code, queryBalanceResponse.toJSON())
+        const data: any = this.createData(code, balance)
         const response = this.getResponseObject(data, code)
 
         return this.nockRoute(enums.V1RPCRoutes.QueryBalance.toString(), code, response.data)
@@ -180,7 +196,7 @@ export class NockUtil {
             BigInt(100), "http://127.0.0.2:80", ["ETH01", "ETH02"])
 
         const queryNodesResponse = new QueryNodesResponse([node01, node02])
-        const data: any = this.createData(code, queryNodesResponse.toJSON())
+        const data: any = this.createData(code, queryNodesResponse.toJSON().nodes)
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryNodes.toString(), code, response.data)
