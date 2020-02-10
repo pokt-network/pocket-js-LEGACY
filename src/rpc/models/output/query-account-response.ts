@@ -1,5 +1,4 @@
 import { validateAddressHex, validatePublicKey, typeGuard } from "../../../utils"
-import { base64ToBytes } from "@tendermint/belt"
 
 /**
  *

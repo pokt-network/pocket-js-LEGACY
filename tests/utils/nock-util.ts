@@ -94,16 +94,20 @@ export class NockUtil {
     }
 
     public static mockDispatch(code: number = 200): nock.Scope {
+        const blockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
         const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
-            BigInt(100), "http://127.0.0.1:80", ["ETH01", "ETH04"])
+            BigInt(100), "http://127.0.0.1:80", [blockchain])
         const node02 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
-            BigInt(100), "http://127.0.0.1:80", ["ETH01", "ETH04"])
-        const sessionHeader = new SessionHeader(applicationPublicKey, "ETH04", BigInt(5))
+            BigInt(101), "http://127.0.0.1:80", [blockchain])
+        const sessionHeader = new SessionHeader(applicationPublicKey, blockchain, BigInt(5))
 
         const data: any = this.createData(code, {
-            header: sessionHeader.toJSON(),
-            key: 'key',
-            nodes: [node01.toJSON(), node02.toJSON()]
+            type: "pocketcore/session",
+            value: {
+                header: sessionHeader.toJSON(),
+                key: 'Qck/v4L3u7vH6SbrzMiscjEHYucFBFz3pMZv6r9KIZI=',
+                nodes: [node01.toJSON(), node02.toJSON()]
+            }
         })
         
         const response = this.getResponseObject(data, code)

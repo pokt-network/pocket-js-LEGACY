@@ -9,18 +9,23 @@ import { Hex } from "../../utils/hex"
 export class Node {
   public static fromJSON(json: string): Node {
     try {
-      const jsonObject = JSON.parse(json)
-      const status: BondStatus = BondStatusUtil.getStatus(jsonObject.status)
+      const rawObj = JSON.parse(json)
+      if (!rawObj.value) {
+        throw new Error("No value field in account response")
+      }
+      const rawObjValue = rawObj.value
+
+      const status: BondStatus = BondStatusUtil.getStatus(rawObjValue.status)
   
       return new Node(
-        jsonObject.address,
-        jsonObject.public_key,
-        jsonObject.jailed,
+        rawObjValue.address,
+        rawObjValue.public_key,
+        rawObjValue.jailed,
         status,
-        BigInt(jsonObject.tokens),
-        jsonObject.service_url,
-        jsonObject.chains,
-        jsonObject.unstaking_time
+        BigInt(rawObjValue.tokens),
+        rawObjValue.service_url,
+        rawObjValue.chains,
+        rawObjValue.unstaking_time
       )
     } catch (error) {
       throw error
@@ -79,14 +84,17 @@ export class Node {
    */
   public toJSON() {
     return {
-      address: this.address,
-      chains: this.chains,
-      public_key: this.publicKey,
-      jailed: this.jailed,
-      service_url: this.serviceURL,
-      status: this.status.toString(),
-      tokens: Number(this.stakedTokens.toString()),
-      unstaking_time: this.unstakingCompletionTime
+      type: "pos/Validator",
+      value: {
+        address: this.address,
+        chains: this.chains,
+        public_key: this.publicKey,
+        jailed: this.jailed,
+        service_url: this.serviceURL,
+        status: this.status.toString(),
+        tokens: Number(this.stakedTokens.toString()),
+        unstaking_time: this.unstakingCompletionTime
+      }
     }
   }
   /**

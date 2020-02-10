@@ -25,7 +25,7 @@ export class StdTx implements IAminoEncodable{
         // Parse PosmintMsg list
         const msgList: PosmintMsg[] = []
         this.stdSignDoc.msgs.forEach(txMsg => {
-            var stdSignMsgObj = txMsg.toStdSignDocMsgObj()
+            const stdSignMsgObj = txMsg.toStdSignDocMsgObj()
             msgList.push({
                 type: stdSignMsgObj.type,
                 value: stdSignMsgObj.value

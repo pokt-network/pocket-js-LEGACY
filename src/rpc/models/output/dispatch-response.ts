@@ -22,7 +22,7 @@ export class DispatchResponse {
       const nodes: Node[] = []
 
       jsonObject.value.nodes.forEach(function(nodeJSON: any) {
-        const node = Node.fromJSON(JSON.stringify(nodeJSON.value))
+        const node = Node.fromJSON(JSON.stringify(nodeJSON))
         nodes.push(node)
       })
 
