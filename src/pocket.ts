@@ -6,7 +6,7 @@ import { Node, RPC, IRPCProvider, RpcError, HttpRpcProvider } from "./rpc"
 import { Keybase } from "./keybase/keybase"
 import { UnlockedAccount, Account } from "./keybase/models"
 import { RoutingTable } from "./routing-table/routing-table"
-import { PocketAAT } from "pocket-aat-js"
+import { PocketAAT } from "@pokt-network/aat-js"
 import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, TransactionSender } from "./"
 
 /**
@@ -202,4 +202,4 @@ export class Pocket {
   }
 }
 
-export * from "pocket-aat-js"
+export * from "@pokt-network/aat-js"

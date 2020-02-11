@@ -14,7 +14,7 @@ export class TxLog {
         let success: boolean
         let log: string
 
-        if (typeGuard(txLogObj.msg_index, "string")) {
+        if (typeGuard(txLogObj.msg_index, "number")) {
             msgIndex = BigInt(txLogObj.msg_index)
         } else {
             return new Error("Invalid msg index for transaction log: " + JSON.stringify(txLogObj))
