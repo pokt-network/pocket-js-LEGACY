@@ -1,14 +1,16 @@
 <div align="center">
   <a href="https://www.pokt.network">
-    <img src="https://pokt.network/wp-content/uploads/2018/12/Logo-488x228-px.png" alt="drawing" width="340"/>
+    <img src="https://user-images.githubusercontent.com/16605170/74199287-94f17680-4c18-11ea-9de2-b094fab91431.png" alt="Pocket Network logo" width="340"/>
   </a>
 </div>
-<h1 align="left">PocketJS</h1>
-<h6 align="left">Official Javascript client to use with the Pocket Network</h6>
+
+# Pocket-JS
+Official Javascript client to use with the Pocket Network
 <div align="lef">
   <a  href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference">
     <img src="https://img.shields.io/badge/js-reference-yellow.svg"/>
   </a>
+  <a href="https://nodejs.org/"><img  src="https://img.shields.io/badge/node-%3E%3D%2011.6.0-brightgreen"/></a>
 </div>
 
 <h1 align="left">Overview</h1>
@@ -37,38 +39,66 @@
     </a>
 </div>
 
-PocketJS wraps all of the tools a developer will need to begin interacting with a network. PocketJS contains 5 packages:
+## Getting Started
 
-- `pocket-js-eth`: A library that allows your DApp to communicate to the Ethereum network.
-- `pocket-js-aion`: A library that allows your DApp to communicate to the AION network.
-- `pocket-js-web3-provider`: A [Web3](https://web3.foundation) provider, which you can just drop-in into your Web3 JS projects and have your app connect to the Pocket Network. Works both with Ethereum and AION versions of Web3.
-- `pocket-js-core`: An implementation of the Pocket protocol that you can use to create your own plugin to interact with a blockchain of your choosing.
-- `pocket-js`: Contains all the beforementioned packages.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-Before you can start using the library, you have to get a Developer ID by registering for MVP. [To learn how to register please click here.](https://pocket-network.readme.io/docs/how-to-participate#section-for-developers)
+### Requirements
 
-<h1 align="left">Requirements</h1>
+You should have at least have a basic knowledge of blockchain technology and know your way around JavaScript. You will also need to install the [NPM tool](https://www.npmjs.com/get-npm).
 
-You should have at least have a basic knowledge of blockchain technology and know your way around Javascript. You will also need to install the [NPM tool.](https://www.npmjs.com/get-npm)
+### Installation
 
-<h1 align="left">Installation</h1>
+```
+npm install --save @pokt-network/pocket-js
+```
 
-The PocketJS packages are hosted in [NPM](https://npmjs.com), see below how to install each individual package.
+## Documentation
 
-`npm install --save pocket-js-eth`
+If you would like to know how to integrate Pocket-JS into your DApp, [visit our developer portal](https://pocket-network.readme.io) that has a lot of useful tutorials and material about the Pocket Network.
 
-`npm install --save pocket-js-aion`
+```javascript
+const module = require('@pokt-network/pocket-js')
+const Pocket = module.Pocket
+const Configuration = module.Configuration
+const HttpRpcProvider = module.HttpRpcProvider
+const Node = module.Node
+const BondStatus = module.BondStatus
 
-`npm install --save pocket-js-web3-provider`
+const node = new Node(
+    nodeAddress, publiKey,
+    jailedStatus, BondStatus,
+    stakedTokens, serviceURL, chains
+)
 
-`npm install --save pocket-js-core`
+const config = new Configuration([node])
+const provider = new HttpRpcProvider(node.serviceURL)
+const pocketInstance = new Pocket(config, provider)
 
-`npm install --save @pokt-network/pocket-js`
+const balance = await pocketInstance.rpc.query.getBalance(accountAddress)
+console.log("Account Balance: " + balance)
+```
 
-<h1 align="left">Usage</h1>
+## Running the tests
 
-If you would like to know how to integrate PocketJS into your DApp, [visit our developer portal](https://pocket-network.readme.io) that has a lot of useful tutorials and material about the Pocket Network.
+```
+npm run test:unit
+npm run test:integration
+```
 
-<h1 align="left">Contact Us</h1>
+## Contributing
 
-We have created a Discord server where you can meet with the Pocket team, as well as fellow App Developers, and Service Nodes. [Click here to join!](https://discord.gg/sarhfXP)
+Please read [CONTRIBUTING.md](https://github.com/pokt-network/pocket-js/blob/staging/CONTRIBUTING.md) for details on contributions and the process of submitting pull requests.
+
+## Support & Contact
+
+<div>
+  <a  href="https://twitter.com/poktnetwork" ><img src="https://img.shields.io/twitter/url/http/shields.io.svg?style=social"></a>
+  <a href="https://t.me/POKTnetwork"><img src="https://img.shields.io/badge/Telegram-blue.svg"></a>
+  <a href="https://www.facebook.com/POKTnetwork" ><img src="https://img.shields.io/badge/Facebook-red.svg"></a>
+  <a href="https://research.pokt.network"><img src="https://img.shields.io/discourse/https/research.pokt.network/posts.svg"></a>
+</div>
+
+## License
+
+This project is licensed under the MIT License; see the [LICENSE.md](LICENSE.md) file for details.
