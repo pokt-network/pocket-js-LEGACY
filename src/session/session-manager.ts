@@ -84,7 +84,7 @@ export class SessionManager {
         JSON.stringify(result.toJSON())
       )
 
-      if (sessionQueue.length < configuration.maxSessions) {
+      if (sessionQueue.length < configuration.maxSessions || configuration.maxSessions === 0 ) {
         sessionQueue.enqueue(session)
 
         if (typeGuard(session, Session)) {

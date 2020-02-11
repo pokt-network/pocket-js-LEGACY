@@ -21,7 +21,7 @@ export class RoutingTable {
    * @memberof Routing
    */
   constructor(nodes: Node[] = [], configuration: Configuration, store: IKVStore) {
-    if (nodes.length > configuration.maxNodes) {
+    if (nodes.length > configuration.maxNodes && configuration.maxNodes > 0) {
       throw new Error(
         "Routing table cannot contain more than the specified maxNodes per blockchain."
       )
@@ -111,7 +111,7 @@ export class RoutingTable {
     const nodes = this.store.get(this.nodesKey) as Node[]
     nodes.push(node)
     // If this pushes the count over the maxNodes, splice the first element off
-    if (nodes.length > this.configuration.maxNodes) {
+    if (nodes.length > this.configuration.maxNodes && this.configuration.maxNodes > 0) {
       nodes.splice(0, 1)
     }
 
