@@ -15,11 +15,11 @@ export class RelayResponse {
   public static fromJSON(json: string): RelayResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const proof = RelayProof.fromJSON(JSON.stringify(jsonObject.proof))
+      const proof = RelayProof.fromJSON(JSON.stringify(jsonObject.RelayProof))
   
       return new RelayResponse(
         jsonObject.signature,
-        jsonObject.response,
+        jsonObject.payload,
         proof
       )
     } catch (error) {

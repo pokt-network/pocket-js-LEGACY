@@ -16,7 +16,7 @@ export class RawTxResponse {
             let height: BigInt
             let hash: string
             const logs: TxLog[] = []
-            if (rawTxResObj.height) {
+            if (rawTxResObj.height !== undefined) {
                 height = BigInt(rawTxResObj.height)
             } else {
                 return new Error("Invalid height: " + rawTxResObj.height)
