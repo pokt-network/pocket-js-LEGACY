@@ -5,9 +5,7 @@
  *
  */
 import { expect } from "chai"
-import { Keybase } from "../../../src/keybase/keybase"
-import { Account } from "../../../src/keybase/models/account"
-import { InMemoryKVStore, typeGuard } from "../../../src"
+import { Keybase, InMemoryKVStore, typeGuard, Account } from "../../../../src"
 
 describe("Keybase Digital signature operations", () => {
     describe("Success scenarios", () => {

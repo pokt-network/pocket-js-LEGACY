@@ -5,9 +5,7 @@
  *
  */
 import { expect } from "chai"
-import { Keybase } from "../../../src/keybase/keybase"
-import { Account } from "../../../src/keybase/models/account"
-import { InMemoryKVStore } from "../../../src"
+import { Keybase, InMemoryKVStore, Account } from "../../../../src"
 
 /**
  * @description Keybase class tests

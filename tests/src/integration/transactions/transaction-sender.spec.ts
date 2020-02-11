@@ -1,35 +1,25 @@
 import { expect } from 'chai'
-import { Account, Node, BondStatus, Configuration, Pocket, HttpRpcProvider, ITransactionSender, CoinDenom, typeGuard, RpcError, RawTxResponse } from '../../../src'
-import { NockUtil } from '../../utils/nock-util'
-import { EnvironmentHelper } from '../../utils/env/helper'
+import { Account, Node, BondStatus, Configuration, Pocket, HttpRpcProvider, ITransactionSender, CoinDenom, typeGuard, RpcError, RawTxResponse, QueryAccountResponse } from '../../../../src'
+import { NockUtil } from '../../../utils/nock-util'
+import { EnvironmentHelper } from '../../../utils/env/helper'
+import { type } from 'os'
 
-/** Specify the environment using using EnvironmentHelper.getLocalNet()
- * LocalNet will run the tests againt's nock which have a set of responses mocked.abs
- * TestNet will run the tests with the TestNet Network.
- * MainNet will run the tests with the MainNet Network (not available).
- * 
- * Note: Can be done also using the Network enum (LocalNet,TestNet and MainNet)
- * EnvironmentHelper.get(Network.LocalNet)
- * Note: process.env.TEST is set in the package.json scripts section
- * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
- */
-const test = process.env.TEST
-let env = EnvironmentHelper.getLocalNet()
-if (test === 'integration') {
-    env = EnvironmentHelper.getTestNet()
-}
-const nodeAddress = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
-const nodePublicKey = "d9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb"
-const testNode = new Node(nodeAddress, nodePublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), ["ETH04"])
+// let env = EnvironmentHelper.getTestNet()
+// const nodeAddress = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
+// const nodePublicKey = "d9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb"
+// const testNode = new Node(nodeAddress, nodePublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), ["49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29"])
+
+const dispatchNodeJSON = "{\"address\":\"189ceb72c06b99e15a53fd437b81d4500f7a01f1\",\"public_key\":\"1839f4836f22d438692355b2ee34e47d396f6eb23b423bf3a1e623137ddbf7e3\",\"jailed\":false,\"status\":2,\"tokens\":\"1000000000\",\"service_url\":\"http:\/\/35.245.90.148:8081\",\"chains\":[\"6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8\",\"49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29\"],\"unstaking_time\":\"0001-01-01T00:00:00Z\"}"
+const dispatchNode = Node.fromJSON(dispatchNodeJSON)
+const configuration = new Configuration([dispatchNode], 5, 60000, 1000000)
 
 function defaultConfiguration(): Configuration {
-    return new Configuration([testNode])
+    return configuration
 }
 
 function createPocketInstance(configuration?: Configuration): Pocket {
     if (configuration === undefined) {
-        const baseURL = new URL(defaultConfiguration().nodes[0].serviceURL)
-        const rpcProvider = new HttpRpcProvider(baseURL)
+        const rpcProvider = new HttpRpcProvider(new URL(dispatchNode.serviceURL))
         return new Pocket(defaultConfiguration(), rpcProvider)
     } else {
         const baseURL = new URL(configuration.nodes[0].serviceURL)
@@ -137,19 +127,24 @@ describe("Using ITransactionSender", function () {
     describe("Submit transaction", function () {
         describe("Success scenarios", function () {
             it("should succesfully submit a transaction given the correct parameters", async () => {
-                NockUtil.mockRawTx()
                 const pocket = createPocketInstance()
 
                 // Create the account
                 const passphrase = "1234"
-                const accountOrError = await pocket.keybase.createAccount(passphrase)
+                const accountOrError = await pocket.keybase.importAccount(Buffer.from("2dec343f5d225be87663194f5ce61611ee585ab68baf1046694b0045124bd1a5d3814cf87d0d0b249dc9727d2e124a03cbb4d23e37c169833ef88562546f0958", "hex"), passphrase)
                 const account = accountOrError as Account
 
                 // Create the transaction sender
                 const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                
+                // Get account information
+                let accountInfo = await pocket.rpc.query.getAccount(account.addressHex)
+                expect(typeGuard(accountInfo, QueryAccountResponse))
+                accountInfo = accountInfo as QueryAccountResponse
+
                 let rawTxResponse = await transactionSender
-                    .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10")
-                    .submit("0", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
+                    .send(account.addressHex, "A8224A98BCDBEF16CF1C4B67F75F092BC6C38E4A", "10")
+                    .submit(accountInfo.accountNumber, accountInfo.sequence, "pocket-testet-playground", "100000", CoinDenom.Upokt, "This is a test!")
                 expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                 rawTxResponse = rawTxResponse as RawTxResponse
                 expect(rawTxResponse.height).to.equal(BigInt(0))
@@ -279,65 +274,66 @@ describe("Using ITransactionSender", function () {
         })
     })
 
-    describe("Send message", function () {
-        describe("Success scenarios", function () {
-            it("should succesfully submit a send message given the correct parameters", async () => {
-                NockUtil.mockRawTx()
-                const pocket = createPocketInstance()
+    // TODO: test messages
+    // describe("Send message", function () {
+    //     describe("Success scenarios", function () {
+    //         it("should succesfully submit a send message given the correct parameters", async () => {
+    //             NockUtil.mockRawTx()
+    //             const pocket = createPocketInstance()
 
-                // Create the account
-                const passphrase = "1234"
-                const accountOrError = await pocket.keybase.createAccount(passphrase)
-                const account = accountOrError as Account
+    //             // Create the account
+    //             const passphrase = "1234"
+    //             const accountOrError = await pocket.keybase.createAccount(passphrase)
+    //             const account = accountOrError as Account
 
-                // Create the transaction sender
-                const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                let rawTxResponse = await transactionSender
-                    .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10")
-                    .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
-                expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                rawTxResponse = rawTxResponse as RawTxResponse
-                expect(rawTxResponse.height).to.equal(BigInt(0))
-                expect(rawTxResponse.hash).not.to.be.empty
-            })
-        })
+    //             // Create the transaction sender
+    //             const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+    //             let rawTxResponse = await transactionSender
+    //                 .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10")
+    //                 .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
+    //             expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+    //             rawTxResponse = rawTxResponse as RawTxResponse
+    //             expect(rawTxResponse.height).to.equal(BigInt(0))
+    //             expect(rawTxResponse.hash).not.to.be.empty
+    //         })
+    //     })
 
-        describe("Error scenarios", function () {
-            it("should error to submit a send message with an empty amount", async () => {
-                NockUtil.mockRawTx()
-                const pocket = createPocketInstance()
+    //     describe("Error scenarios", function () {
+    //         it("should error to submit a send message with an empty amount", async () => {
+    //             NockUtil.mockRawTx()
+    //             const pocket = createPocketInstance()
 
-                // Create the account
-                const passphrase = "1234"
-                const accountOrError = await pocket.keybase.createAccount(passphrase)
-                const account = accountOrError as Account
+    //             // Create the account
+    //             const passphrase = "1234"
+    //             const accountOrError = await pocket.keybase.createAccount(passphrase)
+    //             const account = accountOrError as Account
 
-                // Create the transaction sender
-                const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                const rawTxResponse = await transactionSender
-                    .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "")
-                    .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
-                expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-            })
+    //             // Create the transaction sender
+    //             const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+    //             const rawTxResponse = await transactionSender
+    //                 .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "")
+    //                 .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
+    //             expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+    //         })
 
-            it("should error to submit a send message with an non-numerical amount", async () => {
-                NockUtil.mockRawTx()
-                const pocket = createPocketInstance()
+    //         it("should error to submit a send message with an non-numerical amount", async () => {
+    //             NockUtil.mockRawTx()
+    //             const pocket = createPocketInstance()
 
-                // Create the account
-                const passphrase = "1234"
-                const accountOrError = await pocket.keybase.createAccount(passphrase)
-                const account = accountOrError as Account
+    //             // Create the account
+    //             const passphrase = "1234"
+    //             const accountOrError = await pocket.keybase.createAccount(passphrase)
+    //             const account = accountOrError as Account
 
-                // Create the transaction sender
-                const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                const rawTxResponse = await transactionSender
-                    .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "NotANumber")
-                    .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
-                expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-            })
-        })
-    })
+    //             // Create the transaction sender
+    //             const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+    //             const rawTxResponse = await transactionSender
+    //                 .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "NotANumber")
+    //                 .submit("1234", "0", "mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
+    //             expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+    //         })
+    //     })
+    // })
 
     // describe("App stake message", function () {
     //     describe("Success scenarios", function () {
