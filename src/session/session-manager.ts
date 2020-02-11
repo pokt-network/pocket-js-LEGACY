@@ -161,9 +161,13 @@ export class SessionManager {
         this.store.add(this.sessionMapKey, map)
       }
       
+      const sessionMap = this.store.get(this.sessionMapKey) as Map<string, Queue<Session>>
+
+      if(!sessionMap.has(key)){
+        this.sessionMap.set(key, new Queue())
+      }
       
-      ((this.store.get(this.sessionMapKey) as Map<string, Queue<Session>>)
-      .get(key) as Queue<Session>).enqueue(currentSession as Session)
+      (sessionMap.get(key) as Queue<Session>).enqueue(currentSession as Session)
       return undefined
     }else{
       return currentSession as RpcError
