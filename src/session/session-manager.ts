@@ -11,7 +11,7 @@ import { typeGuard } from "../utils/type-guard"
 import { Queue } from "./queue"
 import { RoutingTable } from "../routing-table/routing-table"
 import { HttpRpcProvider } from "../rpc"
-import { PocketAAT } from "pocket-aat-js"
+import { PocketAAT } from "@pokt-network/aat-js"
 import { sha3_256 } from "js-sha3"
 
 /**
