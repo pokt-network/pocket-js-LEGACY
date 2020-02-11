@@ -102,12 +102,9 @@ export class NockUtil {
         const sessionHeader = new SessionHeader(applicationPublicKey, blockchain, BigInt(5))
 
         const data: any = this.createData(code, {
-            type: "pocketcore/session",
-            value: {
-                header: sessionHeader.toJSON(),
-                key: 'Qck/v4L3u7vH6SbrzMiscjEHYucFBFz3pMZv6r9KIZI=',
-                nodes: [node01.toJSON(), node02.toJSON()]
-            }
+            header: sessionHeader.toJSON(),
+            key: 'Qck/v4L3u7vH6SbrzMiscjEHYucFBFz3pMZv6r9KIZI=',
+            nodes: [{ value: node01.toJSON() }, {value: node02.toJSON()}]
         })
         
         const response = this.getResponseObject(data, code)

@@ -3,9 +3,7 @@
  * @description Unit tests for the Routing Table
  */
 import { expect } from 'chai'
-import { RoutingTable } from "../../../src/routing-table/routing-table"
-import { Node } from "../../../src/rpc/models/node"
-import { InMemoryKVStore, BondStatus, Configuration } from '../../../src'
+import { BondStatus, InMemoryKVStore, Configuration, RoutingTable, Node } from '../../../../src'
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
 const addressHex = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
