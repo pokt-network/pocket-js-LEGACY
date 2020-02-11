@@ -72,7 +72,7 @@ describe("Pocket Interface functionalities", async () => {
 
             it("should send multiple relays for different clients given the correct parameters", async () => {
                 const pocket = new Pocket(configuration, rpcProvider)
-                for (var i = 0; i < 15; i++) {
+                for (let i = 0; i < 15; i++) {
                     // Generate client account
                     const clientPassphrase = "1234"
                     const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
