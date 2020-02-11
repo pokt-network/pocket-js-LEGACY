@@ -40,6 +40,9 @@ export class SessionManager {
 
     if(this.store.has(this.sessionMapKey)){
       this.sessionMap = this.store.get(this.sessionMapKey)
+    }else {
+      this.sessionMap = new Map()
+      this.store.add(this.sessionMapKey, this.sessionMap)
     }
   }
 
@@ -155,19 +158,11 @@ export class SessionManager {
 
     const key = this.getSessionKey(pocketAAT, header.chain)
     if (typeGuard(currentSession, Session)) {
-      if(!this.store.has(this.sessionMapKey)) {
-        const map: Map<string, Queue<Session>> = new Map()
-        map.set(key, new Queue<Session>())
-        this.store.add(this.sessionMapKey, map)
-      }
-      
-      const sessionMap = this.store.get(this.sessionMapKey) as Map<string, Queue<Session>>
-
-      if(!sessionMap.has(key)){
+      if(!this.sessionMap.has(key)){
         this.sessionMap.set(key, new Queue())
       }
       
-      (sessionMap.get(key) as Queue<Session>).enqueue(currentSession as Session)
+      (this.sessionMap.get(key) as Queue<Session>).enqueue(currentSession as Session)
       return undefined
     }else{
       return currentSession as RpcError
