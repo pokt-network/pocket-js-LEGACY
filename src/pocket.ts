@@ -74,7 +74,7 @@ export class Pocket {
   ): Promise<RelayResponse | RpcError> {
     try {
       // Get the current session
-      const currentSessionOrError = await this.sessionManager.getCurrentSession(pocketAAT.applicationPublicKey, blockchain, configuration)
+      const currentSessionOrError = await this.sessionManager.getCurrentSession(pocketAAT, blockchain, configuration)
 
       if (typeGuard(currentSessionOrError, RpcError)) {
         return currentSessionOrError as RpcError
