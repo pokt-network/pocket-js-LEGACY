@@ -4,7 +4,7 @@
  */
 import { expect } from "chai"
 import { NockUtil } from "../../utils/nock-util"
-import { EnvironmentHelper } from "../../../src/utils/env/helper"
+import { EnvironmentHelper } from "../../utils/env/helper"
 import { Node, PocketAAT, BondStatus, Configuration, HttpRpcProvider, Pocket, typeGuard, RpcError, Account, RelayResponse } from "../../../src"
 
 // Constants
@@ -30,8 +30,14 @@ const blockchains = [ethBlockchain]
  * 
  * Note: Can be done also using the Network enum (LocalNet,TestNet and MainNet)
  * EnvironmentHelper.get(Network.LocalNet)
+ * Note: process.env.TEST is set in the package.json scripts section
+ * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
  */
-const env = EnvironmentHelper.getLocalNet()
+const test = process.env.TEST
+let env = EnvironmentHelper.getLocalNet()
+if (test === 'integration') {
+    env = EnvironmentHelper.getTestNet()
+}
 
 // Instances
 const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)

@@ -29,7 +29,7 @@ export class TxProof {
   }
 
   public readonly rootHash: string
-  public readonly data: string
+  public readonly data: string | null
   public readonly proof: SimpleProof
 
   /**
@@ -39,13 +39,13 @@ export class TxProof {
    * @param {string} data - Hash holding the current tx proof data.
    * @param {SimpleProof} proof - Simple proof object.
    */
-  constructor(rootHash: string, data: string, proof: SimpleProof) {
+  constructor(rootHash: string, data: string | null, proof: SimpleProof) {
     this.rootHash = rootHash
     this.data = data
     this.proof = proof
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid TxProof properties length.")
+      throw new TypeError("Invalid TxProof properties.")
     }
   }
   /**
@@ -68,8 +68,6 @@ export class TxProof {
    * @memberof TxProof
    */
   public isValid(): boolean {
-    return this.data.length !== 0 &&
-    this.proof.isValid() &&
-    this.rootHash.length !== 0
+    return true
   }
 }

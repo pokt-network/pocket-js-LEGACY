@@ -25,8 +25,8 @@ export class SimpleProof {
 
   public readonly total: BigInt
   public readonly index: BigInt
-  public readonly leafHash: Hex
-  public readonly aunts: Hex[]
+  public readonly leafHash: Hex | null
+  public readonly aunts: Hex[] | null
 
   /**
    * SimpleProof.
@@ -36,14 +36,14 @@ export class SimpleProof {
    * @param {Hex} leafHash - Hash of item value.
    * @param {Hex[]} aunts - Hashes from leaf's sibling to a root's child.
    */
-  constructor(total: BigInt, index: BigInt, leafHash: Hex, aunts: Hex[]) {
+  constructor(total: BigInt, index: BigInt, leafHash: Hex | null, aunts: Hex[] | null) {
     this.total = total
     this.index = index
     this.leafHash = leafHash
     this.aunts = aunts
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid SimpleProof properties length.")
+      throw new TypeError("Invalid SimpleProof properties.")
     }
   }
   /**
@@ -55,9 +55,9 @@ export class SimpleProof {
   public toJSON() {
     return {
       aunts: this.aunts,
-      index: this.index.toString(16),
+      index: Number(this.index.toString()),
       leaf_hash: this.leafHash,
-      total: this.total.toString(16)
+      total: Number(this.total.toString())
     }
   }
   /**
@@ -67,9 +67,6 @@ export class SimpleProof {
    * @memberof SimpleProof
    */
   public isValid(): boolean {
-    return this.aunts.length !== 0 &&
-    this.index !== undefined &&
-    this.leafHash !== undefined &&
-    this.total !== undefined
+    return true
   }
 }

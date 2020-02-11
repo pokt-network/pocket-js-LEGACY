@@ -1,7 +1,23 @@
 import { expect } from 'chai'
-import { Account, Node, LocalNet, BondStatus, Configuration, Pocket, HttpRpcProvider, ITransactionSender, CoinDenom, typeGuard, RpcError, RawTxResponse } from '../../../src'
+import { Account, Node, BondStatus, Configuration, Pocket, HttpRpcProvider, ITransactionSender, CoinDenom, typeGuard, RpcError, RawTxResponse } from '../../../src'
 import { NockUtil } from '../../utils/nock-util'
-const env = new LocalNet()
+import { EnvironmentHelper } from '../../utils/env/helper'
+
+/** Specify the environment using using EnvironmentHelper.getLocalNet()
+ * LocalNet will run the tests againt's nock which have a set of responses mocked.abs
+ * TestNet will run the tests with the TestNet Network.
+ * MainNet will run the tests with the MainNet Network (not available).
+ * 
+ * Note: Can be done also using the Network enum (LocalNet,TestNet and MainNet)
+ * EnvironmentHelper.get(Network.LocalNet)
+ * Note: process.env.TEST is set in the package.json scripts section
+ * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
+ */
+const test = process.env.TEST
+let env = EnvironmentHelper.getLocalNet()
+if (test === 'integration') {
+    env = EnvironmentHelper.getTestNet()
+}
 const nodeAddress = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
 const nodePublicKey = "d9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb"
 const testNode = new Node(nodeAddress, nodePublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), ["ETH04"])

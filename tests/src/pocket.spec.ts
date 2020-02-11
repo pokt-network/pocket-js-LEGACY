@@ -4,7 +4,7 @@
  */
 // Constants
 import { expect, assert } from 'chai'
-import { EnvironmentHelper } from '../../src/utils/env/helper'
+import { EnvironmentHelper } from '../utils/env/helper'
 import { Node, BondStatus, Configuration, HttpRpcProvider, Pocket, typeGuard } from '../../src'
 
 // For Testing we are using dummy data, none of the following information is real.

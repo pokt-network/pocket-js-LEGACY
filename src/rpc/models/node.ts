@@ -9,14 +9,8 @@ import { Hex } from "../../utils/hex"
 export class Node {
   public static fromJSON(json: string): Node {
     try {
-      const rawObj = JSON.parse(json)
-      if (!rawObj.value) {
-        throw new Error("No value field in account response")
-      }
-      const rawObjValue = rawObj.value
-
+      const rawObjValue = JSON.parse(json)
       const status: BondStatus = BondStatusUtil.getStatus(rawObjValue.status)
-  
       return new Node(
         rawObjValue.address,
         rawObjValue.public_key,
@@ -84,17 +78,14 @@ export class Node {
    */
   public toJSON() {
     return {
-      type: "pos/Validator",
-      value: {
-        address: this.address,
-        chains: this.chains,
-        public_key: this.publicKey,
-        jailed: this.jailed,
-        service_url: this.serviceURL,
-        status: this.status.toString(),
-        tokens: Number(this.stakedTokens.toString()),
-        unstaking_time: this.unstakingCompletionTime
-      }
+      address: this.address,
+      chains: this.chains,
+      public_key: this.publicKey,
+      jailed: this.jailed,
+      service_url: this.serviceURL,
+      status: this.status.toString(),
+      tokens: Number(this.stakedTokens.toString()),
+      unstaking_time: this.unstakingCompletionTime   
     }
   }
   /**

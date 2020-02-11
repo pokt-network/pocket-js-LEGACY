@@ -66,7 +66,7 @@ export class QueryNamespace {
             const payload = JSON.stringify({ hash: txHash })
 
             const response = await this.rpcProvider.send(
-                V1RPCRoutes.QueryTX.toString().toString(),
+                V1RPCRoutes.QueryTX.toString(),
                 payload,
                 timeout
             )

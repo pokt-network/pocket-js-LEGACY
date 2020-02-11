@@ -13,9 +13,14 @@ export class QuerySupportedChainsResponse {
    */
   public static fromJSON(json: string): QuerySupportedChainsResponse {
     try {
-      const jsonObject = JSON.parse(json)
+      const chains: string[] = []
+      if (Array.isArray(json)) {
+        json.forEach(chain => {
+          chains.push(chain)
+        })
+      }
 
-      return new QuerySupportedChainsResponse(jsonObject)
+      return new QuerySupportedChainsResponse(chains)
     } catch (error) {
       throw error
     }
