@@ -71,7 +71,7 @@ export class SessionManager {
       this.sessionMap.set(key, new Queue())
     }
     const rpc = new RPC(new HttpRpcProvider(new URL(node.serviceURL)))
-    const header = new SessionHeader(pocketAAT.applicationPubKey, chain, sessionBlockHeight)
+    const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, sessionBlockHeight)
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut)
     const sessionQueue = this.sessionMap.get(key) as Queue<Session>
@@ -151,7 +151,7 @@ export class SessionManager {
    * @memberof SessionManager
    */
   private async saveCurrentSession(pocketAAT: PocketAAT, header: SessionHeader, configuration: Configuration): Promise< RpcError | undefined > {
-    const currentSession = await this.getCurrentSession(header.applicationPubKey, header.chain, configuration, header.sessionBlockHeight)
+    const currentSession = await this.getCurrentSession(pocketAAT.applicationPublicKey, header.chain, configuration, header.sessionBlockHeight)
 
     const key = this.getSessionKey(pocketAAT, header.chain)
     if (typeGuard(currentSession, Session)) {
