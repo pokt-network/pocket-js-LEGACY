@@ -1,4 +1,4 @@
-import { LocalNet, TestNet, MainNet, Environment } from "./"
+import { LocalNet, TestNet, MainNet, Environment } from "."
 
 /**
  * Enum indicating all the environment networks

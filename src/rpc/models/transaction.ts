@@ -20,8 +20,8 @@ export class Transaction {
 
       return new Transaction(
         jsonObject.hash,
-        jsonObject.height,
-        jsonObject.index,
+        BigInt(jsonObject.height),
+        BigInt(jsonObject.index),
         jsonObject.tx,
         TxProof.fromJSON(JSON.stringify(jsonObject.proof))
       )
@@ -59,7 +59,7 @@ export class Transaction {
     this.proof = proof
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid Transaction properties length.")
+      throw new TypeError("Invalid Transaction properties.")
     }
   }
   /**
@@ -71,8 +71,8 @@ export class Transaction {
   public toJSON() {
     return {
       hash: this.hash,
-      height: this.height.toString(16),
-      index: this.index.toString(16),
+      height: Number(this.height.toString()),
+      index: Number(this.index.toString()),
       proof: this.proof.toJSON(),
       tx: this.tx
     }
@@ -85,9 +85,8 @@ export class Transaction {
    */
   public isValid(): boolean {
     return Hex.isHex(this.hash) &&
-    this.height !== undefined &&
-    this.index !== undefined &&
-    this.proof.isValid() &&
+    Number(this.height.toString()) >= 0 &&
+    Number(this.index.toString()) >= 0  &&
     this.tx !== undefined
   }
 }

@@ -1,6 +1,6 @@
 import nock from 'nock'
 import enums = require("../../src/rpc/models/routes")
-import { LocalNet } from "../../src/utils/env"
+import { LocalNet } from "./env"
 import {
     PocketAAT,
     Transaction,
@@ -185,7 +185,7 @@ export class NockUtil {
     }
 
     public static mockGetBalance(code: number = 200): nock.Scope {
-        const balance = Number(BigInt(100).toString())
+        const balance = JSON.stringify(Number(BigInt(100).toString()))
 
         const data: any = this.createData(code, balance)
         const response = this.getResponseObject(data, code)
@@ -199,8 +199,11 @@ export class NockUtil {
         const node02 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
             BigInt(100), "http://127.0.0.2:80", ["ETH01", "ETH02"])
 
-        const queryNodesResponse = new QueryNodesResponse([node01, node02])
-        const data: any = this.createData(code, queryNodesResponse.toJSON().nodes)
+        const payload = [
+            node01.toJSON(),
+            node02.toJSON()
+        ]
+        const data: any = this.createData(code, payload)
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QueryNodes.toString(), code, response.data)
