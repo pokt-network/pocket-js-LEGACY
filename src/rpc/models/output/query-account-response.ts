@@ -15,13 +15,9 @@ export class QueryAccountResponse {
    */
   public static fromJSON(json: string): QueryAccountResponse {
     try {
-      const rawObj = JSON.parse(json)
-      if (!rawObj.value) {
-        throw new Error("No value field in account response")
-      }
-      const rawObjValue = rawObj.value
-      const accountNumber = rawObjValue.account_number
-      const address = rawObjValue.address
+      const rawObjValue = JSON.parse(json)
+      const accountNumber = rawObjValue.account_number.toString()
+      const address = rawObjValue.address.toString()
       let balance = "0"
       const coins = rawObjValue.coins
       if (coins && typeGuard(coins, Array) && coins.length === 1) {
@@ -29,8 +25,8 @@ export class QueryAccountResponse {
         balance = coinObj.amount || "0"
       }
       const pubKeyObj = rawObjValue.public_key
-      const pubKeyValue = Buffer.from(pubKeyObj.value, "base64").toString("hex")
-      const sequence = rawObjValue.sequence
+      const pubKeyValue = Buffer.from(pubKeyObj).toString("hex")
+      const sequence = rawObjValue.sequence.toString()
       return new QueryAccountResponse(accountNumber, address, balance, pubKeyValue, sequence)
     } catch (error) {
       throw error

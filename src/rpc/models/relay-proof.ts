@@ -1,4 +1,4 @@
-import { PocketAAT } from "pocket-aat-js"
+import { PocketAAT } from "@pokt-network/aat-js"
 import { Hex } from "../../utils"
 import { sha3_256 } from "js-sha3"
 

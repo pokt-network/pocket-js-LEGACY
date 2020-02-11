@@ -14,12 +14,7 @@ export class Session {
 
     if (jsonObject.nodes !== undefined && Array.isArray(jsonObject.nodes)) {
       for(let i = 0; i < jsonObject.nodes.length; i++) {
-        const rawNodeObj = jsonObject.nodes[i]
-        if (rawNodeObj.value) {
-          sessionNodes.push(Node.fromJSON(JSON.stringify(rawNodeObj.value)))
-        } else {
-          throw new Error("Invalid node obj: " + JSON.stringify(rawNodeObj))
-        }
+        sessionNodes.push(Node.fromJSON(JSON.stringify(jsonObject.nodes[i])))
       }
     }
     return new Session(sessionHeader, jsonObject.key, sessionNodes)

@@ -31,7 +31,7 @@ export class ClientNamespace {
             if (typeGuard(response, RpcError)) {
                 return response as RpcError
             } else {
-                const rawTxResponse = RawTxResponse.fromJSON(response)
+                const rawTxResponse = RawTxResponse.fromJSON(JSON.stringify(response))
                 if (typeGuard(rawTxResponse, Error)) {
                     return RpcError.fromError(rawTxResponse as Error)
                 } else {
