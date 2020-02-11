@@ -11,6 +11,8 @@ import { typeGuard } from "../utils/type-guard"
 import { Queue } from "./queue"
 import { RoutingTable } from "../routing-table/routing-table"
 import { HttpRpcProvider } from "../rpc"
+import { PocketAAT } from "pocket-aat-js"
+import { sha3_256 } from "js-sha3"
 
 /**
  *
@@ -43,13 +45,14 @@ export class SessionManager {
 
   /**
    * Request a new session object. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
-   * @param {SessionHeader} header - SessionHeader object.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
    * @returns {Promise}
    * @memberof SessionManager
    */
   public async requestCurrentSession(
-    applicationPubKey: string, 
+    pocketAAT: PocketAAT, 
     chain: string,
     configuration: Configuration,
     sessionBlockHeight: BigInt = BigInt(0)
@@ -63,14 +66,15 @@ export class SessionManager {
       )
     }
     
-    if(!this.sessionMap.has(chain)) {
-      this.sessionMap.set(chain, new Queue())
+    const key = this.getSessionKey(pocketAAT, chain)
+    if(!this.sessionMap.has(key)) {
+      this.sessionMap.set(key, new Queue())
     }
     const rpc = new RPC(new HttpRpcProvider(new URL(node.serviceURL)))
-    const header = new SessionHeader(applicationPubKey, chain, sessionBlockHeight)
+    const header = new SessionHeader(pocketAAT.applicationPubKey, chain, sessionBlockHeight)
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut)
-    const sessionQueue = this.sessionMap.get(chain) as Queue<Session>
+    const sessionQueue = this.sessionMap.get(key) as Queue<Session>
 
     if (typeGuard(result, DispatchResponse)) {
       const session: Session = Session.fromJSON(
@@ -81,10 +85,10 @@ export class SessionManager {
         sessionQueue.enqueue(session)
 
         if (typeGuard(session, Session)) {
-          this.saveCurrentSession(header, configuration) 
+          this.saveCurrentSession(pocketAAT, header, configuration) 
         }
 
-        return this.getCurrentSession(applicationPubKey, chain, configuration, sessionBlockHeight)
+        return this.getCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
       }
       return new RpcError(
         "500",
@@ -97,18 +101,20 @@ export class SessionManager {
 
   /**
    * Returns the current session for an specific Blockchain. Request a new session object if there's no an active Session for the specified blockchain. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
-   * @param {SessionHeader} header - SessionHeader object.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
    * @returns {Promise}
    * @memberof SessionManager
    */
-  public async getCurrentSession(applicationPubKey: string, chain: string, configuration: Configuration, sessionBlockHeight: BigInt = BigInt(0)): Promise<Session | RpcError> {
+  public async getCurrentSession(pocketAAT: PocketAAT, chain: string, configuration: Configuration, sessionBlockHeight: BigInt = BigInt(0)): Promise<Session | RpcError> {
 
-    if(!this.sessionMap.has(chain)){
-      return await this.requestCurrentSession(applicationPubKey, chain, configuration, sessionBlockHeight)
+    const key = this.getSessionKey(pocketAAT, chain)
+    if(!this.sessionMap.has(key)){
+      return await this.requestCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
     }
 
-    const currentSession = (this.sessionMap.get(chain) as Queue<Session>).front
+    const currentSession = (this.sessionMap.get(key) as Queue<Session>).front
     if (currentSession !== undefined) {
       return currentSession
     }
@@ -117,12 +123,25 @@ export class SessionManager {
   }
 
   /**
+   * Creates an unique key using the PocketAAT object and the chain.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {string} chain - Name of the Blockchain.
+   * @memberof SessionManager
+   */
+  public getSessionKey(pocketAAT: PocketAAT, chain: string): string{
+    const hash = sha3_256.create()
+    hash.update(JSON.stringify(pocketAAT).concat(chain))
+    return hash.toString()
+  }
+
+  /**
    * Removes the first Session in the queue for the specified blockchain.
    * @param {string} chain - Name of the Blockchain.
    * @memberof SessionManager
    */
-  public destroySession(chain: string) {
-    (this.sessionMap.get(chain) as Queue<Session>).dequeue()
+  public destroySession(pocketAAT: PocketAAT, chain: string) {
+    const key = this.getSessionKey(pocketAAT, chain);
+    (this.sessionMap.get(key) as Queue<Session>).dequeue()
   }
 
   /**
@@ -131,17 +150,20 @@ export class SessionManager {
    * @param {Configuration} configuration - Configuration object
    * @memberof SessionManager
    */
-  private async saveCurrentSession(header: SessionHeader, configuration: Configuration): Promise< RpcError | undefined > {
+  private async saveCurrentSession(pocketAAT: PocketAAT, header: SessionHeader, configuration: Configuration): Promise< RpcError | undefined > {
     const currentSession = await this.getCurrentSession(header.applicationPubKey, header.chain, configuration, header.sessionBlockHeight)
 
+    const key = this.getSessionKey(pocketAAT, header.chain)
     if (typeGuard(currentSession, Session)) {
       if(!this.store.has(this.sessionMapKey)) {
         const map: Map<string, Queue<Session>> = new Map()
-        map.set(header.chain, new Queue<Session>())
+        map.set(key, new Queue<Session>())
         this.store.add(this.sessionMapKey, map)
       }
+      
+      
       ((this.store.get(this.sessionMapKey) as Map<string, Queue<Session>>)
-      .get(header.chain) as Queue<Session>).enqueue(currentSession as Session)
+      .get(key) as Queue<Session>).enqueue(currentSession as Session)
       return undefined
     }else{
       return currentSession as RpcError
