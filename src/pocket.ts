@@ -2,7 +2,7 @@ import { Configuration } from "./config"
 import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session } from "./rpc/models"
 import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate, typeGuard } from "./utils"
 import { SessionManager } from "./session/session-manager"
-import { Node, RPC, IRPCProvider, RpcError } from "./rpc"
+import { Node, RPC, IRPCProvider, RpcError, HttpRpcProvider } from "./rpc"
 import { Keybase } from "./keybase/keybase"
 import { UnlockedAccount, Account } from "./keybase/models"
 import { RoutingTable } from "./routing-table/routing-table"
@@ -22,8 +22,8 @@ export class Pocket {
   public readonly configuration: Configuration
   public readonly keybase: Keybase
   public readonly rpc: RPC
-  private readonly routingTable: RoutingTable
-  private readonly sessionManager: SessionManager
+  public readonly sessionManager: SessionManager
+  public readonly routingTable: RoutingTable
 
   /**
    * Creates an instance of Pocket.
@@ -146,9 +146,8 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
-      return await this.rpc.client.relay(
-        relay
-      )
+      const rpc = new RPC(new HttpRpcProvider(new URL(serviceNode.serviceURL)))
+      return rpc.client.relay(relay)
     } catch (error) {
       return error
     }

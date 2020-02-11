@@ -13,12 +13,14 @@ export class Session {
     const sessionNodes: Node[] = []
 
     if (jsonObject.nodes !== undefined && Array.isArray(jsonObject.nodes)) {
-      jsonObject.nodes.forEach((nodeObj: Node) => {
-        const node = Node.fromJSON(JSON.stringify(nodeObj))
-        if(node.serviceURL.length > 0) {
-          sessionNodes.push(node)
-        }   
-      })
+      for(let i = 0; i < jsonObject.nodes.length; i++) {
+        const rawNodeObj = jsonObject.nodes[i]
+        if (rawNodeObj.value) {
+          sessionNodes.push(Node.fromJSON(JSON.stringify(rawNodeObj.value)))
+        } else {
+          throw new Error("Invalid node obj: " + JSON.stringify(rawNodeObj))
+        }
+      }
     }
     return new Session(sessionHeader, jsonObject.key, sessionNodes)
   }

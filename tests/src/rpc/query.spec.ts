@@ -31,6 +31,9 @@ const nodeAddress = "189ceb72c06b99e15a53fd437b81d4500f7a01f1"
  */
 const test = process.env.TEST
 let env = EnvironmentHelper.getLocalNet()
+// TODO: find a better way to only mock on localnet
+// Mocks all query routes
+NockUtil.mockQueries()
 if (test === 'integration') {
     env = EnvironmentHelper.getTestNet()
 }
@@ -43,9 +46,6 @@ const rpcProvider = new HttpRpcProvider(new URL(node01.serviceURL))
 function getPocketDefaultInstance(): Pocket {
     return new Pocket(configuration, rpcProvider)
 }
-
-// Mocks all query routes
-NockUtil.mockQueries()
 
 describe("Pocket RPC Query Interface", async () => {
     // describe("Success scenarios", async () => {
