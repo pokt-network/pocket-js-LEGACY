@@ -151,7 +151,7 @@ export class SessionManager {
    * @memberof SessionManager
    */
   private async saveCurrentSession(pocketAAT: PocketAAT, header: SessionHeader, configuration: Configuration): Promise< RpcError | undefined > {
-    const currentSession = await this.getCurrentSession(pocketAAT.applicationPublicKey, header.chain, configuration, header.sessionBlockHeight)
+    const currentSession = await this.getCurrentSession(pocketAAT, header.chain, configuration, header.sessionBlockHeight)
 
     const key = this.getSessionKey(pocketAAT, header.chain)
     if (typeGuard(currentSession, Session)) {
