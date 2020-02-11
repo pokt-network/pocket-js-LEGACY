@@ -69,6 +69,26 @@ describe("Pocket Interface functionalities", async () => {
                 const relayResponse = await pocket.sendRelay(relayData, blockchain, aat, undefined, undefined, undefined, undefined)
                 expect(typeGuard(relayResponse, RelayResponse)).to.be.true
             })
+
+            it("should send multiple relays for different clients given the correct parameters", async () => {
+                const pocket = new Pocket(configuration, rpcProvider)
+                for (var i = 0; i < 15; i++) {
+                    // Generate client account
+                    const clientPassphrase = "1234"
+                    const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
+                    expect(typeGuard(clientAccountOrError, Error)).to.be.false
+                    const clientAccount = clientAccountOrError as Account
+                    const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
+                    expect(error).to.be.undefined
+                    // Generate AAT
+                    const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                    const blockchain = "49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29"
+                    // Let's submit a relay!
+                    const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
+                    const relayResponse = await pocket.sendRelay(relayData, blockchain, aat, undefined, undefined, undefined, undefined)
+                    expect(typeGuard(relayResponse, RelayResponse)).to.be.true
+                }
+            })
         })
     })
 })
