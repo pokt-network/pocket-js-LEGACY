@@ -21,31 +21,49 @@ export class Pocket {
   // private static TransactionSender = 
   public readonly configuration: Configuration
   public readonly keybase: Keybase
-  public readonly rpc: RPC
   public readonly sessionManager: SessionManager
   public readonly routingTable: RoutingTable
+  private innerRpc?: RPC
 
   /**
    * Creates an instance of Pocket.
-   * @param {Configuration} configuration - Configuration object.
+   * @param {URL} dispatchers - Array holding the initial dispatcher url(s).
    * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
+   * @param {Configuration} configuration - Configuration object.
    * @param {IKVStore} store - Save data using a Key/Value relationship. This object save information in memory.
    * @memberof Pocket
    */
   constructor(
-    configuration: Configuration,
-    rpcProvider: IRPCProvider,
-    store: IKVStore = new InMemoryKVStore(),
+    dispatchers: URL[],
+    rpcProvider?: IRPCProvider,
+    configuration: Configuration = new Configuration(),
+    store: IKVStore = new InMemoryKVStore()
   ) {
     this.configuration = configuration
     try {
-      this.routingTable = new RoutingTable(configuration.nodes, configuration, store)
+      this.routingTable = new RoutingTable(dispatchers, configuration, store)
     } catch (error) {
       throw error
     }
     this.sessionManager = new SessionManager(this.routingTable, store)
     this.keybase = new Keybase(store)
-    this.rpc = new RPC(rpcProvider)
+
+    if(rpcProvider !== undefined) {
+      this.innerRpc = new RPC(rpcProvider)
+    }
+  }
+
+  public rpc(rpcProvider?: IRPCProvider): RPC {
+    if(rpcProvider !== undefined) {
+      this.innerRpc = new RPC(rpcProvider)
+    }
+
+    if(this.innerRpc !== undefined) {
+      return this.innerRpc
+    }
+
+    throw new Error("You need to specify the RPCProvider at least once")
+    
   }
 
   /**
@@ -146,7 +164,7 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
-      const rpc = new RPC(new HttpRpcProvider(new URL(serviceNode.serviceURL)))
+      const rpc = new RPC(new HttpRpcProvider(serviceNode.serviceURL))
       return rpc.client.relay(relay)
     } catch (error) {
       return error

@@ -31,7 +31,7 @@ export class Node {
   public readonly jailed: boolean
   public readonly status: BondStatus
   public readonly stakedTokens: BigInt
-  public readonly serviceURL: string
+  public readonly serviceURL: URL
   public readonly chains: string[]
   public readonly unstakingCompletionTime: string | undefined
 
@@ -62,7 +62,7 @@ export class Node {
     this.jailed = jailed
     this.status = status
     this.stakedTokens = stakedTokens
-    this.serviceURL = serviceURL
+    this.serviceURL = new URL(serviceURL)
     this.chains = chains
     this.unstakingCompletionTime = unstakingCompletionTime
 
@@ -98,7 +98,7 @@ export class Node {
     return Hex.isHex(this.address) &&
     Hex.isHex(this.publicKey) &&
     this.jailed !== undefined &&
-    this.serviceURL.length !== 0 &&
+    this.serviceURL.pathname.length !== 0 &&
     this.status !== undefined &&
     Number(this.stakedTokens.toString()) >= 0
   }

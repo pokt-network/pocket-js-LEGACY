@@ -39,12 +39,13 @@ const nodeAddress = "189ceb72c06b99e15a53fd437b81d4500f7a01f1"
 // Instances
 const env = EnvironmentHelper.getTestNet()
 const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), blockchains)
-const configuration = new Configuration([node01],5, 40000, 200)
-const rpcProvider = new HttpRpcProvider(new URL(node01.serviceURL))
+const dispatcher: URL = node01.serviceURL
+const configuration = new Configuration(5, 40000, 200)
+const rpcProvider = new HttpRpcProvider(dispatcher)
 
 // Default pocket instance to reuse code
 function getPocketDefaultInstance(): Pocket {
-    return new Pocket(configuration, rpcProvider)
+    return new Pocket([dispatcher], rpcProvider, configuration)
 }
 
 describe("Pocket RPC Query Interface", async () => {
@@ -53,56 +54,56 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve an account information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const accountResponse = await pocket.rpc.query.getAccount("4930289621AEFBF9252C91C4C729B7F685E44C4B")
+            const accountResponse = await pocket.rpc().query.getAccount("4930289621AEFBF9252C91C4C729B7F685E44C4B")
             expect(typeGuard(accountResponse, QueryAccountResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a block information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const blockResponse = await pocket.rpc.query.getBlock(BigInt(5))
+            const blockResponse = await pocket.rpc().query.getBlock(BigInt(5))
             expect(typeGuard(blockResponse, QueryBlockResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a transaction information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const txResponse = await pocket.rpc.query.getTX("1293657D9B1E69913DB228AD209997CB5BEA3BE306BD3E87174B86A6C8747717")
+            const txResponse = await pocket.rpc().query.getTX("1293657D9B1E69913DB228AD209997CB5BEA3BE306BD3E87174B86A6C8747717")
             expect(typeGuard(txResponse, QueryTXResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve the current block height', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const heightResponse = await pocket.rpc.query.getHeight()
+            const heightResponse = await pocket.rpc().query.getHeight()
             expect(typeGuard(heightResponse, QueryHeightResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve an account balance', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const balanceResponse = await pocket.rpc.query.getBalance("4930289621AEFBF9252C91C4C729B7F685E44C4B", BigInt(1))
+            const balanceResponse = await pocket.rpc().query.getBalance("4930289621AEFBF9252C91C4C729B7F685E44C4B", BigInt(1))
             expect(typeGuard(balanceResponse, QueryBalanceResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a list of nodes', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const nodeResponse = await pocket.rpc.query.getNodes(StakingStatus.Staked, BigInt(0))
+            const nodeResponse = await pocket.rpc().query.getNodes(StakingStatus.Staked, BigInt(0))
             expect(typeGuard(nodeResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a node information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const nodeResponse = await pocket.rpc.query.getNode(nodeAddress, BigInt(0))
+            const nodeResponse = await pocket.rpc().query.getNode(nodeAddress, BigInt(0))
             expect(typeGuard(nodeResponse, QueryNodeResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a node params information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const nodeParamsResponse = await pocket.rpc.query.getNodeParams(BigInt(0))
+            const nodeParamsResponse = await pocket.rpc().query.getNodeParams(BigInt(0))
             expect(typeGuard(nodeParamsResponse, QueryNodeParamsResponse)).to.be.true
         }).timeout(0)
         // TODO: Proper proof data needed for integration testing
@@ -128,42 +129,42 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a list of apps', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const appsResponse = await pocket.rpc.query.getApps(StakingStatus.Staked, BigInt(0))
+            const appsResponse = await pocket.rpc().query.getApps(StakingStatus.Staked, BigInt(0))
             expect(typeGuard(appsResponse, QueryAppsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve an app information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const appResponse = await pocket.rpc.query.getApp("0C522E0087F6A71B43B9FE11A31C31E710DA8FB3", BigInt(0))
+            const appResponse = await pocket.rpc().query.getApp("0C522E0087F6A71B43B9FE11A31C31E710DA8FB3", BigInt(0))
             expect(typeGuard(appResponse, QueryAppResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve the app params', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const appParamsResponse = await pocket.rpc.query.getAppParams(BigInt(0))
+            const appParamsResponse = await pocket.rpc().query.getAppParams(BigInt(0))
             expect(typeGuard(appParamsResponse, QueryAppParamsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve the Pocket params', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const pocketParamsResponse = await pocket.rpc.query.getPocketParams(BigInt(0))
+            const pocketParamsResponse = await pocket.rpc().query.getPocketParams(BigInt(0))
             expect(typeGuard(pocketParamsResponse, QueryPocketParamsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve the supported chains', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const supportedResponse = await pocket.rpc.query.getSupportedChains(BigInt(0))
+            const supportedResponse = await pocket.rpc().query.getSupportedChains(BigInt(0))
             expect(typeGuard(supportedResponse, QuerySupportedChainsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve the supply information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const supplyResponse = await pocket.rpc.query.getSupply(BigInt(0))
+            const supplyResponse = await pocket.rpc().query.getSupply(BigInt(0))
             expect(typeGuard(supplyResponse, QuerySupplyResponse)).to.be.true
         }).timeout(0)
     })
@@ -173,7 +174,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const blockResponse = await pocket.rpc.query.getBlock(BigInt(-1))
+            const blockResponse = await pocket.rpc().query.getBlock(BigInt(-1))
             expect(typeGuard(blockResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -182,7 +183,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const txResponse = await pocket.rpc.query.getTX("0xw892400Dc3C5a5eeBc96070ccd575D6A720F0F9z")
+            const txResponse = await pocket.rpc().query.getTX("0xw892400Dc3C5a5eeBc96070ccd575D6A720F0F9z")
             expect(typeGuard(txResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -191,7 +192,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const txResponse = await pocket.rpc.query.getTX("")
+            const txResponse = await pocket.rpc().query.getTX("")
             expect(typeGuard(txResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -210,7 +211,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const balanceResponse = await pocket.rpc.query.getBalance("0xz892400Dc3C5a5eeBc96070ccd575D6A720F0F9wee", BigInt(5))
+            const balanceResponse = await pocket.rpc().query.getBalance("0xz892400Dc3C5a5eeBc96070ccd575D6A720F0F9wee", BigInt(5))
             expect(typeGuard(balanceResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -219,7 +220,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const balanceResponse = await pocket.rpc.query.getBalance("", BigInt(5))
+            const balanceResponse = await pocket.rpc().query.getBalance("", BigInt(5))
             expect(typeGuard(balanceResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -228,7 +229,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const balanceResponse = await pocket.rpc.query.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(-1))
+            const balanceResponse = await pocket.rpc().query.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(-1))
             expect(typeGuard(balanceResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -237,7 +238,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeResponse = await pocket.rpc.query.getNodes(StakingStatus.Staked, BigInt(-1))
+            const nodeResponse = await pocket.rpc().query.getNodes(StakingStatus.Staked, BigInt(-1))
             expect(typeGuard(nodeResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -246,7 +247,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeResponse = await pocket.rpc.query.getNode("0xzA0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            const nodeResponse = await pocket.rpc().query.getNode("0xzA0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
             expect(typeGuard(nodeResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -255,7 +256,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeResponse = await pocket.rpc.query.getNode("", BigInt(5))
+            const nodeResponse = await pocket.rpc().query.getNode("", BigInt(5))
             expect(typeGuard(nodeResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -264,7 +265,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeResponse = await pocket.rpc.query.getNode("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-1))
+            const nodeResponse = await pocket.rpc().query.getNode("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-1))
             expect(typeGuard(nodeResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -273,7 +274,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeParamsResponse = await pocket.rpc.query.getNodeParams(BigInt(-1))
+            const nodeParamsResponse = await pocket.rpc().query.getNodeParams(BigInt(-1))
             expect(typeGuard(nodeParamsResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -282,7 +283,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeProofsResponse = await pocket.rpc.query.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            const nodeProofsResponse = await pocket.rpc().query.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
             expect(typeGuard(nodeProofsResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -291,7 +292,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeProofsResponse = await pocket.rpc.query.getNodeProofs(addressHex, BigInt(-1))
+            const nodeProofsResponse = await pocket.rpc().query.getNodeProofs(addressHex, BigInt(-1))
             expect(typeGuard(nodeProofsResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -311,7 +312,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const appsResponse = await pocket.rpc.query.getApps(StakingStatus.Staked, BigInt(-1))
+            const appsResponse = await pocket.rpc().query.getApps(StakingStatus.Staked, BigInt(-1))
             expect(typeGuard(appsResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -320,7 +321,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const appResponse = await pocket.rpc.query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            const appResponse = await pocket.rpc().query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
             expect(typeGuard(appResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -329,7 +330,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const appResponse = await pocket.rpc.query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-5))
+            const appResponse = await pocket.rpc().query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-5))
             expect(typeGuard(appResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -338,7 +339,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const appParamsResponse = await pocket.rpc.query.getAppParams(BigInt(-5))
+            const appParamsResponse = await pocket.rpc().query.getAppParams(BigInt(-5))
             expect(typeGuard(appParamsResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -347,7 +348,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const pocketParamsResponse = await pocket.rpc.query.getPocketParams(BigInt(-5))
+            const pocketParamsResponse = await pocket.rpc().query.getPocketParams(BigInt(-5))
             expect(typeGuard(pocketParamsResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -356,7 +357,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const supportedResponse = await pocket.rpc.query.getSupportedChains(BigInt(-5))
+            const supportedResponse = await pocket.rpc().query.getSupportedChains(BigInt(-5))
             expect(typeGuard(supportedResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -365,7 +366,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const pocket = getPocketDefaultInstance()
 
-            const supplyResponse = await pocket.rpc.query.getSupply(BigInt(-5))
+            const supplyResponse = await pocket.rpc().query.getSupply(BigInt(-5))
             expect(typeGuard(supplyResponse, RpcError)).to.be.true
         }).timeout(0)
     })

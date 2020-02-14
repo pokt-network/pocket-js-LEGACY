@@ -60,9 +60,9 @@ export class SessionManager {
     configuration: Configuration,
     sessionBlockHeight: BigInt = BigInt(0)
   ): Promise<Session | RpcError> {
-    const node = this.routingTable.getNode()
+    const dispatcher = this.routingTable.getDispatcher()
 
-    if (!typeGuard(node, Node)) {
+    if (!typeGuard(dispatcher, URL)) {
       return new RpcError(
         "500",
         "You have reached the maximum number of sessions"
@@ -73,7 +73,7 @@ export class SessionManager {
     if(!this.sessionMap.has(key)) {
       this.sessionMap.set(key, new Queue())
     }
-    const rpc = new RPC(new HttpRpcProvider(new URL(node.serviceURL)))
+    const rpc = new RPC(new HttpRpcProvider(dispatcher))
     const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, sessionBlockHeight)
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut)
