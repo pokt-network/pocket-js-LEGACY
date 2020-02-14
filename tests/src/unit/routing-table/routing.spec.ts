@@ -55,7 +55,7 @@ describe('Routing Table tests',() => {
         const routing = new RoutingTable([dispatcher], configuration, store)
         routing.deleteDispatcher(dispatcher)
         
-        expect(() => routing.readDispatcher(dispatcher)).to.throw("Node not found in routing table.")
+        expect(() => routing.readDispatcher(dispatcher)).to.throw("Dispatcher not found in routing table.")
     }).timeout(0)
 
     it('should not allow more than the max number of nodes per blockchain to be added to the routing table', () => {
