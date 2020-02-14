@@ -23,7 +23,7 @@ export class RoutingTable {
   constructor(dispatchers: URL[] = [], configuration: Configuration, store: IKVStore) {
     if (dispatchers.length > configuration.maxDispatchers && configuration.maxDispatchers > 0) {
       throw new Error(
-        "Routing table cannot contain more than the specified maxNodes per blockchain."
+        "Routing table cannot contain more than the specified maxDispatcher per blockchain."
       )
     }
     if (dispatchers.length < 1) {
