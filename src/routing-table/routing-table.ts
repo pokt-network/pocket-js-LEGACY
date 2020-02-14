@@ -12,21 +12,21 @@ import { typeGuard } from "../utils/type-guard"
 export class RoutingTable {
   public readonly configuration: Configuration
   public readonly localNodesFileName = ""
-  private readonly nodesKey: string = "NODES_KEY"
+  private readonly dispatchersKey: string = "DISPATCHER_KEY"
   private readonly store: IKVStore
   /**
    * Creates an instance of routing.
-   * @param {Array} nodes - Array holding the initial node(s).
+   * @param {Array} nodes - Array holding the initial dispatcher url(s).
    * @param {Configuration} configuration - Configuration object.
    * @memberof Routing
    */
-  constructor(nodes: Node[] = [], configuration: Configuration, store: IKVStore) {
-    if (nodes.length > configuration.maxNodes && configuration.maxNodes > 0) {
+  constructor(dispatchers: URL[] = [], configuration: Configuration, store: IKVStore) {
+    if (dispatchers.length > configuration.maxDispatchers && configuration.maxDispatchers > 0) {
       throw new Error(
         "Routing table cannot contain more than the specified maxNodes per blockchain."
       )
     }
-    if (nodes.length < 1) {
+    if (dispatchers.length < 1) {
       throw new Error(
         "Routing table must be initialized with at least one node."
       )
@@ -34,14 +34,14 @@ export class RoutingTable {
 
     this.configuration = configuration
     this.store = store
-    this.store.add(this.nodesKey, nodes)
+    this.store.add(this.dispatchersKey, dispatchers)
   }
   /**
-   * Returns the stored nodes count
+   * Returns the stored dispatchers urls count
    * @memberof Routing
    */
-  public get nodesCount(): number { 
-    const result = this.store.get(this.nodesKey)
+  public get dispatchersCount(): number { 
+    const result = this.store.get(this.dispatchersKey)
     if (result !== undefined && Array.isArray(result) ) {
       return result.length
     }else{
@@ -50,14 +50,14 @@ export class RoutingTable {
   } 
 
   /**
-   * Reads an array of random nodes from the routing table
-   * @param {number} count - desired number of nodes returned
+   * Reads an array of random dispatchers urls from the routing table
+   * @param {number} count - desired number of dispatchers urls returned
    * @memberof Routing
    */
-  public readRandomNodes(count: number): Node[] {
-    const nodes = this.store.get(this.nodesKey) as Node[]
+  public readRandomDispatchers(count: number): URL[] {
+    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
     // Shuffle array then return the slice
-    const shuffled = nodes.sort(() => 0.5 - Math.random())
+    const shuffled = dispatchers.sort(() => 0.5 - Math.random())
     return shuffled.slice(0, count)
   }
 
@@ -65,21 +65,21 @@ export class RoutingTable {
    * Reads a random node from the routing table based on blockchain netID
    * @memberof Routing
    */
-  public readRandomNode(): Node {
-    const nodes = this.store.get(this.nodesKey) as Node[]
-    return nodes[Math.floor(Math.random() * nodes.length)]
+  public readRandomDispatcher(): URL {
+    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
+    return dispatchers[Math.floor(Math.random() * dispatchers.length)]
   }
 
   /**
-   * Gets a node for the Pocket network rpc calls
+   * Gets a dispatcher url for the Pocket network rpc calls
    * @memberof Routing
    */
-  public getNode(): Node | RpcError {
-    const nodes = this.store.get(this.nodesKey) as Node[]
-    if (nodes.length < 0) {
-      return new RpcError("101", "Node not found in routing table.")
+  public getDispatcher(): URL | RpcError {
+    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
+    if (dispatchers.length < 0) {
+      return new RpcError("101", "Dispatcher not found in routing table.")
     }
-    return nodes[Math.floor(Math.random() * nodes.length)]
+    return dispatchers[Math.floor(Math.random() * dispatchers.length)]
   }
 
   /**
@@ -87,70 +87,51 @@ export class RoutingTable {
    * @param {string} publicKey - public key attached to the node
    * @memberof Routing
    */
-  public readNode(address: string): Node {
-    const nodes = this.store.get(this.nodesKey.toUpperCase()) as Node[]
-    let requestedNode
-    nodes.forEach(function(node: Node) {
-      if (node.address.toUpperCase() === address) {
-        requestedNode = node
+  public readDispatcher(url: URL): Node {
+    const dispatchers = this.store.get(this.dispatchersKey.toUpperCase()) as URL[]
+    let requestedDispatcher
+    dispatchers.forEach(function(storedURL: URL) {
+      if (storedURL.hash === url.hash) {
+        requestedDispatcher = url
       }
     })
-    if (typeGuard(requestedNode, Node)) {
-      return requestedNode
+    if (typeGuard(requestedDispatcher, URL)) {
+      return requestedDispatcher
     }else{
-      throw new Error("Node not found in routing table.")
+      throw new Error("Dispatcher not found in routing table.")
     }
   }
 
   /**
-   * Add a node to the routing table
-   * @param {Node} node - node object to be added
+   * Add a dispatcher url to the routing table
+   * @param {URL} url - URL object to be added
    * @memberof Routing
    */
-  public addNode(node: Node) {
-    const nodes = this.store.get(this.nodesKey) as Node[]
-    nodes.push(node)
+  public addDispatcher(url: URL) {
+    const disptachers = this.store.get(this.dispatchersKey) as URL[]
+    disptachers.push(url)
     // If this pushes the count over the maxNodes, splice the first element off
-    if (nodes.length > this.configuration.maxNodes && this.configuration.maxNodes > 0) {
-      nodes.splice(0, 1)
+    if (disptachers.length > this.configuration.maxDispatchers && this.configuration.maxDispatchers > 0) {
+      disptachers.splice(0, 1)
     }
 
-    this.store.add(this.nodesKey, nodes)
+    this.store.add(this.dispatchersKey, disptachers)
   }
 
   /**
-   * Deletes a node from the routing table
-   * @param {Node} node - node object to be deleted
+   * Deletes a dispatcher url from the routing table
+   * @param {URL} url - url object to be deleted
    * @memberof Routing
    */
-  public deleteNode(node: Node): boolean {
+  public deleteDispatcher(url: URL): boolean {
     // Cycle through the list of nodes, find a match, splice it off
-    const nodes = this.store.get(this.nodesKey) as Node[]
-    for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].address === node.address) {
-        nodes.splice(i, 1)
+    const disptachers = this.store.get(this.dispatchersKey) as URL[]
+    for (let i = 0; i < disptachers.length; i++) {
+      if (disptachers[i].hash === url.hash) {
+        disptachers.splice(i, 1)
         return true
       }
     }
     return false
-  }
-
-  /**
-   * Filter a list of nodes by chain.
-   * @param {string} blockchain - Blockchain hash.
-   * @param {Node[]} nodes - Node list to filter.
-   * @returns {Node[]} - Filtered list of nodes.
-   * @memberof Routing
-   */
-  public filterNodes(blockchain: string, nodes: Node[]): Node[] {
-    const nodeList: Node[] = []
-    nodes.forEach(node => {
-      node.chains.forEach(chain => {
-        if (chain === blockchain) {
-          nodeList.push(node)
-        }
-      })
-    })
-    return nodes
   }
 }

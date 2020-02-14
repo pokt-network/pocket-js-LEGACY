@@ -32,9 +32,9 @@ import { EnvironmentHelper } from '../../utils/env'
 
 // Pocket instance requirements
 const dispatchNodeJSON = "{\"address\":\"189ceb72c06b99e15a53fd437b81d4500f7a01f1\",\"public_key\":\"1839f4836f22d438692355b2ee34e47d396f6eb23b423bf3a1e623137ddbf7e3\",\"jailed\":false,\"status\":2,\"tokens\":\"1000000000\",\"service_url\":\"http:\/\/35.245.90.148:8081\",\"chains\":[\"6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8\",\"49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29\"],\"unstaking_time\":\"0001-01-01T00:00:00Z\"}"
-const dispatchNode = Node.fromJSON(dispatchNodeJSON)
-const configuration = new Configuration([dispatchNode], 5, 60000, 1000000)
-const rpcProvider = new HttpRpcProvider(new URL(dispatchNode.serviceURL))
+const dispatchURL = Node.fromJSON(dispatchNodeJSON).serviceURL
+const configuration = new Configuration(5, 60000, 1000000)
+const rpcProvider = new HttpRpcProvider(dispatchURL)
 
 // Relay requirements
 const appPubKeyHex = "d3814cf87d0d0b249dc9727d2e124a03cbb4d23e37c169833ef88562546f0958"
@@ -43,7 +43,7 @@ const appPrivKeyHex = "2dec343f5d225be87663194f5ce61611ee585ab68baf1046694b00451
 describe("Pocket Interface functionalities", async () => {
     it('should instantiate a Pocket instance due to a valid configuration is being used', () => {
         try {
-            const pocket = new Pocket(configuration, rpcProvider)
+            const pocket = new Pocket([dispatchURL], rpcProvider, configuration)
             expect(typeGuard(pocket, Pocket)).to.be.true
         } catch (error) {
             assert.fail()
@@ -53,7 +53,7 @@ describe("Pocket Interface functionalities", async () => {
     describe("Relay functionality", () => {
         describe("Success scenarios", () => {
             it("should send a relay given the correct parameters", async () => {
-                const pocket = new Pocket(configuration, rpcProvider)
+                const pocket = new Pocket([dispatchURL], rpcProvider, configuration)
                 // Generate client account
                 const clientPassphrase = "1234"
                 const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
@@ -71,7 +71,7 @@ describe("Pocket Interface functionalities", async () => {
             })
 
             it("should send multiple relays for different clients given the correct parameters", async () => {
-                const pocket = new Pocket(configuration, rpcProvider)
+                const pocket = new Pocket([dispatchURL], rpcProvider, configuration)
                 for (let i = 0; i < 15; i++) {
                     // Generate client account
                     const clientPassphrase = "1234"
