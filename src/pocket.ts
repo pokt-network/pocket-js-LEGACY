@@ -53,17 +53,14 @@ export class Pocket {
     }
   }
 
-  public rpc(rpcProvider?: IRPCProvider): RPC {
+  public rpc(rpcProvider?: IRPCProvider): RPC | undefined {
     if(rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)
     }
 
     if(this.innerRpc !== undefined) {
       return this.innerRpc
-    }
-
-    throw new Error("You need to specify the RPCProvider at least once")
-    
+    } 
   }
 
   /**

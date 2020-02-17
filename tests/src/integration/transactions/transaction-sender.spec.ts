@@ -139,7 +139,7 @@ describe("Using ITransactionSender", function () {
                 const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
                 
                 // Get account information
-                let accountInfo = await pocket.rpc().query.getAccount(account.addressHex)
+                let accountInfo = await pocket.rpc()!.query.getAccount(account.addressHex)
                 expect(typeGuard(accountInfo, QueryAccountResponse))
                 accountInfo = accountInfo as QueryAccountResponse
 
