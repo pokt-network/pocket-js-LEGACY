@@ -6,9 +6,10 @@ import { Hex, validateAddressHex, typeGuard } from "../../../utils"
 export class RawTxRequest {
     /**
      * Util function to create a RawTxRequest using Buffer or strings
-     * @param address {Buffer | string} The address hex of the sender
-     * @param tx {Buffer | string} The transaction bytes
-     * @returns {RawTxRequest}
+     * @param {Buffer | string} address - The address hex of the sender
+     * @param {Buffer | string} tx - The transaction bytes
+     * @returns {RawTxRequest} - Raw transaction request object.
+     * @memberof RawTxRequest
      */
     public static with(address: Buffer | string, tx: Buffer | string): RawTxRequest {
         const addrParam: string = typeGuard(address, Buffer) ? (address as Buffer).toString('hex') : (address as string)
@@ -21,8 +22,8 @@ export class RawTxRequest {
 
     /**
      * Constructor for this class
-     * @param address {string} The address hex of the sender
-     * @param txHex {string} The transaction bytes in hex format
+     * @param {string} address - The address hex of the sender
+     * @param {string} txHex - The transaction bytes in hex format
      */
     public constructor(address: string, txHex: string) {
         this.address = address
@@ -39,6 +40,7 @@ export class RawTxRequest {
     /**
      * JSON representation of this model
      * @returns {object} The JSON request specified by the /v1/rawtx RPC call
+     * @memberof RawTxRequest
      */
     public toJSON(): {} {
         return {

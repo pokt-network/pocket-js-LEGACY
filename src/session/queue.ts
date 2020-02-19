@@ -2,7 +2,6 @@
  * @class Queue
  * This class provides a TypeScript implementation of a Queue (FIFO Structure).
  */
-
 export class Queue<T> {
   private intHead?: QueueItem<T> = undefined
   private intTail?: QueueItem<T> = undefined
@@ -15,7 +14,13 @@ export class Queue<T> {
       })
     }
   }
-
+  /**
+   *
+   * Creates a Application object using a JSON string
+   * @param {String} json - JSON string.
+   * @returns {Application} - Application object.
+   * @memberof Queue
+   */
   public *iterator(): IterableIterator<T> {
     let currentItem = this.intHead
 

@@ -6,6 +6,13 @@ import { Hex } from "../.."
  * @class Application
  */
 export class Application {
+  /**
+   *
+   * Creates a Application object using a JSON string
+   * @param {String} json - JSON string.
+   * @returns {Application} - Application object.
+   * @memberof Application
+   */
   public static fromJSON(json: string): Application {
     try {
       const jsonObject = JSON.parse(json)

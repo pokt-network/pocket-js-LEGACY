@@ -8,6 +8,7 @@ export class TxLog {
      * Construct this object from it's JSON representation
      * @param txLogObj {any}
      * @returns {TxLog | Error}
+     * @memberof TxLog
      */
     public static fromJSONObj(txLogObj: any): TxLog | Error {
         let msgIndex: BigInt

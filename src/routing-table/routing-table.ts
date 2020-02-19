@@ -38,6 +38,7 @@ export class RoutingTable {
   }
   /**
    * Returns the stored dispatchers urls count
+   * @returns {number} Nodes count.
    * @memberof Routing
    */
   public get dispatchersCount(): number { 
@@ -52,6 +53,7 @@ export class RoutingTable {
   /**
    * Reads an array of random dispatchers urls from the routing table
    * @param {number} count - desired number of dispatchers urls returned
+   * @returns {URL[]} Random dispatcher urls.
    * @memberof Routing
    */
   public readRandomDispatchers(count: number): URL[] {
@@ -63,6 +65,7 @@ export class RoutingTable {
 
   /**
    * Reads a random node from the routing table based on blockchain netID
+   * @returns {Node} Random node.
    * @memberof Routing
    */
   public readRandomDispatcher(): URL {
@@ -72,6 +75,7 @@ export class RoutingTable {
 
   /**
    * Gets a dispatcher url for the Pocket network rpc calls
+   * @returns {URL | RpcError} Dispatcher url or rpc error
    * @memberof Routing
    */
   public getDispatcher(): URL | RpcError {
@@ -85,6 +89,7 @@ export class RoutingTable {
   /**
    * Reads a specific node from the routing table based on public key
    * @param {string} publicKey - public key attached to the node
+   * @returns {Node} Node object.
    * @memberof Routing
    */
   public readDispatcher(url: URL): Node {
@@ -121,6 +126,7 @@ export class RoutingTable {
   /**
    * Deletes a dispatcher url from the routing table
    * @param {URL} url - url object to be deleted
+   * @returns {boolean} True or false if the node was deleted.
    * @memberof Routing
    */
   public deleteDispatcher(url: URL): boolean {

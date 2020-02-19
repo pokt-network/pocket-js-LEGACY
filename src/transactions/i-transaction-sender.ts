@@ -1,7 +1,6 @@
 import { CoinDenom } from "./models/coin-denom"
 import { RawTxResponse } from "../rpc/models/output/raw-tx-response"
-import { Node } from "../rpc/models/node"
-import { Configuration, RpcError } from ".."
+import { RpcError } from ".."
 
 /**
  * Interface indicating all MsgTypes possible in a Pocket Network transaction and a function to submit the transaction to the network
@@ -9,8 +8,6 @@ import { Configuration, RpcError } from ".."
 export interface ITransactionSender {
     /**
      * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
-     * @param accountNumber {string} Account number for this account
-     * @param sequence {string} Sequence of transactions (or Nonce)
      * @param chainId {string} The chainId of the network to be sent to
      * @param node {Node} the Node object to send the transaction to
      * @param fee {string} The amount to pay as a fee for executing this transaction
@@ -19,8 +16,6 @@ export interface ITransactionSender {
      * @param configuration {Configuration | undefined} Alternative configuration to be used
      */
     submit(
-        accountNumber: string,
-        sequence: string,
         chainId: string,
         fee: string,
         feeDenom?: CoinDenom,

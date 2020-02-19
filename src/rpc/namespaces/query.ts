@@ -4,7 +4,10 @@ import { QueryBlockResponse, RpcError, RPC, V1RPCRoutes, QueryTXResponse, QueryH
 
 export class QueryNamespace {
     public readonly rpcProvider: IRPCProvider
-
+    /**
+     * @description Query namespace class
+     * @param {IRPCProvider} rpcProvider - RPC Provider interface object.
+     */
     public constructor(rpcProvider: IRPCProvider) {
         this.rpcProvider = rpcProvider
     }
@@ -13,12 +16,12 @@ export class QueryNamespace {
      *
      * Query a Block information
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getBlock(
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryBlockResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -51,12 +54,12 @@ export class QueryNamespace {
      *
      * Retrieves a transaction information
      * @param {string} txHash - Transaction hash.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getTX(
-        txHash: string, timeout: number = 60000
+        txHash: string, 
+        timeout: number = 60000
     ): Promise<QueryTXResponse | RpcError> {
         try {
             if (!Hex.isHex(txHash) && Hex.byteLength(txHash) !== 20) {
@@ -90,11 +93,11 @@ export class QueryNamespace {
     /**
      *
      * Get the current network block height
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
-    public async getHeight(timeout: number = 60000
+    public async getHeight(
+        timeout: number = 60000
     ): Promise<QueryHeightResponse | RpcError> {
         try {
             const response = await this.rpcProvider.send(
@@ -124,13 +127,13 @@ export class QueryNamespace {
      * Retrieves an account balance
      * @param {string} address - Account's address.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getBalance(
         address: string,
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryBalanceResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -170,13 +173,13 @@ export class QueryNamespace {
      * Retrieves a list of nodes
      * @param {StakingStatus} stakingStatus - Staking status.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getNodes(
         stakingStatus: StakingStatus,
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryNodesResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -215,13 +218,13 @@ export class QueryNamespace {
      * Query a Node information
      * @param {string} address - Node address.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getNode(
         address: string,
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryNodeResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -263,12 +266,12 @@ export class QueryNamespace {
      *
      * Retrieves the node params
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getNodeParams(
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryNodeParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -304,13 +307,13 @@ export class QueryNamespace {
      * Retrieves the node proofs information
      * @param {string} address - Node's address.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getNodeProofs(
         address: string,
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryNodeProofsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -353,12 +356,12 @@ export class QueryNamespace {
      *
      * Retrieves the node proof information
      * @param {NodeProof} nodeProof - Node's address.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getNodeProof(
-        nodeProof: NodeProof, timeout: number = 60000
+        nodeProof: NodeProof, 
+        timeout: number = 60000
     ): Promise<QueryNodeProofResponse | RpcError> {
         try {
             if (!nodeProof.isValid()) {
@@ -395,13 +398,13 @@ export class QueryNamespace {
      * Retrieves a list of apps
      * @param {StakingStatus} stakingStatus - Staking status.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getApps(
         stakingStatus: StakingStatus,
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryAppsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -441,13 +444,13 @@ export class QueryNamespace {
      * Retrieves an app information
      * @param {string} address - Address of the app.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getApp(
         address: string,
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryAppResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -489,12 +492,12 @@ export class QueryNamespace {
      *
      * Retrieves app params.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getAppParams(
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryAppParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -529,12 +532,12 @@ export class QueryNamespace {
      *
      * Retrieves the pocket params.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getPocketParams(
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QueryPocketParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -570,12 +573,12 @@ export class QueryNamespace {
      *
      * Retrieves supported chains
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getSupportedChains(
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QuerySupportedChainsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -611,12 +614,12 @@ export class QueryNamespace {
      *
      * Retrieves current supply information
      * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getSupply(
-        blockHeight: BigInt = BigInt(0), timeout: number = 60000
+        blockHeight: BigInt = BigInt(0), 
+        timeout: number = 60000
     ): Promise<QuerySupplyResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -651,13 +654,13 @@ export class QueryNamespace {
     /**
      *
      * Retrieves current supply information
-     * @param {BigInt} blockHeight - Block's number.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {string} address - Account's address.
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
      */
     public async getAccount(
-        address: string, timeout: number = 60000
+        address: string, 
+        timeout: number = 60000
     ): Promise<QueryAccountResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {

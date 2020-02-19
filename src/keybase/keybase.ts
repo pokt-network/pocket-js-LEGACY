@@ -21,9 +21,10 @@ import { IKVStore } from ".."
 export class Keybase {
     /**
      * Utility function to sign an arbitrary payload with a valid ed25519 private key
-     * @param privateKey {Buffer} the private key to sign with
-     * @param payload {Buffer} arbitrary payload to sign
+     * @param {Buffer} privateKey - The private key to sign with
+     * @param {Buffer} payload - Arbitrary payload to sign
      * @returns {Buffer | Error} The signature or an Error
+     * @memberof Keybase
      */
     public static signWith(
         privateKey: Buffer,
@@ -43,7 +44,8 @@ export class Keybase {
 
     /**
      * @description Constructor for the Keybase class
-     * @param store - The IKVStore to use to store encrypted accounts
+     * @param {IKVStore} store - The IKVStore to use to store encrypted accounts
+     * @memberof Keybase
      */
     constructor(store: IKVStore) {
         this.store = store
@@ -52,7 +54,9 @@ export class Keybase {
 
     /**
      * @description Creates an account and stores it in the keybase
-     * @param passphrase The passphrase for the account in this keybase
+     * @param {string} passphrase The passphrase for the account in this keybase
+     * @returns {Account | Error} The the new account or an Error
+     * @memberof Keybase
      */
     public async createAccount(passphrase: string): Promise<Account | Error> {
         if (passphrase.length === 0) {
@@ -72,6 +76,8 @@ export class Keybase {
 
     /**
      * @description Lists all the accounts stored in this keybase
+     * @returns {Account | Error} The the new account or an Error
+     * @memberof Keybase
      */
     public async listAccounts(): Promise<Account[] | Error> {
         const result = new Array<Account>()
@@ -96,7 +102,9 @@ export class Keybase {
 
     /**
      * @description Retrieves a single account from this keybase
-     * @param addressHex The address of the account to retrieve in hex string format
+     * @param {string} addressHex - The address of the account to retrieve in hex string format
+     * @returns {Account | Error} - The the new account or an Error
+     * @memberof Keybase
      */
     public async getAccount(addressHex: string): Promise<Account | Error> {
         return this.getAccountFromStore(addressHex)
@@ -104,9 +112,10 @@ export class Keybase {
 
     /**
      * Generates a one time use UnlockedAccount from a persisted Account
-     * @param addressHex {string} The address hex for the account
-     * @param passphrase {string} The passphrase for the account
+     * @param {string} addressHex - The address hex for the account
+     * @param {string} passphrase - The passphrase for the account
      * @returns {Promise<UnlockedAccount | Error>} The UnlockedAccount object or an Error
+     * @memberof Keybase
      */
     public async getUnlockedAccount(addressHex: string, passphrase: string): Promise<UnlockedAccount | Error> {
         return this.unlockAccountFromPersistence(addressHex, passphrase)
@@ -114,8 +123,10 @@ export class Keybase {
 
     /**
      * @description Deletes an account stored in the keybase
-     * @param addressHex The address of the account to delete in hex string format
-     * @param passphrase The passphrase for the account in this keybase
+     * @param {string} addressHex - The address of the account to delete in hex string format
+     * @param {string} passphrase - The passphrase for the account in this keybase
+     * @returns {Promise<Error | undefined>} undefined if the account was deleted or an Error
+     * @memberof Keybase
      */
     public async deleteAccount(
         addressHex: string,
@@ -144,9 +155,11 @@ export class Keybase {
 
     /**
      *
-     * @param addressHex The address of the account to update in hex string format
-     * @param passphrase The passphrase of the account
-     * @param newPassphrase The new passphrase that the account will be updated to
+     * @param {string} addressHex The address of the account to update in hex string format
+     * @param {string} passphrase The passphrase of the account
+     * @param {string} newPassphrase The new passphrase that the account will be updated to
+     * @returns {Promise<Error | undefined>} undefined if the account passphrase was updated or an Error
+     * @memberof Keybase
      */
     public async updateAccountPassphrase(
         addressHex: string,
@@ -192,9 +205,11 @@ export class Keybase {
 
     // Keybase ECDSA functions
     /**
-     * @param addressHex The address of the account that will sign the payload in hex string format
-     * @param passphrase The passphrase of the account
-     * @param payload The payload to be signed
+     * @param {string} addressHex The address of the account that will sign the payload in hex string format
+     * @param {string} passphrase The passphrase of the account
+     * @param {Buffer} payload The payload to be signed
+     * @returns {Promise<Buffer | Error>} Signature buffer or an Error
+     * @memberof Keybase
      */
     public async sign(
         addressHex: string,
@@ -218,8 +233,10 @@ export class Keybase {
 
     /**
      * @description Signs a payload with an unlocked account stored in this keybase
-     * @param addressHex The address of the account that will sign the payload in hex string format
-     * @param payload The payload to be signed
+     * @param {string} addressHex The address of the account that will sign the payload in hex string format
+     * @param {Buffer} payload The payload to be signed
+     * @returns {Promise<Buffer | Error>} Signature buffer or an Error
+     * @memberof Keybase
      */
     public async signWithUnlockedAccount(
         addressHex: string,
@@ -245,9 +262,11 @@ export class Keybase {
 
     /**
      * @description Verify the signature for a given payload signed by `signedPublicKey`
-     * @param signerPublicKey The public key of the signer
-     * @param payload The payload to be verified against the signature
-     * @param signature The calculated signature for the payload
+     * @param {Buffer} signerPublicKey The public key of the signer
+     * @param {Buffer} payload The payload to be verified against the signature
+     * @param {Buffer} signature The calculated signature for the payload
+     * @returns {Promise<Buffer | Error>} Signature buffer or an Error
+     * @memberof Keybase
      */
     public async verifySignature(
         signerPublicKey: Buffer,
@@ -263,9 +282,11 @@ export class Keybase {
 
     /**
      * @description Unlock an account for passphrase free signing of arbitrary payloads using `signWithUnlockedAccount`
-     * @param addressHex The address of the account that will be unlocked in hex string format
-     * @param passphrase The passphrase of the account to unlock
-     * @param unlockPeriod The amount of time (in ms) the account is going to be unlocked, defaults to 10 minutes. Use 0 to keep it unlocked indefinetely
+     * @param {string} addressHex The address of the account that will be unlocked in hex string format
+     * @param {string} passphrase The passphrase of the account to unlock
+     * @param {number} unlockPeriod The amount of time (in ms) the account is going to be unlocked, defaults to 10 minutes. Use 0 to keep it unlocked indefinetely
+     * @returns {Promise<Error | undefined>} Undefined if account got unlocked or an Error
+     * @memberof Keybase
      */
     public async unlockAccount(
         addressHex: string,
@@ -301,7 +322,9 @@ export class Keybase {
 
     /**
      * @description Locks an unlocked account back so signing payloads with it will require a passphrase
-     * @param addressHex The address of the account that will be locked in hex string format
+     * @param {string} addressHex The address of the account that will be locked in hex string format
+     * @returns {Promise<Error | undefined>} Undefined if account got locked or an Error
+     * @memberof Keybase
      */
     public async lockAccount(addressHex: string): Promise<Error | undefined> {
         // Validate the address
@@ -320,7 +343,9 @@ export class Keybase {
 
     /**
      * @description Returns whether or not the specified account is unlocked
-     * @param addressHex The address of the account that will be verified in hex string format
+     * @param {string} addressHex The address of the account that will be verified in hex string format
+     * @returns {Promise<boolean>} True or false if the account is unlocked
+     * @memberof Keybase
      */
     public async isUnlocked(addressHex: string): Promise<boolean> {
         return this.unlockedAccounts[addressHex] ? true : false
@@ -329,8 +354,10 @@ export class Keybase {
     // Import/export of accounts
     /**
      * @description Imports an account by using it's private key into this keybase
-     * @param privateKey The private key of the account to be imported into this keybase
-     * @param passphrase The passphrase of the account to be imported into the keybase
+     * @param {Buffer} privateKey The private key of the account to be imported into this keybase
+     * @param {string} passphrase The passphrase of the account to be imported into the keybase
+     * @returns {Promise<Account | Error>} Imported account or an Error
+     * @memberof Keybase
      */
     public async importAccount(
         privateKey: Buffer,
@@ -375,8 +402,10 @@ export class Keybase {
 
     /**
      * @description Exports an account's private key stored in this keybase
-     * @param addressHex The address of the account that will be exported in hex string format
-     * @param passphrase The passphrase for the account that will be exported
+     * @param {string} addressHex The address of the account that will be exported in hex string format
+     * @param {string} passphrase The passphrase for the account that will be exported
+     * @returns {Promise<Buffer | Error>} Exported account buffer or an Error
+     * @memberof Keybase
      */
     public async exportAccount(
         addressHex: string,
@@ -396,8 +425,10 @@ export class Keybase {
     // Private interface
     /**
      * Returns an `UnlockedAccount` object corresponding to the `Account` object stored in this keybase
-     * @param addressHex The address of the account that will be used to create an `UnlockedAccount` in hex string format
-     * @param passphrase The passphrase for the account that will be used
+     * @param {string} addressHex The address of the account that will be used to create an `UnlockedAccount` in hex string format
+     * @param {string} passphrase The passphrase for the account that will be used
+     * @returns {Promise<UnlockedAccount | Error>} Unlocked account or an Error
+     * @memberof Keybase
      */
     private async unlockAccountFromPersistence(
         addressHex: string,
@@ -470,7 +501,9 @@ export class Keybase {
     // Internal persistence interface
     /**
      * Persists an account in the storage of this keybase
-     * @param account
+     * @param {Account} account
+     * @returns {Promise<Buffer | Error>} Signature buffer or an Error
+     * @memberof Keybase
      */
     private async persistAccount(account: Account): Promise<Error | undefined> {
         // Create the store key
@@ -501,7 +534,9 @@ export class Keybase {
 
     /**
      * Removes an account from the storage of this keybase
-     * @param account
+     * @param {Account} account
+     * @returns {Promise<Error | undefined>} Undefined if the account was removed or an Error
+     * @memberof Keybase
      */
     private async removeAccountRecord(
         account: Account
@@ -531,7 +566,9 @@ export class Keybase {
 
     /**
      * Gets a properly parsed Account object from the store
-     * @param addressHex The address of the account in hex format
+     * @param {string} addressHex The address of the account in hex format
+     * @returns {Promise<Account | Error>} Account from store or an Error
+     * @memberof Keybase
      */
     private async getAccountFromStore(
         addressHex: string
@@ -563,7 +600,9 @@ export class Keybase {
 
     /**
      * Generates a key to be used in the IKVStore for this keybase instance
-     * @param account The account for which the key wants to be generated for
+     * @param {Account} account The account for which the key wants to be generated for
+     * @returns {string} Account store key value
+     * @memberof Keybase
      */
     private generateAccountStoreKey(account: Account): string {
         return this.ACCOUNT_STORE_PREFIX + account.addressHex
@@ -572,7 +611,9 @@ export class Keybase {
     /**
      * Generates a key to be used in the IKVStore for this keybase instance from the address of
      * the account in hex format
-     * @param addressHex The account for which the key wants to be generated for
+     * @param {string} addressHex The account for which the key wants to be generated for
+     * @returns {string} Generated Account store key.
+     * @memberof Keybase
      */
     private generateAccountStoreKeyFromAddressHex(addressHex: string): string {
         return this.ACCOUNT_STORE_PREFIX + addressHex

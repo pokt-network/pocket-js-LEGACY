@@ -51,6 +51,7 @@ export class SessionManager {
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
+   * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @returns {Promise}
    * @memberof SessionManager
    */
@@ -107,10 +108,16 @@ export class SessionManager {
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
+   * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @returns {Promise}
    * @memberof SessionManager
    */
-  public async getCurrentSession(pocketAAT: PocketAAT, chain: string, configuration: Configuration, sessionBlockHeight: BigInt = BigInt(0)): Promise<Session | RpcError> {
+  public async getCurrentSession(
+    pocketAAT: PocketAAT,
+    chain: string,
+    configuration: Configuration,
+    sessionBlockHeight: BigInt = BigInt(0)
+  ): Promise<Session | RpcError> {
 
     const key = this.getSessionKey(pocketAAT, chain)
     if(!this.sessionMap.has(key)){
@@ -128,7 +135,7 @@ export class SessionManager {
   /**
    * Creates an unique key using the PocketAAT object and the chain.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
-   * @param {string} chain - Name of the Blockchain.
+   * @param {string} chain - Blockchain hash.
    * @memberof SessionManager
    */
   public getSessionKey(pocketAAT: PocketAAT, chain: string): string{
@@ -139,7 +146,8 @@ export class SessionManager {
 
   /**
    * Removes the first Session in the queue for the specified blockchain.
-   * @param {string} chain - Name of the Blockchain.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {string} chain - Blockchain hash.
    * @memberof SessionManager
    */
   public destroySession(pocketAAT: PocketAAT, chain: string) {
@@ -149,22 +157,27 @@ export class SessionManager {
 
   /**
    * Save every new Session inside of the KVStore object. All the Sessions saved using this method can be recover if the current execution of the application is terminated.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {SessionHeader} header - SessionHeader object.
    * @param {Configuration} configuration - Configuration object
    * @memberof SessionManager
    */
-  private async saveCurrentSession(pocketAAT: PocketAAT, header: SessionHeader, configuration: Configuration): Promise< RpcError | undefined > {
+  private async saveCurrentSession(
+    pocketAAT: PocketAAT,
+    header: SessionHeader,
+    configuration: Configuration
+  ): Promise<RpcError | undefined> {
     const currentSession = await this.getCurrentSession(pocketAAT, header.chain, configuration, header.sessionBlockHeight)
 
     const key = this.getSessionKey(pocketAAT, header.chain)
     if (typeGuard(currentSession, Session)) {
-      if(!this.sessionMap.has(key)){
+      if (!this.sessionMap.has(key)) {
         this.sessionMap.set(key, new Queue())
       }
-      
+
       (this.sessionMap.get(key) as Queue<Session>).enqueue(currentSession as Session)
       return undefined
-    }else{
+    } else {
       return currentSession as RpcError
     }
   }
