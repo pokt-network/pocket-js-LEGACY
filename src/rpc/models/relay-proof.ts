@@ -44,7 +44,17 @@ export class RelayProof {
       throw new Error("Failed to retrieve PocketAAT for Proof with error: " + error)
     }
   }
-
+  /**
+   *
+   * Creates a Proof object using a JSON string
+   * @param {BigInt} entropy - Entropy big int value.
+   * @param {BigInt} sessionBlockHeight - Session Block Height.
+   * @param {string} servicePubKey - Service Public Key.
+   * @param {string} blockchain - Blockchain hash.
+   * @param {PocketAAT} token - PocketAAT token.
+   * @returns {Buffer} - Buffer.
+   * @memberof RelayProof
+   */
   public static bytes(
     entropy: BigInt,
     sessionBlockHeight: BigInt,
@@ -66,7 +76,13 @@ export class RelayProof {
     hash.update(proofJSONStr)
     return Buffer.from(hash.hex(), "hex")
   }
-
+  /**
+   *
+   * Creates a Proof object using a JSON string
+   * @param {PocketAAT} aat - PocketAAT token.
+   * @returns {string} - PocketAAT Hash.
+   * @memberof RelayProof
+   */
   private static hashAAT(aat: PocketAAT): string {
     const aatObj = {
       version: aat.version,

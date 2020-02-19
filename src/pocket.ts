@@ -15,10 +15,6 @@ import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, Trans
  * @class Pocket
  */
 export class Pocket {
-  /**
-   * Annonymous class which handles TxMsg encoding and Transaciton submission to the Network
-   */
-  // private static TransactionSender = 
   public readonly configuration: Configuration
   public readonly keybase: Keybase
   public readonly sessionManager: SessionManager
@@ -74,12 +70,12 @@ export class Pocket {
    * Sends a Relay Request
    * @param {string} data - string holding the json rpc call.
    * @param {string} blockchain - Blockchain hash.
-   * @param {RelayHeaders} headers - An object holding the HTTP Headers.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {Configuration} configuration - Pocket configuration object.
-   * @param {Node} node - (Optional) Session node which will receive the Relay.
+   * @param {RelayHeaders} headers - (Optional) An object holding the HTTP Headers.
    * @param {string} method - (Optional) HTTP method for REST API calls.
    * @param {string} path - (Optional) REST API path.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @returns {RelayResponse} - A Relay Response object.
    * @memberof Pocket
    */
@@ -163,7 +159,7 @@ export class Pocket {
         pocketAAT,
         signatureHex
       )
-
+      
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
@@ -174,10 +170,11 @@ export class Pocket {
     }
   }
 
-
   /**
    * Creates an ITransactionSender given a private key
-   * @param privateKey {Buffer | string}
+   * @param {Buffer | string} privateKey 
+   * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
+   * @memberof Pocket
    */
   public withPrivateKey(privateKey: Buffer | string): ITransactionSender | Error {
     try {
@@ -195,8 +192,10 @@ export class Pocket {
 
   /**
    * Creates an ITransactionSender given an already imported account into this instanc keybase
-   * @param address {Buffer | string} address of the account
-   * @param passphrase {string} passphrase for the account
+   * @param {Buffer | string} address - address of the account
+   * @param {string} passphrase - passphrase for the account
+   * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
+   * @memberof Pocket
    */
   public async withImportedAccount(address: Buffer | string, passphrase: string): Promise<ITransactionSender | Error> {
     const unlockedAccountOrError = await this.keybase.getUnlockedAccount(
@@ -212,7 +211,9 @@ export class Pocket {
 
   /**
    * Creates an ITransactionSender given a {TransactionSigner} function
-   * @param txSigner {TransactionSigner} Function which will sign the transaction bytes
+   * @param {TransactionSigner} txSigner - Function which will sign the transaction bytes
+   * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
+   * @memberof Pocket
    */
   public withTxSigner(txSigner: TransactionSigner): ITransactionSender | Error {
     try {

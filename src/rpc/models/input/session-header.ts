@@ -4,6 +4,13 @@
  * @class SessionHeader
  */
 export class SessionHeader {
+  /**
+   *
+   * Creates a SessionHeader object using a JSON string
+   * @param {string} json - JSON string.
+   * @returns {SessionHeader} - SessionHeader object.
+   * @memberof SessionHeader
+   */
   public static fromJSON(json: string): SessionHeader {
     try {
       const jsonObject = JSON.parse(json)

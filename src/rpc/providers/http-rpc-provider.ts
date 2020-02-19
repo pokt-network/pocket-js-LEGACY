@@ -3,13 +3,27 @@ import axios from "axios"
 import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
 
+/**
+ * @author Luis C. de León <luis@pokt.network>
+ * @description The HttpRpcProvider class implements the IRCProvider interface.
+ */
 export class HttpRpcProvider implements IRPCProvider{
     public readonly baseURL: URL
-
+    /**
+     * Utility function to send requests.
+     * @param {URL} baseURL - Base URL.
+     */
     public constructor(baseURL: URL) {
         this.baseURL = baseURL
     }
-
+    /**
+     * Utility function to send a request.
+     * @param {string} path - The private key to sign with
+     * @param {string} payload - Request payload to send.
+     * @param {number} timeout - Request timeout.
+     * @returns {Buffer | Error} The signature or an Error
+     * @memberof HttpRpcProvider
+     */
     public async send(path: string, payload: string, timeout: number): Promise<string | RpcError> {
         try {
             const axiosInstance = axios.create({

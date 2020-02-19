@@ -14,6 +14,7 @@ export class Configuration {
    * @param {number} maxDispatchers - (optional) Maximun amount of dispatchers urls to stored in rounting table, default 0.
    * @param {number} maxSessions - (optional) Maximun amount of sessions to stored for the session manager, default 0.
    * @param {number} requestTimeOut - (optional) Maximun timeout for every request in miliseconds, default 0.
+   * @memberof Configuration
    */
   constructor(
     maxDispatchers: number = 0,

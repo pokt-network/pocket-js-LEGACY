@@ -5,17 +5,20 @@ import { RawTxResponse, RpcError, RawTxRequest, V1RPCRoutes, RelayRequest, Relay
 export class ClientNamespace {
 
     public readonly rpcProvider: IRPCProvider
-
+    /**
+     * @description Client namespace class
+     * @param {IRPCProvider} rpcProvider - RPC Provider interface object.
+     */
     public constructor(rpcProvider: IRPCProvider) {
         this.rpcProvider = rpcProvider
     }
 
     /**
      * Method to call the v1/client/rawtx endpoint of a given node
-     * @param fromAddress {Buffer | string} The address of the sender
-     * @param tx {Buffer | string} The amino encoded transaction bytes
-     * @param node {Node}
-     * @param configuration {Configuration}
+     * @param {Buffer | string} fromAddress - The address of the sender
+     * @param {Buffer | string} tx - The amino encoded transaction bytes
+     * @param {number} timeout - Request timeout.
+     * @memberof ClientNamespace
      */
     public async rawtx(
         fromAddress: Buffer | string,
@@ -46,10 +49,9 @@ export class ClientNamespace {
     /**
      *
      * Sends a relay
-     * @param {Object} payload - Payload object containing the needed parameters.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {Object} request - Payload object containing the needed parameters.
+     * @param {number} timeout - Request timeout.
+     * @memberof ClientNamespace
      */
     public async relay(
         request: RelayRequest,
@@ -78,10 +80,9 @@ export class ClientNamespace {
     }
     /**
      * Sends a dispatch request
-     * @param {Object} payload - Payload object containing the needed parameters.
-     * @param {Node} node - Node that will receive the relay.
-     * @param {Configuration} configuration - Configuration object containing preferences information.
-     * @memberof RequestManager
+     * @param {DispatchRequest} request - Request object containing the needed parameters.
+     * @param {number} timeout - Request timeout.
+     * @memberof ClientNamespace
      */
     public async dispatch(
         request: DispatchRequest,

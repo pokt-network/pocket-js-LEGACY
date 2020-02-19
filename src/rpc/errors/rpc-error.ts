@@ -1,11 +1,11 @@
 /**
- * @class RpcErrorResponse
+ * @class RpcError
  */
 export class RpcError extends Error {
 
   /**
-   * Creates a RpcErrorResponse from an Error object
-   * @param error 
+   * Creates a RpcError from an Error object
+   * @param {Error} error - Error object.
    */
   public static fromError(error: Error): RpcError {
     return new RpcError("0", error.message)
@@ -13,10 +13,10 @@ export class RpcError extends Error {
 
   /**
    *
-   * Creates a RpcErrorResponse object using a JSON string
+   * Creates a RpcError object using a JSON string
    * @param {string} json - JSON string.
-   * @returns {RpcError} - RpcErrorResponse object.
-   * @memberof RpcErrorResponse
+   * @returns {RpcError} - RpcError object.
+   * @memberof RpcError
    */
   public static fromJSON(json: string): RpcError {
     const jsonObject = JSON.parse(json)
@@ -27,10 +27,11 @@ export class RpcError extends Error {
   public readonly message: string
 
   /**
-   * Relay Response.
+   * RPC Error.
    * @constructor
    * @param {string} code - Error code.
    * @param {string} message - Error message.
+   * @memberof RpcError
    */
   constructor(code: string, message: string) {
     super(...arguments)
@@ -41,9 +42,9 @@ export class RpcError extends Error {
 
   /**
    *
-   * Creates a JSON object with the RpcErrorResponse properties
+   * Creates a JSON object with the RpcError properties
    * @returns {JSON} - JSON Object.
-   * @memberof RpcErrorResponse
+   * @memberof RpcError
    */
   public toJSON() {
     return {

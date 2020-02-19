@@ -41,8 +41,6 @@ export class TransactionSender implements ITransactionSender {
      * @param configuration {Configuration | undefined} Alternative configuration to be used
      */
     public async submit(
-        accountNumber: string,
-        sequence: string,
         chainId: string,
         fee: string,
         feeDenom?: CoinDenom,
@@ -59,7 +57,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMgs.length === 0) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
-            const stdSignDoc = new StdSignDoc(accountNumber, sequence, chainId, this.txMgs, fee, feeDenom, memo)
+            const stdSignDoc = new StdSignDoc(chainId, this.txMgs, fee, feeDenom, memo)
             let txSignatureOrError
             const bytesToSign = stdSignDoc.marshalAmino()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {

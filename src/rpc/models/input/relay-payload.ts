@@ -35,7 +35,7 @@ export class RelayPayload {
   public readonly headers?: RelayHeaders
 
   /**
-   * Relay Response.
+   * Relay Payload.
    * @constructor
    * @param {string} data - The actual data string for the external chain.
    * @param {string} method - The http CRUD method.

@@ -16,7 +16,6 @@ export class QueryAccountResponse {
   public static fromJSON(json: string): QueryAccountResponse {
     try {
       const rawObjValue = JSON.parse(json)
-      const accountNumber = rawObjValue.account_number.toString()
       const address = rawObjValue.address.toString()
       let balance = "0"
       const coins = rawObjValue.coins
@@ -26,18 +25,15 @@ export class QueryAccountResponse {
       }
       const pubKeyObj = rawObjValue.public_key
       const pubKeyValue = Buffer.from(pubKeyObj).toString("hex")
-      const sequence = rawObjValue.sequence.toString()
-      return new QueryAccountResponse(accountNumber, address, balance, pubKeyValue, sequence)
+      return new QueryAccountResponse(address, balance, pubKeyValue)
     } catch (error) {
       throw error
     }
   }
 
-  public readonly accountNumber: string
   public readonly address: string
   public readonly balance: string
   public readonly publicKey: string
-  public readonly sequence: string
 
   /**
    * Query Account Response.
@@ -45,17 +41,13 @@ export class QueryAccountResponse {
    * @param {object} account - Current account object.
    */
   constructor( 
-    accountNumber: string, 
     address: string,
     balance: string,
     publicKey: string,
-    sequence: string
   ) {
-    this.accountNumber = accountNumber
     this.address = address
     this.balance = balance
     this.publicKey = publicKey
-    this.sequence = sequence
 
     if (!this.isValid()) {
       throw new TypeError("Invalid QueryAccountResponse properties.")
@@ -71,7 +63,6 @@ export class QueryAccountResponse {
     return {
       "type": "posmint/Account",
       "value": {
-        "account_number": this.accountNumber,
         "address": this.address,
         "coins": [
           {
@@ -82,8 +73,7 @@ export class QueryAccountResponse {
         "public_key": {
           "type": "crypto/ed25519_public_key",
           "value": this.publicKey
-        },
-        "sequence": this.sequence
+        }
       }
     }
   }
@@ -96,6 +86,6 @@ export class QueryAccountResponse {
   public isValid(): boolean {
     const validAddress: boolean = validateAddressHex(this.address) === undefined
     const validPubKey: boolean = validatePublicKey(Buffer.from(this.publicKey, "hex"))
-    return validAddress && validPubKey && this.accountNumber.length > 0 && this.sequence.length > 0
+    return validAddress && validPubKey
   }
 }

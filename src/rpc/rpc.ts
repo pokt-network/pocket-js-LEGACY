@@ -10,7 +10,10 @@ export class RPC {
   public readonly rpcProvider: IRPCProvider
   public readonly client: ClientNamespace
   public readonly query: QueryNamespace
-
+  /**
+   * RPC Class for the query and client namespaces.
+   * @param {IRPCProvider} rpcProvider - RPC Provider.
+   */
   public constructor(rpcProvider: IRPCProvider) {
     this.rpcProvider = rpcProvider
     this.client = new ClientNamespace(this.rpcProvider)

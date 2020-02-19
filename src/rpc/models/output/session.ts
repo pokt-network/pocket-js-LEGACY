@@ -7,6 +7,13 @@ import { SessionHeader } from "../input/session-header"
  * @class Session
  */
 export class Session {
+  /**
+   *
+   * Creates a Session object using a JSON string
+   * @param {String} json - JSON string.
+   * @returns {Session} - Session object.
+   * @memberof Session
+   */
   public static fromJSON(json: string): Session {
     const jsonObject = JSON.parse(json)
     const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.header))
@@ -50,6 +57,7 @@ export class Session {
    * Returns whether or not a node is part of this session
    * @param {Node} node the node to check
    * @returns {boolean} whether or not the node is part of this session
+   * @memberof Session
    */
   public isNodeInSession(node: Node): boolean {
     for(let i = 0; i < this.sessionNodes.length; i++) {

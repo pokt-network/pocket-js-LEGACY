@@ -7,7 +7,8 @@ import { Hex } from "./hex"
 
 /**
  * @description Calculates the address from a given public key
- * @param publicKey Public key from which we're going to calculate the address for
+ * @param {Buffer} publicKey - Public key from which we're going to calculate the address for
+ * @returns {Buffer} - Address buffer.
  */
 export function addressFromPublickey(publicKey: Buffer): Buffer {
   const hash = sha256.create()
@@ -17,7 +18,8 @@ export function addressFromPublickey(publicKey: Buffer): Buffer {
 
 /**
  * Extracts the public key from a 64-byte long ed25519 private key
- * @param privateKey
+ * @param {Buffer} privateKey - Private key buffer.
+ * @returns {Buffer} - Public Key buffer.
  */
 export function publicKeyFromPrivate(privateKey: Buffer): Buffer {
   return Buffer.from(privateKey.slice(32, privateKey.length))
@@ -25,7 +27,8 @@ export function publicKeyFromPrivate(privateKey: Buffer): Buffer {
 
 /**
  * Validates an ed25519 private key structure
- * @param privateKey
+ * @param {Buffer} privateKey - Private key buffer.
+ * @returns {boolean} - True or false if the private key is valid.
  */
 export function validatePrivateKey(privateKey: Buffer): boolean {
   return privateKey.length === 64
@@ -33,7 +36,8 @@ export function validatePrivateKey(privateKey: Buffer): boolean {
 
 /**
  * Validates the address for a hex string encoded representing an ed25519 keypair
- * @param addressHex
+ * @param {string} addressHex - Address hex.
+ * @returns {Error | undefined} - Address buffer.
  */
 export function validateAddressHex(addressHex: string): Error | undefined {
 
@@ -47,7 +51,8 @@ export function validateAddressHex(addressHex: string): Error | undefined {
 
 /**
  * Validates an ed25519 public key structure
- * @param pubKey 
+ * @param {Buffer} pubKey - Public key buffer.
+ * @returns {boolean} - True or false if the public key is valid.
  */
 export function validatePublicKey(pubKey: Buffer): boolean {
   return pubKey.length === 32
