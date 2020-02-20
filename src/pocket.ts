@@ -122,6 +122,9 @@ export class Pocket {
         return new RpcError("0", "Could not determine a Service Node to submit this relay")
       }
 
+      // Assign session service node to the rpc instance
+      const serviceRpc = new HttpRpcProvider(new URL(serviceNode.serviceURL))
+      this.rpc = new RPC(serviceRpc)
       // Create Relay Payload
       const relayPayload = new RelayPayload(data, method, path, headers)
 
