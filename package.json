@@ -2,7 +2,7 @@
     "name": "@pokt-network/pocket-js",
     "version": "0.0.1-rc",
     "engine": {
-        "node": ">= 11.6.0"
+        "node": ">=10.19.0 <=12.15.0" 
     },
     "description": "Pocket-js core package with the main functionalities to interact with the Pocket Network.",
     "license": "MIT",
@@ -58,17 +58,17 @@
         }
     ],
     "dependencies": {
+        "@pokt-network/aat-js": "0.0.1-rc",
         "@pokt-network/amino-js": "0.7.2-alpha.1",
+        "@pokt-network/ed25519": "0.0.1",
         "@tendermint/belt": "^0.2.1",
         "@types/aes-js": "^3.1.0",
         "aes-js": "^3.1.2",
         "axios": "^0.18.1",
-        "ed25519": "0.0.4",
         "js-sha256": "^0.9.0",
         "js-sha3": "^0.8.0",
         "node-localstorage": "^2.1.5",
         "pbkdf2": "^3.0.17",
-        "@pokt-network/aat-js": "0.0.1-rc",
         "seedrandom": "^3.0.5"
     },
     "devDependencies": {
