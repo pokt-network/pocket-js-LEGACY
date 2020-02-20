@@ -22,23 +22,15 @@ import { EnvironmentHelper } from '../../utils/env'
 //  */
 // const env = EnvironmentHelper.getLocalNet()
 
-// // Instances
-// const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), blockchains)
-// const configuration = new Configuration([node01], 5, 40000, 200)
-// const rpcProvider = new HttpRpcProvider(new URL(node01.serviceURL))
-
-
-// const nodeJSON = "{\"address\":\"b5f68f97bcd6e5c749723150a509d98d7ae766b4\",\"public_key\":\"e9c04dfc08514377ddeb4d7451137a7ce11a0ab6ae4f86a51d6677667072530a\",\"jailed\":false,\"status\":2,\"tokens\":\"1000000000\",\"service_url\":\"http:\/\/35.236.203.13:8081\",\"chains\":[\"6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8\",\"49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29\"],\"unstaking_time\":\"0001-01-01T00:00:00Z\"}"
-
 // Pocket instance requirements
-// const dispatchNodeJSON = "{\"address\":\"189ceb72c06b99e15a53fd437b81d4500f7a01f1\",\"public_key\":\"1839f4836f22d438692355b2ee34e47d396f6eb23b423bf3a1e623137ddbf7e3\",\"jailed\":false,\"status\":2,\"tokens\":\"1000000000\",\"service_url\":\"http:\/\/35.245.90.148:8081\",\"chains\":[\"6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8\",\"49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29\"],\"unstaking_time\":\"0001-01-01T00:00:00Z\"}"
-const dispatchURL = new URL("http://35.245.90.148:8081")
+const dispatchURL = new URL("http://node9.testnet.pokt.network:8081")
 const configuration = new Configuration(5, 60000, 1000000)
 const rpcProvider = new HttpRpcProvider(dispatchURL)
 
 // Relay requirements
-const appPubKeyHex = "d3814cf87d0d0b249dc9727d2e124a03cbb4d23e37c169833ef88562546f0958"
-const appPrivKeyHex = "2dec343f5d225be87663194f5ce61611ee585ab68baf1046694b0045124bd1a5d3814cf87d0d0b249dc9727d2e124a03cbb4d23e37c169833ef88562546f0958"
+const appPubKeyHex = "ab4ef282930bc21904076cbbbe3a463a4917dc1906d9d28b5c37d0d34ef5668f"
+const appPrivKeyHex = "412844aefbeee579b82395ac40d131f417f701cb0aa1928220b990b738ac929aab4ef282930bc21904076cbbbe3a463a4917dc1906d9d28b5c37d0d34ef5668f"
+const blockchain = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
 
 describe("Pocket Interface functionalities", async () => {
     it('should instantiate a Pocket instance due to a valid configuration is being used', () => {
@@ -63,7 +55,6 @@ describe("Pocket Interface functionalities", async () => {
                 expect(error).to.be.undefined
                 // Generate AAT
                 const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
-                const blockchain = "49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29"
                 // Let's submit a relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 const relayResponse = await pocket.sendRelay(relayData, blockchain, aat, undefined, undefined, undefined, undefined)
@@ -82,10 +73,9 @@ describe("Pocket Interface functionalities", async () => {
                     expect(error).to.be.undefined
                     // Generate AAT
                     const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
-                    const blockchain = "49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29"
                     // Let's submit a relay!
                     const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
-                    const relayResponse = await pocket.sendRelay(relayData, blockchain, aat, undefined, undefined, undefined, undefined)
+                    const relayResponse = await pocket.sendRelay(relayData, blockchain, aat)
                     expect(typeGuard(relayResponse, RelayResponse)).to.be.true
                 }
             })
