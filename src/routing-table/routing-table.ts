@@ -28,7 +28,7 @@ export class RoutingTable {
     }
     if (dispatchers.length < 1) {
       throw new Error(
-        "Routing table must be initialized with at least one node."
+        "Routing table must be initialized with at least one Dispatch node."
       )
     }
 

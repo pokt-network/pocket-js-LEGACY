@@ -42,17 +42,23 @@ export class Pocket {
     this.configuration = configuration
     try {
       this.routingTable = new RoutingTable(dispatchers, configuration, store)
+      this.sessionManager = new SessionManager(this.routingTable, store)
+      this.keybase = new Keybase(store)
     } catch (error) {
       throw error
     }
-    this.sessionManager = new SessionManager(this.routingTable, store)
-    this.keybase = new Keybase(store)
-
+    
     if(rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)
     }
   }
 
+  /**
+   * Creates a new instance of RPC if you set an IRPCProvider or return the previous existing instance
+   * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
+   * @returns {RPC} - A RPC object.
+   * @memberof Pocket
+   */
   public rpc(rpcProvider?: IRPCProvider): RPC | undefined {
     if(rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)

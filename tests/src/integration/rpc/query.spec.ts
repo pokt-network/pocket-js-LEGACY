@@ -38,8 +38,7 @@ const nodeAddress = "189ceb72c06b99e15a53fd437b81d4500f7a01f1"
 // }
 // Instances
 const env = EnvironmentHelper.getTestNet()
-const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), blockchains)
-const dispatcher: URL = node01.serviceURL
+const dispatcher: URL = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 40000, 200)
 const rpcProvider = new HttpRpcProvider(dispatcher)
 
