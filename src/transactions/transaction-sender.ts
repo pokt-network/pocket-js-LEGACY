@@ -15,9 +15,9 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
-     * @param pocket {Pocket}
-     * @param unlockedAccount {UnlockedAccount} 
-     * @param txSigner {TransactionSigner}
+     * @param {Pocket} pocket - Pocket instance 
+     * @param {UnlockedAccount} unlockedAccount - Unlocked account 
+     * @param {TransactionSigner} txSigner - Transaction signer
      */
     public constructor(pocket: Pocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
         this.unlockedAccount = unlockedAccount
@@ -31,16 +31,17 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
-     * @param accountNumber {string} Account number for this account
-     * @param sequence {string} Sequence of transactions (or Nonce)
-     * @param chainId {string} The chainId of the network to be sent to
-     * @param node {Node} the Node object to send the transaction to
-     * @param fee {string} The amount to pay as a fee for executing this transaction
-     * @param feeDenom {CoinDenom | undefined} The denomination of the fee amount 
-     * @param memo {string | undefined} The memo field for this account
-     * @param configuration {Configuration | undefined} Alternative configuration to be used
+     * @param {BigInt} entropy - Random int64.
+     * @param {string} chainId - The chainId of the network to be sent to
+     * @param {string} fee - The amount to pay as a fee for executing this transaction
+     * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
+     * @param {string | undefined} memo - The memo field for this account
+     * @param {number | undefined} timeout - Request timeout
+     * @returns {Promise<RawTxResponse | RpcError>} - A Raw transaction Response object or Rpc error.
+     * @memberof TransactionSender
      */
     public async submit(
+        entropy: BigInt,
         chainId: string,
         fee: string,
         feeDenom?: CoinDenom,
@@ -57,7 +58,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMgs.length === 0) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
-            const stdSignDoc = new StdSignDoc(chainId, this.txMgs, fee, feeDenom, memo)
+            const stdSignDoc = new StdSignDoc(entropy, chainId, this.txMgs, fee, feeDenom, memo)
             let txSignatureOrError
             const bytesToSign = stdSignDoc.marshalAmino()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
@@ -86,10 +87,12 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgSend TxMsg for this transaction
-     * @param fromAddress {string}
-     * @param toAddress {string}
-     * @param amount {string} Needs to be a valid number greater than 0
-     * @param amountDenom {CoinDenom | undefined}
+     * @param {string} fromAddress - Origin address
+     * @param {string} toAddress - Destination address
+     * @param {string} amount - Amount to be sent, needs to be a valid number greater than 0
+     * @param {CoinDenom | undefined} amountDenom - Amoun denomination
+     * @returns {ITransactionSender} - A transaction sender.
+     * @memberof TransactionSender
      */
     public send(
         fromAddress: string,
@@ -106,9 +109,11 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgAppStake TxMsg for this transaction
-     * @param appPubKey {string}
-     * @param chains {string[]} Network identifier list to be requested by this app
-     * @param amount {string} the amount to stake, must be greater than 0
+     * @param {string} appPubKey - Application Public Key
+     * @param {string[]} chains - Network identifier list to be requested by this app
+     * @param {string} amount - the amount to stake, must be greater than 0
+     * @returns {ITransactionSender} - A transaction sender.
+     * @memberof TransactionSender
      */
     public appStake(
         appPubKey: string,
@@ -125,7 +130,9 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgBeginAppUnstake TxMsg for this transaction
-     * @param address {string} Address of the Application to unstake for
+     * @param {string} address - Address of the Application to unstake for
+     * @returns {ITransactionSender} - A transaction sender.
+     * @memberof TransactionSender
      */
     public appUnstake(
         address: string
@@ -140,7 +147,9 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgAppUnjail TxMsg for this transaction
-     * @param address {string} Address of the Application to unjail
+     * @param {string} address - Address of the Application to unjail
+     * @returns {ITransactionSender} - A transaction sender.
+     * @memberof TransactionSender
      */
     public appUnjail(
         address: string
@@ -156,10 +165,12 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgAppStake TxMsg for this transaction
-     * @param nodePubKey {string}
-     * @param chains {string[]} Network identifier list to be serviced by this node
-     * @param amount {string} the amount to stake, must be greater than 0
-     * @param serviceURL {URL}
+     * @param {string} nodePubKey - Node Public key
+     * @param {string[]} chains - Network identifier list to be serviced by this node
+     * @param {string} amount - the amount to stake, must be greater than 0
+     * @param {URL} serviceURL - Node service url
+     * @returns {ITransactionSender} - A transaction sender.
+     * @memberof TransactionSender
      */
     public nodeStake(
         nodePubKey: string,
@@ -177,7 +188,9 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgBeginUnstake TxMsg for this transaction
-     * @param address {string} Address of the Node to unstake for
+     * @param {string} address - Address of the Node to unstake for
+     * @returns {ITransactionSender} - A transaction sender.
+     * @memberof TransactionSender
      */
     public nodeUnstake(
         address: string
@@ -193,7 +206,9 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgUnjail TxMsg for this transaction
-     * @param address {string} Address of the Node to unjail
+     * @param {string} address - Address of the Node to unjail
+     * @returns {ITransactionSender} - A transaction sender.
+     * @memberof TransactionSender
      */
     public nodeUnjail(
         address: string
@@ -208,8 +223,10 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Signs using the unlockedAccount attribute of this class
-     * @param bytesToSign {Buffer}
-     * @param unlockedAccount {UnlockedAccount}
+     * @param {Buffer} bytesToSign - Bytes to be signed
+     * @param {UnlockedAccount} unlockedAccount - Unlocked account for signing
+     * @returns {TxSignature | Error} - A transaction signature or error.
+     * @memberof TransactionSender
      */
     private signWithUnlockedAccount(bytesToSign: Buffer, unlockedAccount: UnlockedAccount): TxSignature | Error {
         const signatureOrError = Keybase.signWith(unlockedAccount.privateKey, bytesToSign)
@@ -221,8 +238,10 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Signs using the txSigner attribute of this class
-     * @param bytesToSign {Buffer}
-     * @param unlockedAccount {TransactionSigner}
+     * @param {Buffer} bytesToSign - Bytes to sign
+     * @param {TransactionSigner} txSigner - Transaction signer
+     * @returns {TxSignature | Error} - A transaction signature or error.
+     * @memberof TransactionSender
      */
     private signWithTrasactionSigner(bytesToSign: Buffer, txSigner: TransactionSigner): TxSignature | Error {
         const transactionSignatureOrError = txSigner(bytesToSign)
