@@ -21,6 +21,11 @@ export class StdTx implements IAminoEncodable{
         this.signatures = signatures
     }
     
+    /**
+     * Marshal the StdTx class properties with amino
+     * @returns {Buffer} - Buffer representation of the marshal object.
+     * @memberof StdTx
+     */
     public marshalAmino(): Buffer {
         // Parse PosmintMsg list
         const msgList: PosmintMsg[] = []

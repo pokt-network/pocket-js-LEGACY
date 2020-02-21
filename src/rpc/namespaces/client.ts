@@ -18,6 +18,7 @@ export class ClientNamespace {
      * @param {Buffer | string} fromAddress - The address of the sender
      * @param {Buffer | string} tx - The amino encoded transaction bytes
      * @param {number} timeout - Request timeout.
+     * @returns {Promise<RawTxResponse | RpcError>} - A Raw transaction Response object or Rpc error.
      * @memberof ClientNamespace
      */
     public async rawtx(
@@ -51,6 +52,7 @@ export class ClientNamespace {
      * Sends a relay
      * @param {Object} request - Payload object containing the needed parameters.
      * @param {number} timeout - Request timeout.
+     * @returns {Promise<RelayResponse | RpcError>} - A Relay Response object or Rpc error
      * @memberof ClientNamespace
      */
     public async relay(
@@ -82,6 +84,7 @@ export class ClientNamespace {
      * Sends a dispatch request
      * @param {DispatchRequest} request - Request object containing the needed parameters.
      * @param {number} timeout - Request timeout.
+     * @returns {Promise<DispatchResponse | RpcError>} - A Dispatch Response object or Rpc error
      * @memberof ClientNamespace
      */
     public async dispatch(

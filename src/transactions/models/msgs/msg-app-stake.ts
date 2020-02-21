@@ -13,9 +13,9 @@ export class MsgAppStake extends TxMsg {
 
     /**
      * Constructor for this class
-     * @param pubKey {Buffer}
-     * @param chains {string[]} Network identifier list to be requested by this app
-     * @param amount {string} the amount to stake, must be greater than 0
+     * @param {Buffer} pubKey - Public key buffer
+     * @param {string[]} chains - Network identifier list to be requested by this app
+     * @param {string} amount - The amount to stake, must be greater than 0
      */
     constructor(pubKey: Buffer, chains: string[], amount: string) {
         super()
@@ -33,11 +33,19 @@ export class MsgAppStake extends TxMsg {
             throw new Error("Invalid public key")
         }
     }
-
+    /**
+     * Returns the msg type key
+     * @returns {string} - Msg type key value.
+     * @memberof MsgAppStake
+     */
     public getMsgTypeKey(): string {
         return this.AMINO_KEY
     }
-
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgAppStake
+     */
     public toStdSignDocMsgObj(): any {
         return {
             type: this.AMINO_KEY,

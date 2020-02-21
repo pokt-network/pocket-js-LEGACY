@@ -10,7 +10,7 @@ export class MsgAppUnjail extends TxMsg {
 
     /**
      * 
-     * @param address {string} The address of the Application to unjail
+     * @param {string} address - The address of the Application to unjail
      */
     public constructor(address: string) {
         super()
@@ -21,7 +21,11 @@ export class MsgAppUnjail extends TxMsg {
             throw errorOrUndefined as Error
         }
     }
-    
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgAppUnjail
+     */
     public toStdSignDocMsgObj(): any {
         return {
             type: this.AMINO_KEY,
