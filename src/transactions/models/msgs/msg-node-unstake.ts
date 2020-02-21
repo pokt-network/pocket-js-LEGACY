@@ -9,7 +9,7 @@ export class MsgNodeUnstake extends TxMsg {
     public readonly nodeAddress: string
 
     /**
-     * @param nodeAddress {string}
+     * @param {string} nodeAddress - Node address
      */
     public constructor(nodeAddress: string) {
         super()
@@ -20,7 +20,11 @@ export class MsgNodeUnstake extends TxMsg {
             throw errorOrUndefined as Error
         }
     }
-
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgNodeUnstake
+     */
     public toStdSignDocMsgObj(): any {
         return {
             type: this.AMINO_KEY,

@@ -13,10 +13,10 @@ export class MsgNodeStake extends TxMsg {
     public readonly serviceURL: URL
 
     /**
-     * @param pubKey {string}
-     * @param chains {string[]} Cannot be empty
-     * @param amount {string} Has to be a valid number and cannot be lesser than 0
-     * @param serviceURL {URL} Needs to be https://
+     * @param {string} pubKey - Public key
+     * @param {string[]} chains - String array containing a list of blockchain hashes
+     * @param {string} amount - Amount to be sent, has to be a valid number and cannot be lesser than 0
+     * @param {URL} serviceURL - Service node URL, needs to be https://
      */
     constructor(pubKey: Buffer, chains: string[], amount: string, serviceURL: URL) {
         super()
@@ -38,6 +38,11 @@ export class MsgNodeStake extends TxMsg {
         }
     }
 
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgAppUnstake
+     */
     public toStdSignDocMsgObj(): any {
         return {
             type: this.AMINO_KEY,

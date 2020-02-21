@@ -10,7 +10,7 @@ export class MsgAppUnstake extends TxMsg {
 
     /**
      * The address hex of the Application to unstake for
-     * @param appAddress {string}
+     * @param {string} appAddress - Application address 
      */
     public constructor(appAddress: string) {
         super()
@@ -21,7 +21,11 @@ export class MsgAppUnstake extends TxMsg {
             throw errorOrUndefined as Error
         }
     }
-
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgAppUnstake
+     */
     public toStdSignDocMsgObj(): any {
         return {
             type: this.AMINO_KEY,

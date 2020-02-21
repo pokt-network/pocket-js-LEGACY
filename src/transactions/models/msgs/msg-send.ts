@@ -12,10 +12,10 @@ export class MsgSend extends TxMsg {
 
     /**
      * Constructor this message
-     * @param fromAddress {string}
-     * @param toAddress {string}
-     * @param amount {string} Needs to be a valid number greater than 0
-     * @param amountDenom {CoinDenom | undefined}
+     * @param {string} fromAddress - Origin address
+     * @param {string} toAddress - Destination address
+     * @param {string} amount - Amount to be sent, needs to be a valid number greater than 0
+     * @param {CoinDenom | undefined} amountDenom  - Amount value denomination
      */
     public constructor(fromAddress: string, toAddress: string, amount: string) {
         super()
@@ -29,6 +29,11 @@ export class MsgSend extends TxMsg {
             throw new Error("Amount < 0")
         }
     }
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgSend
+     */
     public toStdSignDocMsgObj(): any {
         return { 
             type: this.AMINO_KEY, 

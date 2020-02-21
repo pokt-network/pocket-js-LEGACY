@@ -9,7 +9,7 @@ export class MsgNodeUnjail extends TxMsg {
     public readonly address: string
 
     /**
-     * @param address {string}
+     * @param {string} address - Address value
      */
     public constructor(address: string) {
         super()
@@ -20,7 +20,11 @@ export class MsgNodeUnjail extends TxMsg {
             throw errorOrUndefined as Error
         }
     }
-
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgNodeUnjail
+     */
     public toStdSignDocMsgObj(): any {
         return {
             type: this.AMINO_KEY,
