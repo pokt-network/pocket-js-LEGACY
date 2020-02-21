@@ -25,7 +25,7 @@ export class RelayProof {
         pocketAAT = new PocketAAT(
           jsonObject.aat.version,
           jsonObject.aat.client_pub_key,
-          jsonObject.aat.app_address,
+          jsonObject.aat.app_pub_key,
           jsonObject.aat.signature
         )
 
@@ -86,7 +86,7 @@ export class RelayProof {
   private static hashAAT(aat: PocketAAT): string {
     const aatObj = {
       version: aat.version,
-      app_address: aat.applicationPublicKey,
+      app_pub_key: aat.applicationPublicKey,
       client_pub_key: aat.clientPublicKey,
       signature: ""
     }
@@ -149,7 +149,7 @@ export class RelayProof {
       blockchain: this.blockchain,
       aat: {
         version: this.token.version,
-        app_address: this.token.applicationPublicKey,
+        app_pub_key: this.token.applicationPublicKey,
         client_pub_key: this.token.clientPublicKey,
         signature: this.token.applicationSignature
       },
