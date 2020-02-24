@@ -8,10 +8,10 @@ import { RpcError } from ".."
 export interface ITransactionSender {
     /**
      * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
-     * @param {BigInt} entropy - Random int64.
      * @param {string} chainId - The chainId of the network to be sent to
      * @param {Node} node - The Node object to send the transaction to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
+     * @param {BigInt | undefined} entropy - Random int64.
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount
      * @param {string | undefined} memo - The memo field for this account
      * @param {Configuration | undefined} configuration - Alternative configuration to be used
@@ -19,9 +19,9 @@ export interface ITransactionSender {
      * @memberof ITransactionSender
      */
     submit(
-        entropy: BigInt,
         chainId: string,
         fee: string,
+        entropy?: BigInt,
         feeDenom?: CoinDenom,
         memo?: string,
         timeout?: number

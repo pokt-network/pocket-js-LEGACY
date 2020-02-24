@@ -41,14 +41,17 @@ export class TransactionSender implements ITransactionSender {
      * @memberof TransactionSender
      */
     public async submit(
-        entropy: BigInt,
         chainId: string,
         fee: string,
+        entropy?: BigInt,
         feeDenom?: CoinDenom,
         memo?: string,
         timeout?: number
     ): Promise<RawTxResponse | RpcError> {
         try {
+            if (entropy === undefined) {
+                entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
+            }
             if (this.txMsgErrors.length === 1) {
                 return RpcError.fromError(this.txMsgErrors[0])
             } else if (this.txMsgErrors.length > 1) {
