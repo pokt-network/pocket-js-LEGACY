@@ -43,7 +43,7 @@ export class Node {
    * @param {boolean} jailed - has the validator been jailed from staked status?
    * @param {BondStatus} status - validator status
    * @param {BigInt} stakedTokens - how many staked tokens
-   * @param {string} serviceURL - Service node url
+   * @param {URL} serviceURL - Service node url
    * @param {string[]} chains - chains
    * @param {string} unstakingCompletionTime - if unstaking, min time for the validator to complete unstaking
    */

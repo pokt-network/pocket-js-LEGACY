@@ -123,8 +123,8 @@ export class Pocket {
       }
 
       // Assign session service node to the rpc instance
-      const serviceRpc = new HttpRpcProvider(new URL(serviceNode.serviceURL))
-      this.rpc = new RPC(serviceRpc)
+      const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL)
+      this.rpc(serviceProvider)
       // Create Relay Payload
       const relayPayload = new RelayPayload(data, method, path, headers)
 
@@ -166,8 +166,7 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
-      const rpc = new RPC(new HttpRpcProvider(serviceNode.serviceURL))
-      return rpc.client.relay(relay)
+      return this.innerRpc!.client.relay(relay)
     } catch (error) {
       return error
     }
