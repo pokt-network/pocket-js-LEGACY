@@ -66,7 +66,7 @@ const Node = module.Node
 const BondStatus = module.BondStatus
 
 const node = new Node(
-    nodeAddress, publiKey,
+    nodeAddress, publicKey,
     jailedStatus, BondStatus,
     stakedTokens, serviceURL, chains
 )
