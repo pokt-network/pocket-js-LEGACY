@@ -1,6 +1,6 @@
 {
     "name": "@pokt-network/pocket-js",
-    "version": "0.0.1-rc",
+    "version": "0.1.0-rc",
     "engine": {
         "node": ">=10.19.0 <=12.15.0"
     },
@@ -58,8 +58,9 @@
         }
     ],
     "dependencies": {
-        "@pokt-network/aat-js": "0.0.1-rc",
+        "@pokt-network/aat-js": "0.0.2-rc",
         "@pokt-network/amino-js": "0.7.2-alpha.1",
+        "@types/pokt-network__ed25519": "pabelnl/types-pokt-network-ed25519",
         "@pokt-network/ed25519": "0.0.1",
         "@tendermint/belt": "^0.2.1",
         "@types/aes-js": "^3.1.0",
@@ -74,7 +75,6 @@
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.1",
         "@types/chai": "^4.2.7",
-        "@types/ed25519": "0.0.0",
         "@types/mocha": "^5.2.7",
         "@types/node": "^12.12.17",
         "@types/pbkdf2": "^3.0.0",
