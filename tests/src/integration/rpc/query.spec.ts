@@ -56,7 +56,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve an account information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const accountResponse = await pocket.rpc()!.query.getAccount("44c68750b0e2f8cf70498bd6fadead4843260ec9")
+            const accountResponse = await pocket.rpc()!.query.getAccount("cef2cb8d2f4119a180c8b19def1fdec05a7b800d")
             expect(typeGuard(accountResponse, QueryAccountResponse)).to.be.true
         }).timeout(0)
 
@@ -70,7 +70,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a transaction information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const txResponse = await pocket.rpc()!.query.getTX("1293657D9B1E69913DB228AD209997CB5BEA3BE306BD3E87174B86A6C8747717")
+            const txResponse = await pocket.rpc()!.query.getTX("7F928510B1A1550B1C2EB79EAA830FA255EA642516B6D6716AC78B675C743AAE")
             expect(typeGuard(txResponse, QueryTXResponse)).to.be.true
         }).timeout(0)
 
@@ -84,7 +84,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve an account balance', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const balanceResponse = await pocket.rpc()!.query.getBalance("4930289621AEFBF9252C91C4C729B7F685E44C4B", BigInt(1))
+            const balanceResponse = await pocket.rpc()!.query.getBalance("cef2cb8d2f4119a180c8b19def1fdec05a7b800d", BigInt(1))
             expect(typeGuard(balanceResponse, QueryBalanceResponse)).to.be.true
         }).timeout(0)
 
@@ -131,14 +131,14 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a list of apps', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const appsResponse = await pocket.rpc()!.query.getApps(StakingStatus.Staked, BigInt(0))
+            const appsResponse = await pocket.rpc()!.query.getApps(StakingStatus.None, BigInt(0))
             expect(typeGuard(appsResponse, QueryAppsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve an app information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const appResponse = await pocket.rpc()!.query.getApp("44c68750b0e2f8cf70498bd6fadead4843260ec9", BigInt(0))
+            const appResponse = await pocket.rpc()!.query.getApp("cef2cb8d2f4119a180c8b19def1fdec05a7b800d", BigInt(0))
             expect(typeGuard(appResponse, QueryAppResponse)).to.be.true
         }).timeout(0)
 
