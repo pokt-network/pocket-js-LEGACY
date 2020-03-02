@@ -28,8 +28,8 @@ const configuration = new Configuration(5, 60000, 1000000)
 const rpcProvider = new HttpRpcProvider(dispatchURL)
 
 // Relay requirements
-const appPubKeyHex = "ab4ef282930bc21904076cbbbe3a463a4917dc1906d9d28b5c37d0d34ef5668f"
-const appPrivKeyHex = "412844aefbeee579b82395ac40d131f417f701cb0aa1928220b990b738ac929aab4ef282930bc21904076cbbbe3a463a4917dc1906d9d28b5c37d0d34ef5668f"
+const appPubKeyHex = "25e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
+const appPrivKeyHex = "640d19b8bfb1cd70fe565ead88e705beaab34fe18fb0879d32539ebfe5ba511725e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
 const blockchain = "8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff"
 
 describe("Pocket Interface functionalities", async () => {
