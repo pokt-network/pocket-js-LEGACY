@@ -7,7 +7,7 @@ import { CoinDenom } from "./coin-denom"
  */
 export class StdSignDoc implements IAminoEncodable{
 
-    public readonly entropy: BigInt
+    public readonly entropy: string
     public readonly chaindId: string
     public readonly msgs: TxMsg[]
     public readonly fee: string
@@ -18,13 +18,13 @@ export class StdSignDoc implements IAminoEncodable{
     /**
      * Constructor for the StdSignDoc class
      * @throws {Error} Throws an error if the msgs list is empty or the fee is not a number
-     * @param {BigInt} entropy - Random int64.
+     * @param {string} entropy - Random int64.
      * @param {string} chainId - The chainId of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
      * @param {string | undefined} memo - The memo field for this account
      */
-    public constructor(entropy: BigInt, chaindId: string, msgs: TxMsg[], fee: string, feeDenom?: CoinDenom, memo?: string) {
+    public constructor(entropy: string, chaindId: string, msgs: TxMsg[], fee: string, feeDenom?: CoinDenom, memo?: string) {
         this.entropy = entropy
         this.chaindId = chaindId
         this.msgs = msgs
@@ -51,7 +51,7 @@ export class StdSignDoc implements IAminoEncodable{
     public marshalAmino(): Buffer {
         const stdSignDocValue = {
             chain_id: this.chaindId,
-            entropy: Number(this.entropy.toString()).toString(),
+            entropy: this.entropy,
             fee: [{
                 amount: this.fee,
                 denom: this.feeDenom

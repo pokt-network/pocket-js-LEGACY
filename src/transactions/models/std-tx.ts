@@ -52,7 +52,7 @@ export class StdTx implements IAminoEncodable{
             }],
             signatures: signatureList,
             memo: this.stdSignDoc.memo,
-            entropy: Number(this.stdSignDoc.entropy.toString())
+            entropy: this.stdSignDoc.entropy
         }
 
         // Marshal PosmintTx

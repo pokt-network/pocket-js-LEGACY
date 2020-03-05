@@ -57,7 +57,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMgs.length === 0) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
-            const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
+            const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
             const stdSignDoc = new StdSignDoc(entropy, chainId, this.txMgs, fee, feeDenom, memo)
             let txSignatureOrError
             const bytesToSign = stdSignDoc.marshalAmino()
