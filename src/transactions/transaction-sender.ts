@@ -43,15 +43,11 @@ export class TransactionSender implements ITransactionSender {
     public async submit(
         chainId: string,
         fee: string,
-        entropy?: BigInt,
         feeDenom?: CoinDenom,
         memo?: string,
         timeout?: number
     ): Promise<RawTxResponse | RpcError> {
-        try {
-            if (entropy === undefined) {
-                entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
-            }
+        try { 
             if (this.txMsgErrors.length === 1) {
                 return RpcError.fromError(this.txMsgErrors[0])
             } else if (this.txMsgErrors.length > 1) {
@@ -61,6 +57,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMgs.length === 0) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
+            const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
             const stdSignDoc = new StdSignDoc(entropy, chainId, this.txMgs, fee, feeDenom, memo)
             let txSignatureOrError
             const bytesToSign = stdSignDoc.marshalAmino()
