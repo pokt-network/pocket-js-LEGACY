@@ -45,13 +45,14 @@ export class StdTx implements IAminoEncodable{
 
         // Create StdTx object
         const stdTx: PosmintStdTx = {
+            msg: msgList,
             fee: [{
                 amount: this.stdSignDoc.fee,
                 denom: this.stdSignDoc.feeDenom
             }],
+            signatures: signatureList,
             memo: this.stdSignDoc.memo,
-            msg: msgList,
-            signatures: signatureList
+            entropy: Number(this.stdSignDoc.entropy.toString())
         }
 
         // Marshal PosmintTx

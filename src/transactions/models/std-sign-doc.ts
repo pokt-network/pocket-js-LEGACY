@@ -50,8 +50,8 @@ export class StdSignDoc implements IAminoEncodable{
      */
     public marshalAmino(): Buffer {
         const stdSignDocValue = {
-            entropy: Number(this.entropy.toString()),
             chain_id: this.chaindId,
+            entropy: Number(this.entropy.toString()).toString(),
             fee: [{
                 amount: this.fee,
                 denom: this.feeDenom
