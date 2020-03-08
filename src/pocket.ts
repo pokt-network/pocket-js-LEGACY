@@ -166,7 +166,7 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
-      return this.innerRpc!.client.relay(relay)
+      return this.innerRpc!.client.relay(relay, configuration.requestTimeOut)
     } catch (error) {
       return error
     }
