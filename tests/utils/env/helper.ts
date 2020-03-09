@@ -26,6 +26,19 @@ export class EnvironmentHelper {
                 return new LocalNet()
         }
     }
+
+    public static getNetwork(net: string | undefined): Environment {
+        switch (net) {
+            case "local":
+                return new LocalNet()
+            case "test":
+                return new TestNet()
+            case "main":
+                return new MainNet()
+            default:
+                return new LocalNet()
+        }
+    }
     public static getLocalNet(): Environment {
         return new LocalNet()
     }
