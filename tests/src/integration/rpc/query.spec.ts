@@ -31,16 +31,9 @@ const nodeAddress = "17ca63e4ff7535a40512c550dd0267e519cafc1a"
  * Note: process.env.TEST is set in the package.json scripts section
  * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
  */
-// const test = process.env.TEST
 
-// TODO: find a better way to only mock on localnet
-// Mocks all query routes
-//// NockUtil.mockQueries()
-// if (test === 'integration') {
-//     env = EnvironmentHelper.getTestNet()
-// }
-// Instances
-const env = EnvironmentHelper.getTestNet()
+// npm --network=test run test:integration --> replace test with local or main in order to change the environment
+const env = EnvironmentHelper.getNetwork(process.env.npm_config_network)
 const dispatcher: URL = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 40000, 200)
 const rpcProvider = new HttpRpcProvider(dispatcher)
