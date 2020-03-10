@@ -31,8 +31,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
-     * @param {BigInt} entropy - Random int64.
-     * @param {string} chainId - The chainId of the network to be sent to
+     * @param {string} chainID - The chainID of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
      * @param {string | undefined} memo - The memo field for this account
@@ -41,7 +40,7 @@ export class TransactionSender implements ITransactionSender {
      * @memberof TransactionSender
      */
     public async submit(
-        chainId: string,
+        chainID: string,
         fee: string,
         feeDenom?: CoinDenom,
         memo?: string,
@@ -58,7 +57,7 @@ export class TransactionSender implements ITransactionSender {
                 return new RpcError("0", "No messages configured for this transaction")
             }
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
-            const stdSignDoc = new StdSignDoc(entropy, chainId, this.txMgs, fee, feeDenom, memo)
+            const stdSignDoc = new StdSignDoc(entropy, chainID, this.txMgs, fee, feeDenom, memo)
             let txSignatureOrError
             const bytesToSign = stdSignDoc.marshalAmino()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {

@@ -8,7 +8,7 @@ import { CoinDenom } from "./coin-denom"
 export class StdSignDoc implements IAminoEncodable{
 
     public readonly entropy: string
-    public readonly chaindId: string
+    public readonly chainID: string
     public readonly msgs: TxMsg[]
     public readonly fee: string
     public readonly feeDenom: CoinDenom
@@ -24,9 +24,9 @@ export class StdSignDoc implements IAminoEncodable{
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
      * @param {string | undefined} memo - The memo field for this account
      */
-    public constructor(entropy: string, chaindId: string, msgs: TxMsg[], fee: string, feeDenom?: CoinDenom, memo?: string) {
+    public constructor(entropy: string, chainID: string, msgs: TxMsg[], fee: string, feeDenom?: CoinDenom, memo?: string) {
         this.entropy = entropy
-        this.chaindId = chaindId
+        this.chainID = chainID
         this.msgs = msgs
         this.fee = fee
         this.feeDenom = feeDenom ? feeDenom : CoinDenom.Upokt
@@ -39,7 +39,7 @@ export class StdSignDoc implements IAminoEncodable{
             throw new Error("Invalid fee or < 0")
         } else if (msgs.length === 0) {
             throw new Error("No messages found in the msgs list")
-        } else if (this.chaindId.length === 0) {
+        } else if (this.chainID.length === 0) {
             throw new Error("Empty chain id")
         }
     }
@@ -50,7 +50,7 @@ export class StdSignDoc implements IAminoEncodable{
      */
     public marshalAmino(): Buffer {
         const stdSignDocValue = {
-            chain_id: this.chaindId,
+            chain_id: this.chainID,
             entropy: this.entropy,
             fee: [{
                 amount: this.fee,
