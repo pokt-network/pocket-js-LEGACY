@@ -36,11 +36,19 @@ export class ClientNamespace {
                 return response as RpcError
             } else {
                 const rawTxResponse = RawTxResponse.fromJSON(JSON.stringify(response))
-                if (typeGuard(rawTxResponse, Error)) {
-                    return RpcError.fromError(rawTxResponse as Error)
-                } else {
-                    return rawTxResponse as RawTxResponse
+
+                if (typeGuard(rawTxResponse, RawTxResponse)) {
+                    if (rawTxResponse.logs && rawTxResponse.logs.length > 0) {
+                        if (rawTxResponse.logs[0].success) {
+                            return rawTxResponse
+                        }else {
+                            return new RpcError("", JSON.stringify(rawTxResponse.logs[0]))
+                        }
+                    }
+                    return rawTxResponse
                 }
+
+                return RpcError.fromError(rawTxResponse as Error)
             }
         } catch (err) {
             return RpcError.fromError(err)
