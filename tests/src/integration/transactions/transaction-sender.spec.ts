@@ -4,14 +4,9 @@ import { NockUtil } from '../../../utils/nock-util'
 import { EnvironmentHelper } from '../../../utils/env/helper'
 import { type } from 'os'
 
-// let env = EnvironmentHelper.getTestNet()
-// const nodeAddress = "84871BAF5B4E01BE52E5007EACF7048F24BF57E0"
-// const nodePublicKey = "d9c7f275388ca1f87900945dba7f3a90fa9bba78f158c070aa12e3eccf53a2eb"
-// const testNode = new Node(nodeAddress, nodePublicKey, false, BondStatus.bonded, BigInt(100), env.getPOKTRPC(), ["49aff8a9f51b268f6fc485ec14fb08466c3ec68c8d86d9b5810ad80546b65f29"])
-
 const dispatcherURL = new URL("http://node9.testnet.pokt.network:8081")
 const configuration = new Configuration(5, 60000, 1000000)
-
+const privKey = "640d19b8bfb1cd70fe565ead88e705beaab34fe18fb0879d32539ebfe5ba511725e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
 function defaultConfiguration(): Configuration {
     return configuration
 }
@@ -33,12 +28,12 @@ describe("Using ITransactionSender", function () {
             describe("Success scenarios", function () {
                 it("Should create a ITransactionSender given a private key string", async () => {
                     const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey("23eaa0dba825603e30ebff8cbd25d43e43009615b28c68a648f834002272b3f7917fe8e7fc02ceabddfbb10168dcd6885180d9f2db8855dbe063f6c5f7f93c9c")).to.not.throw
+                    expect(pocket.withPrivateKey(privKey)).to.not.throw
                 })
 
                 it("Should create a ITransactionSender given a private key buffer", async () => {
                     const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey(Buffer.from("23eaa0dba825603e30ebff8cbd25d43e43009615b28c68a648f834002272b3f7917fe8e7fc02ceabddfbb10168dcd6885180d9f2db8855dbe063f6c5f7f93c9c", "hex"))).to.not.throw
+                    expect(pocket.withPrivateKey(Buffer.from(privKey, "hex"))).to.not.throw
                 })
             })
 
@@ -46,7 +41,7 @@ describe("Using ITransactionSender", function () {
                 it("Should fail to create with an empty or invalid private key string", async () => {
                     // Invalid private key
                     const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey("23eaa0dba825603e30ebff8cbd25d43e43009615b28c68a648f834002272b3f7917fe8e7fc02ceabddfbb10168dcd6885180d9f2db8855dbe063f6c5f7f93c")).to.not.throw
+                    expect(pocket.withPrivateKey(privKey)).to.not.throw
 
                     // Empty private key
                     expect(pocket.withPrivateKey("")).to.not.throw
@@ -55,7 +50,7 @@ describe("Using ITransactionSender", function () {
                 it("Should fail to create with an empty or invalid private key buffer", async () => {
                     // Invalid private key
                     const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey(Buffer.from("23eaa0dba825603e30ebff8cbd25d43e43009615b28c68a648f834002272b3f7917fe8e7fc02ceabddfbb10168dcd6885180d9f2db8855dbe063f6c5f7f93c", "hex"))).to.not.throw
+                    expect(pocket.withPrivateKey(Buffer.from(privKey, "hex"))).to.not.throw
 
                     // Empty private key
                     expect(pocket.withPrivateKey(Buffer.from("", "hex"))).to.not.throw
@@ -128,11 +123,10 @@ describe("Using ITransactionSender", function () {
             it("should succesfully submit a transaction given the correct parameters", async () => {
                 const pocket = createPocketInstance()
                 
-                const pkStr = ""
-                const publicKey = publicKeyFromPrivate(Buffer.from(pkStr, "hex"))
+                const publicKey = publicKeyFromPrivate(Buffer.from(privKey, "hex"))
                 const address = addressFromPublickey(publicKey)
                 // Create the transaction sender
-                let transactionSender = await pocket.withPrivateKey(pkStr)
+                let transactionSender = await pocket.withPrivateKey(privKey)
                 transactionSender = transactionSender as TransactionSender
 
                 let rawTxResponse = await transactionSender
@@ -206,16 +200,15 @@ describe("Using ITransactionSender", function () {
                 NockUtil.mockRawTx()
                 const pocket = createPocketInstance()
 
-                // Create the account
-                const passphrase = "1234"
-                const accountOrError = await pocket.keybase.createAccount(passphrase)
-                const account = accountOrError as Account
-
+                const publicKey = publicKeyFromPrivate(Buffer.from(privKey, "hex"))
+                const address = addressFromPublickey(publicKey)
                 // Create the transaction sender
-                const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                let transactionSender = await pocket.withPrivateKey(privKey)
+                transactionSender = transactionSender as TransactionSender
+
                 let rawTxResponse = await transactionSender
-                    .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "10")
-                    .submit("mocked-pocket-testnet", "100", CoinDenom.Pokt, "This is a test!")
+                    .send(address.toString("hex"), "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "100000")
+                    .submit("pocket-testnet", "100000", CoinDenom.Pokt, "This is a test!")
                 expect(typeGuard(rawTxResponse, RpcError)).to.be.false
                 rawTxResponse = rawTxResponse as RawTxResponse
                 expect(rawTxResponse.height).to.equal(BigInt(0))
