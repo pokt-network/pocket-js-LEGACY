@@ -79,7 +79,9 @@ export class TransactionSender implements ITransactionSender {
             const encodedTxBytes = transaction.marshalAmino()
             // Clean messages accumulated on submit
             this.txMgs = []
-            return this.pocket.rpc()!.client.rawtx(addressHex, encodedTxBytes, timeout)
+            const response = await this.pocket.rpc()!.client.rawtx(addressHex, encodedTxBytes, timeout)
+            
+            return response
         } catch (error) {
             return RpcError.fromError(error)
         }
