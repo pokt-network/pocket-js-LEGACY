@@ -27,5 +27,6 @@ export enum V1RPCRoutes {
   QuerySupply = Versions.V1 + "/query/supply",
   ClientRawTx = Versions.V1 + "/client/rawtx",
   ClientDispatch = Versions.V1 + "/client/dispatch",
-  ClientRelay = Versions.V1 + "/client/relay"
+  ClientRelay = Versions.V1 + "/client/relay",
+  ClientChallenge = Versions.V1 + "/client//client/challenge"
 }
