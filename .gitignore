@@ -63,4 +63,5 @@ typings/
 *node_modules/
 *jspm_packages/
 /lib
+/.idea
 
