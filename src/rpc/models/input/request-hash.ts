@@ -19,8 +19,8 @@ export class RequestHash {
             const jsonObject = JSON.parse(json)
 
             return new RequestHash(
-                RelayPayload.fromJSON(JSON.stringify(jsonObject.payload)),
-                RelayMeta.fromJSON(JSON.stringify(jsonObject.meta))
+                RelayPayload.fromJSON(jsonObject.payload),
+                RelayMeta.fromJSON(jsonObject.meta)
             )
         } catch (error) {
             throw error
