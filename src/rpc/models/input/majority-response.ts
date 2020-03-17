@@ -17,7 +17,7 @@ export class MajorityResponse {
         try {
             const jsonObject = JSON.parse(json)
 
-            const relays: Relay[] = []
+            const relays: Relay[] =  new Array<Relay>(2)
 
             if (Array.isArray(jsonObject.majority_responses)) {
                 jsonObject.majority_responses.forEach((relay: any) => {
@@ -70,6 +70,6 @@ export class MajorityResponse {
      * @memberof MajorityResponse
      */
     public isValid(): boolean {
-        return (this.relays.length > 0)
+        return (this.relays.length > 0 && this.relays.length < 3)
     }
 }
