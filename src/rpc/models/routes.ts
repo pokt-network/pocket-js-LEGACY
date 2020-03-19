@@ -28,5 +28,5 @@ export enum V1RPCRoutes {
   ClientRawTx = Versions.V1 + "/client/rawtx",
   ClientDispatch = Versions.V1 + "/client/dispatch",
   ClientRelay = Versions.V1 + "/client/relay",
-  ClientChallenge = Versions.V1 + "/client//client/challenge"
+  ClientChallenge = Versions.V1 + "/client/challenge"
 }
