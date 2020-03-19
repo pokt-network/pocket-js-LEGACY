@@ -1,6 +1,8 @@
 import { IRPCProvider } from "../providers"
 import { Configuration, typeGuard, Hex } from "../.."
 import { QueryBlockResponse, RpcError, RPC, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse } from ".."
+import {ChallengeRequest} from "../models/input/challenge-request"
+import {ChallengeResponse} from "../models/output/challenge-response"
 
 export class QueryNamespace {
     public readonly rpcProvider: IRPCProvider
@@ -610,6 +612,7 @@ export class QueryNamespace {
             return new RpcError("0", err)
         }
     }
+
     /**
      *
      * Retrieves current supply information
@@ -681,6 +684,43 @@ export class QueryNamespace {
                     response
                 )
                 return queryAccountResponse
+            } else {
+                return new RpcError(
+                    response.code,
+                    "Failed to retrieve the supply information: " + response.message
+                )
+            }
+        } catch (err) {
+            return new RpcError("0", err)
+        }
+    }
+
+    /**
+     *
+     * Retrieves a ChallengeResponse object.
+     * @param {ChallengeRequest} request - The ChallengeRequest
+     * @param {number} timeout - Request timeout.
+     * @memberof QueryNamespace
+     */
+    public async requestChallenge(
+        request: ChallengeRequest,
+        timeout: number = 60000
+    ): Promise<ChallengeResponse | RpcError> {
+        try {
+            const payload = JSON.stringify(request.toJSON())
+
+            const response = await this.rpcProvider.send(
+                V1RPCRoutes.ClientChallenge.toString(),
+                payload,
+                timeout
+            )
+
+            // Check if response is an error
+            if (!typeGuard(response, RpcError)) {
+                const challengeResponse = ChallengeResponse.fromJSON(
+                    response
+                )
+                return challengeResponse
             } else {
                 return new RpcError(
                     response.code,

@@ -4,15 +4,20 @@
  */
 import { expect } from "chai"
 import { EnvironmentHelper } from "../../../utils/env/helper"
-import { Configuration, HttpRpcProvider, Pocket, typeGuard, 
-    QueryAccountResponse, QueryBlockResponse, QueryTXResponse, 
-    QueryHeightResponse, QueryBalanceResponse, StakingStatus, 
-    QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, 
-    QueryNodeProofsResponse, NodeProof, QueryNodeProofResponse, 
-    QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, 
-    QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, 
-    RpcError 
+import { Configuration, HttpRpcProvider, Pocket, typeGuard,
+    QueryAccountResponse, QueryBlockResponse, QueryTXResponse,
+    QueryHeightResponse, QueryBalanceResponse, StakingStatus,
+    QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse,
+    QueryNodeProofsResponse, NodeProof, QueryNodeProofResponse,
+    QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse,
+    QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse,
+    RpcError
 } from "../../../../src"
+import {ChallengeResponse} from "../../../../src/rpc/models/output/challenge-response"
+import {ChallengeRequest} from "../../../../src/rpc/models/input/challenge-request"
+import {MajorityResponse} from "../../../../src/rpc/models/input/majority-response"
+import {MinorityResponse} from "../../../../src/rpc/models/input/minority-response"
+import {NockUtil} from "../../../utils/nock-util"
 
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
@@ -162,11 +167,20 @@ describe("Pocket RPC Query Interface", async () => {
             const supplyResponse = await pocket.rpc()!.query.getSupply(BigInt(0))
             expect(typeGuard(supplyResponse, QuerySupplyResponse)).to.be.true
         }).timeout(0)
+
+        it('should successfully retrieve a challenge response', async () => {
+            const pocket = getPocketDefaultInstance()
+
+            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelay()])
+            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelay())
+            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, addressHex)
+
+            const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
+            expect(typeGuard(challengeResponse, ChallengeResponse)).to.be.true
+        }).timeout(0)
     })
     describe("Error scenarios", async () => {
         it('should returns an error trying to get a block due block height lower than 0.', async () => {
-            
-
             const pocket = getPocketDefaultInstance()
 
             const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(-1))
@@ -363,6 +377,17 @@ describe("Pocket RPC Query Interface", async () => {
 
             const supplyResponse = await pocket.rpc()!.query.getSupply(BigInt(-5))
             expect(typeGuard(supplyResponse, RpcError)).to.be.true
+        }).timeout(0)
+
+        it('should returns an error trying to get a challenge response due invalid address.', async () => {
+            const pocket = getPocketDefaultInstance()
+
+            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelay()])
+            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelay())
+            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, "000")
+
+            const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
+            expect(typeGuard(challengeResponse, ChallengeResponse)).to.be.true
         }).timeout(0)
     })
 })

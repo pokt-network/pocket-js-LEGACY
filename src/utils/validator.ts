@@ -4,6 +4,7 @@ import {Relay} from "../rpc/models/input/relay"
 import {RelayProof} from "../rpc/models"
 import {typeGuard} from "./type-guard"
 import {MajorityResponse} from "../rpc/models/input/majority-response"
+import {validateAddressHex} from "./key-pair"
 
 
 /**
@@ -21,6 +22,8 @@ export function validateChallengeRequest(request: ChallengeRequest): Error | und
             return new Error("Invalid majority request. The amount of relays needs to be bigger than 0 and lower than 3")
         case typeGuard(validateMajorityResponse(request.majorityResponse), Error):
             return validateMajorityResponse(request.majorityResponse) as Error
+        case typeGuard(validateAddressHex(request.address), Error):
+            return validateAddressHex(request.address) as Error
         default:
             return undefined
     }

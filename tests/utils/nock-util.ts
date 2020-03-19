@@ -41,6 +41,8 @@ import {
 } from '../../src'
 import { SessionHeader } from '../../src/rpc/models/input/session-header'
 import { RelayProof } from '../../src/rpc/models/relay-proof'
+import {ChallengeResponse} from "../../src/rpc/models/output/challenge-response"
+import {Relay} from "../../src/rpc/models/input/relay"
 
 const env = new LocalNet()
 const version = '0.0.1'
@@ -67,6 +69,7 @@ export class NockUtil {
         this.mockGetSupply()
         this.mockGetSupportedChains()
         this.mockGetTx()
+        this.mockChallenge()
     }
 
     public static mockRawTx(code: number = 200): nock.Scope {
@@ -304,6 +307,23 @@ export class NockUtil {
 
         const response = this.getResponseObject(data, code)
         return this.nockRoute(enums.V1RPCRoutes.QuerySupply.toString(), code, response.data)
+    }
+
+    public static mockChallenge(code: number = 200): nock.Scope {
+        const challengeResponse = new ChallengeResponse(addressHex)
+
+        const data: any = this.createData(code, challengeResponse.toJSON())
+
+        const response = this.getResponseObject(data, code)
+        return this.nockRoute(enums.V1RPCRoutes.ClientChallenge.toString(), code, response.data)
+    }
+
+    public static getMockRelay(): Relay {
+        const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
+        const proof = new RelayProof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
+
+        const relay: Relay = new Relay(addressHex, "payload", proof)
+        return relay
     }
 
     // Private functions
