@@ -3,6 +3,8 @@
  */
 import {RelayProof} from "../relay-proof"
 import {Relay} from "./relay"
+import {validateMajorityResponse} from "../../../utils/validator"
+import {typeGuard} from "../../../utils"
 
 
 export class MajorityResponse {
@@ -50,8 +52,10 @@ export class MajorityResponse {
         relays: Relay[]
     ) {
         this.relays = relays
-        if (!this.isValid()) {
-            throw new TypeError("Invalid MajorityResponse properties.")
+
+        const valid = this.isValid()
+        if(typeGuard(valid, Error)) {
+            throw valid
         }
     }
     /**
@@ -69,7 +73,7 @@ export class MajorityResponse {
      * @returns {boolean} - True or false.
      * @memberof MajorityResponse
      */
-    public isValid(): boolean {
-        return (this.relays.length > 0 && this.relays.length < 3)
+    public isValid(): Error | undefined {
+        return validateMajorityResponse(this)
     }
 }
