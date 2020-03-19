@@ -2,6 +2,8 @@
  * @class MinorityResponse
  */
 import {Relay} from "./relay"
+import {validateRelay} from "../../../utils/validator"
+import {typeGuard} from "../../../utils"
 
 
 export class MinorityResponse {
@@ -35,8 +37,10 @@ export class MinorityResponse {
         relay: Relay
     ) {
         this.relay = relay
-        if (!this.isValid()) {
-            throw new TypeError("Invalid MinorityResponse properties.")
+
+        const valid = this.isValid()
+        if(typeGuard(valid, Error)) {
+            throw valid
         }
     }
     /**
@@ -54,7 +58,7 @@ export class MinorityResponse {
      * @returns {boolean} - True or false.
      * @memberof MinorityResponse
      */
-    public isValid(): boolean {
-        return (this.relay.isValid())
+    public isValid(): Error | undefined {
+        return validateRelay(this.relay)
     }
 }

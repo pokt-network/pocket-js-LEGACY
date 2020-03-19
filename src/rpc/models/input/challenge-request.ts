@@ -3,6 +3,8 @@
  */
 import {MajorityResponse} from "./majority-response"
 import {MinorityResponse} from "./minority-response"
+import {validateChallengeRequest, validateRelay} from "../../../utils/validator"
+import {typeGuard} from "../../../utils"
 
 
 export class ChallengeRequest {
@@ -46,8 +48,10 @@ export class ChallengeRequest {
         this.majorityResponse = majorityResponse
         this.minorityResponse = minorityResponse
         this.address = address
-        if (!this.isValid()) {
-            throw new TypeError("Invalid ChallengeRequest properties.")
+
+        const valid = this.isValid()
+        if(typeGuard(valid, Error)) {
+            throw valid
         }
     }
     /**
@@ -70,9 +74,7 @@ export class ChallengeRequest {
      * @returns {boolean} - True or false.
      * @memberof ChallengeRequest
      */
-    public isValid(): boolean {
-        return (this.majorityResponse.isValid() &&
-            this.minorityResponse.isValid() &&
-            this.address.length > 0)
+    public isValid(): Error | undefined {
+        return validateChallengeRequest(this)
     }
 }
