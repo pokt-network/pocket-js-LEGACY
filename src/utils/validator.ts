@@ -16,10 +16,8 @@ export function validateChallengeRequest(request: ChallengeRequest): Error | und
     switch (true) {
         case typeGuard(validateRelay(request.minorityResponse.relay), Error):
             return validateRelay(request.minorityResponse.relay) as Error
-        case request.majorityResponse.relays.length === 0:
-            return new Error("Invalid majority request. The amount of relays needs to be bigger than 0 and lower than 3")
-        case request.majorityResponse.relays.length > 2:
-            return new Error("Invalid majority request. The amount of relays needs to be bigger than 0 and lower than 3")
+        case request.majorityResponse.relays.length !== 2:
+            return new Error("Invalid majority request. The amount of relays needs to be equals to 2")
         case typeGuard(validateMajorityResponse(request.majorityResponse), Error):
             return validateMajorityResponse(request.majorityResponse) as Error
         case typeGuard(validateAddressHex(request.address), Error):
