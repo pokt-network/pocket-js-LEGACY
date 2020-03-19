@@ -29,7 +29,7 @@ export class RawTxResponse {
             }
 
             if (rawTxResObj.logs && typeGuard(rawTxResObj.logs, Array)) {
-                const rawLogObjs = rawTxResObj.logs as Array<{}>
+                const rawLogObjs = rawTxResObj.logs as {}[]
                 for (let i = 0; i < rawLogObjs.length; i++) {
                     const txLogOrError = TxLog.fromJSONObj(rawLogObjs[i])
                     if (typeGuard(txLogOrError, TxLog)) {
