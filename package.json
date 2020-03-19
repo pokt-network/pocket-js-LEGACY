@@ -18,6 +18,7 @@
         "prepare": "rm -r lib & cti create ./src & npm run lint & tsc",
         "prepackage": "rm -r lib & cti create ./src & npm run lint & tsc",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+        "update": "rm -r node_modules/ && rm package-lock.json && npm install",
         "lint": "tslint -p tsconfig.json"
     },
     "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/core",
@@ -81,8 +82,8 @@
         "@types/seedrandom": "^2.4.28",
         "chai": "^4.2.0",
         "create-ts-index": "^1.12.0",
-        "mocha": "^6.2.2",
-        "nock": "^11.7.2",
+        "mocha": "^7.1.1",
+        "nock": "^12.0.3",
         "nyc": "^15.0.0",
         "prettier": "^1.19.1",
         "source-map-support": "^0.5.16",
