@@ -8,7 +8,7 @@ import {Hex} from "../../../utils"
 export class Relay {
     /**
      *
-     * Creates a MajorityResponse object using a JSON string
+     * Creates a Relay object using a JSON string
      * @param {String} json - JSON string.
      * @returns {Relay} - Relay object.
      * @memberof Relay
@@ -54,7 +54,7 @@ export class Relay {
 
     /**
      *
-     * Creates a JSON object with the MajorityResponse properties
+     * Creates a JSON object with the Relay properties
      * @returns {JSON} - JSON Object.
      * @memberof Relay
      */
