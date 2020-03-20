@@ -3,7 +3,7 @@
  */
 import {MajorityResponse} from "./majority-response"
 import {MinorityResponse} from "./minority-response"
-import {validateChallengeRequest, validateRelay} from "../../../utils/validator"
+import {validateChallengeRequest} from "../../../utils/validator"
 import {typeGuard} from "../../../utils"
 
 

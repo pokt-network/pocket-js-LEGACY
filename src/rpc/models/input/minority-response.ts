@@ -1,9 +1,9 @@
 /**
  * @class MinorityResponse
  */
-import {Relay} from "./relay"
-import {validateRelay} from "../../../utils/validator"
+import {validateRelayResponse} from "../../../utils/validator"
 import {typeGuard} from "../../../utils"
+import {RelayResponse} from "../output"
 
 
 export class MinorityResponse {
@@ -19,14 +19,14 @@ export class MinorityResponse {
             const jsonObject = JSON.parse(json)
 
             return new MinorityResponse(
-                Relay.fromJSON(JSON.stringify(jsonObject.relay))
+                RelayResponse.fromJSON(JSON.stringify(jsonObject.relay))
             )
         } catch (error) {
             throw error
         }
     }
 
-    public readonly relay: Relay
+    public readonly relay: RelayResponse
 
     /**
      * Minority Response.
@@ -34,7 +34,7 @@ export class MinorityResponse {
      * @param {Relay} relay - Array of relays.
      */
     constructor(
-        relay: Relay
+        relay: RelayResponse
     ) {
         this.relay = relay
 
@@ -59,6 +59,6 @@ export class MinorityResponse {
      * @memberof MinorityResponse
      */
     public isValid(): Error | undefined {
-        return validateRelay(this.relay)
+        return validateRelayResponse(this.relay)
     }
 }

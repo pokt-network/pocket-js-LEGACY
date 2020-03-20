@@ -4,7 +4,19 @@
  */
 // Constants
 import { expect, assert } from 'chai'
-import { Node, BondStatus, Configuration, HttpRpcProvider, Pocket, typeGuard, Account, PocketAAT, Session, RelayResponse } from '../../../src'
+import {
+    Node,
+    BondStatus,
+    Configuration,
+    HttpRpcProvider,
+    Pocket,
+    typeGuard,
+    Account,
+    PocketAAT,
+    Session,
+    RelayResponse,
+    RelayMeta, RequestHash, RelayPayload
+} from '../../../src'
 import { EnvironmentHelper } from '../../utils/env'
 
 // // For Testing we are using dummy data, none of the following information is real.
@@ -56,8 +68,11 @@ describe("Pocket Interface functionalities", async () => {
                 // Generate AAT
                 const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a relay!
+                const relayPayload = new RelayPayload("data", "method", "path")
+                const relayMeta = new RelayMeta(BigInt(1))
+                const requestHash = new RequestHash(relayPayload, relayMeta)
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
-                const relayResponse = await pocket.sendRelay(relayData, blockchain, aat)
+                const relayResponse = await pocket.sendRelay(relayData, blockchain, aat, requestHash)
                 expect(typeGuard(relayResponse, RelayResponse)).to.be.true
             })
 
@@ -74,8 +89,11 @@ describe("Pocket Interface functionalities", async () => {
                     // Generate AAT
                     const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                     // Let's submit a relay!
+                    const relayPayload = new RelayPayload("data", "method", "path")
+                    const relayMeta = new RelayMeta(BigInt(1))
+                    const requestHash = new RequestHash(relayPayload, relayMeta)
                     const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
-                    const relayResponse = await pocket.sendRelay(relayData, blockchain, aat)
+                    const relayResponse = await pocket.sendRelay(relayData, blockchain, aat, requestHash)
                     expect(typeGuard(relayResponse, RelayResponse)).to.be.true
                 }
             })

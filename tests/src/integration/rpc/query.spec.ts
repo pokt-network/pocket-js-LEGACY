@@ -171,8 +171,8 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a challenge response', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelay(), NockUtil.getMockRelay()])
-            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelay())
+            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse(), NockUtil.getMockRelayResponse()])
+            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
             const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, addressHex)
 
             const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
@@ -382,8 +382,8 @@ describe("Pocket RPC Query Interface", async () => {
         it('should returns an error trying to get a challenge response due invalid address.', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelay()])
-            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelay())
+            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse()])
+            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
             const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, "000")
 
             const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
@@ -393,8 +393,8 @@ describe("Pocket RPC Query Interface", async () => {
         it('should returns an error trying to get a challenge response due missing relay.', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelay()])
-            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelay())
+            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse()])
+            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
             const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, addressHex)
 
             const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
