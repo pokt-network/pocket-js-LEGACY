@@ -2,9 +2,9 @@
  * @class MajorityResponse
  */
 import {RelayProof} from "../relay-proof"
-import {Relay} from "./relay"
 import {validateMajorityResponse} from "../../../utils/validator"
 import {typeGuard} from "../../../utils"
+import {RelayResponse} from "../output"
 
 
 export class MajorityResponse {
@@ -19,12 +19,12 @@ export class MajorityResponse {
         try {
             const jsonObject = JSON.parse(json)
 
-            const relays: Relay[] =  new Array<Relay>(2)
+            const relays: RelayResponse[] =  new Array<RelayResponse>(2)
 
             if (Array.isArray(jsonObject.majority_responses)) {
                 jsonObject.majority_responses.forEach((relay: any) => {
                     if (relay !== null) {
-                        const newRelay = new Relay(
+                        const newRelay = new RelayResponse(
                             relay.signature,
                             relay.payload,
                             RelayProof.fromJSON(JSON.stringify(relay.proof)),
@@ -41,7 +41,7 @@ export class MajorityResponse {
         }
     }
 
-    public readonly relays: Relay[]
+    public readonly relays: RelayResponse[]
 
     /**
      * Majority Response.
@@ -49,7 +49,7 @@ export class MajorityResponse {
      * @param {Relay[]} relays - Array of relays.
      */
     constructor(
-        relays: Relay[]
+        relays: RelayResponse[]
     ) {
         this.relays = relays
 

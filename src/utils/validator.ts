@@ -1,7 +1,6 @@
 import {ChallengeRequest} from "../rpc/models/input/challenge-request"
 import {Hex} from "./hex"
-import {Relay} from "../rpc/models/input/relay"
-import {RelayProof} from "../rpc/models"
+import {RelayProof, RelayResponse} from "../rpc/models"
 import {typeGuard} from "./type-guard"
 import {MajorityResponse} from "../rpc/models/input/majority-response"
 import {validateAddressHex} from "./key-pair"
@@ -14,8 +13,8 @@ import {validateAddressHex} from "./key-pair"
  */
 export function validateChallengeRequest(request: ChallengeRequest): Error | undefined {
     switch (true) {
-        case typeGuard(validateRelay(request.minorityResponse.relay), Error):
-            return validateRelay(request.minorityResponse.relay) as Error
+        case typeGuard(validateRelayResponse(request.minorityResponse.relay), Error):
+            return validateRelayResponse(request.minorityResponse.relay) as Error
         case request.majorityResponse.relays.length !== 2:
             return new Error("Invalid majority request. The amount of relays needs to be equals to 2")
         case typeGuard(validateMajorityResponse(request.majorityResponse), Error):
@@ -35,7 +34,7 @@ export function validateChallengeRequest(request: ChallengeRequest): Error | und
 export function validateMajorityResponse(response: MajorityResponse): Error | undefined {
     let result: Error | undefined
     response.relays.forEach(relay => {
-        result = validateRelay(relay)
+        result = validateRelayResponse(relay)
     })
     return result
 }
@@ -45,7 +44,7 @@ export function validateMajorityResponse(response: MajorityResponse): Error | un
  * @param {Relay} relay - The Relay to be evaluated.
  * @returns {Error | undefined}.
  */
-export function validateRelay(relay: Relay): Error | undefined {
+export function validateRelayResponse(relay: RelayResponse): Error | undefined {
     switch (true) {
         case !Hex.isHex(relay.signature):
             return new Error("Invalid string is not hex: " + relay.signature)

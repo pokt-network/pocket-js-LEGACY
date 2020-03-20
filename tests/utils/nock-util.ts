@@ -37,12 +37,13 @@ import {
     QueryAppParamsResponse,
     QueryPocketParamsResponse,
     QuerySupportedChainsResponse,
-    QuerySupplyResponse
+    QuerySupplyResponse, RelayResponse, RelayPayload
 } from '../../src'
 import { SessionHeader } from '../../src/rpc/models/input/session-header'
 import { RelayProof } from '../../src/rpc/models/relay-proof'
 import {ChallengeResponse} from "../../src/rpc/models/output/challenge-response"
-import {Relay} from "../../src/rpc/models/input/relay"
+import {RequestHash} from "../../src/rpc/models/input/request-hash"
+import {RelayMeta} from "../../src/rpc/models/input/relay-meta"
 
 const env = new LocalNet()
 const version = '0.0.1'
@@ -84,8 +85,10 @@ export class NockUtil {
     }
 
     public static mockRelay(code: number = 200): nock.Scope {
+        const relayPayload = new RelayPayload("data", "method", "path")
+        const relayMeta = new RelayMeta(BigInt(1))
         const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
-        const proof = new RelayProof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
+        const proof = new RelayProof(new RequestHash(relayPayload, relayMeta), BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
         const data: any = this.createData(code, {
             proof: proof.toJSON(),
             response: 'response',
@@ -318,12 +321,14 @@ export class NockUtil {
         return this.nockRoute(enums.V1RPCRoutes.ClientChallenge.toString(), code, response.data)
     }
 
-    public static getMockRelay(): Relay {
+    public static getMockRelayResponse(): RelayResponse {
         const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
-        const proof = new RelayProof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
+        const relayPayload = new RelayPayload("data", "method", "path")
+        const relayMeta = new RelayMeta(BigInt(1))
+        const proof = new RelayProof(new RequestHash(relayPayload, relayMeta), BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
 
-        const relay: Relay = new Relay(addressHex, "payload", proof)
-        return relay
+        const relayResponse: RelayResponse = new RelayResponse(addressHex, "payload", proof)
+        return relayResponse
     }
 
     // Private functions

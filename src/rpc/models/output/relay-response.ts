@@ -28,19 +28,19 @@ export class RelayResponse {
   }
 
   public readonly signature: string
-  public readonly response: string
+  public readonly payload: string
   public readonly proof: RelayProof
 
   /**
    * Relay Response.
    * @constructor
    * @param {string} signature - Signature.
-   * @param {string} response - Response string.
+   * @param {string} payload - Payload string.
    * @param {RelayProof} proof - Proof object.
    */
-  constructor(signature: string, response: string, proof: RelayProof) {
+  constructor(signature: string, payload: string, proof: RelayProof) {
     this.signature = signature
-    this.response = response
+    this.payload = payload
     this.proof = proof
 
     if (!this.isValid()) {
@@ -56,7 +56,7 @@ export class RelayResponse {
   public toJSON() {
     return {
       proof: this.proof.toJSON(),
-      response: this.response,
+      payload: this.payload,
       signature: this.signature
     }
   }
@@ -70,7 +70,7 @@ export class RelayResponse {
     return (
       this.signature.length !== 0 &&
       this.proof.isValid() &&
-      this.response.length !== 0
+      this.payload.length !== 0
     )
   }
 }

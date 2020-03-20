@@ -1,5 +1,5 @@
 import { Configuration } from "./config"
-import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session } from "./rpc/models"
+import {RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session, RequestHash} from "./rpc/models"
 import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate, typeGuard } from "./utils"
 import { SessionManager } from "./session/session-manager"
 import { Node, RPC, IRPCProvider, RpcError, HttpRpcProvider } from "./rpc"
@@ -71,6 +71,7 @@ export class Pocket {
    * @param {string} data - string holding the json rpc call.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {RequestHash} requestHash - RequestHash object.
    * @param {Configuration} configuration - Pocket configuration object.
    * @param {RelayHeaders} headers - (Optional) An object holding the HTTP Headers.
    * @param {string} method - (Optional) HTTP method for REST API calls.
@@ -83,6 +84,7 @@ export class Pocket {
     data: string,
     blockchain: string,
     pocketAAT: PocketAAT,
+    requestHash: RequestHash,
     configuration: Configuration = this.configuration,
     headers?: RelayHeaders,
     method = "",
@@ -138,11 +140,12 @@ export class Pocket {
       // Produce signature payload
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
       const proofBytes = RelayProof.bytes(
-        entropy,
-        currentSession.sessionHeader.sessionBlockHeight,
-        serviceNode.publicKey,
-        blockchain,
-        pocketAAT
+          requestHash,
+          entropy,
+          currentSession.sessionHeader.sessionBlockHeight,
+          serviceNode.publicKey,
+          blockchain,
+          pocketAAT
       )
 
       // Sign
@@ -155,12 +158,13 @@ export class Pocket {
 
       // Produce RelayProof
       const relayProof = new RelayProof(
-        entropy,
-        currentSession.sessionHeader.sessionBlockHeight,
-        serviceNode.publicKey,
-        blockchain,
-        pocketAAT,
-        signatureHex
+          requestHash,
+          entropy,
+          currentSession.sessionHeader.sessionBlockHeight,
+          serviceNode.publicKey,
+          blockchain,
+          pocketAAT,
+          signatureHex
       )
       
       // Relay to be sent
