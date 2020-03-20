@@ -62,6 +62,7 @@ export class RelayPayload {
   public toJSON() {
     return {
       data: this.data,
+      headers: this.headers,
       method: this.method,
       path: this.path
     }
