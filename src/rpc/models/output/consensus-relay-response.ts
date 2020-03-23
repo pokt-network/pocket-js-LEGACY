@@ -41,6 +41,8 @@ export class ConsensusRelayResponse {
    * @param {string} signature - Signature.
    * @param {string} response - Response string.
    * @param {RelayProof} proof - Proof object.
+   * @param {ConsensusNode[]} consensusNodes - List of the nodes participating in the consensus.
+   * @param {boolean} consensusResult - True or false if  the consensus was successful or not.
    */
   constructor(signature: string, response: string, proof: RelayProof, consensusNodes: ConsensusNode[]) {
     this.signature = signature
@@ -58,7 +60,6 @@ export class ConsensusRelayResponse {
   /**
    *
    * Returns whether the local consensus result is positive or negative
-   * @returns {boolean} - True or false.
    * @memberof ConsensusRelayResponse
    */
   private setLocalConsensusResults() {
