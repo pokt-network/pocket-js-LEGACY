@@ -37,7 +37,7 @@ export class ConsensusNode {
    * @constructor
    * @param {Node} node - Signature.
    * @param {boolean} status - True if the response is accepted or false if not.
-   * @param {ConsensusResult} consensusResult - Response string.
+   * @param {RelayResponse} relayResponse - Relay Response.
    */
   constructor(node: Node, status: boolean, relayResponse: RelayResponse) {
     this.node = node
@@ -71,7 +71,8 @@ export class ConsensusNode {
   public isValid(): boolean {
     return (
       this.node.isValid() &&
-      this.consensusResult.isValid()
+      this.status !== undefined &&
+      this.relayResponse.isValid()
     )
   }
 }

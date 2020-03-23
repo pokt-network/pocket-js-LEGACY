@@ -11,6 +11,7 @@ export * from './block';
 export * from './bond-status';
 export * from './commit-signature';
 export * from './commit';
+export * from './consensus-node';
 export * from './consensus';
 export * from './node-params';
 export * from './node';
