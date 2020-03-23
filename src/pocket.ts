@@ -8,6 +8,8 @@ import { UnlockedAccount, Account } from "./keybase/models"
 import { RoutingTable } from "./routing-table/routing-table"
 import { PocketAAT } from "@pokt-network/aat-js"
 import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, TransactionSender } from "./"
+import { ConsensusRelayResponse } from "./rpc/models/output/consensus-relay-response"
+import { ConsensusNode } from "./rpc/models/consensus-node"
 
 /**
  *
@@ -65,6 +67,76 @@ export class Pocket {
     } 
   }
 
+
+  public async sendConsensusRelay(
+    data: string,
+    blockchain: string,
+    pocketAAT: PocketAAT,
+    configuration: Configuration = this.configuration,
+    headers?: RelayHeaders,
+    method = "",
+    path = "",
+    node?: Node
+  ): Promise<ConsensusRelayResponse | Error> {
+    let consensusNodes: ConsensusNode[] = []
+    let firstResponse: RelayResponse
+    let resultBooleans: boolean[] = []
+    try {
+      // Checks if max consensus nodes count is 0, meaning it wasn't configured for local concensus.
+      if (this.configuration.maxConsensusNodes == 0) {
+        return new Error("Failed to send a relay with local consensus, configuration maxConsensusNodes is 0")
+      }
+      // Perform the relays based on the max consensus nodes count
+      for (let index = 0; index < this.configuration.maxConsensusNodes; index++) {
+        let relayResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers, method, path, node)
+        // Check if ConsensusNode type
+        if (typeGuard(relayResponse, ConsensusNode)) {
+          // Save the first response
+          if (index == 0) {
+            firstResponse = relayResponse.relayResponse
+          }
+          consensusNodes.push(relayResponse)
+        } else {
+          console.log("Relay error: " + relayResponse)
+        }
+      }
+      // Check consensus nodes length
+      if (consensusNodes.length == 0) {
+        return new Error("Failed to send a relay with local consensus, no responses.")
+      }
+      // Add the consensus node list to the consensus relay response
+      const consensusRelayResponse = new ConsensusRelayResponse(
+        firstResponse!.signature,
+        firstResponse!.response,
+        firstResponse!.proof,
+        consensusNodes
+      )
+      // Compare all the responses with the first one
+      consensusRelayResponse.consensusNodes.forEach(consensusNodes => {
+        if (Buffer.compare(Buffer.from(firstResponse.response, "utf8"), Buffer.from(consensusRelayResponse.response, "utf8")) == 0) {
+          consensusNodes.status = true
+        } else {
+          consensusNodes.status = false
+        }
+      })
+      // Check the local consensus result
+      if (resultBooleans.filter(Boolean).length) {
+        consensusRelayResponse.consensusResult = true
+      } else {
+        consensusRelayResponse.consensusResult = false
+      }
+      // Check if acceptDisputedResponses is true or false
+      if (consensusRelayResponse.consensusResult) {
+        return consensusRelayResponse
+      } else if (configuration.acceptDisputedResponses) {
+        return consensusRelayResponse
+      } else {
+        return new Error("Relay Consensus failed, response is disputed")
+      }
+    } catch (err) {
+      return err
+    }
+  }
   /**
    *
    * Sends a Relay Request
@@ -89,8 +161,9 @@ export class Pocket {
     headers?: RelayHeaders,
     method = "",
     path = "",
-    node?: Node
-  ): Promise<RelayResponse | RpcError> {
+    node?: Node,
+    consensusEnabled: boolean = false
+  ): Promise<RelayResponse | ConsensusNode | RpcError> {
     try {
       // Get the current session
       const currentSessionOrError = await this.sessionManager.getCurrentSession(pocketAAT, blockchain, configuration)
@@ -166,11 +239,17 @@ export class Pocket {
           pocketAAT,
           signatureHex
       )
-      
+
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayProof)
       // Send relay
-      return this.innerRpc!.client.relay(relay, configuration.requestTimeOut)
+      const result = await this.innerRpc!.client.relay(relay, configuration.requestTimeOut)
+      // 
+      if (consensusEnabled && typeGuard(result, RelayResponse)) {
+        return new ConsensusNode(serviceNode, false, result)
+      } else {
+        return result
+      }
     } catch (error) {
       return error
     }
