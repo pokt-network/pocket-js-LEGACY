@@ -1,5 +1,5 @@
 import { Configuration } from "./config"
-import {RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session, RequestHash} from "./rpc/models"
+import {RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session} from "./rpc/models"
 import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate, typeGuard } from "./utils"
 import { SessionManager } from "./session/session-manager"
 import { Node, RPC, IRPCProvider, RpcError, HttpRpcProvider } from "./rpc"
@@ -10,6 +10,7 @@ import { PocketAAT } from "@pokt-network/aat-js"
 import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, TransactionSender } from "./"
 import { ConsensusRelayResponse } from "./rpc/models/output/consensus-relay-response"
 import { ConsensusNode } from "./rpc/models/consensus-node"
+import { RequestHash } from "./rpc/models/input/request-hash"
 
 /**
  *
@@ -72,6 +73,7 @@ export class Pocket {
     data: string,
     blockchain: string,
     pocketAAT: PocketAAT,
+    requestHash: RequestHash,
     configuration: Configuration = this.configuration,
     headers?: RelayHeaders,
     method = "",
@@ -80,7 +82,7 @@ export class Pocket {
   ): Promise<ConsensusRelayResponse | Error> {
     let consensusNodes: ConsensusNode[] = []
     let firstResponse: RelayResponse
-    let resultBooleans: boolean[] = []
+
     try {
       // Checks if max consensus nodes count is 0, meaning it wasn't configured for local concensus.
       if (this.configuration.maxConsensusNodes == 0) {
@@ -88,7 +90,7 @@ export class Pocket {
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.maxConsensusNodes; index++) {
-        let relayResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers, method, path, node)
+        let relayResponse = await this.sendRelay(data, blockchain, pocketAAT, requestHash, configuration, headers ?? {"":""}, method, path, node)
         // Check if ConsensusNode type
         if (typeGuard(relayResponse, ConsensusNode)) {
           // Save the first response
@@ -111,20 +113,7 @@ export class Pocket {
         firstResponse!.proof,
         consensusNodes
       )
-      // Compare all the responses with the first one
-      consensusRelayResponse.consensusNodes.forEach(consensusNodes => {
-        if (Buffer.compare(Buffer.from(firstResponse.response, "utf8"), Buffer.from(consensusRelayResponse.response, "utf8")) == 0) {
-          consensusNodes.status = true
-        } else {
-          consensusNodes.status = false
-        }
-      })
-      // Check the local consensus result
-      if (resultBooleans.filter(Boolean).length) {
-        consensusRelayResponse.consensusResult = true
-      } else {
-        consensusRelayResponse.consensusResult = false
-      }
+
       // Check if acceptDisputedResponses is true or false
       if (consensusRelayResponse.consensusResult) {
         return consensusRelayResponse
