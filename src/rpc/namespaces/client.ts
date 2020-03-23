@@ -54,7 +54,6 @@ export class ClientNamespace {
             return RpcError.fromError(err)
         }
     }
-
     /**
      *
      * Sends a relay
@@ -84,7 +83,6 @@ export class ClientNamespace {
                 )
             }
         } catch (err) {
-            console.dir(err, { colors: true, depth: null })
             return new RpcError("0", err)
         }
     }
