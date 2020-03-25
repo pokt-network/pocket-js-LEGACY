@@ -11,6 +11,10 @@ import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, Trans
 import { ConsensusRelayResponse } from "./rpc/models/output/consensus-relay-response"
 import { ConsensusNode } from "./rpc/models/consensus-node"
 import { RequestHash } from "./rpc/models/input/request-hash"
+import { MajorityResponse } from "./rpc/models/input/majority-response"
+import { MinorityResponse } from "./rpc/models/input/minority-response"
+import { ChallengeRequest } from "./rpc/models/input/challenge-request"
+import { ChallengeResponse } from "./rpc/models/output/challenge-response"
 
 /**
  *
@@ -79,9 +83,9 @@ export class Pocket {
     method = "",
     path = "",
     node?: Node
-  ): Promise<ConsensusRelayResponse | Error> {
+  ): Promise<ConsensusRelayResponse | ChallengeResponse | Error> {
     let consensusNodes: ConsensusNode[] = []
-    let firstResponse: RelayResponse
+    let firstResponse: RelayResponse | undefined
 
     try {
       // Checks if max consensus nodes count is 0, meaning it wasn't configured for local concensus.
@@ -90,26 +94,26 @@ export class Pocket {
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.maxConsensusNodes; index++) {
-        let relayResponse = await this.sendRelay(data, blockchain, pocketAAT, requestHash, configuration, headers ?? {"":""}, method, path, node)
+        let consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, requestHash, configuration, headers ?? {"":""}, method, path, node)
         // Check if ConsensusNode type
-        if (typeGuard(relayResponse, ConsensusNode)) {
+        if (typeGuard(consensusNodeResponse, ConsensusNode)) {
           // Save the first response
           if (index == 0) {
-            firstResponse = relayResponse.relayResponse
+            firstResponse = consensusNodeResponse.relayResponse
           }
-          consensusNodes.push(relayResponse)
-        } else {
-          console.log("Relay error: " + relayResponse)
+          consensusNodes.push(consensusNodeResponse)
+        } else if (typeGuard(consensusNodeResponse, RpcError)){
+          return new Error("Relay error: "+ consensusNodeResponse.message)
         }
       }
       // Check consensus nodes length
-      if (consensusNodes.length == 0) {
+      if (consensusNodes.length == 0 || firstResponse === undefined) {
         return new Error("Failed to send a relay with local consensus, no responses.")
       }
       // Add the consensus node list to the consensus relay response
       const consensusRelayResponse = new ConsensusRelayResponse(
         firstResponse!.signature,
-        firstResponse!.response,
+        firstResponse!.payload,
         firstResponse!.proof,
         consensusNodes
       )
@@ -120,7 +124,15 @@ export class Pocket {
       } else if (configuration.acceptDisputedResponses) {
         return consensusRelayResponse
       } else {
-        return new Error("Relay Consensus failed, response is disputed")
+        // Create the challenge request
+        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse, consensusRelayResponse.minorityResponse)
+        // Send the challenge request
+        const challengeResponse = await this.rpc()!.query.requestChallenge(challengeRequest)
+
+        if (typeGuard(challengeResponse, ChallengeResponse)) {
+          return challengeResponse
+        }
+        return new Error(challengeResponse.message)
       }
     } catch (err) {
       return err

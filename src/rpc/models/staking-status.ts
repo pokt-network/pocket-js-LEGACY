@@ -3,10 +3,9 @@
  * StakingStatus enum with the possible Staking status values
  */
 export enum StakingStatus {
-    Staked = "staked",
-    Unstaked = "unstaked",
-    Unstaking = "unstaking",
-    None = ""
+    Unstaked = 0,
+    Unstaking = 1,
+    Staked = 2
 }
 /**
  *
@@ -20,18 +19,16 @@ export namespace StakingStatus {
      * @returns {StakingStatus} - StakingStatus object.
      * @memberof StakingStatus
      */
-    export function getStatus(status: string): StakingStatus {
+    export function getStatus(status: number): StakingStatus {
         switch (status) {
-            case "staked":
-                return StakingStatus.Staked
-            case "unstaked":
+            case 0:
                 return StakingStatus.Unstaked
-            case "unstaking":
+            case 1:
                 return StakingStatus.Unstaking
-            case "":
-                return StakingStatus.None
+            case 2:
+                return StakingStatus.Staked
             default:
-                return StakingStatus.None
+                return StakingStatus.Unstaked
         }
     }
 }

@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Account, Node, BondStatus, Configuration, Pocket, HttpRpcProvider, ITransactionSender, CoinDenom, typeGuard, RpcError, RawTxResponse, QueryAccountResponse, TransactionSender, publicKeyFromPrivate, addressFromPublickey } from '../../../../src'
+import { Account, Node, Configuration, Pocket, HttpRpcProvider, ITransactionSender, CoinDenom, typeGuard, RpcError, RawTxResponse, QueryAccountResponse, TransactionSender, publicKeyFromPrivate, addressFromPublickey } from '../../../../src'
 import { NockUtil } from '../../../utils/nock-util'
 import { EnvironmentHelper } from '../../../utils/env/helper'
 import { type } from 'os'

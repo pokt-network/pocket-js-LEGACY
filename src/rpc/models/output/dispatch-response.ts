@@ -17,18 +17,18 @@ export class DispatchResponse {
   public static fromJSON(json: string): DispatchResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.header))
+      const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.session.header))
       // Handle nodes
       const nodes: Node[] = []
 
-      jsonObject.nodes.forEach(function(nodeJSON: any) {
+      jsonObject.session.nodes.forEach(function(nodeJSON: any) {
         const node = Node.fromJSON(JSON.stringify(nodeJSON))
         nodes.push(node)
       })
 
       return new DispatchResponse(
         sessionHeader,
-        jsonObject.key,
+        jsonObject.session.key,
         nodes
       )
     } catch (error) {

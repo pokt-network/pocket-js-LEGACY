@@ -1,5 +1,5 @@
-import { BondStatus, BondStatusUtil } from "./bond-status"
 import { Hex } from "../.."
+import { StakingStatus } from "./staking-status"
 /**
  *
  *
@@ -16,7 +16,7 @@ export class Application {
   public static fromJSON(json: string): Application {
     try {
       const jsonObject = JSON.parse(json)
-      const status: BondStatus = BondStatusUtil.getStatus(jsonObject.status)
+      const status: StakingStatus = StakingStatus.getStatus(jsonObject.status)
   
       return new Application(
         jsonObject.address,
@@ -36,7 +36,7 @@ export class Application {
   public readonly address: string
   public readonly publicKey: string
   public readonly jailed: boolean
-  public readonly status: BondStatus
+  public readonly status: StakingStatus
   public readonly chains: string[]
   public readonly stakedTokens: BigInt
   public readonly maxRelays: BigInt
@@ -48,7 +48,7 @@ export class Application {
    * @param {string} address - the hex address of the validator
    * @param {string} publicKey - the hex consensus public key of the validator.
    * @param {boolean} jailed - has the validator been jailed from staked status?
-   * @param {BondStatus} status - validator status
+   * @param {StakingStatus} status - validator status
    * @param {string[]} chains - chains
    * @param {BigInt} stakedTokens - how many staked tokens
    * @param {string} maxRelays - Service Application url
@@ -58,7 +58,7 @@ export class Application {
     address: string,
     publicKey: string,
     jailed: boolean,
-    status: BondStatus,
+    status: StakingStatus,
     chains: string[] = [],
     stakedTokens: BigInt,
     maxRelays: BigInt,
