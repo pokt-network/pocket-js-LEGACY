@@ -19,8 +19,6 @@ export function validateChallengeRequest(request: ChallengeRequest): Error | und
             return new Error("Invalid majority request. The amount of relays needs to be equals to 2")
         case typeGuard(validateMajorityResponse(request.majorityResponse), Error):
             return validateMajorityResponse(request.majorityResponse) as Error
-        case typeGuard(validateAddressHex(request.address), Error):
-            return validateAddressHex(request.address) as Error
         default:
             return undefined
     }

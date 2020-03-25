@@ -8,7 +8,7 @@ import {
     TxProof,
     SimpleProof,
     Node,
-    BondStatus,
+    StakingStatus,
     StoredProof,
     NodeProof,
     Application,
@@ -101,9 +101,9 @@ export class NockUtil {
 
     public static mockDispatch(code: number = 200): nock.Scope {
         const blockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
-        const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
+        const node01 = new Node(addressHex, applicationPublicKey, false, StakingStatus.Staked,
             BigInt(100), "http://127.0.0.1:80", [blockchain])
-        const node02 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
+        const node02 = new Node(addressHex, applicationPublicKey, false, StakingStatus.Staked,
             BigInt(101), "http://127.0.0.1:80", [blockchain])
         const sessionHeader = new SessionHeader(applicationPublicKey, blockchain, BigInt(5))
 
@@ -197,9 +197,9 @@ export class NockUtil {
     }
 
     public static mockGetNodes(code: number = 200): nock.Scope {
-        const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
+        const node01 = new Node(addressHex, applicationPublicKey, false, StakingStatus.Staked,
             BigInt(100), "http://127.0.0.1:80", ["ETH01", "ETH02"])
-        const node02 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
+        const node02 = new Node(addressHex, applicationPublicKey, false, StakingStatus.Staked,
             BigInt(100), "http://127.0.0.2:80", ["ETH01", "ETH02"])
 
         const payload = [
@@ -213,7 +213,7 @@ export class NockUtil {
     }
 
     public static mockGetNode(code: number = 200): nock.Scope {
-        const node01 = new Node(addressHex, applicationPublicKey, false, BondStatus.bonded,
+        const node01 = new Node(addressHex, applicationPublicKey, false, StakingStatus.Staked,
             BigInt(100), "http://127.0.0.1:80", ["ETH01", "ETH02"])
         
         const queryNodeResponse = new QueryNodeResponse(node01)
@@ -256,8 +256,8 @@ export class NockUtil {
     }
 
     public static mockGetApps(code: number = 200): nock.Scope {
-        const app01 = new Application(addressHex, applicationPublicKey, false, BondStatus.bonded, ["ETH04"], BigInt(100), BigInt(1000))
-        const app02 = new Application(addressHex, applicationPublicKey, false, BondStatus.unbonded, ["ETH04"], BigInt(200), BigInt(2000))
+        const app01 = new Application(addressHex, applicationPublicKey, false, StakingStatus.Staked, ["ETH04"], BigInt(100), BigInt(1000))
+        const app02 = new Application(addressHex, applicationPublicKey, false, StakingStatus.Unstaked, ["ETH04"], BigInt(200), BigInt(2000))
 
         const queryAppsResponse = new QueryAppsResponse([app01, app02])
         const data: any = this.createData(code, queryAppsResponse.toJSON())
@@ -267,7 +267,7 @@ export class NockUtil {
     }
 
     public static mockGetApp(code: number = 200): nock.Scope {
-        const app01 = new Application(addressHex, applicationPublicKey, false, BondStatus.bonded, ["ETH04"], BigInt(100), BigInt(1000))
+        const app01 = new Application(addressHex, applicationPublicKey, false, StakingStatus.Staked, ["ETH04"], BigInt(100), BigInt(1000))
         const queryAppResponse = new QueryAppResponse(app01)
 
         const data: any = this.createData(code, queryAppResponse.toJSON())

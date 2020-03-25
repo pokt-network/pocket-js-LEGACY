@@ -1,5 +1,8 @@
 import { RelayProof } from "../relay-proof"
 import { ConsensusNode } from "../consensus-node"
+import { MajorityResponse } from "../input/majority-response"
+import { MinorityResponse } from "../input/minority-response"
+import { RelayResponse } from "./relay-response"
 /**
  *
  *
@@ -30,28 +33,51 @@ export class ConsensusRelayResponse {
   }
 
   public readonly signature: string
-  public readonly response: string
+  public readonly payload: string
   public readonly proof: RelayProof
   public readonly consensusNodes: ConsensusNode[] = []
   public consensusResult: boolean = false
+  public majorityResponse: MajorityResponse
+  public minorityResponse: MinorityResponse
   
   /**
-   * Relay Response.
+   * Relay payload.
    * @constructor
    * @param {string} signature - Signature.
-   * @param {string} response - Response string.
+   * @param {string} payload - payload string.
    * @param {RelayProof} proof - Proof object.
    * @param {ConsensusNode[]} consensusNodes - List of the nodes participating in the consensus.
    * @param {boolean} consensusResult - True or false if  the consensus was successful or not.
    */
-  constructor(signature: string, response: string, proof: RelayProof, consensusNodes: ConsensusNode[]) {
+  constructor(signature: string, payload: string, proof: RelayProof, consensusNodes: ConsensusNode[]) {
     this.signature = signature
-    this.response = response
+    this.payload = payload
     this.proof = proof
     this.consensusNodes = consensusNodes
     
     this.setLocalConsensusResults()
+    // Populate the majority and minotiry response objects
+    const majorityResponse: RelayResponse[] = []
+    const minorityResponse: RelayResponse[] = []
 
+    this.consensusNodes.forEach(node => {
+      if (this.consensusResult == true) {
+        if (node.status) {
+          majorityResponse.push(node.relayResponse)
+        } else {
+          minorityResponse.push(node.relayResponse)
+        }
+      } else {
+        if (!node.status) {
+          majorityResponse.push(node.relayResponse)
+        } else {
+          minorityResponse.push(node.relayResponse)
+        }
+      }
+    })
+    this.majorityResponse = new MajorityResponse(majorityResponse)
+    this.minorityResponse = new MinorityResponse(minorityResponse[0])
+    
     if (!this.isValid()) {
       throw new TypeError("Invalid ConsensusRelayResponse properties.")
     }
@@ -97,7 +123,7 @@ export class ConsensusRelayResponse {
   public toJSON() {
     return {
       proof: this.proof.toJSON(),
-      response: this.response,
+      payload: this.payload,
       signature: this.signature
     }
   }
@@ -111,7 +137,7 @@ export class ConsensusRelayResponse {
     return (
       this.signature.length !== 0 &&
       this.proof.isValid() &&
-      this.response.length !== 0
+      this.payload.length !== 0
     )
   }
 }

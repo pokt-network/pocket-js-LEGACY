@@ -3,7 +3,7 @@
  * @description Unit tests for the Routing Table
  */
 import { expect } from 'chai'
-import { BondStatus, InMemoryKVStore, Configuration, RoutingTable, Node } from '../../../../src'
+import { InMemoryKVStore, Configuration, RoutingTable, Node } from '../../../../src'
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
 const dispatcher = new URL("http://127.0.0.1:8080")

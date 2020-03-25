@@ -8,7 +8,6 @@ export * from './block-header';
 export * from './block-id';
 export * from './block-meta';
 export * from './block';
-export * from './bond-status';
 export * from './commit-signature';
 export * from './commit';
 export * from './consensus-node';
