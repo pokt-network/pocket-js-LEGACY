@@ -23,9 +23,9 @@ export class Configuration {
    */
   constructor(
     maxDispatchers: number = 0,
-    requestTimeOut: number = 0,
     maxSessions: number = 0,
     maxConsensusNodes: number = 0,
+    requestTimeOut: number = 0,
     acceptDisputedResponses: boolean = false
   ) {
     this.maxDispatchers = maxDispatchers
