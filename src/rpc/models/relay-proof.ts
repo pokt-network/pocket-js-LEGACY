@@ -67,7 +67,7 @@ export class RelayProof {
       token: PocketAAT
   ): Buffer {
     const proofJSON = {
-      request_hash: (requestHash.toJSON()),
+      request_hash: RelayProof.hashRequest(requestHash),
       entropy: Number(entropy.toString()),
       session_block_height: Number(sessionBlockHeight.toString()),
       servicer_pub_key: servicePubKey,
@@ -98,6 +98,20 @@ export class RelayProof {
     // Generate sha3 hash of the aat payload object
     const hash = sha3_256.create()
     hash.update(JSON.stringify(aatObj))
+    return hash.hex()
+  }
+    /**
+   *
+   * Creates a Proof object using a JSON string
+   * @param {PocketAAT} aat - PocketAAT token.
+   * @returns {string} - PocketAAT Hash.
+   * @memberof RelayProof
+   */
+  private static hashRequest(request: RequestHash): string {
+    const requestObj = request.toJSON()
+    // Generate sha3 hash of the request payload and meta object
+    const hash = sha3_256.create()
+    hash.update(JSON.stringify(requestObj))
     return hash.hex()
   }
 
@@ -151,7 +165,7 @@ export class RelayProof {
    */
   public toJSON() {
     return {
-      request_hash: this.requestHash.toJSON(),
+      request_hash: RelayProof.hashRequest(this.requestHash),
       entropy: Number(this.entropy.toString()),
       session_block_height: Number(this.sessionBlockHeight.toString()),
       servicer_pub_key: this.servicePubKey,

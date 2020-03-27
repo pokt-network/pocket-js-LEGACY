@@ -15,6 +15,7 @@ import { MajorityResponse } from "./rpc/models/input/majority-response"
 import { MinorityResponse } from "./rpc/models/input/minority-response"
 import { ChallengeRequest } from "./rpc/models/input/challenge-request"
 import { ChallengeResponse } from "./rpc/models/output/challenge-response"
+import { RelayMeta } from "./rpc/models/input/relay-meta"
 
 /**
  *
@@ -77,7 +78,6 @@ export class Pocket {
     data: string,
     blockchain: string,
     pocketAAT: PocketAAT,
-    requestHash: RequestHash,
     configuration: Configuration = this.configuration,
     headers?: RelayHeaders,
     method = "",
@@ -94,7 +94,7 @@ export class Pocket {
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.maxConsensusNodes; index++) {
-        let consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, requestHash, configuration, headers ?? {"":""}, method, path, node)
+        let consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers ?? {"":""}, method, path, node)
         // Check if ConsensusNode type
         if (typeGuard(consensusNodeResponse, ConsensusNode)) {
           // Save the first response
@@ -157,7 +157,6 @@ export class Pocket {
     data: string,
     blockchain: string,
     pocketAAT: PocketAAT,
-    requestHash: RequestHash,
     configuration: Configuration = this.configuration,
     headers?: RelayHeaders,
     method = "",
@@ -210,6 +209,9 @@ export class Pocket {
       if (!isUnlocked) {
         return new RpcError("0", "Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
+      // Request Hash
+      const relayMeta = new RelayMeta(currentSession.sessionHeader.sessionBlockHeight)
+      const requestHash = new RequestHash(relayPayload, relayMeta)
 
       // Produce signature payload
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
@@ -242,7 +244,7 @@ export class Pocket {
       )
 
       // Relay to be sent
-      const relay = new RelayRequest(relayPayload, relayProof)
+      const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
       // Send relay
       const result = await this.innerRpc!.client.relay(relay, configuration.requestTimeOut)
       // 
