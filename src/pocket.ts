@@ -84,21 +84,21 @@ export class Pocket {
     path = "",
     node?: Node
   ): Promise<ConsensusRelayResponse | ChallengeResponse | Error> {
-    let consensusNodes: ConsensusNode[] = []
+    const consensusNodes: ConsensusNode[] = []
     let firstResponse: RelayResponse | undefined
 
     try {
       // Checks if max consensus nodes count is 0, meaning it wasn't configured for local concensus.
-      if (this.configuration.maxConsensusNodes == 0) {
+      if (this.configuration.maxConsensusNodes === 0) {
         return new Error("Failed to send a relay with local consensus, configuration maxConsensusNodes is 0")
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.maxConsensusNodes; index++) {
-        let consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers ?? {"":""}, method, path, node)
+        const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers ?? {"":""}, method, path, node)
         // Check if ConsensusNode type
         if (typeGuard(consensusNodeResponse, ConsensusNode)) {
           // Save the first response
-          if (index == 0) {
+          if (index === 0) {
             firstResponse = consensusNodeResponse.relayResponse
           }
           consensusNodes.push(consensusNodeResponse)
@@ -107,7 +107,7 @@ export class Pocket {
         }
       }
       // Check consensus nodes length
-      if (consensusNodes.length == 0 || firstResponse === undefined) {
+      if (consensusNodes.length === 0 || firstResponse === undefined) {
         return new Error("Failed to send a relay with local consensus, no responses.")
       }
       // Add the consensus node list to the consensus relay response

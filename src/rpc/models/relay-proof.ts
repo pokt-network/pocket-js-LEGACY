@@ -100,7 +100,7 @@ export class RelayProof {
     hash.update(JSON.stringify(aatObj))
     return hash.hex()
   }
-    /**
+  /**
    *
    * Creates a Proof object using a JSON string
    * @param {PocketAAT} aat - PocketAAT token.

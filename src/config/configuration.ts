@@ -31,12 +31,12 @@ export class Configuration {
     this.maxDispatchers = maxDispatchers
     this.requestTimeOut = requestTimeOut
     this.maxSessions = maxSessions
-    if (maxConsensusNodes % 2 == 1) {
+    if (maxConsensusNodes % 2 === 1) {
       this.maxConsensusNodes = maxConsensusNodes
     }
     this.acceptDisputedResponses = acceptDisputedResponses
   }
-  setMaxConsensusNodes(v: number){
+  public setMaxConsensusNodes(v: number){
     this.maxConsensusNodes = v
   }
 }
