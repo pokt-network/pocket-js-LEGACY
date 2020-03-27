@@ -1,5 +1,6 @@
 import { RelayProof } from "../relay-proof"
 import { RelayPayload } from "./relay-payload"
+import { RelayMeta } from "./relay-meta"
 /**
  *
  *
@@ -18,6 +19,7 @@ export class RelayRequest {
       const jsonObject = JSON.parse(json)
       return new RelayRequest(
         RelayPayload.fromJSON(JSON.stringify(jsonObject.payload)),
+        RelayMeta.fromJSON(JSON.stringify(jsonObject.meta)),
         RelayProof.fromJSON(JSON.stringify(jsonObject.proof))
       )
     } catch (error) {
@@ -26,16 +28,19 @@ export class RelayRequest {
   }
 
   public readonly payload: RelayPayload
+  public readonly meta: RelayMeta
   public readonly proof: RelayProof
 
   /**
    * Relay Request.
    * @constructor
    * @param {RelayPayload} payload - Relay payload.
+   * @param {RelayMeta} meta - Relay meta.
    * @param {RelayProof} proof - Proof object.
    */
-  constructor(payload: RelayPayload, proof: RelayProof) {
+  constructor(payload: RelayPayload, meta: RelayMeta, proof: RelayProof) {
     this.payload = payload
+    this.meta = meta
     this.proof = proof
 
     if (!this.isValid()) {
@@ -51,6 +56,7 @@ export class RelayRequest {
   public toJSON() {
     return {
       payload: this.payload.toJSON(),
+      meta: this.meta.toJSON(),
       relayProof: this.proof.toJSON()
     }
   }
@@ -61,6 +67,8 @@ export class RelayRequest {
    * @memberof RelayRequest
    */
   public isValid(): boolean {
-    return this.payload.isValid() && this.proof.isValid()
+    return this.payload.isValid() &&
+    this.meta.isValid()&& 
+    this.proof.isValid()
   }
 }
