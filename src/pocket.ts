@@ -214,7 +214,7 @@ export class Pocket {
       const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL)
       this.rpc(serviceProvider)
       // Create Relay Payload
-      const relayPayload = new RelayPayload(data, method, path, headers)
+      const relayPayload = new RelayPayload(data, method, path, headers || {"":""})
 
       // Check if account is available for signing
       const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
