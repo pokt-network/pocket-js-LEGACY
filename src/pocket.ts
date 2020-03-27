@@ -73,7 +73,20 @@ export class Pocket {
     } 
   }
 
-
+  /**
+   *
+   * Sends a Relay Request to multiple nodes for manual consensus
+   * @param {string} data - string holding the json rpc call.
+   * @param {string} blockchain - Blockchain hash.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {Configuration} configuration - Pocket configuration object.
+   * @param {RelayHeaders} headers - (Optional) An object holding the HTTP Headers.
+   * @param {string} method - (Optional) HTTP method for REST API calls.
+   * @param {string} path - (Optional) REST API path.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
+   * @returns {ConsensusRelayResponse | ChallengeResponse | Error} - A Consensus Relay Response object, Challenge response or error.
+   * @memberof Pocket
+   */
   public async sendConsensusRelay(
     data: string,
     blockchain: string,
@@ -144,12 +157,12 @@ export class Pocket {
    * @param {string} data - string holding the json rpc call.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
-   * @param {RequestHash} requestHash - RequestHash object.
    * @param {Configuration} configuration - Pocket configuration object.
    * @param {RelayHeaders} headers - (Optional) An object holding the HTTP Headers.
    * @param {string} method - (Optional) HTTP method for REST API calls.
    * @param {string} path - (Optional) REST API path.
    * @param {Node} node - (Optional) Session node which will receive the Relay.
+   * @param {boolean} consensusEnabled - (Optional) True or false if the relay will be sent to multiple nodes for consensus, default is false.
    * @returns {RelayResponse} - A Relay Response object.
    * @memberof Pocket
    */
