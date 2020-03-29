@@ -59,12 +59,20 @@ export class RelayPayload {
    * @returns {JSON} - JSON Object.
    * @memberof RelayPayload
    */
-  public toJSON() {
-    return {
-      data: this.data,
-      headers: this.headers,
-      method: this.method,
-      path: this.path
+  public toJSON(stripHeaders?: boolean) {
+    if (stripHeaders) {
+      return {
+        data: this.data,
+        method: this.method,
+        path: this.path
+      }
+    } else {
+      return {
+        data: this.data,
+        headers: this.headers,
+        method: this.method,
+        path: this.path
+      }
     }
   }
   /**

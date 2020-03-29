@@ -88,7 +88,7 @@ export class NockUtil {
         const relayPayload = new RelayPayload("data", "method", "path")
         const relayMeta = new RelayMeta(BigInt(1))
         const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
-        const proof = new RelayProof(new RequestHash(relayPayload, relayMeta), BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
+        const proof = new RelayProof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04",  pocketAAT, pocketAAT.applicationSignature, new RequestHash(relayPayload, relayMeta))
         const data: any = this.createData(code, {
             proof: proof.toJSON(),
             response: 'response',
@@ -322,12 +322,7 @@ export class NockUtil {
     }
 
     public static getMockRelayResponse(): RelayResponse {
-        const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
-        const relayPayload = new RelayPayload("data", "method", "path")
-        const relayMeta = new RelayMeta(BigInt(1))
-        const proof = new RelayProof(new RequestHash(relayPayload, relayMeta), BigInt(1), BigInt(5), applicationPublicKey, "ETH04", pocketAAT, pocketAAT.applicationSignature)
-
-        const relayResponse: RelayResponse = new RelayResponse(addressHex, "payload", proof)
+        const relayResponse: RelayResponse = new RelayResponse(addressHex, "payload")
         return relayResponse
     }
 

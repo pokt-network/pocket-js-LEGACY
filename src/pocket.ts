@@ -11,8 +11,6 @@ import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, Trans
 import { ConsensusRelayResponse } from "./rpc/models/output/consensus-relay-response"
 import { ConsensusNode } from "./rpc/models/consensus-node"
 import { RequestHash } from "./rpc/models/input/request-hash"
-import { MajorityResponse } from "./rpc/models/input/majority-response"
-import { MinorityResponse } from "./rpc/models/input/minority-response"
 import { ChallengeRequest } from "./rpc/models/input/challenge-request"
 import { ChallengeResponse } from "./rpc/models/output/challenge-response"
 import { RelayMeta } from "./rpc/models/input/relay-meta"
@@ -127,7 +125,6 @@ export class Pocket {
       const consensusRelayResponse = new ConsensusRelayResponse(
         firstResponse!.signature,
         firstResponse!.payload,
-        firstResponse!.proof,
         consensusNodes
       )
 
@@ -213,6 +210,7 @@ export class Pocket {
       // Assign session service node to the rpc instance
       const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL)
       this.rpc(serviceProvider)
+      
       // Create Relay Payload
       const relayPayload = new RelayPayload(data, method, path, headers || {"":""})
 
@@ -222,19 +220,19 @@ export class Pocket {
       if (!isUnlocked) {
         return new RpcError("0", "Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
-      // Request Hash
-      const relayMeta = new RelayMeta(currentSession.sessionHeader.sessionBlockHeight)
-      const requestHash = new RequestHash(relayPayload, relayMeta)
-
+      
       // Produce signature payload
+      const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight) + BigInt(currentSession.getBlocksSinceCreation()))
+      const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
+
       const proofBytes = RelayProof.bytes(
-          requestHash,
           entropy,
           currentSession.sessionHeader.sessionBlockHeight,
           serviceNode.publicKey,
           blockchain,
-          pocketAAT
+          pocketAAT,
+          requestHash
       )
 
       // Sign
@@ -247,13 +245,13 @@ export class Pocket {
 
       // Produce RelayProof
       const relayProof = new RelayProof(
-          requestHash,
           entropy,
           currentSession.sessionHeader.sessionBlockHeight,
           serviceNode.publicKey,
           blockchain,
           pocketAAT,
-          signatureHex
+          signatureHex,
+          requestHash
       )
 
       // Relay to be sent

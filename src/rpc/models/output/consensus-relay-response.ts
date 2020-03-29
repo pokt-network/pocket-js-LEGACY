@@ -1,4 +1,3 @@
-import { RelayProof } from "../relay-proof"
 import { ConsensusNode } from "../consensus-node"
 import { MajorityResponse } from "../input/majority-response"
 import { MinorityResponse } from "../input/minority-response"
@@ -19,12 +18,10 @@ export class ConsensusRelayResponse {
   public static fromJSON(json: string): ConsensusRelayResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const proof = RelayProof.fromJSON(JSON.stringify(jsonObject.RelayProof))
 
       return new ConsensusRelayResponse(
         jsonObject.signature,
         jsonObject.payload,
-        proof,
         jsonObject.nodes
       )
     } catch (error) {
@@ -34,7 +31,6 @@ export class ConsensusRelayResponse {
 
   public readonly signature: string
   public readonly payload: string
-  public readonly proof: RelayProof
   public readonly consensusNodes: ConsensusNode[] = []
   public consensusResult: boolean = false
   public majorityResponse: MajorityResponse
@@ -45,18 +41,16 @@ export class ConsensusRelayResponse {
    * @constructor
    * @param {string} signature - Signature.
    * @param {string} payload - payload string.
-   * @param {RelayProof} proof - Proof object.
    * @param {ConsensusNode[]} consensusNodes - List of the nodes participating in the consensus.
    * @param {boolean} consensusResult - True or false if  the consensus was successful or not.
    */
-  constructor(signature: string, payload: string, proof: RelayProof, consensusNodes: ConsensusNode[]) {
+  constructor(signature: string, payload: string, consensusNodes: ConsensusNode[]) {
     this.signature = signature
     this.payload = payload
-    this.proof = proof
     this.consensusNodes = consensusNodes
 
     this.setLocalConsensusResults()
-    // Populate the majority and minotiry response objects
+    // Populate the majority and minority response objects
     const majorityResponse: RelayResponse[] = []
     const minorityResponse: RelayResponse[] = []
 
@@ -91,7 +85,6 @@ export class ConsensusRelayResponse {
    */
   public toJSON() {
     return {
-      proof: this.proof.toJSON(),
       payload: this.payload,
       signature: this.signature
     }
@@ -105,7 +98,6 @@ export class ConsensusRelayResponse {
   public isValid(): boolean {
     return (
       this.signature.length !== 0 &&
-      this.proof.isValid() &&
       this.payload.length !== 0
     )
   }
