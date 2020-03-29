@@ -1,7 +1,6 @@
 /**
  * @class MajorityResponse
  */
-import {RelayProof} from "../relay-proof"
 import {validateMajorityResponse} from "../../../utils/validator"
 import {typeGuard} from "../../../utils"
 import {RelayResponse} from "../output"
@@ -27,7 +26,6 @@ export class MajorityResponse {
                         const newRelay = new RelayResponse(
                             relay.signature,
                             relay.payload,
-                            RelayProof.fromJSON(JSON.stringify(relay.proof)),
                         )
                         relays.push(newRelay)
                     }

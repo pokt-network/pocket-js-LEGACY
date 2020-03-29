@@ -1,4 +1,3 @@
-import { RelayProof } from "../relay-proof"
 /**
  *
  *
@@ -15,12 +14,10 @@ export class RelayResponse {
   public static fromJSON(json: string): RelayResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const proof = RelayProof.fromJSON(JSON.stringify(jsonObject.RelayProof))
   
       return new RelayResponse(
         jsonObject.signature,
-        jsonObject.payload,
-        proof
+        jsonObject.payload
       )
     } catch (error) {
       throw error
@@ -29,19 +26,16 @@ export class RelayResponse {
 
   public readonly signature: string
   public readonly payload: string
-  public readonly proof: RelayProof
 
   /**
    * Relay Response.
    * @constructor
    * @param {string} signature - Signature.
    * @param {string} payload - Payload string.
-   * @param {RelayProof} proof - Proof object.
    */
-  constructor(signature: string, payload: string, proof: RelayProof) {
+  constructor(signature: string, payload: string) {
     this.signature = signature
     this.payload = payload
-    this.proof = proof
 
     if (!this.isValid()) {
       throw new TypeError("Invalid RelayResponse properties.")
@@ -55,7 +49,6 @@ export class RelayResponse {
    */
   public toJSON() {
     return {
-      proof: this.proof.toJSON(),
       payload: this.payload,
       signature: this.signature
     }
@@ -69,7 +62,6 @@ export class RelayResponse {
   public isValid(): boolean {
     return (
       this.signature.length !== 0 &&
-      this.proof.isValid() &&
       this.payload.length !== 0
     )
   }

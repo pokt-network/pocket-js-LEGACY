@@ -44,10 +44,9 @@ export function validateMajorityResponse(response: MajorityResponse): Error | un
  */
 export function validateRelayResponse(relay: RelayResponse): Error | undefined {
     switch (true) {
+        // This should be a better check for validity
         case !Hex.isHex(relay.signature):
             return new Error("Invalid string is not hex: " + relay.signature)
-        case typeGuard(validateRelayProof(relay.proof), Error):
-            return validateRelayProof(relay.proof) as Error
         default:
             return undefined
     }

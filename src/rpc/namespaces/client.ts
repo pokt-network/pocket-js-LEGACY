@@ -103,7 +103,6 @@ export class ClientNamespace {
                 JSON.stringify(request.toJSON()),
                 timeout
             )
-
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const dispatchResponse = DispatchResponse.fromJSON(

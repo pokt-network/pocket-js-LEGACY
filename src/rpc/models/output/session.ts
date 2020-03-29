@@ -16,6 +16,11 @@ export class Session {
    */
   public static fromJSON(json: string): Session {
     const jsonObject = JSON.parse(json)
+
+    // Compute the session timestamp from the number of blocks since dispatch
+    const sessionBlockAge = Number( BigInt(jsonObject.block_height) - BigInt(jsonObject.header.session_height))
+    jsonObject.header.session_timestamp = Math.floor( (Date.now() / 1000) - (sessionBlockAge * 60))
+    
     const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.header))
     const sessionNodes: Node[] = []
 
@@ -80,6 +85,12 @@ export class Session {
     }
     return new Error("Failed to retrieve a Session node, list is empty")
   } 
+
+  public getBlocksSinceCreation(): number {
+    const blocksPassed = Math.ceil( (Math.floor(Date.now() / 1000) - this.sessionHeader.sessionTimestamp) / 60)
+    return blocksPassed
+  }
+
   /**
    *
    * Creates a JSON object with the Session properties

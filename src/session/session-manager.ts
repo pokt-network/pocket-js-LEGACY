@@ -66,7 +66,7 @@ export class SessionManager {
     if (!typeGuard(dispatcher, URL)) {
       return new RpcError(
         "500",
-        "You have reached the maximum number of sessions"
+        "Dispatcher URL is invalid"
       )
     }
     
