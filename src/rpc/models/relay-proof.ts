@@ -84,9 +84,9 @@ export class RelayProof {
   }
   /**
    *
-   * Creates a Proof object using a JSON string
+   * Creates a hash using the PocketAAT object
    * @param {PocketAAT} aat - PocketAAT token.
-   * @returns {string} - PocketAAT Hash.
+   * @returns {string} - PocketAAT Hash string.
    * @memberof RelayProof
    */
   private static hashAAT(aat: PocketAAT): string {
@@ -103,9 +103,9 @@ export class RelayProof {
   }
   /**
    *
-   * Creates a Proof object using a JSON string
-   * @param {PocketAAT} aat - PocketAAT token.
-   * @returns {string} - PocketAAT Hash.
+   * Creates a hash using the RequestHash object
+   * @param {RequestHash} request - RequestHash object.
+   * @returns {string} - RequestHash string.
    * @memberof RelayProof
    */
   private static hashRequest(request: RequestHash): string {
