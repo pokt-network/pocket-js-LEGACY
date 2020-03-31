@@ -61,7 +61,7 @@ export class TransactionSender implements ITransactionSender {
             let txSignatureOrError
             const bytesToSign = stdSignDoc.marshalAmino()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
-                txSignatureOrError = this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
+                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
             } else if (this.txSigner !== undefined) {
                 txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
             } else {
@@ -229,8 +229,8 @@ export class TransactionSender implements ITransactionSender {
      * @returns {TxSignature | Error} - A transaction signature or error.
      * @memberof TransactionSender
      */
-    private signWithUnlockedAccount(bytesToSign: Buffer, unlockedAccount: UnlockedAccount): TxSignature | Error {
-        const signatureOrError = Keybase.signWith(unlockedAccount.privateKey, bytesToSign)
+    private async signWithUnlockedAccount(bytesToSign: Buffer, unlockedAccount: UnlockedAccount): Promise<TxSignature | Error> {
+        const signatureOrError = await Keybase.signWith(unlockedAccount.privateKey, bytesToSign)
         if (typeGuard(signatureOrError, Error)) {
             return signatureOrError as Error
         }

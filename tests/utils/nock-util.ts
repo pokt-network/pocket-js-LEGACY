@@ -84,20 +84,20 @@ export class NockUtil {
         return this.nockRoute(enums.V1RPCRoutes.ClientRawTx.toString(), code, response.data)
     }
 
-    public static mockRelay(code: number = 200): nock.Scope {
-        const relayPayload = new RelayPayload("data", "method", "path")
-        const relayMeta = new RelayMeta(BigInt(1))
-        const pocketAAT = PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
-        const proof = new RelayProof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04",  pocketAAT, pocketAAT.applicationSignature, new RequestHash(relayPayload, relayMeta))
-        const data: any = this.createData(code, {
-            proof: proof.toJSON(),
-            response: 'response',
-            signature: addressHex
-        })
+    // public static mockRelay(code: number = 200): nock.Scope {
+    //     const relayPayload = new RelayPayload("data", "method", "path")
+    //     const relayMeta = new RelayMeta(BigInt(1))
+    //     const pocketAAT = await PocketAAT.from(version, clientPublicKey, applicationPublicKey, applicationPrivateKey)
+    //     const proof = new RelayProof(BigInt(1), BigInt(5), applicationPublicKey, "ETH04",  pocketAAT, pocketAAT.applicationSignature, new RequestHash(relayPayload, relayMeta))
+    //     const data: any = this.createData(code, {
+    //         proof: proof.toJSON(),
+    //         response: 'response',
+    //         signature: addressHex
+    //     })
         
-        const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.ClientRelay.toString(), code, response.data)
-    }
+    //     const response = this.getResponseObject(data, code)
+    //     return this.nockRoute(enums.V1RPCRoutes.ClientRelay.toString(), code, response.data)
+    // }
 
     public static mockDispatch(code: number = 200): nock.Scope {
         const blockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
