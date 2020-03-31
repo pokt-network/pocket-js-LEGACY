@@ -1,3 +1,7 @@
+## 0.2.1-RC
+- Switched ECDSA library to `libsodium-wrapper`
+- Added [Webpack support](https://webpack.js.org)
+
 ## 0.2.0-RC
 - Compatible with [Pocket Core version RC-0.2.1](https://github.com/pokt-network/pocket-core/releases/tag/RC-0.2.1)
 - Added ability to run in-browser with webpack
