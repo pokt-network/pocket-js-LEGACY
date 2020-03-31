@@ -1,5 +1,5 @@
 import { Configuration } from "./config"
-import {RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session} from "./rpc/models"
+import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session, MajorityResponse } from "./rpc/models"
 import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate, typeGuard } from "./utils"
 import { SessionManager } from "./session/session-manager"
 import { Node, RPC, IRPCProvider, RpcError, HttpRpcProvider } from "./rpc"
@@ -49,8 +49,8 @@ export class Pocket {
     } catch (error) {
       throw error
     }
-    
-    if(rpcProvider !== undefined) {
+
+    if (rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)
     }
   }
@@ -62,13 +62,13 @@ export class Pocket {
    * @memberof Pocket
    */
   public rpc(rpcProvider?: IRPCProvider): RPC | undefined {
-    if(rpcProvider !== undefined) {
+    if (rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)
     }
 
-    if(this.innerRpc !== undefined) {
+    if (this.innerRpc !== undefined) {
       return this.innerRpc
-    } 
+    }
   }
 
   /**
@@ -105,7 +105,7 @@ export class Pocket {
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.maxConsensusNodes; index++) {
-        const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers ?? {"":""}, method, path, node)
+        const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers ?? { "": "" }, method, path, node, true)
         // Check if ConsensusNode type
         if (typeGuard(consensusNodeResponse, ConsensusNode)) {
           // Save the first response
@@ -113,8 +113,8 @@ export class Pocket {
             firstResponse = consensusNodeResponse.relayResponse
           }
           consensusNodes.push(consensusNodeResponse)
-        } else if (typeGuard(consensusNodeResponse, RpcError)){
-          return new Error("Relay error: "+ consensusNodeResponse.message)
+        } else if (typeGuard(consensusNodeResponse, RpcError)) {
+          return new Error("Relay error: " + consensusNodeResponse.message)
         }
       }
       // Check consensus nodes length
@@ -133,16 +133,18 @@ export class Pocket {
         return consensusRelayResponse
       } else if (configuration.acceptDisputedResponses) {
         return consensusRelayResponse
-      } else {
+      } else if (consensusRelayResponse.majorityResponse !== undefined && consensusRelayResponse.minorityResponse !== undefined){
         // Create the challenge request
-        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse, consensusRelayResponse.minorityResponse)
+        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!)
         // Send the challenge request
         const challengeResponse = await this.rpc()!.query.requestChallenge(challengeRequest)
-
+        // Return a challenge response
         if (typeGuard(challengeResponse, ChallengeResponse)) {
           return challengeResponse
         }
         return new Error(challengeResponse.message)
+      }else {
+        return new Error("Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
       }
     } catch (err) {
       return err
@@ -187,19 +189,31 @@ export class Pocket {
 
       // Determine the service node
       let serviceNode: Node
-      // Provide a random service node from the session
-      if (node !== undefined) {
-        if (currentSession.isNodeInSession(node)) {
-          serviceNode = node as Node
-        } else {
-          return new RpcError("0", "Provided Node is not part of the current session for this application, check your PocketAAT")
+      // Check if consensus relay is enabled
+      if (consensusEnabled) {
+        if (this.configuration.maxConsensusNodes > currentSession.sessionNodes.length) {
+          return new RpcError("", "Failed to send a consensus relay, number of max consensus nodes is higher thant the actual nodes in current session")
         }
-      } else {
-        const serviceNodeOrError = currentSession.getSessionNode()
+        const serviceNodeOrError = currentSession.getUniqueSessionNode()
         if (typeGuard(serviceNodeOrError, Error)) {
           return RpcError.fromError(serviceNodeOrError as Error)
         }
         serviceNode = serviceNodeOrError as Node
+      } else {
+        // Provide a random service node from the session
+        if (node !== undefined) {
+          if (currentSession.isNodeInSession(node)) {
+            serviceNode = node as Node
+          } else {
+            return new RpcError("0", "Provided Node is not part of the current session for this application, check your PocketAAT")
+          }
+        } else {
+          const serviceNodeOrError = currentSession.getSessionNode()
+          if (typeGuard(serviceNodeOrError, Error)) {
+            return RpcError.fromError(serviceNodeOrError as Error)
+          }
+          serviceNode = serviceNodeOrError as Node
+        }
       }
 
       // Final Service Node check
@@ -210,9 +224,9 @@ export class Pocket {
       // Assign session service node to the rpc instance
       const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL)
       this.rpc(serviceProvider)
-      
+
       // Create Relay Payload
-      const relayPayload = new RelayPayload(data, method, path, headers || {"":""})
+      const relayPayload = new RelayPayload(data, method, path, headers || { "": "" })
 
       // Check if account is available for signing
       const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
@@ -220,19 +234,19 @@ export class Pocket {
       if (!isUnlocked) {
         return new RpcError("0", "Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
-      
+
       // Produce signature payload
       const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight) + BigInt(currentSession.getBlocksSinceCreation()))
       const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
 
       const proofBytes = RelayProof.bytes(
-          entropy,
-          currentSession.sessionHeader.sessionBlockHeight,
-          serviceNode.publicKey,
-          blockchain,
-          pocketAAT,
-          requestHash
+        entropy,
+        currentSession.sessionHeader.sessionBlockHeight,
+        serviceNode.publicKey,
+        blockchain,
+        pocketAAT,
+        requestHash
       )
 
       // Sign
@@ -245,21 +259,24 @@ export class Pocket {
 
       // Produce RelayProof
       const relayProof = new RelayProof(
-          entropy,
-          currentSession.sessionHeader.sessionBlockHeight,
-          serviceNode.publicKey,
-          blockchain,
-          pocketAAT,
-          signatureHex,
-          requestHash
+        entropy,
+        currentSession.sessionHeader.sessionBlockHeight,
+        serviceNode.publicKey,
+        blockchain,
+        pocketAAT,
+        signatureHex,
+        requestHash
       )
 
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
       // Send relay
       const result = await this.innerRpc!.client.relay(relay, configuration.requestTimeOut)
-      // 
+      // Handle consensus
       if (consensusEnabled && typeGuard(result, RelayResponse)) {
+        if (currentSession.sessionNodes.indexOf(serviceNode)) {
+          currentSession.sessionNodes[currentSession.sessionNodes.indexOf(serviceNode)].alreadyInConsensus = true
+        }
         return new ConsensusNode(serviceNode, false, result)
       } else {
         return result
