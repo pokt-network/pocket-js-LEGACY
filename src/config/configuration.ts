@@ -33,6 +33,8 @@ export class Configuration {
     this.maxSessions = maxSessions
     if (maxConsensusNodes % 2 === 1) {
       this.maxConsensusNodes = maxConsensusNodes
+    }else{
+      throw new Error("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.")
     }
     this.acceptDisputedResponses = acceptDisputedResponses
   }

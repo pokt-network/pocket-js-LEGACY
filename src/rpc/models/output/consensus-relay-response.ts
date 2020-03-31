@@ -33,16 +33,15 @@ export class ConsensusRelayResponse {
   public readonly payload: string
   public readonly consensusNodes: ConsensusNode[] = []
   public consensusResult: boolean = false
-  public majorityResponse: MajorityResponse
-  public minorityResponse: MinorityResponse
+  public majorityResponse?: MajorityResponse
+  public minorityResponse?: MinorityResponse
 
   /**
-   * Relay payload.
+   * Consensus Relay Response.
    * @constructor
    * @param {string} signature - Signature.
    * @param {string} payload - payload string.
    * @param {ConsensusNode[]} consensusNodes - List of the nodes participating in the consensus.
-   * @param {boolean} consensusResult - True or false if  the consensus was successful or not.
    */
   constructor(signature: string, payload: string, consensusNodes: ConsensusNode[]) {
     this.signature = signature
@@ -69,8 +68,17 @@ export class ConsensusRelayResponse {
         }
       }
     })
-    this.majorityResponse = new MajorityResponse(majorityResponse)
-    this.minorityResponse = new MinorityResponse(minorityResponse[0])
+    if (minorityResponse.length > 0 && majorityResponse.length > 0) {
+      if (majorityResponse.length > 2) {
+        this.majorityResponse = new MajorityResponse(majorityResponse.slice(0, 2))
+      }else if(majorityResponse.length == 2){
+        this.majorityResponse = new MajorityResponse(majorityResponse)
+      }else{
+        throw new Error("Majority response is equal to 1, it should be 2 responses.")
+      }
+      
+      this.minorityResponse = new MinorityResponse(minorityResponse[0])
+    }
 
     if (!this.isValid()) {
       throw new TypeError("Invalid ConsensusRelayResponse properties.")
@@ -98,7 +106,8 @@ export class ConsensusRelayResponse {
   public isValid(): boolean {
     return (
       this.signature.length !== 0 &&
-      this.payload.length !== 0
+      this.payload.length !== 0 &&
+      this.consensusNodes.length !== 0
     )
   }
   /**
@@ -108,23 +117,25 @@ export class ConsensusRelayResponse {
    */
   private setLocalConsensusResults() {
     const results: boolean[] = []
-    const firstResponseBuffer = Buffer.from(JSON.stringify(this.toJSON()), 'utf8')
-
+    const firstResponseBuffer = Buffer.from(this.payload, 'utf8')
+    // Iterate each consensus nodes
     this.consensusNodes.forEach(node => {
-      const responseBuffer = Buffer.from(JSON.stringify(node.relayResponse.toJSON()), 'utf8')
-
+      const responseBuffer = Buffer.from(node.relayResponse.payload, 'utf8')
+      // Compare each relay payload result
       if (Buffer.compare(responseBuffer, firstResponseBuffer) === 0) {
+        // Set the node status for consensus to true
         node.status = true
         results.push(true)
       } else {
+        // Set the node status for consensus to false
         node.status = false
         results.push(false)
       }
     })
-
+    // Retrieve the true and false results
     const positive = results.filter(Boolean).length
     const negative = results.length - positive
-
+    // Updated the consensus result based on the output
     if (positive > negative) {
       this.consensusResult = true
     } else {
