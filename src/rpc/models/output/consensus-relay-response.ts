@@ -68,7 +68,8 @@ export class ConsensusRelayResponse {
         }
       }
     })
-    if (minorityResponse.length > 0 && majorityResponse.length > 0) {
+    // We only wanna handle the case of 1 node being in disagreement with the rest
+    if (minorityResponse.length === 1 && majorityResponse.length > 0) {
       if (majorityResponse.length > 2) {
         this.majorityResponse = new MajorityResponse(majorityResponse.slice(0, 2))
       }else if(majorityResponse.length === 2){
