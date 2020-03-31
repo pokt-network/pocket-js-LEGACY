@@ -44,7 +44,7 @@ export class HttpRpcProvider implements IRPCProvider{
                 return new RpcError(response.status.toString(), JSON.stringify(response.data))
             }
         } catch (error) {
-            if (error.response.data !== undefined) {
+            if (error.response !== undefined && error.response.data !== undefined) {
                 return RpcError.fromRelayError(error, JSON.stringify(error.response.data))
             }
             return RpcError.fromError(error)

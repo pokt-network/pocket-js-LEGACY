@@ -71,9 +71,11 @@ export class DispatchResponse {
   public toJSON() {
     return {
       block_height: this.blockHeight,
-      header: this.header.toJSON(),
-      key: this.key,
-      nodes: JSON.parse(JSON.stringify(this.nodes))
+      session: {
+        header: this.header.toJSON(),
+        key: this.key,
+        nodes: JSON.parse(JSON.stringify(this.nodes))
+      }
     }
   }
   /**
