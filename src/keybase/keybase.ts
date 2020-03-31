@@ -1,9 +1,9 @@
 import { Account } from "./models/account"
 import Sodium from 'libsodium-wrappers'
 import { UnlockedAccount } from "./models/unlocked-account"
-import * as pbkdf2 from "pbkdf2"
+import pbkdf2 from "pbkdf2"
 import { sha256 } from "js-sha256"
-import * as aesjs from "aes-js"
+import aesjs from "aes-js"
 import { typeGuard } from "../utils/type-guard"
 import {
     addressFromPublickey,
