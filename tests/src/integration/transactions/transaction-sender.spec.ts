@@ -5,7 +5,7 @@ import { EnvironmentHelper } from '../../../utils/env/helper'
 import { type } from 'os'
 
 const dispatcherURL = new URL("http://node9.testnet.pokt.network:8081")
-const configuration = new Configuration(5, 60000, 1000000)
+const configuration = new Configuration(5, 2000, undefined, 100000)
 const privKey = "640d19b8bfb1cd70fe565ead88e705beaab34fe18fb0879d32539ebfe5ba511725e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
 function defaultConfiguration(): Configuration {
     return configuration

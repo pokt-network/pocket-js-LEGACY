@@ -40,7 +40,7 @@ const nodeAddress = "17ca63e4ff7535a40512c550dd0267e519cafc1a"
 // npm --network=test run test:integration --> replace test with local or main in order to change the environment
 const env = EnvironmentHelper.getNetwork(process.env.npm_config_network)
 const dispatcher: URL = new URL(env.getPOKTRPC())
-const configuration = new Configuration(5, 40000, 200)
+const configuration = new Configuration(5, 1000, undefined, 40000)
 const rpcProvider = new HttpRpcProvider(dispatcher)
 
 // Default pocket instance to reuse code

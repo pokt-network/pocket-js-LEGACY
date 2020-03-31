@@ -100,11 +100,11 @@ export class Pocket {
 
     try {
       // Checks if max consensus nodes count is 0, meaning it wasn't configured for local concensus.
-      if (this.configuration.maxConsensusNodes === 0) {
-        return new Error("Failed to send a relay with local consensus, configuration maxConsensusNodes is 0")
+      if (this.configuration.consensusNodeCount === 0) {
+        return new Error("Failed to send a relay with local consensus, configuration consensusNodeCount is 0")
       }
       // Perform the relays based on the max consensus nodes count
-      for (let index = 0; index < this.configuration.maxConsensusNodes; index++) {
+      for (let index = 0; index < this.configuration.consensusNodeCount; index++) {
         const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers ?? { "": "" }, method, path, node, true)
         // Check if ConsensusNode type
         if (typeGuard(consensusNodeResponse, ConsensusNode)) {
@@ -191,7 +191,7 @@ export class Pocket {
       let serviceNode: Node
       // Check if consensus relay is enabled
       if (consensusEnabled) {
-        if (this.configuration.maxConsensusNodes > currentSession.sessionNodes.length) {
+        if (this.configuration.consensusNodeCount > currentSession.sessionNodes.length) {
           return new RpcError("", "Failed to send a consensus relay, number of max consensus nodes is higher thant the actual nodes in current session")
         }
         const serviceNodeOrError = currentSession.getUniqueSessionNode()

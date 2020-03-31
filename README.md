@@ -65,10 +65,10 @@ const HttpRpcProvider = module.HttpRpcProvider
 const Node = module.Node
 
 const dispatchURL = new URL("http://node9.testnet.pokt.network:8081")
-const configuration = new Configuration(5, 60000, 1000000)
 const rpcProvider = new HttpRpcProvider(dispatchURL)
+const configuration = new Configuration(5, 1000, undefined, 40000)
 
-const pocketInstance = new Pocket(configuration, rpcProvider)
+const pocketInstance = new Pocket([dispatchURL], rpcProvider, configuration)
 
 const balance = await pocketInstance.rpc.query.getBalance(accountAddress)
 console.log("Account Balance: " + balance)

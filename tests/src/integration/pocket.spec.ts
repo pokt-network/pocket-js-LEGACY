@@ -163,7 +163,7 @@ describe("Pocket Interface functionalities", async () => {
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 NockUtil.mockDispatchForConsensus()
                 NockUtil.mockRelayForConsensus()
-                NockUtil.mockRelayForConsensus()
+                NockUtil.mockRelayForConsensusFailure()
                 NockUtil.mockRelayForConsensusFailure()
                 NockUtil.mockRelayForConsensusFailure()
                 NockUtil.mockRelayForConsensusFailure()
@@ -174,23 +174,42 @@ describe("Pocket Interface functionalities", async () => {
         })
         describe("Failure scenarios", () => {
 
-            it("should fail to instantiate a Configuration class due to maxConsensusNodes NOT being an odd number", async () => {
+            it("should fail to instantiate a Configuration class due to consensusNodeCount NOT being an odd number", async () => {
                 expect(function(){
                     new Configuration(5, 1000, 4, 40000, false)
-                }).to.throw("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.")
+                }).to.throw("Failed to instantiate a Configuration class object due to consensusNodeCount not being an odd number.")
             })
 
-            it("should fail to instantiate a Configuration class due to maxConsensusNodes NOT being set", async () => {
-                expect(function(){
-                    new Configuration(5, 1000, undefined, 40000, false)
-                }).to.throw("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.")
-            })
-
-            it("should fail to send consensus relay due to maxConsensusNodes being higher than the nodes in session", async () => {
+            it("should fail to instantiate a Configuration class due to consensusNodeCount NOT being set", async () => {
                 // We use a different configuration in which we especify that we want 3 consensus nodes,
                 // meaning the relay will be sent to 3 different nodes and the result will be compare
 
-                // For this scenario the consensus fails due to adding the maxConsensusNodes value to the configuration using (7)
+                // For this scenario the consensus fails due to not setting up the consensusNodeCount value in the configuration
+                const config = new Configuration(5, 1000, undefined, 40000, false)
+                const nockDispatchUrl = new URL(env.getPOKTRPC())
+                const nockRpcProvider = new HttpRpcProvider(nockDispatchUrl)
+                const pocket = new Pocket([nockDispatchUrl], nockRpcProvider, config)
+                // Generate client account
+                const clientPassphrase = "1234"
+                const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
+                expect(typeGuard(clientAccountOrError, Error)).to.be.false
+                const clientAccount = clientAccountOrError as Account
+                const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
+                expect(error).to.be.undefined
+                // Generate AAT
+                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                // Let's submit a consensus relay!
+                const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
+                NockUtil.mockDispatchForConsensus()
+                const relayResponse = await pocket.sendConsensusRelay(relayData, blockchain, aat)
+                expect(typeGuard(relayResponse, Error)).to.be.true
+            })
+
+            it("should fail to send consensus relay due to consensusNodeCount being higher than the nodes in session", async () => {
+                // We use a different configuration in which we especify that we want 3 consensus nodes,
+                // meaning the relay will be sent to 3 different nodes and the result will be compare
+
+                // For this scenario the consensus fails due to adding the consensusNodeCount value to the configuration using (7)
                 const config = new Configuration(5, 1000, 7, 40000, false)
                 const nockDispatchUrl = new URL(env.getPOKTRPC())
                 const nockRpcProvider = new HttpRpcProvider(nockDispatchUrl)
@@ -211,11 +230,11 @@ describe("Pocket Interface functionalities", async () => {
                 expect(typeGuard(relayResponse, Error)).to.be.true
             })
 
-            it("should fail to send consensus relay due to maxConsensusNodes being higher than the nodes in session", async () => {
+            it("should fail to send consensus relay due to consensusNodeCount being higher than the nodes in session", async () => {
                 // We use a different configuration in which we especify that we want 3 consensus nodes,
                 // meaning the relay will be sent to 3 different nodes and the result will be compare
 
-                // For this scenario the consensus fails due to adding the maxConsensusNodes value to the configuration using (undefined)
+                // For this scenario the consensus fails due to adding the consensusNodeCount value to the configuration using (undefined)
                 const config = new Configuration(5, 1000, 7, 40000, false)
                 const nockDispatchUrl = new URL(env.getPOKTRPC())
                 const nockRpcProvider = new HttpRpcProvider(nockDispatchUrl)
