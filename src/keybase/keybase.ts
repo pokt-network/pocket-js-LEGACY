@@ -1,10 +1,9 @@
 import { Account } from "./models/account"
-import * as ed25519 from "@pokt-network/ed25519"
+import Sodium from 'libsodium-wrappers'
 import { UnlockedAccount } from "./models/unlocked-account"
 import * as pbkdf2 from "pbkdf2"
 import { sha256 } from "js-sha256"
 import * as aesjs from "aes-js"
-import seedrandom from "seedrandom"
 import { typeGuard } from "../utils/type-guard"
 import {
     addressFromPublickey,
@@ -26,12 +25,14 @@ export class Keybase {
      * @returns {Buffer | Error} The signature or an Error
      * @memberof Keybase
      */
-    public static signWith(
+    public static async signWith(
         privateKey: Buffer,
         payload: Buffer
-    ): Buffer | Error {
+    ): Promise<Buffer | Error> {
         try {
-            return ed25519.Sign(payload, privateKey)
+            // We first wait for Sodium to be ready
+            await Sodium.ready
+            return Buffer.from(Sodium.crypto_sign_detached(payload, privateKey))
         } catch (err) {
             return err
         }
@@ -65,10 +66,9 @@ export class Keybase {
 
         try {
             // Create the keypair
-            const rng = seedrandom(passphrase, { entropy: true })
-            const seed = Buffer.from(sha256(rng().toString()), "hex")
-            const keyPair = ed25519.MakeKeypair(seed)
-            return await this.importAccount(keyPair.privateKey, passphrase)
+            await Sodium.ready
+            const keypair = Sodium.crypto_sign_keypair()
+            return await this.importAccount(Buffer.from(keypair.privateKey), passphrase)
         } catch (err) {
             return err
         }
@@ -225,7 +225,8 @@ export class Keybase {
         }
         const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         try {
-            return ed25519.Sign(payload, unlockedAccount.privateKey)
+            await Sodium.ready
+            return Buffer.from(Sodium.crypto_sign_detached(payload, unlockedAccount.privateKey))
         } catch (err) {
             return err
         }
@@ -254,7 +255,8 @@ export class Keybase {
         }
         try {
             const unlockedAccount = this.unlockedAccounts[addressHex]
-            return ed25519.Sign(payload, unlockedAccount.privateKey)
+            await Sodium.ready
+            return Buffer.from(Sodium.crypto_sign_detached(payload, unlockedAccount.privateKey))
         } catch (err) {
             return err
         }
@@ -274,7 +276,8 @@ export class Keybase {
         signature: Buffer
     ): Promise<boolean> {
         try {
-            return ed25519.Verify(payload, signature, signerPublicKey)
+            await Sodium.ready
+            return Sodium.crypto_sign_verify_detached(signature, payload, signerPublicKey)
         } catch (err) {
             return false
         }

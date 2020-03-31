@@ -67,7 +67,7 @@ describe("Pocket Interface functionalities", async () => {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 const relayResponse = await pocket.sendRelay(relayData, blockchain, aat)
@@ -85,7 +85,7 @@ describe("Pocket Interface functionalities", async () => {
                     const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                     expect(error).to.be.undefined
                     // Generate AAT
-                    const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                    const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                     // Let's submit a relay!   
                     const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                     const relayResponse = await pocket.sendRelay(relayData, blockchain, aat)
@@ -106,7 +106,7 @@ describe("Pocket Interface functionalities", async () => {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a consensus relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 const consensusRelayRespone = await pocket.sendConsensusRelay(relayData, blockchain, aat)
@@ -130,7 +130,7 @@ describe("Pocket Interface functionalities", async () => {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a consensus relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 NockUtil.mockDispatchForConsensus()
@@ -158,7 +158,7 @@ describe("Pocket Interface functionalities", async () => {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a consensus relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 NockUtil.mockDispatchForConsensus()
@@ -197,7 +197,7 @@ describe("Pocket Interface functionalities", async () => {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a consensus relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 NockUtil.mockDispatchForConsensus()
@@ -222,7 +222,7 @@ describe("Pocket Interface functionalities", async () => {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a consensus relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 NockUtil.mockDispatchForConsensus()
@@ -247,7 +247,7 @@ describe("Pocket Interface functionalities", async () => {
                 const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
                 expect(error).to.be.undefined
                 // Generate AAT
-                const aat = PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
                 // Let's submit a consensus relay!
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 NockUtil.mockDispatchForConsensus()
