@@ -11,7 +11,7 @@ const store = new InMemoryKVStore()
 
 describe('Routing Table tests',() => {
     it('should initialize a routing table', () => {
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
         
         const routing = new RoutingTable([dispatcher], configuration, store)
 
@@ -19,7 +19,7 @@ describe('Routing Table tests',() => {
     }).timeout(0)
 
     it('should fail to initialize a routing table due to excessive nodes', () => {
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
         
         const dispatchers: URL[] = [dispatcher]
         for(let i = 0; i < configuration.maxDispatchers; i++) {
@@ -31,7 +31,7 @@ describe('Routing Table tests',() => {
     }).timeout(0)
 
     it('should be able to read a specific node from the routing table', () => {
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
         const routing = new RoutingTable([dispatcher], configuration, store)
         const readDispatcher = routing.readDispatcher(dispatcher)
         
@@ -39,7 +39,7 @@ describe('Routing Table tests',() => {
     }).timeout(0)
 
     it('should be able to add a node to the routing table', () => {
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
         
         const routing = new RoutingTable([dispatcher], configuration, store)
         const secondaryDispatcher: URL = new URL("http://127.0.0.1:80")
@@ -50,7 +50,7 @@ describe('Routing Table tests',() => {
     }).timeout(0)
 
     it('should be able to delete a node from the routing table', () => {
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
 
         const routing = new RoutingTable([dispatcher], configuration, store)
         routing.deleteDispatcher(dispatcher)
@@ -59,7 +59,7 @@ describe('Routing Table tests',() => {
     }).timeout(0)
 
     it('should not allow more than the max number of nodes per blockchain to be added to the routing table', () => {
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
 
         const routing = new RoutingTable([dispatcher], configuration, store)
         // Add more than the currently allowed since one was added already above
@@ -71,7 +71,7 @@ describe('Routing Table tests',() => {
     }).timeout(0)
 
     it('should be able to read a random node from the routing table', () => {
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
         
         const routing = new RoutingTable([dispatcher], configuration, store)
 
@@ -80,7 +80,7 @@ describe('Routing Table tests',() => {
     }).timeout(0)
 
     it('should be able to read multiple random nodes from the routing table', () => { // Test doesn't currently check randomness of results
-        const configuration = new Configuration(5, 40000, 200)
+        const configuration = new Configuration(5, 200, undefined, 40000)
         
     
         const routing = new RoutingTable([dispatcher], configuration, store)
