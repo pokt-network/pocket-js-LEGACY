@@ -71,7 +71,7 @@ export class ConsensusRelayResponse {
     if (minorityResponse.length > 0 && majorityResponse.length > 0) {
       if (majorityResponse.length > 2) {
         this.majorityResponse = new MajorityResponse(majorityResponse.slice(0, 2))
-      }else if(majorityResponse.length == 2){
+      }else if(majorityResponse.length === 2){
         this.majorityResponse = new MajorityResponse(majorityResponse)
       }else{
         throw new Error("Majority response is equal to 1, it should be 2 responses.")
