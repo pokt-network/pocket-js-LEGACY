@@ -40,7 +40,7 @@ const nodeAddress = "17ca63e4ff7535a40512c550dd0267e519cafc1a"
 // npm --network=test run test:integration --> replace test with local or main in order to change the environment
 const env = EnvironmentHelper.getNetwork(process.env.npm_config_network)
 const dispatcher: URL = new URL(env.getPOKTRPC())
-const configuration = new Configuration(5, 40000, 200)
+const configuration = new Configuration(5, 1000, undefined, 40000)
 const rpcProvider = new HttpRpcProvider(dispatcher)
 
 // Default pocket instance to reuse code
@@ -129,7 +129,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a list of apps', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const appsResponse = await pocket.rpc()!.query.getApps(StakingStatus.None, BigInt(0))
+            const appsResponse = await pocket.rpc()!.query.getApps(StakingStatus.Staked, BigInt(0))
             expect(typeGuard(appsResponse, QueryAppsResponse)).to.be.true
         }).timeout(0)
 
@@ -173,7 +173,7 @@ describe("Pocket RPC Query Interface", async () => {
 
             const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse(), NockUtil.getMockRelayResponse()])
             const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
-            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, addressHex)
+            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
 
             const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
             expect(typeGuard(challengeResponse, ChallengeResponse)).to.be.true
@@ -379,23 +379,12 @@ describe("Pocket RPC Query Interface", async () => {
             expect(typeGuard(supplyResponse, RpcError)).to.be.true
         }).timeout(0)
 
-        it('should returns an error trying to get a challenge response due invalid address.', async () => {
-            const pocket = getPocketDefaultInstance()
-
-            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse()])
-            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
-            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, "000")
-
-            const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
-            expect(typeGuard(challengeResponse, Error)).to.be.true
-        }).timeout(0)
-
         it('should returns an error trying to get a challenge response due missing relay.', async () => {
             const pocket = getPocketDefaultInstance()
 
             const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse()])
             const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
-            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse, addressHex)
+            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
 
             const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
             expect(typeGuard(challengeResponse, Error)).to.be.true

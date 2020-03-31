@@ -54,7 +54,6 @@ export class ClientNamespace {
             return RpcError.fromError(err)
         }
     }
-
     /**
      *
      * Sends a relay
@@ -84,7 +83,6 @@ export class ClientNamespace {
                 )
             }
         } catch (err) {
-            console.dir(err, { colors: true, depth: null })
             return new RpcError("0", err)
         }
     }
@@ -105,7 +103,6 @@ export class ClientNamespace {
                 JSON.stringify(request.toJSON()),
                 timeout
             )
-
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const dispatchResponse = DispatchResponse.fromJSON(

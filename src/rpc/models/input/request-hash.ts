@@ -55,11 +55,7 @@ export class RequestHash {
      */
     public toJSON() {
         return {
-            payload: {
-                data: this.payload.data,
-                method: this.payload.method,
-                path: this.payload.path
-            },
+            payload: this.payload.toJSON(true),
             meta: this.meta.toJSON()
         }
     }

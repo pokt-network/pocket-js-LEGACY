@@ -1,5 +1,5 @@
-import { BondStatus, BondStatusUtil } from "./bond-status"
 import { Hex } from "../../utils/hex"
+import { StakingStatus } from "./staking-status"
 
 /**
  *
@@ -10,7 +10,7 @@ export class Node {
   public static fromJSON(json: string): Node {
     try {
       const rawObjValue = JSON.parse(json)
-      const status: BondStatus = BondStatusUtil.getStatus(rawObjValue.status)
+      const status: StakingStatus = StakingStatus.getStatus(rawObjValue.status)
       return new Node(
         rawObjValue.address,
         rawObjValue.public_key,
@@ -29,11 +29,12 @@ export class Node {
   public readonly address: string
   public readonly publicKey: string
   public readonly jailed: boolean
-  public readonly status: BondStatus
+  public readonly status: StakingStatus
   public readonly stakedTokens: BigInt
   public readonly serviceURL: URL
   public readonly chains: string[]
   public readonly unstakingCompletionTime: string | undefined
+  public alreadyInConsensus: boolean = false
 
   /**
    * Creates a Node.
@@ -41,7 +42,7 @@ export class Node {
    * @param {string} address - the hex address of the validator
    * @param {string} publicKey - the hex consensus public key of the validator.
    * @param {boolean} jailed - has the validator been jailed from staked status?
-   * @param {BondStatus} status - validator status
+   * @param {StakingStatus} status - validator status
    * @param {BigInt} stakedTokens - how many staked tokens
    * @param {URL} serviceURL - Service node url
    * @param {string[]} chains - chains
@@ -51,7 +52,7 @@ export class Node {
     address: string,
     publicKey: string,
     jailed: boolean,
-    status: BondStatus,
+    status: StakingStatus,
     stakedTokens: BigInt,
     serviceURL: string,
     chains: string[] = [],
