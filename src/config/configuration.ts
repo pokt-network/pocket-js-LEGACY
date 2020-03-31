@@ -31,9 +31,9 @@ export class Configuration {
     this.maxDispatchers = maxDispatchers
     this.requestTimeOut = requestTimeOut
     this.maxSessions = maxSessions
-    if (maxConsensusNodes % 2 === 1) {
+    if (maxConsensusNodes % 2 === 1 || maxConsensusNodes === 0) {
       this.maxConsensusNodes = maxConsensusNodes
-    }else{
+    }else {
       throw new Error("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.")
     }
     this.acceptDisputedResponses = acceptDisputedResponses
