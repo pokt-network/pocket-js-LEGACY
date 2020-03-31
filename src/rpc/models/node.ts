@@ -34,6 +34,7 @@ export class Node {
   public readonly serviceURL: URL
   public readonly chains: string[]
   public readonly unstakingCompletionTime: string | undefined
+  public alreadyInConsensus: boolean = false
 
   /**
    * Creates a Node.
