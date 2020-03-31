@@ -177,13 +177,13 @@ describe("Pocket Interface functionalities", async () => {
             it("should fail to instantiate a Configuration class due to maxConsensusNodes NOT being an odd number", async () => {
                 expect(function(){
                     new Configuration(5, 1000, 4, 40000, false)
-                }).to.throw("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.");
+                }).to.throw("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.")
             })
 
             it("should fail to instantiate a Configuration class due to maxConsensusNodes NOT being set", async () => {
                 expect(function(){
                     new Configuration(5, 1000, undefined, 40000, false)
-                }).to.throw("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.");
+                }).to.throw("Failed to instantiate a Configuration class object due to maxConsensusNodes not being an odd number.")
             })
 
             it("should fail to send consensus relay due to maxConsensusNodes being higher than the nodes in session", async () => {

@@ -80,7 +80,7 @@ export class Session {
   public getUniqueSessionNode(): Node | Error { 
     const nodes = this.sessionNodes
     if (nodes !== undefined && nodes.length > 0) {
-      let availableNodes: Node[] = []
+      const availableNodes: Node[] = []
       nodes.forEach(node => {
         if (!node.alreadyInConsensus) {
           availableNodes.push(node)
