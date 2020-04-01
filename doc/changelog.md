@@ -1,3 +1,6 @@
+## 0.2.2-RC
+- Removed dependency `@types/pokt-network__ed25519`
+
 ## 0.2.1-RC
 - Switched ECDSA library to `libsodium-wrapper`
 - Added [Webpack support](https://webpack.js.org)
