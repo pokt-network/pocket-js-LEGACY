@@ -36,7 +36,7 @@ export class TxProof {
    * TxProof.
    * @constructor
    * @param {string} rootHash - Root hash.
-   * @param {string} data - Hash holding the current tx proof data.
+   * @param {string | null} data - Hash holding the current tx proof data.
    * @param {SimpleProof} proof - Simple proof object.
    */
   constructor(rootHash: string, data: string | null, proof: SimpleProof) {

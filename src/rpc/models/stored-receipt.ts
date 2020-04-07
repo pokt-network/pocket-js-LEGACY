@@ -3,20 +3,20 @@ import { SessionHeader } from "./input/session-header"
 /**
  *
  *
- * @class StoredProof
+ * @class StoredReceipt
  */
-export class StoredProof {
+export class StoredReceipt {
   /**
    *
-   * Creates a StoredProof object using a JSON string
+   * Creates a StoredReceipt object using a JSON string
    * @param {string} json - JSON string.
-   * @returns {StoredProof} - StoredProof object.
-   * @memberof StoredProof
+   * @returns {StoredReceipt} - StoredReceipt object.
+   * @memberof StoredReceipt
    */
-  public static fromJSON(json: string): StoredProof {
+  public static fromJSON(json: string): StoredReceipt {
     const jsonObject = JSON.parse(json)
 
-    return new StoredProof(
+    return new StoredReceipt(
       SessionHeader.fromJSON(JSON.stringify(jsonObject.session_header)),
       jsonObject.servicer_address,
       BigInt(jsonObject.total_relays)
@@ -28,7 +28,7 @@ export class StoredProof {
   public readonly totalRelays: BigInt
 
   /**
-   * StoredProof.
+   * StoredReceipt.
    * @constructor
    * @param {SessionHeader} sessionHeader - Session Header.
    * @param {string} servicerAddress - Servicer address.
@@ -45,9 +45,9 @@ export class StoredProof {
   }
   /**
    *
-   * Creates a JSON object with the StoredProof properties
+   * Creates a JSON object with the StoredReceipt properties
    * @returns {JSON} - JSON Object.
-   * @memberof StoredProof
+   * @memberof StoredReceipt
    */
   public toJSON() {
     return {
@@ -58,9 +58,9 @@ export class StoredProof {
   }
   /**
    *
-   * Check if the StoredProof object is valid
+   * Check if the StoredReceipt object is valid
    * @returns {boolean} - True or false.
-   * @memberof StoredProof
+   * @memberof StoredReceipt
    */
   public isValid(): boolean {
     return this.servicerAddress.length !== 0 &&

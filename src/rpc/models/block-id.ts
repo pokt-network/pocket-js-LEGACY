@@ -32,7 +32,7 @@ export class BlockID {
    * BlockID.
    * @constructor
    * @param {string} hash - BlockID hash.
-   * @param {PartSetHeader} parts - Session BlockID Height.
+   * @param {PartSetHeader} parts - PartSetHeader object.
    */
   constructor(hash: string, parts: PartSetHeader) {
     this.hash = hash

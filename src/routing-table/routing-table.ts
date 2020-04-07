@@ -16,8 +16,9 @@ export class RoutingTable {
   private readonly store: IKVStore
   /**
    * Creates an instance of routing.
-   * @param {Array} nodes - Array holding the initial dispatcher url(s).
+   * @param {URL[]} dispatchers - Array holding the initial dispatcher url(s).
    * @param {Configuration} configuration - Configuration object.
+   * @param {IKVStore} store - KeyBase store object.
    * @memberof Routing
    */
   constructor(dispatchers: URL[] = [], configuration: Configuration, store: IKVStore) {
@@ -38,7 +39,7 @@ export class RoutingTable {
   }
   /**
    * Returns the stored dispatchers urls count
-   * @returns {number} Nodes count.
+   * @returns {number} Dispatcher nodes count.
    * @memberof Routing
    */
   public get dispatchersCount(): number { 
@@ -52,7 +53,7 @@ export class RoutingTable {
 
   /**
    * Reads an array of random dispatchers urls from the routing table
-   * @param {number} count - desired number of dispatchers urls returned
+   * @param {number} count - Desired number of dispatchers urls returned
    * @returns {URL[]} Random dispatcher urls.
    * @memberof Routing
    */
@@ -64,8 +65,8 @@ export class RoutingTable {
   }
 
   /**
-   * Reads a random node from the routing table based on blockchain netID
-   * @returns {Node} Random node.
+   * Reads a random dispatcher node from the routing table
+   * @returns {URL} Random dispatcher URL.
    * @memberof Routing
    */
   public readRandomDispatcher(): URL {
@@ -88,7 +89,7 @@ export class RoutingTable {
 
   /**
    * Reads a specific node from the routing table based on public key
-   * @param {string} publicKey - public key attached to the node
+   * @param {URL} url - Node's service url.
    * @returns {Node} Node object.
    * @memberof Routing
    */
@@ -109,7 +110,7 @@ export class RoutingTable {
 
   /**
    * Add a dispatcher url to the routing table
-   * @param {URL} url - URL object to be added
+   * @param {URL} url - URL of the dispatcher node to be added.
    * @memberof Routing
    */
   public addDispatcher(url: URL) {

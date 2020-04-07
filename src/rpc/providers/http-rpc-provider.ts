@@ -19,10 +19,10 @@ export class HttpRpcProvider implements IRPCProvider{
     }
     /**
      * Utility function to send a request.
-     * @param {string} path - The private key to sign with
+     * @param {string} path - Request path
      * @param {string} payload - Request payload to send.
      * @param {number} timeout - Request timeout.
-     * @returns {Buffer | Error} The signature or an Error
+     * @returns {string | RpcError} Response string or RpcError
      * @memberof HttpRpcProvider
      */
     public async send(path: string, payload: string, timeout: number): Promise<string | RpcError> {

@@ -11,8 +11,8 @@ export class UnlockedAccount extends Account {
 
   /**
    * @description Constructor for UnlockedAccount
-   * @param account The Account object on which to base this UnlockedAccount
-   * @param privateKey The raw private key of the Account object
+   * @param {Account} account - The Account object on which to base this UnlockedAccount
+   * @param {Buffer} privateKey - The raw private key of the Account object
    */
   constructor(account: Account, privateKey: Buffer) {
     super(account.publicKey, account.encryptedPrivateKeyHex)

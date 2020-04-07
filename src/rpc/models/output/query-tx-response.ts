@@ -29,7 +29,7 @@ export class QueryTXResponse {
     this.transaction = transaction
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid QueryTxResponse properties.")
     }
   }
   /**

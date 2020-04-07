@@ -14,8 +14,8 @@ export class Account {
 
   /**
    * @description Constructor for this class
-   * @param publicKey Public key of the keypair
-   * @param encryptedPrivateKeyHex The encrypted private key in hex string format
+   * @param {buffer} publicKey - Public key of the keypair
+   * @param {string} encryptedPrivateKeyHex - The encrypted private key in hex string format
    */
   constructor(publicKey: Buffer, encryptedPrivateKeyHex: string) {
     this.publicKey = publicKey

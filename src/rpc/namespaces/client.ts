@@ -57,14 +57,14 @@ export class ClientNamespace {
     /**
      *
      * Sends a relay
-     * @param {Object} request - Payload object containing the needed parameters.
+     * @param {RelayRequest} request - Payload object containing the needed parameters.
      * @param {number} timeout - Request timeout.
      * @returns {Promise<RelayResponse | RpcError>} - A Relay Response object or Rpc error
      * @memberof ClientNamespace
      */
     public async relay(
         request: RelayRequest,
-        timeout: number = 6000
+        timeout: number = 60000
     ): Promise<RelayResponse | RpcError> {
         try {
             const payload = JSON.stringify(request.toJSON())

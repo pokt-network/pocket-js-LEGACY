@@ -3,26 +3,27 @@ import { Hex } from "../../../utils"
 /**
  *
  *
- * @class NodeProof
+ * @class NodeReceipt
  */
-export class NodeProof {
+export class NodeReceipt {
   /**
    *
-   * Creates a NodeProof object using a JSON string
+   * Creates a NodeReceipt object using a JSON string
    * @param {String} json - JSON string.
-   * @returns {NodeProof} - NodeProof object.
-   * @memberof NodeProof
+   * @returns {NodeReceipt} - NodeReceipt object.
+   * @memberof NodeReceipt
    */
-  public static fromJSON(json: string): NodeProof {
+  public static fromJSON(json: string): NodeReceipt {
     try {
       const jsonObject = JSON.parse(json)
 
-      return new NodeProof(
+      return new NodeReceipt(
         jsonObject.address,
         jsonObject.blockchain,
         jsonObject.app_pubkey,
         BigInt(jsonObject.session_block_height),
-        BigInt(jsonObject.height)
+        BigInt(jsonObject.height),
+        jsonObject.receipt_type
       )
     } catch (error) {
       throw error
@@ -32,40 +33,43 @@ export class NodeProof {
   public readonly address: string
   public readonly blockchain: string
   public readonly appPubKey: string
-  public readonly SBlockHeight: BigInt
+  public readonly sessionBlockHeight: BigInt
   public readonly height: BigInt
-
+  public readonly receiptType: string
   /**
-   * Node Proof.
+   * Node Receipt.
    * @constructor
    * @param {string} address - Node address.
    * @param {string} blockchain - Blockchain hash.
    * @param {string} appPubKey - Application Key associated with a client.
-   * @param {BigInt} SBlockHeight - Session Block Height.
-   * @param {BigInt} height - Height of session.
+   * @param {BigInt} sessionBlockHeight - Session Block Height.
+   * @param {BigInt} height - Current height.
+   * @param {string} receiptType - Receipt type.
    */
   constructor(
     address: string,
     blockchain: string,
     appPubKey: string,
-    SBlockHeight: BigInt,
-    height: BigInt
+    sessionBlockHeight: BigInt,
+    height: BigInt,
+    receiptType: string
   ) {
     this.address = address
     this.blockchain = blockchain
     this.appPubKey = appPubKey
-    this.SBlockHeight = SBlockHeight
+    this.sessionBlockHeight = sessionBlockHeight
     this.height = height
+    this.receiptType = receiptType
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid NodeProof properties.")
+      throw new TypeError("Invalid NodeReceipt properties.")
     }
   }
   /**
    *
-   * Creates a JSON object with the NodeProof properties
+   * Creates a JSON object with the NodeReceipt properties
    * @returns {JSON} - JSON Object.
-   * @memberof NodeProof
+   * @memberof NodeReceipt
    */
   public toJSON() {
     return {
@@ -73,14 +77,14 @@ export class NodeProof {
       app_pubkey: this.appPubKey,
       blockchain: this.blockchain,
       height: Number(this.height.toString()),
-      session_block_height: Number(this.SBlockHeight.toString())
+      session_block_height: Number(this.sessionBlockHeight.toString())
     }
   }
   /**
    *
-   * Check if the NodeProof object is valid
+   * Check if the NodeReceipt object is valid
    * @returns {boolean} - True or false.
-   * @memberof NodeProof
+   * @memberof NodeReceipt
    */
   public isValid(): boolean {
     return (
@@ -89,8 +93,9 @@ export class NodeProof {
       this.blockchain.length !== 0 &&
       Hex.isHex(this.appPubKey) &&
       Hex.byteLength(this.appPubKey) === 32 &&
-      this.SBlockHeight !== undefined &&
-      this.height !== undefined 
+      this.sessionBlockHeight !== undefined &&
+      this.height !== undefined &&
+      this.receiptType.length > 0
     )
   }
 }

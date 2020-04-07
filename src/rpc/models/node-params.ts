@@ -52,8 +52,19 @@ export class NodeParams {
   /**
    * NodeParams.
    * @constructor
-   * @param {Hex} hash - NodeParams hash.
-   * @param {PartSetHeader} parts - Session NodeParams Height.
+   * @param {BigInt} daoAllocation - Award percentage of the mint for the DAO.
+   * @param {BigInt} maxValidators - Maximum number of validators in the network at any given block.
+   * @param {BigInt} proposerAllocation - Award percentage of the mint for the proposer.
+   * @param {BigInt} sessionBlockFrequency - How many blocks are in a session.
+   * @param {BigInt} unstakingTime - How much time must pass between the begin_unstaking_tx and the node transitioning to unstaked status.
+   * @param {string} stakeDenom - The monetary denomination of the coins in the network `uPOKT`.
+   * @param {BigInt} stakeMinimum - Minimum amount of uPOKT needed to stake in the network as a node.
+   * @param {BigInt} maxEvidenceAge - Maximum age of tendermint evidence that is still valid (currently not implemented in Cosmos or Pocket-Core).
+   * @param {BigInt} signedBlocksWindow - Window of time in blocks (unit) used for signature verification -> specifically in not signing (missing) blocks.
+   * @param {number} minSignedPerWindow - Minimum number of blocks the node must sign per window.
+   * @param {BigInt} downtimeJailDuration - Minimum amount of time node must spend in jail after missing blocks.
+   * @param {number} slashFractionDoubleSign - The factor of which a node is slashed for a double sign.
+   * @param {number} slashFractionDowntime - The factor of which a node is slashed for a double sign.
    */
   constructor(
     daoAllocation: BigInt,

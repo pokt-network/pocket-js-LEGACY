@@ -10,6 +10,7 @@ export class Hex {
   /**
    * Validates wheter or not str is a valid hex string
    * @param {string} str string to validate
+   * @returns {boolean} - True or false if the string is hex.
    */
   public static isHex(str: string): boolean {
     const regexp = new RegExp("^[0-9a-fA-F]+$")
@@ -18,11 +19,10 @@ export class Hex {
 
   /**
    *
-   *  Encodes str into an array of bytes. After that using bitwise operations we transform each byte into an hexadecimal value.
+   * Encodes an string into an array of bytes. After that using bitwise operations we transform each byte into an hexadecimal value.
    * @param {string} str - string value to be encoded.
    * @returns {string} - Encoded value.
    */
-
   public static encodeTostring(str: string): string {
     const encoded: string[] = this.encode(str)
     return encoded.join("")
@@ -34,7 +34,7 @@ export class Hex {
    * @param {string} hex - Encoded value to be decoded.
    * @returns {string} - Encoded value.
    */
-  public static decodeString(hex: string) {
+  public static decodeString(hex: string): string {
     let text = ""
     for (let i = 0; i < hex.length; i += 2) {
       text += String.fromCharCode(parseInt(hex.substr(i, 2), 16))
@@ -91,7 +91,7 @@ export class Hex {
    *
    *  Encodes a decoded value.
    * @param {string} str - Decoded value to be encoded.
-   * @returns {string} - Encoded value.
+   * @returns {string[]} - Encoded value.
    */
   private static encode(str: string): string[] {
     const value = this.toByteArray(str)
@@ -111,7 +111,7 @@ export class Hex {
    *
    *  Converts an string to a byte array
    * @param {string} str - string value.
-   * @returns {string} - Byte array.
+   * @returns {number[]} - Byte array.
    */
   private static toByteArray(str: string): number[] {
     const utf8: number[] = []

@@ -1,6 +1,6 @@
 import { IRPCProvider } from "../providers"
 import { Configuration, typeGuard, Hex } from "../.."
-import { QueryBlockResponse, RpcError, RPC, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeProofsResponse, NodeProof, QueryNodeProofResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse } from ".."
+import { QueryBlockResponse, RpcError, RPC, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeReceiptsResponse, NodeReceipt, QueryNodeReceiptResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse } from ".."
 import {ChallengeRequest} from "../models/input/challenge-request"
 import {ChallengeResponse} from "../models/output/challenge-response"
 
@@ -306,17 +306,17 @@ export class QueryNamespace {
     }
     /**
      *
-     * Retrieves the node proofs information
+     * Retrieves the node receips information
      * @param {string} address - Node's address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
      * @memberof QueryNamespace
      */
-    public async getNodeProofs(
+    public async getNodeReceipts(
         address: string,
         blockHeight: BigInt = BigInt(0), 
         timeout: number = 60000
-    ): Promise<QueryNodeProofsResponse | RpcError> {
+    ): Promise<QueryNodeReceiptsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
                 return new RpcError("101", "block height can't be lower than 0")
@@ -332,7 +332,7 @@ export class QueryNamespace {
             })
 
             const response = await this.rpcProvider.send(
-                V1RPCRoutes.QueryNodeProofs.toString(),
+                V1RPCRoutes.QueryNodeReceipts.toString(),
                 payload,
                 timeout
             )
@@ -340,14 +340,14 @@ export class QueryNamespace {
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
 
-                const queryNodeProofsResponse = QueryNodeProofsResponse.fromJSON(
+                const queryNodeReceiptsResponse = QueryNodeReceiptsResponse.fromJSON(
                     response
                 )
-                return queryNodeProofsResponse
+                return queryNodeReceiptsResponse
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the node proofs: " + response.message
+                    "Failed to retrieve the node receipts: " + response.message
                 )
             }
         } catch (err) {
@@ -356,24 +356,24 @@ export class QueryNamespace {
     }
     /**
      *
-     * Retrieves the node proof information
-     * @param {NodeProof} nodeProof - Node's address.
+     * Retrieves the node receipt information
+     * @param {NodeReceipt} nodeReceipt - Node's address.
      * @param {number} timeout - Request timeout.
      * @memberof QueryNamespace
      */
-    public async getNodeProof(
-        nodeProof: NodeProof, 
+    public async getNodeReceipt(
+        nodeReceipt: NodeReceipt, 
         timeout: number = 60000
-    ): Promise<QueryNodeProofResponse | RpcError> {
+    ): Promise<QueryNodeReceiptResponse | RpcError> {
         try {
-            if (!nodeProof.isValid()) {
-                return new RpcError("0", "Invalid Node Proof")
+            if (!nodeReceipt.isValid()) {
+                return new RpcError("0", "Invalid Node Receipt")
             }
 
-            const payload = JSON.stringify(nodeProof.toJSON())
+            const payload = JSON.stringify(nodeReceipt.toJSON())
 
             const response = await this.rpcProvider.send(
-                V1RPCRoutes.QueryNodeProof.toString(),
+                V1RPCRoutes.QueryNodeReceipt.toString(),
                 payload,
                 timeout
             )
@@ -381,14 +381,14 @@ export class QueryNamespace {
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
 
-                const queryNodeProofResponse = QueryNodeProofResponse.fromJSON(
+                const queryNodeReceiptResponse = QueryNodeReceiptResponse.fromJSON(
                     response
                 )
-                return queryNodeProofResponse
+                return queryNodeReceiptResponse
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the node proof: " + response.message
+                    "Failed to retrieve the node receipt: " + response.message
                 )
             }
         } catch (err) {
