@@ -91,7 +91,6 @@ export class TransactionSender implements ITransactionSender {
      * @param {string} fromAddress - Origin address
      * @param {string} toAddress - Destination address
      * @param {string} amount - Amount to be sent, needs to be a valid number greater than 0
-     * @param {CoinDenom | undefined} amountDenom - Amoun denomination
      * @returns {ITransactionSender} - A transaction sender.
      * @memberof TransactionSender
      */

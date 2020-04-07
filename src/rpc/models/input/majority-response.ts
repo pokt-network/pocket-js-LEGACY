@@ -44,7 +44,7 @@ export class MajorityResponse {
     /**
      * Majority Response.
      * @constructor
-     * @param {Relay[]} relays - Array of relays.
+     * @param {RelayResponse[]} relays - Array of relay response.
      */
     constructor(
         relays: RelayResponse[]
@@ -71,7 +71,10 @@ export class MajorityResponse {
      * @returns {boolean} - True or false.
      * @memberof MajorityResponse
      */
-    public isValid(): Error | undefined {
-        return validateMajorityResponse(this)
+    public isValid(): boolean {
+        if (validateMajorityResponse(this) === undefined) {
+            return true
+        }
+        return false
     }
 }

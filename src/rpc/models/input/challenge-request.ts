@@ -68,7 +68,10 @@ export class ChallengeRequest {
      * @returns {boolean} - True or false.
      * @memberof ChallengeRequest
      */
-    public isValid(): Error | undefined {
-        return validateChallengeRequest(this)
+    public isValid(): boolean {
+        if (validateChallengeRequest(this) === undefined) {
+            return true
+        }
+        return false
     }
 }

@@ -9,8 +9,8 @@ import {
     SimpleProof,
     Node,
     StakingStatus,
-    StoredProof,
-    NodeProof,
+    StoredReceipt,
+    NodeReceipt,
     Application,
     ApplicationParams,
     PocketParams,
@@ -30,8 +30,8 @@ import {
     QueryNodeResponse,
     QueryNodeParamsResponse,
     NodeParams,
-    QueryNodeProofsResponse,
-    QueryNodeProofResponse,
+    QueryNodeReceiptsResponse,
+    QueryNodeReceiptResponse,
     QueryAppsResponse,
     QueryAppResponse,
     QueryAppParamsResponse,
@@ -63,8 +63,8 @@ export class NockUtil {
         this.mockGetHeight()
         this.mockGetNode()
         this.mockGetNodeParams()
-        this.mockGetNodeProof()
-        this.mockGetNodeProofs()
+        this.mockGetNodeReceipt()
+        this.mockGetNodeReceipts()
         this.mockGetNodes()
         this.mockGetPocketParams()
         this.mockGetSupply()
@@ -259,26 +259,26 @@ export class NockUtil {
         return this.nockRoute(enums.V1RPCRoutes.QueryNodeParams.toString(), code, response.data)
     }
 
-    public static mockGetNodeProofs(code: number = 200): nock.Scope {
+    public static mockGetNodeReceipts(code: number = 200): nock.Scope {
         const sessionHeader = new SessionHeader(applicationPublicKey, "ETH04", BigInt(5))
-        const storedProof01 = new StoredProof(sessionHeader, addressHex, BigInt(100))
-        const storedProof02 = new StoredProof(sessionHeader, addressHex, BigInt(200))
+        const storedProof01 = new StoredReceipt(sessionHeader, addressHex, BigInt(100))
+        const storedProof02 = new StoredReceipt(sessionHeader, addressHex, BigInt(200))
 
-        const queryNodeProofsResponse = new QueryNodeProofsResponse([storedProof01, storedProof02])
+        const queryNodeProofsResponse = new QueryNodeReceiptsResponse([storedProof01, storedProof02])
         const data: any = this.createData(code, queryNodeProofsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
-        return this.nockRoute(enums.V1RPCRoutes.QueryNodeProofs.toString(), code, response.data)
+        return this.nockRoute(enums.V1RPCRoutes.QueryNodeReceipts.toString(), code, response.data)
     }
 
-    public static mockGetNodeProof(code: number = 200): nock.Scope {
-        const nodeProof = new NodeProof(addressHex, "ETH04", applicationPublicKey, BigInt(5), BigInt(5))
-        const queryNodeProofResponse = new QueryNodeProofResponse(nodeProof)
+    public static mockGetNodeReceipt(code: number = 200): nock.Scope {
+        const nodeProof = new NodeReceipt(addressHex, "ETH04", applicationPublicKey, BigInt(5), BigInt(5), "receiptType")
+        const queryNodeProofResponse = new QueryNodeReceiptResponse(nodeProof)
         const data: any = this.createData(code, queryNodeProofResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
 
-        return this.nockRoute(enums.V1RPCRoutes.QueryNodeProof.toString(), code, response.data)
+        return this.nockRoute(enums.V1RPCRoutes.QueryNodeReceipt.toString(), code, response.data)
     }
 
     public static mockGetApps(code: number = 200): nock.Scope {

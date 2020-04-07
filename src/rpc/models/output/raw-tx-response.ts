@@ -69,16 +69,16 @@ export class RawTxResponse {
 
     /**
      * Constructor for this class
-     * @param height {BigInt} The height for this Transaction
-     * @param hash {string} The transaction hash in hex format
-     * @param code {BigInt} The code for this tx
-     * @param data {string} Data hex for this tranaction
-     * @param rawLog {string} Dumped logs in string format
-     * @param logs {TxLog[]} Logs for this transaction
-     * @param info {string}
-     * @param codeSpace {string}
-     * @param tx {string}
-     * @param timestamp {string}
+     * @param {BigInt} height - The height for this Transaction
+     * @param {string} hash - The transaction hash in hex format
+     * @param {BigInt} code - The code for this tx
+     * @param {string} data - Data hex for this tranaction
+     * @param {string} rawLog - Dumped logs in string format
+     * @param {TxLog[]} logs - Logs for this transaction
+     * @param {string} info - Raw tx information.
+     * @param {string} codeSpace - Code space string.
+     * @param {string} tx - Transaction string.
+     * @param {string} timestamp - Transaction timestamp.
      */
     public constructor(height: BigInt, hash: string, code?: BigInt, data?: string, rawLog?: string, logs?: TxLog[], info?: string, codeSpace?: string, tx?: string, timestamp?: string) {
         this.height = height

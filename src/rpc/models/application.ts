@@ -45,14 +45,14 @@ export class Application {
   /**
    * Creates a Application.
    * @constructor
-   * @param {string} address - the hex address of the validator
-   * @param {string} publicKey - the hex consensus public key of the validator.
-   * @param {boolean} jailed - has the validator been jailed from staked status?
-   * @param {StakingStatus} status - validator status
-   * @param {string[]} chains - chains
-   * @param {BigInt} stakedTokens - how many staked tokens
-   * @param {string} maxRelays - Service Application url
-   * @param {string} unstakingCompletionTime - if unstaking, min time for the validator to complete unstaking
+   * @param {string} address - The hex address of the application
+   * @param {string} publicKey - The hex consensus public key of the application.
+   * @param {boolean} jailed - Has the application been jailed from staked status?
+   * @param {StakingStatus} status - Application staking status
+   * @param {string[]} chains - An array of blockchains
+   * @param {BigInt} stakedTokens - How many staked tokens
+   * @param {BigInt} maxRelays - Max amount of relays.
+   * @param {string} unstakingCompletionTime - If unstaking, min time for the application to complete unstaking
    */
   constructor(
     address: string,

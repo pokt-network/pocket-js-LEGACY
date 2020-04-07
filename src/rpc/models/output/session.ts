@@ -40,9 +40,9 @@ export class Session {
   /**
    * Request for Session.
    * @constructor
-   * @param {SessionHeader} sessionHeader - Application Key associated with a client.
-   * @param {string} sessionKey - Chain.
-   * @param {SessionNode[]} sessionNodes - Height of session.
+   * @param {SessionHeader} sessionHeader - Session Header object.
+   * @param {string} sessionKey - Session Key.
+   * @param {SessionNode[]} sessionNodes - Nodes for the session.
    */
   constructor(
     sessionHeader: SessionHeader,
@@ -60,7 +60,7 @@ export class Session {
 
   /**
    * Returns whether or not a node is part of this session
-   * @param {Node} node the node to check
+   * @param {Node} node - Node object to verify if exists in the current session.
    * @returns {boolean} whether or not the node is part of this session
    * @memberof Session
    */

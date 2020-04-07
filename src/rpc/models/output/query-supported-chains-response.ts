@@ -31,7 +31,7 @@ export class QuerySupportedChainsResponse {
   /**
    * QuerySupportedChainsResponse
    * @constructor
-   * @param {string[]} supportedChains - Application params.
+   * @param {string[]} supportedChains - Supported chains string array.
    */
   constructor(supportedChains: string[]) {
     this.supportedChains = supportedChains

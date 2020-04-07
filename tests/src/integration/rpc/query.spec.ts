@@ -8,7 +8,7 @@ import { Configuration, HttpRpcProvider, Pocket, typeGuard,
     QueryAccountResponse, QueryBlockResponse, QueryTXResponse,
     QueryHeightResponse, QueryBalanceResponse, StakingStatus,
     QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse,
-    QueryNodeProofsResponse, NodeProof, QueryNodeProofResponse,
+    QueryNodeReceiptsResponse, NodeReceipt, QueryNodeReceiptResponse,
     QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse,
     QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse,
     RpcError
@@ -106,24 +106,24 @@ describe("Pocket RPC Query Interface", async () => {
             const nodeParamsResponse = await pocket.rpc()!.query.getNodeParams(BigInt(0))
             expect(typeGuard(nodeParamsResponse, QueryNodeParamsResponse)).to.be.true
         }).timeout(0)
-        // TODO: Proper proof data needed for integration testing
-        // it('should successfully retrieve a node proofs', async () => {
+        // TODO: Proper receipt data needed for integration testing
+        // it('should successfully retrieve a node receipts', async () => {
         //     const pocket = getPocketDefaultInstance()
 
-        //     const nodeProofsResponse = await pocket.rpc.query.getNodeProofs("4930289621aefbf9252c91c4c729b7f685e44c4b", BigInt(100))
-        //     expect(typeGuard(nodeProofsResponse, QueryNodeProofsResponse)).to.be.true
+        //     const nodeReceiptsResponse = await pocket.rpc.query.getNodeReceipts("4930289621aefbf9252c91c4c729b7f685e44c4b", BigInt(100))
+        //     expect(typeGuard(nodeReceiptsResponse, QueryNodeReceiptsResponse)).to.be.true
         // }).timeout(0)
 
-        // it('should successfully retrieve a node proof', async () => {
-        //         const nodeProof = new NodeProof("4930289621aefbf9252c91c4c729b7f685e44c4b", 
+        // it('should successfully retrieve a node receipt', async () => {
+        //         const nodeReceipt = new NodeReceipt("4930289621aefbf9252c91c4c729b7f685e44c4b", 
         //         "6d3ce011e06e27a74cfa7d774228c52597ef5ef26f4a4afa9ad3cebefb5f3ca8", 
         //         "f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa",
         //         BigInt(166), BigInt(166)
         //      )
         //     const pocket = getPocketDefaultInstance()
 
-        //     const nodeProofResponse = await pocket.rpc.query.getNodeProof(nodeProof)
-        //     expect(typeGuard(nodeProofResponse, QueryNodeProofResponse)).to.be.true
+        //     const nodeReceiptResponse = await pocket.rpc.query.getNodeReceipt(nodeReceipt)
+        //     expect(typeGuard(nodeReceiptResponse, QueryNodeReceiptResponse)).to.be.true
         // }).timeout(0)
 
         it('should successfully retrieve a list of apps', async () => {
@@ -287,33 +287,33 @@ describe("Pocket RPC Query Interface", async () => {
             expect(typeGuard(nodeParamsResponse, RpcError)).to.be.true
         }).timeout(0)
 
-        it('should returns an error trying to get a node proofs list of proofs due to an invalid address.', async () => {
-            // NockUtil.mockGetNodeProofs(500)
+        it('should returns an error trying to get a node receipts list of receipts due to an invalid address.', async () => {
+            // NockUtil.mockGetNodeReceipts(500)
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeProofsResponse = await pocket.rpc()!.query.getNodeProofs("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
-            expect(typeGuard(nodeProofsResponse, RpcError)).to.be.true
+            const nodeReceiptsResponse = await pocket.rpc()!.query.getNodeReceipts("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            expect(typeGuard(nodeReceiptsResponse, RpcError)).to.be.true
         }).timeout(0)
 
-        it('should returns an error trying to get a node proofs list of proofs due to the block height being less than 0.', async () => {
-            // NockUtil.mockGetNodeProofs(500)
+        it('should returns an error trying to get a node receipts list due to the block height being less than 0.', async () => {
+            // NockUtil.mockGetNodeReceipts(500)
 
             const pocket = getPocketDefaultInstance()
 
-            const nodeProofsResponse = await pocket.rpc()!.query.getNodeProofs(addressHex, BigInt(-1))
-            expect(typeGuard(nodeProofsResponse, RpcError)).to.be.true
+            const nodeReceiptsResponse = await pocket.rpc()!.query.getNodeReceipts(addressHex, BigInt(-1))
+            expect(typeGuard(nodeReceiptsResponse, RpcError)).to.be.true
         }).timeout(0)
 
         // Figure out test
-        // it('should returns an error trying to get a proof of a node due to internal server error.', async () => {
-        //     // NockUtil.mockGetNodeProof(500)
+        // it('should returns an error trying to get a receipt of a node due to internal server error.', async () => {
+        //     // NockUtil.mockGetNodeReceipt(500)
 
-        //     const nodeProof = new NodeProof(addressHex, "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
+        //     const nodeReceipt = new NodeReceipt(addressHex, "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
         //     const pocket = getPocketDefaultInstance()
 
-        //     const nodeProofResponse = await pocket.rpc.query.getNodeProof(nodeProof)
-        //     expect(typeGuard(nodeProofResponse, RpcError)).to.be.true
+        //     const nodeReceiptResponse = await pocket.rpc.query.getNodeReceipt(nodeReceipt)
+        //     expect(typeGuard(nodeReceiptResponse, RpcError)).to.be.true
         // }).timeout(0)
 
         it('should returns an error trying to get a list of apps due to the block height being less than 0.', async () => {

@@ -33,20 +33,20 @@ export class Node {
   public readonly stakedTokens: BigInt
   public readonly serviceURL: URL
   public readonly chains: string[]
-  public readonly unstakingCompletionTime: string | undefined
+  public readonly unstakingCompletionTimestamp: string | undefined
   public alreadyInConsensus: boolean = false
 
   /**
    * Creates a Node.
    * @constructor
-   * @param {string} address - the hex address of the validator
-   * @param {string} publicKey - the hex consensus public key of the validator.
-   * @param {boolean} jailed - has the validator been jailed from staked status?
-   * @param {StakingStatus} status - validator status
-   * @param {BigInt} stakedTokens - how many staked tokens
-   * @param {URL} serviceURL - Service node url
-   * @param {string[]} chains - chains
-   * @param {string} unstakingCompletionTime - if unstaking, min time for the validator to complete unstaking
+   * @param {string} address - Node address hex.
+   * @param {string} publicKey - Node public key hex.
+   * @param {boolean} jailed - True or false if the validator been jailed.
+   * @param {StakingStatus} status - Validator staking status
+   * @param {BigInt} stakedTokens - How many tokens are staked
+   * @param {URL} serviceURL - Service node URL
+   * @param {string[]} chains - A list of blockchain hash
+   * @param {string} unstakingCompletionTimestamp - If unstaking, the minimum time for the validator to complete unstaking
    */
   constructor(
     address: string,
@@ -56,7 +56,7 @@ export class Node {
     stakedTokens: BigInt,
     serviceURL: string,
     chains: string[] = [],
-    unstakingCompletionTime: string = ""
+    unstakingCompletionTimestamp: string = ""
   ) {
     this.address = address
     this.publicKey = publicKey
@@ -65,7 +65,7 @@ export class Node {
     this.stakedTokens = stakedTokens
     this.serviceURL = new URL(serviceURL)
     this.chains = chains
-    this.unstakingCompletionTime = unstakingCompletionTime
+    this.unstakingCompletionTimestamp = unstakingCompletionTimestamp
 
     if (!this.isValid()) {
       throw new TypeError("Invalid Node properties.")
@@ -86,7 +86,7 @@ export class Node {
       service_url: this.serviceURL,
       status: this.status.toString(),
       tokens: Number(this.stakedTokens.toString()),
-      unstaking_time: this.unstakingCompletionTime   
+      unstaking_time: this.unstakingCompletionTimestamp   
     }
   }
   /**

@@ -56,7 +56,7 @@ export class Keybase {
     /**
      * @description Creates an account and stores it in the keybase
      * @param {string} passphrase The passphrase for the account in this keybase
-     * @returns {Account | Error} The the new account or an Error
+     * @returns {Promise<Account | Error>} The the new account or an Error
      * @memberof Keybase
      */
     public async createAccount(passphrase: string): Promise<Account | Error> {
@@ -76,7 +76,7 @@ export class Keybase {
 
     /**
      * @description Lists all the accounts stored in this keybase
-     * @returns {Account | Error} The the new account or an Error
+     * @returns {Promise<Account | Error>} The the new account or an Error
      * @memberof Keybase
      */
     public async listAccounts(): Promise<Account[] | Error> {
@@ -103,7 +103,7 @@ export class Keybase {
     /**
      * @description Retrieves a single account from this keybase
      * @param {string} addressHex - The address of the account to retrieve in hex string format
-     * @returns {Account | Error} - The the new account or an Error
+     * @returns {Promise<Account | Error>} - The the new account or an Error
      * @memberof Keybase
      */
     public async getAccount(addressHex: string): Promise<Account | Error> {

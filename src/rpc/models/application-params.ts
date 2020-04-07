@@ -36,10 +36,14 @@ export class ApplicationParams {
   public readonly participationRateOn: boolean
 
   /**
-   * ApplicationParams.
+   * Application Params.
    * @constructor
-   * @param {Hex} hash - ApplicationParams hash.
-   * @param {PartSetHeader} parts - Session ApplicationParams Height.
+   * @param {string} unstakingTime - Unstaking timestamp.
+   * @param {BigInt} maxApplications - Max applications count.
+   * @param {BigInt} appStakeMin - Minimum amount an app can stake.
+   * @param {BigInt} baseRelaysPerPokt - Amount of relays per Pocket tokens.
+   * @param {BigInt} stabilityAdjustment - Stability adjustment variable.
+   * @param {boolean} participationRateOn - True or false if participation rate is on.
    */
   constructor(
     unstakingTime: string,

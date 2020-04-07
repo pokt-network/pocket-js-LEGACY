@@ -14,7 +14,10 @@ export class Consensus {
   public static fromJSON(json: string): Consensus {
     const jsonObject = JSON.parse(json)
 
-    return new Consensus(jsonObject.block, jsonObject.app)
+    return new Consensus(
+      jsonObject.block,
+      jsonObject.app
+    )
   }
 
   public readonly block: BigInt
@@ -23,8 +26,8 @@ export class Consensus {
   /**
    * Consensus.
    * @constructor
-   * @param {BigInt} block - Consensus hash.
-   * @param {BigInt} app - Session Consensus Height.
+   * @param {BigInt} block - Block height.
+   * @param {BigInt} app - App count.
    */
   constructor(block: BigInt, app: BigInt) {
     this.block = block

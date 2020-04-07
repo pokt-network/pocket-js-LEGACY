@@ -38,8 +38,8 @@ export function validateMajorityResponse(response: MajorityResponse): Error | un
 }
 
 /**
- * Validates a Relay
- * @param {Relay} relay - The Relay to be evaluated.
+ * Validates a Relay response
+ * @param {RelayResponse} relay - The Relay response to be evaluated.
  * @returns {Error | undefined}.
  */
 export function validateRelayResponse(relay: RelayResponse): Error | undefined {

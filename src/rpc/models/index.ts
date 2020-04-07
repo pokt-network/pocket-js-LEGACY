@@ -20,6 +20,6 @@ export * from './relay-proof';
 export * from './routes';
 export * from './simple-proof';
 export * from './staking-status';
-export * from './stored-proof';
+export * from './stored-receipt';
 export * from './transaction';
 export * from './tx-proof';

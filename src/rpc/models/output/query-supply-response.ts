@@ -64,7 +64,7 @@ export class QuerySupplyResponse {
    *
    * Creates a JSON object with the QuerySupplyResponse properties
    * @returns {JSON} - JSON Object.
-   * @memberof NodeProof
+   * @memberof QuerySupplyResponse
    */
   public toJSON() {
     return {

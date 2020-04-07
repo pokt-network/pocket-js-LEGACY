@@ -28,7 +28,7 @@ export class CommitSignature {
         BigInt(jsonObject.height),
         jsonObject.round,
         BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
-        jsonObject.time_stamp,
+        jsonObject.timestamp,
         jsonObject.validator_address,
         jsonObject.validator_index,
         jsonObject.signature
@@ -42,7 +42,7 @@ export class CommitSignature {
   public readonly height: BigInt
   public readonly round: number
   public readonly blockID: BlockID
-  public readonly timeStamp: string
+  public readonly timestamp: string
   public readonly validatorAddress: string
   public readonly validatorIndex: number
   public readonly signature: string
@@ -50,15 +50,21 @@ export class CommitSignature {
   /**
    * CommitSignature.
    * @constructor
-   * @param {string} hash - CommitSignature hash.
-   * @param {PartSetHeader} parts - Session CommitSignature Height.
+   * @param {string} type - CommitSignature type. 
+   * @param {BigInt} height - Block height. 
+   * @param {number} round - Equal or greater than 0, number of rounds required for the commit. 
+   * @param {BlockID} blockID - BlockID object. 
+   * @param {string} timestamp - Commit signature timestamp.
+   * @param {string} validatorAddress - Validator address.
+   * @param {number} validatorIndex - Validator index.
+   * @param {string} signature - Signature hash.
    */
   constructor(
     type: string,
     height: BigInt,
     round: number,
     blockID: BlockID,
-    timeStamp: string,
+    timestamp: string,
     validatorAddress: string,
     validatorIndex: number,
     signature: string
@@ -67,7 +73,7 @@ export class CommitSignature {
     this.height = height
     this.round = round
     this.blockID = blockID
-    this.timeStamp = timeStamp
+    this.timestamp = timestamp
     this.validatorAddress = validatorAddress
     this.validatorIndex = validatorIndex
     this.signature = signature
@@ -88,7 +94,7 @@ export class CommitSignature {
       height: Number(this.height.toString()),
       round: this.round,
       signature: this.signature,
-      timestamp: this.timeStamp,
+      timestamp: this.timestamp,
       type: this.type,
       validator_address: this.validatorAddress,
       validator_index: this.validatorIndex
@@ -105,7 +111,7 @@ export class CommitSignature {
     Number(this.height.toString()) > 0 &&
     this.round >= 0 &&
     this.signature.length !== 0 &&
-    this.timeStamp.length !== 0 &&
+    this.timestamp.length !== 0 &&
     Hex.isHex(this.validatorAddress) &&
     this.validatorIndex !== undefined
   }

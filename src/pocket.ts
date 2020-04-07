@@ -282,7 +282,7 @@ export class Pocket {
         return result
       }
     } catch (error) {
-      return error
+      return new RpcError("0", "Error while sending a relay: "+error)
     }
   }
 

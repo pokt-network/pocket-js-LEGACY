@@ -58,7 +58,10 @@ export class MinorityResponse {
      * @returns {boolean} - True or false.
      * @memberof MinorityResponse
      */
-    public isValid(): Error | undefined {
-        return validateRelayResponse(this.relay)
+    public isValid(): boolean {
+        if (validateRelayResponse(this.relay) === undefined) {
+            return true
+        }
+        return false
     }
 }
