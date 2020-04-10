@@ -10,7 +10,7 @@ export class Node {
   public static fromJSON(json: string): Node {
     try {
       const rawObjValue = JSON.parse(json)
-      const status: StakingStatus = StakingStatus.getStatus(rawObjValue.status)
+      const status= StakingStatus.getStatus(rawObjValue.status)
       return new Node(
         rawObjValue.address,
         rawObjValue.public_key,

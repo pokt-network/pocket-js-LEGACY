@@ -3,9 +3,9 @@
  * StakingStatus enum with the possible Staking status values
  */
 export enum StakingStatus {
-    Unstaked = 0,
-    Unstaking = 1,
-    Staked = 2
+    Unstaked = "Unstaked",
+    Unstaking = "Unstaking",
+    Staked = "Staked"
 }
 /**
  *

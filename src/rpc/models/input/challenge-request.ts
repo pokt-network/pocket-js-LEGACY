@@ -4,7 +4,7 @@
 import {MajorityResponse} from "./majority-response"
 import {MinorityResponse} from "./minority-response"
 import {validateChallengeRequest} from "../../../utils/validator"
-import {typeGuard} from "../../../utils"
+import {typeGuard, Hex} from "../../../utils"
 
 
 export class ChallengeRequest {
@@ -21,7 +21,8 @@ export class ChallengeRequest {
 
             return new ChallengeRequest(
                 MajorityResponse.fromJSON(JSON.stringify(jsonObject.majority_responses)),
-                MinorityResponse.fromJSON(JSON.stringify(jsonObject.minority_response))
+                MinorityResponse.fromJSON(JSON.stringify(jsonObject.minority_response)),
+                jsonObject.address
             )
         } catch (error) {
             throw error
@@ -30,6 +31,7 @@ export class ChallengeRequest {
 
     public readonly majorityResponse: MajorityResponse
     public readonly minorityResponse: MinorityResponse
+    public readonly reporterAddress: string
 
     /**
      * Challenge Request.
@@ -39,10 +41,12 @@ export class ChallengeRequest {
      */
     constructor(
         majorityResponse: MajorityResponse,
-        minorityResponse: MinorityResponse
+        minorityResponse: MinorityResponse,
+        reporterAddress: string
     ) {
         this.majorityResponse = majorityResponse
         this.minorityResponse = minorityResponse
+        this.reporterAddress = reporterAddress
 
         const valid = this.isValid()
         if(typeGuard(valid, Error)) {
@@ -58,7 +62,8 @@ export class ChallengeRequest {
     public toJSON() {
         return {
             majority_responses: this.majorityResponse.toJSON(),
-            minority_response: this.minorityResponse.toJSON()
+            minority_response: this.minorityResponse.toJSON(),
+            address: this.reporterAddress
         }
     }
 
@@ -69,7 +74,7 @@ export class ChallengeRequest {
      * @memberof ChallengeRequest
      */
     public isValid(): boolean {
-        if (validateChallengeRequest(this) === undefined) {
+        if (validateChallengeRequest(this) === undefined && Hex.validateAddress(this.reporterAddress)) {
             return true
         }
         return false

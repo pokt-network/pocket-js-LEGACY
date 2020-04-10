@@ -135,7 +135,8 @@ export class Pocket {
         return consensusRelayResponse
       } else if (consensusRelayResponse.majorityResponse !== undefined && consensusRelayResponse.minorityResponse !== undefined){
         // Create the challenge request
-        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!)
+        const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
+        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!, clientAddressHex)
         // Send the challenge request
         const challengeResponse = await this.rpc()!.query.requestChallenge(challengeRequest)
         // Return a challenge response
