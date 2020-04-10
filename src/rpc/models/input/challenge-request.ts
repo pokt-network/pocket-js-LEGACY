@@ -21,8 +21,7 @@ export class ChallengeRequest {
 
             return new ChallengeRequest(
                 MajorityResponse.fromJSON(JSON.stringify(jsonObject.majority_responses)),
-                MinorityResponse.fromJSON(JSON.stringify(jsonObject.minority_response)),
-                jsonObject.address
+                MinorityResponse.fromJSON(JSON.stringify(jsonObject.minority_response))
             )
         } catch (error) {
             throw error
@@ -31,7 +30,6 @@ export class ChallengeRequest {
 
     public readonly majorityResponse: MajorityResponse
     public readonly minorityResponse: MinorityResponse
-    public readonly reporterAddress: string
 
     /**
      * Challenge Request.
@@ -42,11 +40,9 @@ export class ChallengeRequest {
     constructor(
         majorityResponse: MajorityResponse,
         minorityResponse: MinorityResponse,
-        reporterAddress: string
     ) {
         this.majorityResponse = majorityResponse
         this.minorityResponse = minorityResponse
-        this.reporterAddress = reporterAddress
 
         const valid = this.isValid()
         if(typeGuard(valid, Error)) {
@@ -62,8 +58,7 @@ export class ChallengeRequest {
     public toJSON() {
         return {
             majority_responses: this.majorityResponse.toJSON(),
-            minority_response: this.minorityResponse.toJSON(),
-            address: this.reporterAddress
+            minority_response: this.minorityResponse.toJSON()
         }
     }
 
@@ -74,7 +69,7 @@ export class ChallengeRequest {
      * @memberof ChallengeRequest
      */
     public isValid(): boolean {
-        if (validateChallengeRequest(this) === undefined && Hex.validateAddress(this.reporterAddress)) {
+        if (validateChallengeRequest(this) === undefined) {
             return true
         }
         return false

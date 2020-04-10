@@ -24,7 +24,7 @@ import {NockUtil} from "../../../utils/nock-util"
 const addressHex = "175090018C3796FA05F4C0120EC61E2BBDA523F6"
 const ethBlockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
 const blockchains = [ethBlockchain]
-const nodeAddress = "17ca63e4ff7535a40512c550dd0267e519cafc1a"
+const nodeAddress = "808053795c7b302218a26af6c40f8c39565ebe02"
 
 /** Specify the environment using using EnvironmentHelper.getLocalNet()
  * LocalNet will run the tests againt's nock which have a set of responses mocked.abs
@@ -39,7 +39,7 @@ const nodeAddress = "17ca63e4ff7535a40512c550dd0267e519cafc1a"
 
 // npm --network=test run test:integration --> replace test with local or main in order to change the environment
 const env = EnvironmentHelper.getNetwork(process.env.npm_config_network)
-const dispatcher: URL = new URL(env.getPOKTRPC())
+const dispatcher = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 1000, undefined, 40000)
 const rpcProvider = new HttpRpcProvider(dispatcher)
 
@@ -54,7 +54,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve an account information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const accountResponse = await pocket.rpc()!.query.getAccount("cef2cb8d2f4119a180c8b19def1fdec05a7b800d")
+            const accountResponse = await pocket.rpc()!.query.getAccount("a8e03ee2dd161c2000bad7c945036e231a167549")
             expect(typeGuard(accountResponse, QueryAccountResponse)).to.be.true
         }).timeout(0)
 
@@ -82,7 +82,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve an account balance', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const balanceResponse = await pocket.rpc()!.query.getBalance("cef2cb8d2f4119a180c8b19def1fdec05a7b800d", BigInt(1))
+            const balanceResponse = await pocket.rpc()!.query.getBalance("808053795c7b302218a26af6c40f8c39565ebe02", BigInt(1))
             expect(typeGuard(balanceResponse, QueryBalanceResponse)).to.be.true
         }).timeout(0)
 
@@ -136,7 +136,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve an app information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const appResponse = await pocket.rpc()!.query.getApp("cef2cb8d2f4119a180c8b19def1fdec05a7b800d", BigInt(0))
+            const appResponse = await pocket.rpc()!.query.getApp("a8e03ee2dd161c2000bad7c945036e231a167549", BigInt(0))
             expect(typeGuard(appResponse, QueryAppResponse)).to.be.true
         }).timeout(0)
 
@@ -170,7 +170,7 @@ describe("Pocket RPC Query Interface", async () => {
 
         it('should successfully retrieve a challenge response', async () => {
             const pocket = getPocketDefaultInstance()
-
+            
             const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse(), NockUtil.getMockRelayResponse()])
             const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
             const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)

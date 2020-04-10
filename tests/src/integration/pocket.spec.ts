@@ -135,7 +135,7 @@ describe("Pocket Interface functionalities", async () => {
                 const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f\",\"latest\"],\"id\":67}'
                 NockUtil.mockDispatchForConsensus()
                 NockUtil.mockRelayForConsensus()
-                NockUtil.mockRelayForConsensus()
+                NockUtil.mockRelayForConsensusFailure()
                 NockUtil.mockRelayForConsensusFailure()
                 const relayResponse = await pocket.sendConsensusRelay(relayData, blockchain, aat)
                 expect(typeGuard(relayResponse, ConsensusRelayResponse)).to.be.true

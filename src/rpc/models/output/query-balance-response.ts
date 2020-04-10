@@ -15,7 +15,7 @@ export class QueryBalanceResponse {
     try {
       const jsonObject = JSON.parse(json)
 
-      return new QueryBalanceResponse(BigInt(jsonObject))
+      return new QueryBalanceResponse(BigInt(jsonObject.balance))
     } catch (error) {
       throw error
     }

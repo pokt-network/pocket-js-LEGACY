@@ -20,6 +20,7 @@ export * from './query-supply-response';
 export * from './query-supported-chains-response';
 export * from './query-tx-response';
 export * from './raw-tx-response';
+export * from './relay-proof-response';
 export * from './relay-response';
 export * from './session';
 export * from './tx-log';
