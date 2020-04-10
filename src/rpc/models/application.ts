@@ -16,7 +16,7 @@ export class Application {
   public static fromJSON(json: string): Application {
     try {
       const jsonObject = JSON.parse(json)
-      const status: StakingStatus = StakingStatus.getStatus(jsonObject.status)
+      const status = StakingStatus.getStatus(jsonObject.status)
   
       return new Application(
         jsonObject.address,

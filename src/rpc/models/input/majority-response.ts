@@ -26,6 +26,7 @@ export class MajorityResponse {
                         const newRelay = new RelayResponse(
                             relay.signature,
                             relay.payload,
+                            relay.proof
                         )
                         relays.push(newRelay)
                     }
@@ -63,7 +64,7 @@ export class MajorityResponse {
      * @memberof MajorityResponse
      */
     public toJSON() {
-        return JSON.stringify(this.relays)
+        return this.relays
     }
     /**
      *
