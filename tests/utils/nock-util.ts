@@ -44,6 +44,7 @@ import { RelayProof } from '../../src/rpc/models/relay-proof'
 import {ChallengeResponse} from "../../src/rpc/models/output/challenge-response"
 import {RequestHash} from "../../src/rpc/models/input/request-hash"
 import {RelayMeta} from "../../src/rpc/models/input/relay-meta"
+import { RelayProofResponse } from '../../src/rpc/models/output/relay-proof-response'
 
 const env = new LocalNet()
 const version = '0.0.1'
@@ -126,8 +127,8 @@ export class NockUtil {
     }
 
     public static mockRelayForConsensus(code: number = 200): nock.Scope {
-        const relayResponse = new RelayResponse("880de421c0d0a084302c8d0c2188283b49e30807f42771666c64662f36a39b19cf7b69cf6d610c2584264a0cc15cb4a87d2976d82c486d70f3e9a93fd98c760e", "{\"jsonrpc\":\"2.0\",\"id\":67,\"result\":\"0x37e8ea61b1d51dd5\"}\n")
-
+        const proof = RelayProofResponse.fromJSON('{\"aat\":{\"app_pub_key\":\"73f765cb848f9d40aa9a16a3726f1ec5703f77bad22b2487cd4baaaf777f6e90\",\"client_pub_key\":\"a32329a020cab1fc0a9883630b0a2055faa8ea33280c7736701065afe2031a31\",\"signature\":\"b53c037ef3171badbd528661ca7e690ca0424a18355b8ff75a7fce51dce8875fca9930e60ffbb68259bee333bdbe49fc04e8925fdaa2597a934ca340c5eec30a\",\"version\":\"0.0.1\"},\"blockchain\":\"8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff\",\"entropy\":0,\"request_hash\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\",\"servicer_pub_key\":\"c9228d57cfbc881059e3e07de6bbd46fd5d5a2491263090abd85f07b5ae71417\",\"session_block_height\":12781,\"signature\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\"}')
+        const relayResponse = new RelayResponse("880de421c0d0a084302c8d0c2188283b49e30807f42771666c64662f36a39b19cf7b69cf6d610c2584264a0cc15cb4a87d2976d82c486d70f3e9a93fd98c760e", "{\"jsonrpc\":\"2.0\",\"id\":67,\"result\":\"0x37e8ea61b1d51dd5\"}\n",proof)
         const data: any = this.createData(code, relayResponse.toJSON())
         
         const response = this.getResponseObject(data, code)
@@ -135,8 +136,8 @@ export class NockUtil {
     }
 
     public static mockRelayForConsensusFailure(code: number = 200): nock.Scope {
-        const relayResponse = new RelayResponse("880de421c0d0a084302c8d0c2188283b49e30807f42771666c64662f36a39b19cf7b69cf6d610c2584264a0cc15cb4a87d2976d82c486d70f3e9a93fd98c760e", "{\"jsonrpc\":\"2.0\",\"id\":67,\"result\":\"0x37e8ea51b1d51ee5\"}\n")
-
+        const proof = RelayProofResponse.fromJSON('{\"aat\":{\"app_pub_key\":\"73f765cb848f9d40aa9a16a3726f1ec5703f77bad22b2487cd4baaaf777f6e90\",\"client_pub_key\":\"a32329a020cab1fc0a9883630b0a2055faa8ea33280c7736701065afe2031a31\",\"signature\":\"b53c037ef3171badbd528661ca7e690ca0424a18355b8ff75a7fce51dce8875fca9930e60ffbb68259bee333bdbe49fc04e8925fdaa2597a934ca340c5eec30a\",\"version\":\"0.0.1\"},\"blockchain\":\"8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff\",\"entropy\":0,\"request_hash\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\",\"servicer_pub_key\":\"c9228d57cfbc881059e3e07de6bbd46fd5d5a2491263090abd85f07b5ae71417\",\"session_block_height\":12781,\"signature\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\"}')
+        const relayResponse = new RelayResponse("880de421c0d0a084302c8d0c2188283b49e30807f42771666c64662f36a39b19cf7b69cf6d610c2584264a0cc15cb4a87d2976d82c486d70f3e9a93fd98c760e", "{\"jsonrpc\":\"2.0\",\"id\":67,\"result\":\"0x37e8aa61b1d51ee5\"}\n",proof)
         const data: any = this.createData(code, relayResponse.toJSON())
         
         const response = this.getResponseObject(data, code)
@@ -348,7 +349,14 @@ export class NockUtil {
     }
 
     public static getMockRelayResponse(): RelayResponse {
-        const relayResponse: RelayResponse = new RelayResponse(addressHex, "payload")
+        const proof = RelayProofResponse.fromJSON('{\"aat\":{\"app_pub_key\":\"73f765cb848f9d40aa9a16a3726f1ec5703f77bad22b2487cd4baaaf777f6e90\",\"client_pub_key\":\"a32329a020cab1fc0a9883630b0a2055faa8ea33280c7736701065afe2031a31\",\"signature\":\"b53c037ef3171badbd528661ca7e690ca0424a18355b8ff75a7fce51dce8875fca9930e60ffbb68259bee333bdbe49fc04e8925fdaa2597a934ca340c5eec30a\",\"version\":\"0.0.1\"},\"blockchain\":\"8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff\",\"entropy\":0,\"request_hash\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\",\"servicer_pub_key\":\"c9228d57cfbc881059e3e07de6bbd46fd5d5a2491263090abd85f07b5ae71417\",\"session_block_height\":12781,\"signature\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\"}')
+        const relayResponse = new RelayResponse("880de421c0d0a084302c8d0c2188283b49e30807f42771666c64662f36a39b19cf7b69cf6d610c2584264a0cc15cb4a87d2976d82c486d70f3e9a93fd98c760e", "{\"jsonrpc\":\"2.0\",\"id\":67,\"result\":\"0x37e8ea61b1d51dd5\"}\n",proof)
+        return relayResponse
+    }
+
+    public static getMockRelayResponse2(): RelayResponse {
+        const proof = RelayProofResponse.fromJSON('{\"aat\":{\"app_pub_key\":\"73f765cb848f9d40aa9a16a3726f1ec5703f77bad22b2487cd4baaaf777f6e90\",\"client_pub_key\":\"a32329a020cab1fc0a9883630b0a2055faa8ea33280c7736701065afe2031a31\",\"signature\":\"b53c037ef3171badbd528661ca7e690ca0424a18355b8ff75a7fce51dce8875fca9930e60ffbb68259bee333bdbe49fc04e8925fdaa2597a934ca340c5eec30a\",\"version\":\"0.0.1\"},\"blockchain\":\"8cf7f8799c5b30d36c86d18f0f4ca041cf1803e0414ed9e9fd3a19ba2f0938ff\",\"entropy\":0,\"request_hash\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\",\"servicer_pub_key\":\"c9228d57cfbc881059e3e07de6bbd46fd5d5a2491263090abd85f07b5ae71417\",\"session_block_height\":12781,\"signature\":\"57ce01d285b9084dcee603710109b3048d9ed3424efbcd01fd17d8fdffdbfa61\"}')
+        const relayResponse = new RelayResponse("880de421c0d0a084302c8d0c2188283b49e30807f42771666c64662f36a39b19cf7b69cf6d610c2584264a0cc15cb4a87d2976d82c486d70f3e9a93fd98c760e", "{\"jsonrpc\":\"2.0\",\"id\":67,\"result\":\"0x37e8ea61b1d51dd5\"}\n",proof)
         return relayResponse
     }
 

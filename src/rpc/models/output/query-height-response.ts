@@ -15,7 +15,7 @@ export class QueryHeightResponse {
     try {
       const jsonObject = JSON.parse(json)
 
-      return new QueryHeightResponse(BigInt(jsonObject))
+      return new QueryHeightResponse(BigInt(jsonObject.height))
     } catch (error) {
       throw error
     }

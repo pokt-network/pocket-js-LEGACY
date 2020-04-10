@@ -1,6 +1,6 @@
 import { IRPCProvider } from "../providers"
-import { Configuration, typeGuard, Hex } from "../.."
-import { QueryBlockResponse, RpcError, RPC, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, StakingStatus, QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeReceiptsResponse, NodeReceipt, QueryNodeReceiptResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse } from ".."
+import { typeGuard, Hex } from "../.."
+import { QueryBlockResponse, RpcError, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeReceiptsResponse, NodeReceipt, QueryNodeReceiptResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse, StakingStatus } from ".."
 import {ChallengeRequest} from "../models/input/challenge-request"
 import {ChallengeResponse} from "../models/output/challenge-response"
 
@@ -190,7 +190,7 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({
                 height: Number(blockHeight.toString()),
-                staking_status: stakingStatus
+                staking_status: stakingStatus.toString()
             })
 
             const response = await this.rpcProvider.send(
@@ -306,7 +306,7 @@ export class QueryNamespace {
     }
     /**
      *
-     * Retrieves the node receips information
+     * Retrieves the node receipts information
      * @param {string} address - Node's address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
@@ -415,7 +415,7 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({
                 height: Number(blockHeight.toString()),
-                staking_status: stakingStatus
+                staking_status: stakingStatus.toString()
             })
 
             const response = await this.rpcProvider.send(
@@ -426,7 +426,6 @@ export class QueryNamespace {
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-
                 const queryAppsResponse = QueryAppsResponse.fromJSON(
                     response
                 )
