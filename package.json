@@ -1,6 +1,6 @@
 {
     "name": "@pokt-network/pocket-js",
-    "version": "0.2.2-rc",
+    "version": "0.2.3-rc",
     "engine": {
         "node": ">=10.19.0 <=12.15.0"
     },

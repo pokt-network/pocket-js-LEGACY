@@ -1,3 +1,7 @@
+## 0.2.3-RC
+- Fixed Session tumbling
+- Fixed multiple query issues
+
 ## 0.2.2-RC
 - Removed dependency `@types/pokt-network__ed25519`
 
