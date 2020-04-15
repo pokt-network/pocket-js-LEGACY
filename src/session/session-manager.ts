@@ -1,7 +1,6 @@
 import { SessionHeader } from "../rpc/models/input/session-header"
 import { Session } from "../rpc/models/output/session"
 import { IKVStore } from "../storage/kv-store"
-import { Node } from "../rpc/models"
 import { Configuration } from "../config"
 import { DispatchResponse } from "../rpc/models/output/dispatch-response"
 import { RpcError } from "../rpc/errors/rpc-error"
@@ -15,10 +14,7 @@ import { PocketAAT } from "@pokt-network/aat-js"
 import { sha3_256 } from "js-sha3"
 
 /**
- *
- *
  * @class SessionManager
- * This class provides a TypeScript implementation of the bech32 format specified in BIP 173 --> https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki.
  */
 
 export class SessionManager {
@@ -38,9 +34,9 @@ export class SessionManager {
     this.routingTable = routingTable
     this.sessionMap = new Map()
 
-    if(this.store.has(this.sessionMapKey)){
+    if (this.store.has(this.sessionMapKey)) {
       this.sessionMap = this.store.get(this.sessionMapKey)
-    }else {
+    } else {
       this.sessionMap = new Map()
       this.store.add(this.sessionMapKey, this.sessionMap)
     }
@@ -56,7 +52,7 @@ export class SessionManager {
    * @memberof SessionManager
    */
   public async requestCurrentSession(
-    pocketAAT: PocketAAT, 
+    pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration,
     sessionBlockHeight: BigInt = BigInt(0)
@@ -69,35 +65,35 @@ export class SessionManager {
         "Dispatcher URL is invalid"
       )
     }
-    
+
     const key = this.getSessionKey(pocketAAT, chain)
-    if(!this.sessionMap.has(key)) {
+    if (!this.sessionMap.has(key)) {
       this.sessionMap.set(key, new Queue())
     }
     const rpc = new RPC(new HttpRpcProvider(dispatcher))
     const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, sessionBlockHeight)
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut)
-    const sessionQueue = this.sessionMap.get(key) as Queue<Session>
 
     if (typeGuard(result, DispatchResponse)) {
-      const session: Session = Session.fromJSON(
-        JSON.stringify(result.toJSON())
-      )
-
-      if (sessionQueue.length < configuration.maxSessions || configuration.maxSessions === 0 ) {
-        sessionQueue.enqueue(session)
-
-        if (typeGuard(session, Session)) {
-          this.saveCurrentSession(pocketAAT, header, configuration) 
-        }
-
-        return this.getCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
+      let session: Session
+      try {
+        session = Session.fromJSON(
+          JSON.stringify(result.toJSON())
+        )
+      } catch (error) {
+        return RpcError.fromError(error)
       }
-      return new RpcError(
-        "500",
-        "You have reached the maximum number of sessions"
-      )
+
+      if (session !== undefined) {
+        const key = this.getSessionKey(pocketAAT, chain)
+        return this.saveSession(key, session, configuration)
+      } else {
+        return new RpcError(
+          "500",
+          "Error decoding session from Dispatch response"
+        )
+      }
     } else {
       return result
     }
@@ -120,13 +116,17 @@ export class SessionManager {
   ): Promise<Session | RpcError> {
 
     const key = this.getSessionKey(pocketAAT, chain)
-    if(!this.sessionMap.has(key)){
+    if (!this.sessionMap.has(key)) {
       return await this.requestCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
     }
 
     const currentSession = (this.sessionMap.get(key) as Queue<Session>).front
     if (currentSession !== undefined) {
-      return currentSession
+      if (currentSession.getBlocksSinceCreation(configuration) >= configuration.sessionBlockFrequency) {
+        return await this.requestCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
+      } else {
+        return currentSession
+      }
     }
 
     return new RpcError("500", "Session not found")
@@ -138,7 +138,7 @@ export class SessionManager {
    * @param {string} chain - Blockchain hash.
    * @memberof SessionManager
    */
-  public getSessionKey(pocketAAT: PocketAAT, chain: string): string{
+  public getSessionKey(pocketAAT: PocketAAT, chain: string): string {
     const hash = sha3_256.create()
     hash.update(JSON.stringify(pocketAAT).concat(chain))
     return hash.toString()
@@ -156,29 +156,28 @@ export class SessionManager {
   }
 
   /**
-   * Save every new Session inside of the KVStore object. All the Sessions saved using this method can be recover if the current execution of the application is terminated.
-   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
-   * @param {SessionHeader} header - SessionHeader object.
-   * @param {Configuration} configuration - Configuration object
-   * @memberof SessionManager
+   * Saves the given session to the session queue
+   * @param {string} key - The key under which to save the session
+   * @param {Session} session - The session to save
+   * @param {Configuration} configuration - The configuration to use
    */
-  private async saveCurrentSession(
-    pocketAAT: PocketAAT,
-    header: SessionHeader,
+  private saveSession(
+    key: string,
+    session: Session,
     configuration: Configuration
-  ): Promise<RpcError | undefined> {
-    const currentSession = await this.getCurrentSession(pocketAAT, header.chain, configuration, header.sessionBlockHeight)
-
-    const key = this.getSessionKey(pocketAAT, header.chain)
-    if (typeGuard(currentSession, Session)) {
-      if (!this.sessionMap.has(key)) {
-        this.sessionMap.set(key, new Queue())
-      }
-
-      (this.sessionMap.get(key) as Queue<Session>).enqueue(currentSession as Session)
-      return undefined
-    } else {
-      return currentSession as RpcError
+  ): Session | RpcError {
+    if (!this.sessionMap.has(key)) {
+      this.sessionMap.set(key, new Queue())
     }
+
+    // Check session queue length to pop the oldest element in the queue
+    const sessionQueue = this.sessionMap.get(key) as Queue<Session>
+    if (configuration.maxSessions !== 0 && sessionQueue.length === configuration.maxSessions) {
+      sessionQueue.dequeue()
+    }
+
+    // Append the new session to the queue
+    sessionQueue.enqueue(session)
+    return session
   }
 }
