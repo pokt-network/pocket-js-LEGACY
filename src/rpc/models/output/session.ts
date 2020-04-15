@@ -1,5 +1,6 @@
 import { Node } from "../node"
 import { SessionHeader } from "../input/session-header"
+import { Configuration } from "../../../config/configuration"
 
 /**
  *
@@ -106,8 +107,11 @@ export class Session {
     return new Error("Failed to retrieve a Session node, list is empty")
   }
 
-  public getBlocksSinceCreation(): number {
-    const blocksPassed = Math.ceil( (Math.floor(Date.now() / 1000) - this.sessionHeader.sessionTimestamp) / 60)
+  /**
+   * Returns the amount of blocks that have passed since the session timestamp
+   */
+  public getBlocksSinceCreation(configuration: Configuration): number {
+    const blocksPassed = Math.ceil((Math.floor(Date.now() / 1000) - this.sessionHeader.sessionTimestamp) / (configuration.blockTime / 1000))
     return blocksPassed
   }
 
