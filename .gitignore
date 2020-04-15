@@ -1,3 +1,6 @@
+# Bak files
+*.bak
+
 # Webpack output
 dist
 
