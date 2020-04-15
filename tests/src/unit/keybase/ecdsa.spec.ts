@@ -259,7 +259,7 @@ describe("Keybase Digital signature operations", () => {
                 expect(typeGuard(errorOrUndefined, Error)).to.be.false
 
                 // Wait for the waitPeriod and then check in the keybase if the account is unlocked
-                setTimeout(async function (addressHex) {
+                setTimeout(async function (addressHex: string) {
                     // Check wheter or not is unlocked
                     const isUnlocked = await keybase.isUnlocked(addressHex)
                     expect(isUnlocked).to.equal(false)
