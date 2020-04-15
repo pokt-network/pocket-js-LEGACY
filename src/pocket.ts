@@ -14,6 +14,7 @@ import { RequestHash } from "./rpc/models/input/request-hash"
 import { ChallengeRequest } from "./rpc/models/input/challenge-request"
 import { ChallengeResponse } from "./rpc/models/output/challenge-response"
 import { RelayMeta } from "./rpc/models/input/relay-meta"
+import { type } from "os"
 
 /**
  *
@@ -236,7 +237,7 @@ export class Pocket {
       }
 
       // Produce signature payload
-      const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight) + BigInt(currentSession.getBlocksSinceCreation()))
+      const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight) + BigInt(currentSession.getBlocksSinceCreation(configuration)))
       const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
 
@@ -272,8 +273,42 @@ export class Pocket {
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
       // Send relay
       const result = await this.innerRpc!.client.relay(relay, configuration.requestTimeOut)
-      // Handle consensus
-      if (consensusEnabled && typeGuard(result, RelayResponse)) {
+
+      // Check session out of sync error
+      if (typeGuard(result, RpcError)) {
+        const rpcError = result as RpcError
+        // Refresh the current session if we get this error code
+        if (rpcError.code === "1124") {
+          let sessionRefreshed = false
+          for (let retryIndex = 0; retryIndex < configuration.maxSessionRefreshRetries; retryIndex++) {
+            // Get the current session
+            const currentSessionOrError = await this.sessionManager.requestCurrentSession(pocketAAT, blockchain, configuration)
+            if (typeGuard(currentSessionOrError, RpcError)) {
+              // If error or same session, don't even retry relay
+              continue
+            } else if(typeGuard(currentSessionOrError, Session)) {
+              const newSession = currentSessionOrError as Session
+              if (newSession.sessionKey === currentSessionOrError.sessionKey) {
+                // If we get the same session skip this attempt
+                continue
+              }
+            }
+            sessionRefreshed = true
+            break
+          }
+
+          if (sessionRefreshed) {
+            // If a new session is succesfully obtained retry the relay
+            // This won't cause an endless loop because the relay will only be retried only if the session was refreshed
+            return this.sendRelay(data, blockchain, pocketAAT, configuration, headers, method, path, node, consensusEnabled)
+          } else {
+            return rpcError
+          }
+        } else {
+          return rpcError
+        }
+      } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
+        // Handle consensus
         if (currentSession.sessionNodes.indexOf(serviceNode)) {
           currentSession.sessionNodes[currentSession.sessionNodes.indexOf(serviceNode)].alreadyInConsensus = true
         }
@@ -282,7 +317,7 @@ export class Pocket {
         return result
       }
     } catch (error) {
-      return new RpcError("0", "Error while sending a relay: "+error)
+      return RpcError.fromError(error)
     }
   }
 
