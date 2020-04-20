@@ -70,4 +70,5 @@ typings/
 *jspm_packages/
 /lib
 /.idea
+.env
 
