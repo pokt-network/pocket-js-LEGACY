@@ -2,8 +2,9 @@
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
  * @description Unit test for the Pocket Core Query interface
  */
+import * as dotenv from "dotenv"
 import { expect } from "chai"
-import { EnvironmentHelper } from "../../../utils/env/helper"
+import { EnvironmentHelper, Network } from "../../../utils/env/helper"
 import { Configuration, HttpRpcProvider, Pocket, typeGuard,
     QueryAccountResponse, QueryBlockResponse, QueryTXResponse,
     QueryHeightResponse, QueryBalanceResponse, StakingStatus,
@@ -27,18 +28,17 @@ const blockchains = [ethBlockchain]
 const nodeAddress = "808053795c7b302218a26af6c40f8c39565ebe02"
 
 /** Specify the environment using using EnvironmentHelper.getLocalNet()
- * LocalNet will run the tests againt's nock which have a set of responses mocked.abs
+ * LocalNet will run the tests againt's a local network which can be setup in the .env file = localhost_env_url="http://35.245.7.53"
  * TestNet will run the tests with the TestNet Network.
- * MainNet will run the tests with the MainNet Network (not available).
+ * MainNet will run the tests with the MainNet Network (not available yet).
  * 
  * Note: Can be done also using the Network enum (LocalNet,TestNet and MainNet)
  * EnvironmentHelper.get(Network.LocalNet)
- * Note: process.env.TEST is set in the package.json scripts section
+ * Note: process.env.localhost_env_url is set in the .env file, add if it doesn't exist in the root directory of the project
  * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
  */
-
-// npm --network=test run test:integration --> replace test with local or main in order to change the environment
-const env = EnvironmentHelper.getNetwork(process.env.npm_config_network)
+dotenv.config()
+const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
 const dispatcher = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 1000, undefined, 40000)
 const rpcProvider = new HttpRpcProvider(dispatcher)
@@ -169,6 +169,10 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a challenge response', async () => {
+            const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
+            const dispatcher = new URL(env.getPOKTRPC())
+            const configuration = new Configuration(5, 1000, undefined, 40000)
+            const rpcProvider = new HttpRpcProvider(dispatcher)
             const pocket = getPocketDefaultInstance()
             
             const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse(), NockUtil.getMockRelayResponse()])

@@ -7,9 +7,9 @@ export class MainNet extends Environment {
         return this.ip + ':26657'
     }
     public getTendermintPeers(): string {
-        return this.ip + ':26657'
+        return this.ip + ':26656'
     }
     public getPOKTRPC(): string {
-        return this.ip + ':26657'
+        return this.ip + ':8081'
     }
 }

@@ -5,3 +5,4 @@ export * from './helper';
 export * from './local-net';
 export * from './main-net';
 export * from './test-net';
+export * from './nock-net';
