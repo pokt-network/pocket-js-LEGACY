@@ -1,4 +1,4 @@
-import { LocalNet, TestNet, MainNet, Environment } from "."
+import { LocalNet, TestNet, MainNet, NockNet, Environment } from "."
 
 /**
  * Enum indicating all the environment networks
@@ -6,7 +6,8 @@ import { LocalNet, TestNet, MainNet, Environment } from "."
 export enum Network {
     LocalNet = "localNet",
     TestNet = "testNet",
-    MainNet = "mainNet"
+    MainNet = "mainNet",
+    NockNet = "nockNet"
 }
 
 /**
@@ -22,6 +23,8 @@ export class EnvironmentHelper {
                 return new TestNet()
             case "mainNet":
                 return new MainNet()
+            case "nockNet":
+                return new NockNet()
             default:
                 return new LocalNet()
         }
@@ -35,6 +38,8 @@ export class EnvironmentHelper {
                 return new TestNet()
             case "main":
                 return new MainNet()
+            case "nock":
+                return new NockNet()
             default:
                 return new LocalNet()
         }
@@ -47,5 +52,8 @@ export class EnvironmentHelper {
     }
     public static getMainNet(): Environment {
         return new MainNet()
+    }
+    public static getNockNet(): Environment {
+        return new NockNet()
     }
 }

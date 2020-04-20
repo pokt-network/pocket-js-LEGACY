@@ -3,6 +3,7 @@
  * @description Unit test for the Pocket Core
  */
 // Constants
+import * as dotenv from "dotenv"
 import { expect, assert } from 'chai'
 import {
     Configuration,
@@ -18,23 +19,20 @@ import {
 import { EnvironmentHelper } from '../../utils/env'
 import { NockUtil } from '../../utils/nock-util'
 
-// // For Testing we are using dummy data, none of the following information is real.
-// const addressHex = "4930289621AEFBF9252C91C4C729B7F685E44C4B"
-// const applicationPublicKey = 'f62f77db69d448c1b56f3540c633f294d23ccdaf002bf6b376d058a00b51cfaa'
-// const ethBlockchain = "36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80"
-// const blockchains = [ethBlockchain]
-// /** Specify the environment using using EnvironmentHelper.getLocalNet()
-//  * LocalNet will run the tests againt's nock which have a set of responses mocked.abs
-//  * TestNet will run the tests with the TestNet Network.
-//  * MainNet will run the tests with the MainNet Network (not available).
-//  * 
-//  * Note: Can be done also using the Network enum (LocalNet,TestNet and MainNet)
-//  * EnvironmentHelper.get(Network.LocalNet)
-//  */
-const env = EnvironmentHelper.getLocalNet()
-
+/** Specify the environment using using EnvironmentHelper.getLocalNet()
+ * LocalNet will run the tests againt's a local network which can be setup in the .env file = localhost_env_url="http://35.245.7.53"
+ * TestNet will run the tests with the TestNet Network.
+ * MainNet will run the tests with the MainNet Network (not available yet).
+ * 
+ * Note: Can be done also using the Network enum (LocalNet,TestNet and MainNet)
+ * EnvironmentHelper.get(Network.LocalNet)
+ * Note: process.env.localhost_env_url is set in the .env file, add if it doesn't exist in the root directory of the project
+ * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
+ */
+dotenv.config()
+const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
 // Pocket instance requirements
-const dispatchURL = new URL("http://35.245.7.53:8081")
+const dispatchURL = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 1000, 5, 40000)
 const rpcProvider = new HttpRpcProvider(dispatchURL)
 

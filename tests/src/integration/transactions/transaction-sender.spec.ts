@@ -3,8 +3,21 @@ import { Account, Node, Configuration, Pocket, HttpRpcProvider, ITransactionSend
 import { NockUtil } from '../../../utils/nock-util'
 import { EnvironmentHelper } from '../../../utils/env/helper'
 import { type } from 'os'
+import * as dotenv from "dotenv"
 
-const dispatcherURL = new URL("http://node9.testnet.pokt.network:8081")
+/** Specify the environment using using EnvironmentHelper.getLocalNet()
+ * LocalNet will run the tests againt's a local network which can be setup in the .env file = localhost_env_url="http://35.245.7.53"
+ * TestNet will run the tests with the TestNet Network.
+ * MainNet will run the tests with the MainNet Network (not available yet).
+ * 
+ * Note: Can be done also using the Network enum (LocalNet,TestNet and MainNet)
+ * EnvironmentHelper.get(Network.LocalNet)
+ * Note: process.env.localhost_env_url is set in the .env file, add if it doesn't exist in the root directory of the project
+ * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
+ */
+dotenv.config()
+const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
+const dispatcher = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 2000, undefined, 100000)
 const privKey = "640d19b8bfb1cd70fe565ead88e705beaab34fe18fb0879d32539ebfe5ba511725e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"
 
@@ -14,12 +27,12 @@ function defaultConfiguration(): Configuration {
 
 function createPocketInstance(configuration?: Configuration): Pocket {
     if (configuration === undefined) {
-        const rpcProvider = new HttpRpcProvider(dispatcherURL)
-        return new Pocket([dispatcherURL], rpcProvider, defaultConfiguration())
+        const rpcProvider = new HttpRpcProvider(dispatcher)
+        return new Pocket([dispatcher], rpcProvider, defaultConfiguration())
     } else {
-        const baseURL = dispatcherURL
+        const baseURL = dispatcher
         const rpcProvider = new HttpRpcProvider(baseURL)
-        return new Pocket([dispatcherURL], rpcProvider, configuration)
+        return new Pocket([dispatcher], rpcProvider, configuration)
     }
 }
 
