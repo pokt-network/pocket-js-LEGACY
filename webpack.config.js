@@ -1,4 +1,5 @@
 const path = require('path');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
     entry: './src/index.ts',
@@ -6,16 +7,21 @@ module.exports = {
     module: {
         rules: [{
             test: /\.tsx?$/,
-            use: 'ts-loader'
+            loader: 'ts-loader',
+            options: {
+                // disable type checker - we will use it in fork plugin
+                transpileOnly: true
+            }
         }, ],
     },
+    plugins: [new ForkTsCheckerWebpackPlugin()],
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
-        library: 'webpackLib'
+        library: 'PocketJS'
     },
     mode: "development",
     optimization: {
