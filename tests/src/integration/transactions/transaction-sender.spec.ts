@@ -16,7 +16,7 @@ import * as dotenv from "dotenv"
  * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
  */
 dotenv.config()
-const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
+const env = EnvironmentHelper.getLocalNet()
 const dispatcher = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 2000, undefined, 100000)
 const privKey = "640d19b8bfb1cd70fe565ead88e705beaab34fe18fb0879d32539ebfe5ba511725e433add38bee8bf9d5236267f6c9b8f3d224a0f164f142c351f441792f2b2e"

@@ -38,7 +38,7 @@ const nodeAddress = "808053795c7b302218a26af6c40f8c39565ebe02"
  * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
  */
 dotenv.config()
-const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
+const env = EnvironmentHelper.getLocalNet()
 const dispatcher = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 1000, undefined, 40000)
 const rpcProvider = new HttpRpcProvider(dispatcher)
