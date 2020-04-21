@@ -30,7 +30,7 @@ import { NockUtil } from '../../utils/nock-util'
  * To use unit tests run "npm run test:unit" or "npmtest", for integration run "npm run test:integration"
  */
 dotenv.config()
-const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
+const env = EnvironmentHelper.getLocalNet()
 // Pocket instance requirements
 const dispatchURL = new URL(env.getPOKTRPC())
 const configuration = new Configuration(5, 1000, 5, 40000)
