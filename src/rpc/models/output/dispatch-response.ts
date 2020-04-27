@@ -29,7 +29,7 @@ export class DispatchResponse {
       })
 
       return new DispatchResponse(
-        jsonObject.block_height,
+        BigInt(jsonObject.block_height),
         sessionHeader,
         jsonObject.session.key,
         nodes
