@@ -55,7 +55,7 @@ export class RequestHash {
      */
     public toJSON() {
         return {
-            payload: this.payload.toJSON(true),
+            payload: this.payload.toJSON(),
             meta: this.meta.toJSON()
         }
     }

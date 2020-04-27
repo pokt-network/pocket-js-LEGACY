@@ -17,8 +17,7 @@ export class RelayResponse {
   public static fromJSON(json: string): RelayResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const proofStr = JSON.stringify(jsonObject.proof || jsonObject.Proof)
-      const proof = RelayProofResponse.fromJSON(proofStr)
+      const proof = RelayProofResponse.fromJSON(JSON.stringify(jsonObject.proof))
       return new RelayResponse(
         jsonObject.signature,
         jsonObject.payload,
