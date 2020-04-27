@@ -1,3 +1,3 @@
 // created from 'create-ts-index'
 
-export * from './routing-table';
+export * from './routing-table'
