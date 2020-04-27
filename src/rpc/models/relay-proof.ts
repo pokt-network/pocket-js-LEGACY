@@ -1,7 +1,7 @@
 import { PocketAAT } from "@pokt-network/aat-js"
 import { Hex } from "../../utils"
 import { sha3_256 } from "js-sha3"
-import {RequestHash} from "./input/request-hash"
+import { RequestHash } from "./input/request-hash"
 
 /**
  *
@@ -31,13 +31,13 @@ export class RelayProof {
         )
 
         return new RelayProof(
-            jsonObject.entropy,
-            jsonObject.session_block_height,
-            jsonObject.servicer_pub_key,
-            jsonObject.blockchain,
-            pocketAAT,
-            jsonObject.signature,
-            RequestHash.fromJSON(jsonObject.request_hash)
+          BigInt(jsonObject.entropy),
+          BigInt(jsonObject.session_block_height),
+          jsonObject.servicer_pub_key,
+          jsonObject.blockchain,
+          pocketAAT,
+          jsonObject.signature,
+          RequestHash.fromJSON(jsonObject.request_hash)
         )
       } else {
         throw new Error("Failed to retrieve PocketAAT, property is undefined")
@@ -60,12 +60,12 @@ export class RelayProof {
    * @memberof RelayProof
    */
   public static bytes(
-      entropy: BigInt,
-      sessionBlockHeight: BigInt,
-      servicePubKey: string,
-      blockchain: string,
-      token: PocketAAT,
-      requestHash: RequestHash
+    entropy: BigInt,
+    sessionBlockHeight: BigInt,
+    servicePubKey: string,
+    blockchain: string,
+    token: PocketAAT,
+    requestHash: RequestHash
   ): Buffer {
     const proofJSON = {
       entropy: Number(entropy.toString()),
@@ -110,12 +110,10 @@ export class RelayProof {
    */
   private static hashRequest(request: RequestHash): string {
     const requestObj = JSON.stringify(request.toJSON())
-    // Workaround for pocket-core 0.2.1 containing an empty proof object
-    const formattedReq = requestObj.substring(0, requestObj.length - 1) + ',"proof":{"request_hash":"","entropy":0,"session_block_height":0,"servicer_pub_key":"","blockchain":"","aat":{"version":"","app_pub_key":"","client_pub_key":"","signature":""},"signature":""}}'
-    return Buffer.from(formattedReq).toString('hex')
+    return Buffer.from(requestObj).toString('hex')
   }
 
-  
+
   public readonly entropy: BigInt
   public readonly sessionBlockHeight: BigInt
   public readonly servicePubKey: string
@@ -136,13 +134,13 @@ export class RelayProof {
    * @param {RequestHash} requestHash - RequestHash object.
    */
   constructor(
-      entropy: BigInt,
-      sessionBlockHeight: BigInt,
-      servicePubKey: string,
-      blockchain: string,
-      token: PocketAAT,
-      signature: string,
-      requestHash: RequestHash
+    entropy: BigInt,
+    sessionBlockHeight: BigInt,
+    servicePubKey: string,
+    blockchain: string,
+    token: PocketAAT,
+    signature: string,
+    requestHash: RequestHash
   ) {
     this.entropy = entropy
     this.sessionBlockHeight = sessionBlockHeight
@@ -187,10 +185,10 @@ export class RelayProof {
    */
   public isValid(): boolean {
     return this.requestHash.isValid() &&
-        this.blockchain.length !== 0 &&
-        Number(this.entropy.toString()) !== undefined &&
-        Hex.isHex(this.servicePubKey) &&
-        Number(this.sessionBlockHeight) > 0 &&
-        this.token.isValid()
+      this.blockchain.length !== 0 &&
+      Number(this.entropy.toString()) !== undefined &&
+      Hex.isHex(this.servicePubKey) &&
+      Number(this.sessionBlockHeight) > 0 &&
+      this.token.isValid()
   }
 }

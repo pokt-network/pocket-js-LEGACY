@@ -24,7 +24,7 @@
   ],
   useSemicolon: false,
   useTimestamp: false,
-  verbose: true,
+  verbose: false,
   withoutComment: false,
   withoutBackupFile: true
 }
