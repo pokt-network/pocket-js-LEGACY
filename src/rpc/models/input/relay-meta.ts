@@ -17,7 +17,7 @@ export class RelayMeta {
             const jsonObject = JSON.parse(json)
 
             return new RelayMeta(
-                jsonObject.block_height
+                BigInt(jsonObject.block_height)
             )
         } catch (error) {
             throw error
