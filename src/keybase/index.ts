@@ -1,4 +1,4 @@
 // created from 'create-ts-index'
 
-export * from './models';
-export * from './keybase';
+export * from './models'
+export * from './keybase'

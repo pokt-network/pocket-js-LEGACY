@@ -1,4 +1,4 @@
 // created from 'create-ts-index'
 
-export * from './account';
-export * from './unlocked-account';
+export * from './account'
+export * from './unlocked-account'
