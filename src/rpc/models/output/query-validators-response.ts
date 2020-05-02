@@ -3,33 +3,33 @@ import { Node } from "../node"
 /**
  *
  *
- * @class QueryNodesResponse
+ * @class QueryValidatorsResponse
  */
-export class QueryNodesResponse {
+export class QueryValidatorsResponse {
   /**
    *
-   * Creates a QueryNodesResponse object using a JSON string
+   * Creates a QueryValidatorsResponse object using a JSON string
    * @param {String} json - JSON string.
-   * @returns {QueryNodesResponse} - QueryNodesResponse object.
-   * @memberof QueryNodesResponse
+   * @returns {QueryValidatorsResponse} - QueryValidatorsResponse object.
+   * @memberof QueryValidatorsResponse
    */
-  public static fromJSON(json: string): QueryNodesResponse {
+  public static fromJSON(json: string): QueryValidatorsResponse {
     try {
       const jsonObject = JSON.parse(json)
       const nodes: Node[] = []
       if (Array.isArray(jsonObject)) {
-        jsonObject.forEach(function(nodeJSON: {}) {
+        jsonObject.forEach(function (nodeJSON: {}) {
           const node = Node.fromJSON(JSON.stringify(nodeJSON))
           nodes.push(node)
         })
         if (nodes !== undefined) {
-          return new QueryNodesResponse(nodes)
+          return new QueryValidatorsResponse(nodes)
         } else {
-          throw new Error("Failed to parse the node list for QueryNodesResponse")
+          throw new Error("Failed to parse the node list for QueryValidatorsResponse")
         }
       } else {
         const node = Node.fromJSON(JSON.stringify(jsonObject))
-        return new QueryNodesResponse([node])
+        return new QueryValidatorsResponse([node])
       }
     } catch (error) {
       throw error
@@ -47,14 +47,14 @@ export class QueryNodesResponse {
     this.nodes = nodes
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid QueryNodesResponse properties.")
+      throw new TypeError("Invalid QueryValidatorsResponse properties.")
     }
   }
   /**
    *
-   * Creates a JSON object with the QueryNodesResponse properties
+   * Creates a JSON object with the QueryValidatorsResponse properties
    * @returns {JSON} - JSON Object.
-   * @memberof QueryNodesResponse
+   * @memberof QueryValidatorsResponse
    */
   public toJSON() {
     const nodeListJSON: Node[] = []
@@ -65,9 +65,9 @@ export class QueryNodesResponse {
   }
   /**
    *
-   * Check if the QueryNodesResponse object is valid
+   * Check if the QueryValidatorsResponse object is valid
    * @returns {boolean} - True or false.
-   * @memberof QueryNodesResponse
+   * @memberof QueryValidatorsResponse
    */
   public isValid(): boolean {
     return this.nodes !== undefined

@@ -3,22 +3,22 @@ import { ResultTx } from "../result-tx"
 /**
  *
  *
- * @class QueryAccountTxsResponse
+ * @class QueryTxsResponse
  */
-export class QueryAccountTxsResponse {
+export class QueryTxsResponse {
   /**
    *
-   * Creates a QueryAccountTxsResponse object using a JSON string
+   * Creates a QueryTxsResponse object using a JSON string
    * @param {String} json - JSON string.
-   * @returns {QueryAccountTxsResponse} - QueryAccountTxsResponse object.
-   * @memberof QueryAccountTxsResponse
+   * @returns {QueryTxsResponse} - QueryTxsResponse object.
+   * @memberof QueryTxsResponse
    */
-  public static fromJSON(json: string): QueryAccountTxsResponse {
+  public static fromJSON(json: string): QueryTxsResponse {
     try {
       const rawObjValue = JSON.parse(json)
       const resultTx = ResultTx.fromJSON(rawObjValue.txs)
 
-      return new QueryAccountTxsResponse(resultTx, rawObjValue.total_count)
+      return new QueryTxsResponse(resultTx, rawObjValue.total_count)
     } catch (error) {
       throw error
     }
@@ -41,14 +41,14 @@ export class QueryAccountTxsResponse {
     this.totalCount = totalCount
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid QueryAccountTxsResponse properties.")
+      throw new TypeError("Invalid QueryTxsResponse properties.")
     }
   }
   /**
    *
-   * Creates a JSON object with the QueryAccountTxsResponse properties
+   * Creates a JSON object with the QueryTxsResponse properties
    * @returns {JSON} - JSON Object.
-   * @memberof QueryAccountTxsResponse
+   * @memberof QueryTxsResponse
    */
   public toJSON() {
     return {
@@ -58,9 +58,9 @@ export class QueryAccountTxsResponse {
   }
   /**
    *
-   * Check if the QueryAccountTxsResponse object is valid
+   * Check if the QueryTxsResponse object is valid
    * @returns {boolean} - True or false.
-   * @memberof QueryAccountTxsResponse
+   * @memberof QueryTxsResponse
    */
   public isValid(): boolean {
     return this.resultTx.isValid() &&
