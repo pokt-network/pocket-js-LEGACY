@@ -36,7 +36,7 @@ export class SessionHeader {
    * @param {string} applicationPubKey - Application Key associated with a client.
    * @param {string} chain - Chain.
    * @param {BigInt} sessionBlockHeight - Height of session.
-   * @param {number} sessionTimestamp - Creation timestamp
+   * @param {number} sessionTimestamp - Creation timestamp, used locally only.
    */
   constructor(
     applicationPubKey: string,

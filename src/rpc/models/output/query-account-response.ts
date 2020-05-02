@@ -61,8 +61,6 @@ export class QueryAccountResponse {
    */
   public toJSON() {
     return {
-      "type": "posmint/Account",
-      "value": {
         "address": this.address,
         "coins": [
           {
@@ -70,11 +68,7 @@ export class QueryAccountResponse {
             "denom": "upokt"
           }
         ],
-        "public_key": {
-          "type": "crypto/ed25519_public_key",
-          "value": this.publicKey
-        }
-      }
+        "public_key": this.publicKey
     }
   }
   /**
