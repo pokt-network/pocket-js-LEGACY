@@ -11,10 +11,11 @@
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "watch": false
   },
   "exclude": [
-    "node_modules", 
+    "node_modules",
     "**/*.spec.ts"
   ]
 }
