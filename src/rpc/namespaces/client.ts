@@ -41,7 +41,7 @@ export class ClientNamespace {
                     if (rawTxResponse.logs && rawTxResponse.logs.length > 0) {
                         if (rawTxResponse.logs[0].success) {
                             return rawTxResponse
-                        }else {
+                        } else {
                             return new RpcError("", JSON.stringify(rawTxResponse.logs[0]))
                         }
                     }

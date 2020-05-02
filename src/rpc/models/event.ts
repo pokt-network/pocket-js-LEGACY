@@ -1,8 +1,7 @@
-import { Hex } from "../.."
 
 export interface IKVPair {
-  key: string[],
-  value: string[]
+  key: string,
+  value: string
 }
 
 /**
@@ -21,10 +20,18 @@ export class Event {
   public static fromJSON(json: string): Event {
     try {
       const jsonObject = JSON.parse(json)
-  
+      const attributesArray: IKVPair[] = []
+
+      jsonObject.attributes.forEach(function (attribute: IKVPair) {
+        const test = { key: atob(attribute.key), value: atob(attribute.value) }
+      })
+
+      if (Array.isArray(jsonObject.attributes)) {
+        attributesArray
+      }
       return new Event(
         jsonObject.type,
-        jsonObject.attributes as IKVPair,
+        jsonObject.attributes as IKVPair[],
       )
     } catch (error) {
       throw error
@@ -32,7 +39,7 @@ export class Event {
   }
 
   public readonly type: string
-  public readonly attributes: IKVPair
+  public readonly attributes: IKVPair[]
 
   /**
    * Creates a Event.
@@ -42,7 +49,7 @@ export class Event {
    */
   constructor(
     type: string,
-    attributes: IKVPair
+    attributes: IKVPair[]
   ) {
     this.type = type
     this.attributes = attributes
@@ -71,6 +78,6 @@ export class Event {
    */
   public isValid() {
     return this.type.length > 0 &&
-    this.attributes !== undefined
+      this.attributes !== undefined
   }
 }

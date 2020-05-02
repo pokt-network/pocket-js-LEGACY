@@ -10,7 +10,9 @@ enum Versions {
  */
 export enum V1RPCRoutes {
   QueryAccount = Versions.V1 + "/query/account",
+  QueryAccountTxs = Versions.V1 + "/query/accounttxs",
   QueryBlock = Versions.V1 + "/query/block",
+  QueryBlockTxs = Versions.V1 + "/query/blocktxs",
   QueryTX = Versions.V1 + "/query/tx",
   QueryHeight = Versions.V1 + "/query/height",
   QueryBalance = Versions.V1 + "/query/balance",
