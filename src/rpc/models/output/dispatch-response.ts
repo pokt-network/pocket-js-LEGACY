@@ -14,16 +14,17 @@ export class DispatchResponse {
    * @returns {DispatchResponse} - DispatchResponse object.
    * @memberof DispatchResponse
    */
+
   public static fromJSON(json: string): DispatchResponse {
     try {
-      const jsonObject = JSON.parse(json)     
+      const jsonObject = JSON.parse(json)
       // Initially load the session header timestamp with 0; it will be computed when the session is saved
-      jsonObject.session.header.session_timestamp = 0 
+      jsonObject.session.header.session_timestamp = 0
       const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.session.header))
       // Handle nodes
       const nodes: Node[] = []
 
-      jsonObject.session.nodes.forEach(function(nodeJSON: any) {
+      jsonObject.session.nodes.forEach(function (nodeJSON: any) {
         const node = Node.fromJSON(JSON.stringify(nodeJSON))
         nodes.push(node)
       })
@@ -70,7 +71,7 @@ export class DispatchResponse {
    */
   public toJSON() {
     return {
-      block_height: this.blockHeight,
+      block_height: Number(this.blockHeight.toString()),
       session: {
         header: this.header.toJSON(),
         key: this.key,
@@ -85,8 +86,8 @@ export class DispatchResponse {
    * @memberof DispatchResponse
    */
   public isValid(): boolean {
-    return this.header.isValid() 
-    && this.key.length !== 0
-    && Number(this.blockHeight.toString()) >= 0 
+    return this.header.isValid()
+      && this.key.length !== 0
+      && Number(this.blockHeight.toString()) >= 0
   }
 }
