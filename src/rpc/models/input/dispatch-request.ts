@@ -38,10 +38,7 @@ export class DispatchRequest {
    * @memberof DispatchRequest
    */
   public toJSON() {
-    
-    return { 
-      session_header: this.sessionHeader.toJSON()
-    }
+    return this.sessionHeader.toJSON()
   }
   /**
    *
