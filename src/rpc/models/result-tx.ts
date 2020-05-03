@@ -17,15 +17,16 @@ export class ResultTx {
   public static fromJSON(json: string): ResultTx {
     try {
       const jsonObject = JSON.parse(json)
-      const status = StakingStatus.getStatus(jsonObject.status)
-  
+      const txProof = TxProof.fromJSON(JSON.stringify(jsonObject.proof))
+      const responseDeliverTx = ResponseDeliverTx.fromJSON(JSON.stringify(jsonObject.tx_result))
+
       return new ResultTx(
         jsonObject.hash,
         BigInt(jsonObject.height),
         jsonObject.index,
-        jsonObject.txResult,
-        Buffer.from(jsonObject.tx, "hex"),
-        jsonObject.txProof
+        responseDeliverTx,
+        jsonObject.tx,
+        txProof
       )
     } catch (error) {
       throw error
@@ -92,10 +93,10 @@ export class ResultTx {
    */
   public isValid() {
     return this.hash.length > 0 &&
-    this.height !== undefined &&
-    this.index >= 0 &&
-    this.txResult.isValid() &&
-    Hex.isHex(this.tx.toString("hex")) &&
-    this.txProof.isValid()
+      Number(this.height.toString()) >= 0 &&
+      this.index >= 0 &&
+      this.txResult.isValid() &&
+      this.tx.length > 0 &&
+      this.txProof.isValid()
   }
 }

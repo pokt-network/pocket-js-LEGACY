@@ -16,6 +16,7 @@ export class Block {
    */
   public static fromJSON(json: string): Block {
     const jsonObject = JSON.parse(json)
+
     return new Block(
       BlockHeader.fromJSON(JSON.stringify(jsonObject.header)),
       JSON.stringify(jsonObject.data),
@@ -74,8 +75,8 @@ export class Block {
    */
   public isValid(): boolean {
     return this.data.length !== 0 &&
-    this.evidence.length !== 0 &&
-    this.header.isValid() &&
-    this.lastCommit.isValid()
+      this.evidence.length !== 0 &&
+      this.header.isValid() &&
+      this.lastCommit.isValid()
   }
 }
