@@ -106,7 +106,7 @@ export class Pocket {
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.consensusNodeCount; index++) {
-        const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers ?? { "": "" }, method, path, node, true)
+        const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers, method, path, node, true)
         // Check if ConsensusNode type
         if (typeGuard(consensusNodeResponse, ConsensusNode)) {
           // Save the first response
@@ -227,7 +227,7 @@ export class Pocket {
       this.rpc(serviceProvider)
 
       // Create Relay Payload
-      const relayPayload = new RelayPayload(data, method, path, headers || { "": "" })
+      const relayPayload = new RelayPayload(data, method, path, headers)
 
       // Check if account is available for signing
       const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
