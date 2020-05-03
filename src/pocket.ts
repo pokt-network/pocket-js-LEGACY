@@ -106,7 +106,7 @@ export class Pocket {
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.consensusNodeCount; index++) {
-        const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers, method, path, node, true)
+        const consensusNodeResponse = await this.sendRelay(data, blockchain, pocketAAT, configuration, headers || undefined, method, path, node, true)
         // Check if ConsensusNode type
         if (typeGuard(consensusNodeResponse, ConsensusNode)) {
           // Save the first response
@@ -134,7 +134,7 @@ export class Pocket {
         return consensusRelayResponse
       } else if (configuration.acceptDisputedResponses) {
         return consensusRelayResponse
-      } else if (consensusRelayResponse.majorityResponse !== undefined && consensusRelayResponse.minorityResponse !== undefined){
+      } else if (consensusRelayResponse.majorityResponse !== undefined && consensusRelayResponse.minorityResponse !== undefined) {
         // Create the challenge request
         const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!)
         // Send the challenge request
@@ -144,7 +144,7 @@ export class Pocket {
           return challengeResponse
         }
         return new Error(challengeResponse.message)
-      }else {
+      } else {
         return new Error("Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
       }
     } catch (err) {
@@ -227,7 +227,7 @@ export class Pocket {
       this.rpc(serviceProvider)
 
       // Create Relay Payload
-      const relayPayload = new RelayPayload(data, method, path, headers)
+      const relayPayload = new RelayPayload(data, method, path, headers || null)
 
       // Check if account is available for signing
       const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
@@ -286,7 +286,7 @@ export class Pocket {
             if (typeGuard(currentSessionOrError, RpcError)) {
               // If error or same session, don't even retry relay
               continue
-            } else if(typeGuard(currentSessionOrError, Session)) {
+            } else if (typeGuard(currentSessionOrError, Session)) {
               const newSession = currentSessionOrError as Session
               if (newSession.sessionKey === currentSessionOrError.sessionKey) {
                 // If we get the same session skip this attempt

@@ -17,7 +17,7 @@ export class RelayPayload {
   public static fromJSON(json: string): RelayPayload {
     try {
       const jsonObject = JSON.parse(json)
-    
+
       return new RelayPayload(
         jsonObject.data,
         jsonObject.method,
@@ -32,7 +32,7 @@ export class RelayPayload {
   public readonly data: string
   public readonly method: string
   public readonly path: string
-  public readonly headers?: RelayHeaders
+  public readonly headers?: RelayHeaders | null
 
   /**
    * Relay Payload.
@@ -46,7 +46,7 @@ export class RelayPayload {
     data: string,
     method: string,
     path: string,
-    headers: RelayHeaders = { '': '' }
+    headers: RelayHeaders | null
   ) {
     this.data = data
     this.method = method
@@ -60,20 +60,11 @@ export class RelayPayload {
    * @memberof RelayPayload
    */
   public toJSON() {
-    if (this.headers && !this.headers[0]) { // Empty headers must pass null for Go unmarshal
-      return {
-        data: this.data,
-        method: this.method,
-        path: this.path,
-        headers: null
-      }
-    } else {
-      return {
-        data: this.data,
-        method: this.method,
-        path: this.path,
-        headers: this.headers
-      }
+    return {
+      data: this.data,
+      method: this.method,
+      path: this.path,
+      headers: this.headers
     }
   }
   /**
