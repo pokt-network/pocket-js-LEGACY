@@ -17,19 +17,19 @@ export class QueryValidatorsResponse {
     try {
       const jsonObject = JSON.parse(json)
       const nodes: Node[] = []
-      if (Array.isArray(jsonObject)) {
-        jsonObject.forEach(function (nodeJSON: {}) {
+      if (Array.isArray(jsonObject.result)) {
+        jsonObject.result.forEach(function (nodeJSON: {}) {
           const node = Node.fromJSON(JSON.stringify(nodeJSON))
           nodes.push(node)
         })
         if (nodes !== undefined) {
-          return new QueryValidatorsResponse(nodes)
+          return new QueryValidatorsResponse(nodes, jsonObject.page, jsonObject.total_pages)
         } else {
           throw new Error("Failed to parse the node list for QueryValidatorsResponse")
         }
       } else {
         const node = Node.fromJSON(JSON.stringify(jsonObject))
-        return new QueryValidatorsResponse([node])
+        return new QueryValidatorsResponse([node], jsonObject.page, jsonObject.total_pages)
       }
     } catch (error) {
       throw error
@@ -37,14 +37,20 @@ export class QueryValidatorsResponse {
   }
 
   public readonly nodes: Node[]
+  public readonly page: number
+  public readonly totalPages: number
 
   /**
    * Relay Response.
    * @constructor
    * @param {Node[]} nodes - Node object array.
+   * @param {number} page - Current page.
+   * @param {number} totalPages - Total amount of pages.
    */
-  constructor(nodes: Node[]) {
+  constructor(nodes: Node[], page: number, totalPages: number) {
     this.nodes = nodes
+    this.page = page
+    this.totalPages = totalPages
 
     if (!this.isValid()) {
       throw new TypeError("Invalid QueryValidatorsResponse properties.")

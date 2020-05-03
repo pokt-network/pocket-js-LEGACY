@@ -4,6 +4,7 @@
  */
 import { sha256 } from "js-sha256"
 import { Hex } from "./hex"
+import { typeGuard } from "./type-guard"
 
 /**
  * @description Calculates the address from a given public key
@@ -51,9 +52,12 @@ export function validateAddressHex(addressHex: string): Error | undefined {
 
 /**
  * Validates an ed25519 public key structure
- * @param {Buffer} pubKey - Public key buffer.
+ * @param {Buffer | string} pubKey - Public key buffer or string.
  * @returns {boolean} - True or false if the public key is valid.
  */
-export function validatePublicKey(pubKey: Buffer): boolean {
-  return pubKey.length === 32
+export function validatePublicKey(pubKey: Buffer | string): boolean {
+  if (typeGuard(pubKey, Buffer)) {
+    return pubKey.length === 32
+  }
+  return Buffer.from(pubKey, "hex").length === 32
 }
