@@ -1,7 +1,7 @@
 
 export interface IKVPair {
-  key: string,
-  value: string
+  "key": string,
+  "value": string
 }
 
 /**
@@ -23,15 +23,15 @@ export class Event {
       const attributesArray: IKVPair[] = []
 
       jsonObject.attributes.forEach(function (attribute: IKVPair) {
-        const test = { key: atob(attribute.key), value: atob(attribute.value) }
+        const key = Buffer.from(attribute.key, 'base64').toString('ascii')
+        const value = Buffer.from(attribute.value, 'base64').toString('ascii')
+        const kvPair = { "key": key, "value": value }
+        attributesArray.push(kvPair)
       })
 
-      if (Array.isArray(jsonObject.attributes)) {
-        attributesArray
-      }
       return new Event(
         jsonObject.type,
-        jsonObject.attributes as IKVPair[],
+        attributesArray,
       )
     } catch (error) {
       throw error

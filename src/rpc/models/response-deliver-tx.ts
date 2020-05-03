@@ -16,7 +16,13 @@ export class ResponseDeliverTx {
   public static fromJSON(json: string): ResponseDeliverTx {
     try {
       const jsonObject = JSON.parse(json)
-  
+      const events: Event[] = []
+
+      jsonObject.events.forEach((eventObj: any) => {
+        const event = Event.fromJSON(JSON.stringify(eventObj))
+        events.push(event)
+      })
+
       return new ResponseDeliverTx(
         jsonObject.code,
         jsonObject.data,
@@ -24,7 +30,7 @@ export class ResponseDeliverTx {
         jsonObject.info,
         BigInt(jsonObject.gasWanted),
         BigInt(jsonObject.gasUsed),
-        jsonObject.events,
+        events,
         jsonObject.codespace
       )
     } catch (error) {
@@ -83,8 +89,8 @@ export class ResponseDeliverTx {
    * @memberof ResponseDeliverTx
    */
   public toJSON() {
-    const events : object[] = []
-    this.events.forEach(function(event: Event) {
+    const events: object[] = []
+    this.events.forEach(function (event: Event) {
       events.push(event.toJSON())
     })
     return {
@@ -104,11 +110,11 @@ export class ResponseDeliverTx {
    * @memberof ResponseDeliverTx
    */
   public isValid() {
-    return this.code > 0 &&
-    this.data.length > 0 &&
-    this.log.length > 0 &&
-    this.info.length > 0 &&
-    Number(this.gasWanted.toString()) > 0 &&
-    Number(this.gasUsed.toString()) > 0
+    return this.code >= 0 &&
+      this.data !== undefined &&
+      this.log.length > 0 &&
+      this.info.length >= 0 &&
+      Number(this.gasWanted.toString()) >= 0 &&
+      Number(this.gasUsed.toString()) >= 0
   }
 }

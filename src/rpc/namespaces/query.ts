@@ -3,9 +3,10 @@ import { typeGuard, Hex } from "../.."
 import { QueryBlockResponse, RpcError, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, QueryBalanceResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeReceiptsResponse, NodeReceipt, QueryNodeReceiptResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse, StakingStatus } from ".."
 import { ChallengeRequest } from "../models/input/challenge-request"
 import { ChallengeResponse } from "../models/output/challenge-response"
-import { QueryTxsResponse } from "../models/output/query-txs-response"
+import { QueryAccountTxsResponse } from "../models/output/query-account-txs-response"
 import { JailedStatus } from "../models/jailed-status"
 import { QueryValidatorsResponse } from "../models"
+import { QueryBlockTxsResponse } from "../models/output/query-block-txs-response"
 
 export class QueryNamespace {
     public readonly rpcProvider: IRPCProvider
@@ -59,6 +60,7 @@ export class QueryNamespace {
      *
      * Query a Block transaction list
      * @param {BigInt} blockHeight - Block's number.
+     * @param {boolean} prove - True or false to include the tx proof.
      * @param {number} page - Page number, default 1.
      * @param {number} perPage - Records count per page, default 30.
      * @param {number} timeout - Request timeout.
@@ -66,10 +68,11 @@ export class QueryNamespace {
      */
     public async getBlockTxs(
         blockHeight: BigInt = BigInt(0),
+        prove: boolean,
         page: number = 1,
         perPage: number = 30,
         timeout: number = 60000
-    ): Promise<QueryTxsResponse | RpcError> {
+    ): Promise<QueryBlockTxsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
                 return new RpcError("101", "block height can't be lower than 0")
@@ -77,6 +80,7 @@ export class QueryNamespace {
             const payload = JSON.stringify(
                 {
                     height: Number(blockHeight.toString()),
+                    prove: prove,
                     page: page,
                     per_page: perPage
                 }
@@ -89,10 +93,10 @@ export class QueryNamespace {
             )
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-                const queryTxsResponse = QueryTxsResponse.fromJSON(
+                const queryBlockTxsResponse = QueryBlockTxsResponse.fromJSON(
                     response
                 )
-                return queryTxsResponse
+                return queryBlockTxsResponse
             } else {
                 return new RpcError(
                     response.code,
@@ -773,6 +777,8 @@ export class QueryNamespace {
      *
      * Retrieves an account transaction list
      * @param {string} address - Account's address.
+     * @param {boolean} received - Filters for received or sent txs.
+     * @param {boolean} prove - True or false to include the tx proof.
      * @param {number} page - (optional) Page number, default 1.
      * @param {number} perPage - (optional) Records count per page, default 30.
      * @param {number} timeout - (optional) Request timeout.
@@ -780,10 +786,12 @@ export class QueryNamespace {
      */
     public async getAccountTxs(
         address: string,
+        received: boolean,
+        prove: boolean,
         page: number = 1,
         perPage: number = 30,
         timeout: number = 60000
-    ): Promise<QueryTxsResponse | RpcError> {
+    ): Promise<QueryAccountTxsResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
                 return new RpcError("0", "Invalid Address Hex")
@@ -792,6 +800,8 @@ export class QueryNamespace {
             const payload = JSON.stringify(
                 {
                     address: address,
+                    prove: prove,
+                    received: received,
                     page: page,
                     per_page: perPage
                 }
@@ -805,10 +815,10 @@ export class QueryNamespace {
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-                const queryTxsResponse = QueryTxsResponse.fromJSON(
+                const queryAccountTxsResponse = QueryAccountTxsResponse.fromJSON(
                     response
                 )
-                return queryTxsResponse
+                return queryAccountTxsResponse
             } else {
                 return new RpcError(
                     response.code,
