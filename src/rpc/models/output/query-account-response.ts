@@ -23,9 +23,8 @@ export class QueryAccountResponse {
         const coinObj: any = coins[0] as any
         balance = coinObj.amount || "0"
       }
-      const pubKeyObj = rawObjValue.public_key
-      const pubKeyValue = Buffer.from(pubKeyObj).toString("hex")
-      return new QueryAccountResponse(address, balance, pubKeyValue)
+
+      return new QueryAccountResponse(address, balance, rawObjValue.public_key)
     } catch (error) {
       throw error
     }
@@ -40,7 +39,7 @@ export class QueryAccountResponse {
    * @constructor
    * @param {object} account - Current account object.
    */
-  constructor( 
+  constructor(
     address: string,
     balance: string,
     publicKey: string,
@@ -61,14 +60,14 @@ export class QueryAccountResponse {
    */
   public toJSON() {
     return {
-        "address": this.address,
-        "coins": [
-          {
-            "amount": this.balance,
-            "denom": "upokt"
-          }
-        ],
-        "public_key": this.publicKey
+      "address": this.address,
+      "coins": [
+        {
+          "amount": this.balance,
+          "denom": "upokt"
+        }
+      ],
+      "public_key": this.publicKey
     }
   }
   /**
@@ -78,8 +77,7 @@ export class QueryAccountResponse {
    * @memberof QueryAccountResponse
    */
   public isValid(): boolean {
-    const validAddress: boolean = validateAddressHex(this.address) === undefined
-    const validPubKey: boolean = validatePublicKey(Buffer.from(this.publicKey, "hex"))
-    return validAddress && validPubKey
+    return validateAddressHex(this.address) === undefined &&
+      validatePublicKey(this.publicKey)
   }
 }

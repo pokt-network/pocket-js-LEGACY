@@ -16,14 +16,14 @@ export class QueryAppsResponse {
     try {
       const jsonObject = JSON.parse(json)
       const apps: Application[] = []
-  
-      if (Array.isArray(jsonObject)) {
-        jsonObject.forEach(function(appJSON: {}) {
+
+      if (Array.isArray(jsonObject.result)) {
+        jsonObject.result.forEach(function (appJSON: {}) {
           const app = Application.fromJSON(JSON.stringify(appJSON))
           apps.push(app)
         })
         return new QueryAppsResponse(apps as Application[])
-      }else {
+      } else {
         const app = Application.fromJSON(JSON.stringify(jsonObject))
         return new QueryAppsResponse([app])
       }

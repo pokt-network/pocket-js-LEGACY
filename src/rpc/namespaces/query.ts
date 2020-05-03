@@ -478,7 +478,7 @@ export class QueryNamespace {
     public async getApps(
         stakingStatus: StakingStatus,
         blockHeight: BigInt = BigInt(0),
-        blockchain: string,
+        blockchain: string = "",
         page: number = 1,
         perPage: number = 30,
         timeout: number = 60000
@@ -708,7 +708,11 @@ export class QueryNamespace {
                 return new RpcError("101", "block height can't be lower than 0")
             }
 
-            const payload = JSON.stringify({ height: Number(blockHeight.toString()) })
+            const payload = JSON.stringify(
+                {
+                    height: Number(blockHeight.toString())
+                }
+            )
 
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QuerySupply.toString(),
