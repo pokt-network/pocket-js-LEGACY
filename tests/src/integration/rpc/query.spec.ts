@@ -222,215 +222,209 @@ describe("Pocket RPC Query Interface", async () => {
             expect(typeGuard(blockTxsResponse, QueryBlockTxsResponse)).to.be.true
         }).timeout(0)
     })
-    // describe("Error scenarios", async () => {
-    //     it('should returns an error trying to get a block due block height lower than 0.', async () => {
-    //         const pocket = getPocketDefaultInstance()
+    describe("Error scenarios", async () => {
+        it('should returns an error trying to get a block due block height lower than 0.', async () => {
+            const pocket = getPocketDefaultInstance()
 
-    //         const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(-1))
-    //         expect(typeGuard(blockResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(-1))
+            expect(typeGuard(blockResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a transaction due to an invalid address hex.', async () => {
-    //         // NockUtil.mockGetTx(500)
+        it('should returns an error trying to get a transaction due to an invalid address hex.', async () => {
+            // NockUtil.mockGetTx(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const txResponse = await pocket.rpc()!.query.getTX("0xw892400Dc3C5a5eeBc96070ccd575D6A720F0F9z")
-    //         expect(typeGuard(txResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const txResponse = await pocket.rpc()!.query.getTX("0xw892400Dc3C5a5eeBc96070ccd575D6A720F0F9z")
+            expect(typeGuard(txResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a transaction due to an empty address hex.', async () => {
-    //         // NockUtil.mockGetTx(500)
+        it('should returns an error trying to get a transaction due to an empty address hex.', async () => {
+            // NockUtil.mockGetTx(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const txResponse = await pocket.rpc()!.query.getTX("")
-    //         expect(typeGuard(txResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const txResponse = await pocket.rpc()!.query.getTX("")
+            expect(typeGuard(txResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     // Figure out test
-    //     // it('should returns an error trying to get the height due to internal server error.', async () => {
-    //     //     // NockUtil.mockGetHeight(500)
+        // Figure out test
+        // it('should returns an error trying to get the height due to internal server error.', async () => {
+        //     // NockUtil.mockGetHeight(500)
 
-    //     //     const pocket = getPocketDefaultInstance()
+        //     const pocket = getPocketDefaultInstance()
 
-    //     //     const heightResponse = await pocket.rpc.query.getHeight()
-    //     //     expect(typeGuard(heightResponse, RpcError)).to.be.true
-    //     // }).timeout(0)
+        //     const heightResponse = await pocket.rpc.query.getHeight()
+        //     expect(typeGuard(heightResponse, RpcError)).to.be.true
+        // }).timeout(0)
 
-    //     it('should returns an error trying to get the balance due to an invalid address.', async () => {
-    //         // NockUtil.mockGetBalance(500)
+        it('should returns an error trying to get the balance due to an invalid address.', async () => {
+            // NockUtil.mockGetBalance(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const balanceResponse = await pocket.rpc()!.query.getBalance("0xz892400Dc3C5a5eeBc96070ccd575D6A720F0F9wee", BigInt(5))
-    //         expect(typeGuard(balanceResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const balanceResponse = await pocket.rpc()!.query.getBalance("0xz892400Dc3C5a5eeBc96070ccd575D6A720F0F9wee", BigInt(5))
+            expect(typeGuard(balanceResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get the balance due to an empty address.', async () => {
-    //         // NockUtil.mockGetBalance(500)
+        it('should returns an error trying to get the balance due to an empty address.', async () => {
+            // NockUtil.mockGetBalance(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const balanceResponse = await pocket.rpc()!.query.getBalance("", BigInt(5))
-    //         expect(typeGuard(balanceResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const balanceResponse = await pocket.rpc()!.query.getBalance("", BigInt(5))
+            expect(typeGuard(balanceResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get the balance due to the block height less than 0.', async () => {
-    //         // NockUtil.mockGetBalance(500)
+        it('should returns an error trying to get the balance due to the block height less than 0.', async () => {
+            // NockUtil.mockGetBalance(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const balanceResponse = await pocket.rpc()!.query.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(-1))
-    //         expect(typeGuard(balanceResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const balanceResponse = await pocket.rpc()!.query.getBalance("0xf892400Dc3C5a5eeBc96070ccd575D6A720F0F9f", BigInt(-1))
+            expect(typeGuard(balanceResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a list of nodes due to the block height less than 0.', async () => {
-    //         // NockUtil.mockGetNodes(500)
+        it('should returns an error trying to get a list of nodes due to the block height less than 0.', async () => {
+            const pocket = getPocketDefaultInstance()
 
-    //         const pocket = getPocketDefaultInstance()
+            const nodeResponse = await pocket.rpc()!.query.getValidators(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(-1), undefined, 1, 10)
+            expect(typeGuard(nodeResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //         const nodeResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, BigInt(-1))
-    //         expect(typeGuard(nodeResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+        it('should returns an error trying to get a node due to an invalid address.', async () => {
+            const pocket = getPocketDefaultInstance()
 
-    //     it('should returns an error trying to get a node due to an invalid address.', async () => {
-    //         // NockUtil.mockGetNode(500)
+            const nodeResponse = await pocket.rpc()!.query.getNode("0xzA0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            expect(typeGuard(nodeResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //         const pocket = getPocketDefaultInstance()
+        it('should returns an error trying to get a node due to an empty address.', async () => {
+            const pocket = getPocketDefaultInstance()
 
-    //         const nodeResponse = await pocket.rpc()!.query.getNode("0xzA0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
-    //         expect(typeGuard(nodeResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const nodeResponse = await pocket.rpc()!.query.getNode("", BigInt(5))
+            expect(typeGuard(nodeResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a node due to an empty address.', async () => {
-    //         // NockUtil.mockGetNode(500)
+        it('should returns an error trying to get a node due to the block height is less than 0.', async () => {
+            // NockUtil.mockGetNode(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const nodeResponse = await pocket.rpc()!.query.getNode("", BigInt(5))
-    //         expect(typeGuard(nodeResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const nodeResponse = await pocket.rpc()!.query.getNode("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-1))
+            expect(typeGuard(nodeResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a node due to the block height is less than 0.', async () => {
-    //         // NockUtil.mockGetNode(500)
+        it('should returns an error trying to get the node params due to the block height is less than 0.', async () => {
+            // NockUtil.mockGetNodeParams(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const nodeResponse = await pocket.rpc()!.query.getNode("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-1))
-    //         expect(typeGuard(nodeResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const nodeParamsResponse = await pocket.rpc()!.query.getNodeParams(BigInt(-1))
+            expect(typeGuard(nodeParamsResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get the node params due to the block height is less than 0.', async () => {
-    //         // NockUtil.mockGetNodeParams(500)
+        it('should returns an error trying to get a node receipts list of receipts due to an invalid address.', async () => {
+            // NockUtil.mockGetNodeReceipts(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const nodeParamsResponse = await pocket.rpc()!.query.getNodeParams(BigInt(-1))
-    //         expect(typeGuard(nodeParamsResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const nodeReceiptsResponse = await pocket.rpc()!.query.getNodeReceipts("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            expect(typeGuard(nodeReceiptsResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a node receipts list of receipts due to an invalid address.', async () => {
-    //         // NockUtil.mockGetNodeReceipts(500)
+        it('should returns an error trying to get a node receipts list due to the block height being less than 0.', async () => {
+            // NockUtil.mockGetNodeReceipts(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const nodeReceiptsResponse = await pocket.rpc()!.query.getNodeReceipts("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
-    //         expect(typeGuard(nodeReceiptsResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const nodeReceiptsResponse = await pocket.rpc()!.query.getNodeReceipts(addressHex, BigInt(-1))
+            expect(typeGuard(nodeReceiptsResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a node receipts list due to the block height being less than 0.', async () => {
-    //         // NockUtil.mockGetNodeReceipts(500)
+        // Figure out test
+        // it('should returns an error trying to get a receipt of a node due to internal server error.', async () => {
+        //     // NockUtil.mockGetNodeReceipt(500)
 
-    //         const pocket = getPocketDefaultInstance()
+        //     const nodeReceipt = new NodeReceipt(addressHex, "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
+        //     const pocket = getPocketDefaultInstance()
 
-    //         const nodeReceiptsResponse = await pocket.rpc()!.query.getNodeReceipts(addressHex, BigInt(-1))
-    //         expect(typeGuard(nodeReceiptsResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+        //     const nodeReceiptResponse = await pocket.rpc.query.getNodeReceipt(nodeReceipt)
+        //     expect(typeGuard(nodeReceiptResponse, RpcError)).to.be.true
+        // }).timeout(0)
 
-    //     // Figure out test
-    //     // it('should returns an error trying to get a receipt of a node due to internal server error.', async () => {
-    //     //     // NockUtil.mockGetNodeReceipt(500)
+        it('should returns an error trying to get a list of apps due to the block height being less than 0.', async () => {
+            // NockUtil.mockGetApps(500)
 
-    //     //     const nodeReceipt = new NodeReceipt(addressHex, "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
-    //     //     const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //     //     const nodeReceiptResponse = await pocket.rpc.query.getNodeReceipt(nodeReceipt)
-    //     //     expect(typeGuard(nodeReceiptResponse, RpcError)).to.be.true
-    //     // }).timeout(0)
+            const appsResponse = await pocket.rpc()!.query.getApps(StakingStatus.Staked, BigInt(-1))
+            expect(typeGuard(appsResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get a list of apps due to the block height being less than 0.', async () => {
-    //         // NockUtil.mockGetApps(500)
+        it('should returns an error trying to get an app due to an invalid address.', async () => {
+            // NockUtil.mockGetApp(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const appsResponse = await pocket.rpc()!.query.getApps(StakingStatus.Staked, BigInt(-1))
-    //         expect(typeGuard(appsResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const appResponse = await pocket.rpc()!.query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
+            expect(typeGuard(appResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get an app due to an invalid address.', async () => {
-    //         // NockUtil.mockGetApp(500)
+        it('should returns an error trying to get an app due to block height being less than 0.', async () => {
+            // NockUtil.mockGetApp(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const appResponse = await pocket.rpc()!.query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4czz", BigInt(5))
-    //         expect(typeGuard(appResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const appResponse = await pocket.rpc()!.query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-5))
+            expect(typeGuard(appResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get an app due to block height being less than 0.', async () => {
-    //         // NockUtil.mockGetApp(500)
+        it('should returns an error trying to get an app params due block height being less than 0.', async () => {
+            // NockUtil.mockGetAppParams(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const appResponse = await pocket.rpc()!.query.getApp("0x5A0b54D5dc17e0AadC383d2db43B0a0D3E029c4c", BigInt(-5))
-    //         expect(typeGuard(appResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const appParamsResponse = await pocket.rpc()!.query.getAppParams(BigInt(-5))
+            expect(typeGuard(appParamsResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get an app params due block height being less than 0.', async () => {
-    //         // NockUtil.mockGetAppParams(500)
+        it('should returns an error trying to get the pocket params due block height being less than 0.', async () => {
+            // NockUtil.mockGetPocketParams(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const appParamsResponse = await pocket.rpc()!.query.getAppParams(BigInt(-5))
-    //         expect(typeGuard(appParamsResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const pocketParamsResponse = await pocket.rpc()!.query.getPocketParams(BigInt(-5))
+            expect(typeGuard(pocketParamsResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get the pocket params due block height being less than 0.', async () => {
-    //         // NockUtil.mockGetPocketParams(500)
+        it('should returns an error trying to get the supported chains due block height being less than 0.', async () => {
+            // NockUtil.mockGetSupportedChains(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const pocketParamsResponse = await pocket.rpc()!.query.getPocketParams(BigInt(-5))
-    //         expect(typeGuard(pocketParamsResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const supportedResponse = await pocket.rpc()!.query.getSupportedChains(BigInt(-5))
+            expect(typeGuard(supportedResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get the supported chains due block height being less than 0.', async () => {
-    //         // NockUtil.mockGetSupportedChains(500)
+        it('should returns an error trying to get the supply due block height being less than 0.', async () => {
+            // NockUtil.mockGetSupply(500)
 
-    //         const pocket = getPocketDefaultInstance()
+            const pocket = getPocketDefaultInstance()
 
-    //         const supportedResponse = await pocket.rpc()!.query.getSupportedChains(BigInt(-5))
-    //         expect(typeGuard(supportedResponse, RpcError)).to.be.true
-    //     }).timeout(0)
+            const supplyResponse = await pocket.rpc()!.query.getSupply(BigInt(-5))
+            expect(typeGuard(supplyResponse, RpcError)).to.be.true
+        }).timeout(0)
 
-    //     it('should returns an error trying to get the supply due block height being less than 0.', async () => {
-    //         // NockUtil.mockGetSupply(500)
+        it('should returns an error trying to get a challenge response due missing relay.', async () => {
+            const pocket = getPocketDefaultInstance()
 
-    //         const pocket = getPocketDefaultInstance()
+            const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse()])
+            const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
+            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
 
-    //         const supplyResponse = await pocket.rpc()!.query.getSupply(BigInt(-5))
-    //         expect(typeGuard(supplyResponse, RpcError)).to.be.true
-    //     }).timeout(0)
-
-    //     it('should returns an error trying to get a challenge response due missing relay.', async () => {
-    //         const pocket = getPocketDefaultInstance()
-
-    //         const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse()])
-    //         const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
-    //         const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
-
-    //         const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
-    //         expect(typeGuard(challengeResponse, Error)).to.be.true
-    //     }).timeout(0)
-    // })
+            const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
+            expect(typeGuard(challengeResponse, Error)).to.be.true
+        }).timeout(0)
+    })
 })
