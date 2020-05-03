@@ -46,7 +46,7 @@ export class RelayPayload {
     data: string,
     method: string,
     path: string,
-    headers: RelayHeaders = { "": "" }
+    headers: RelayHeaders = { '': '' }
   ) {
     this.data = data
     this.method = method
@@ -60,11 +60,20 @@ export class RelayPayload {
    * @memberof RelayPayload
    */
   public toJSON() {
-    return {
-      data: this.data,
-      method: this.method,
-      path: this.path,
-      headers: this.headers
+    if (this.headers && !this.headers[0]) { // Empty headers must pass null for Go unmarshal
+      return {
+        data: this.data,
+        method: this.method,
+        path: this.path,
+        headers: null
+      }
+    } else {
+      return {
+        data: this.data,
+        method: this.method,
+        path: this.path,
+        headers: this.headers
+      }
     }
   }
   /**
