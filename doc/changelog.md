@@ -1,3 +1,8 @@
+## 0.3.0-RC
+- Compatible with [Pocket Core version RC-0.3.0](https://github.com/pokt-network/pocket-core/releases/tag/RC-0.3.0)
+- Added queryAccountTxs RPC Call.
+- Added queryBlockTxs RPC Call.
+
 ## 0.2.3-RC
 - Fixed Session tumbling
 - Fixed multiple query issues
