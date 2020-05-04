@@ -14,7 +14,8 @@ export class DispatchRequest {
    * @memberof DispatchRequest
    */
   public static fromJSON(json: string): DispatchRequest {
-    return new DispatchRequest(SessionHeader.fromJSON(json))
+    const jsonObj = JSON.parse(json)
+    return new DispatchRequest(SessionHeader.fromJSON(JSON.stringify(jsonObj.session_header)))
   }
 
   public readonly sessionHeader: SessionHeader
