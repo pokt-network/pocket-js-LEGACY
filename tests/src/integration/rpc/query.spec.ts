@@ -72,7 +72,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a transaction information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const txResponse = await pocket.rpc()!.query.getTX("9858E50A7ABD0699B4F52868FA330AE2736BF9067DB83C21C887BA47E5263B19")
+            const txResponse = await pocket.rpc()!.query.getTX("43E361BE2136D53426564536BC6E1DF32C3722D27D0F9B1D960483C3869E63C2")
             expect(typeGuard(txResponse, QueryTXResponse)).to.be.true
         }).timeout(0)
 
