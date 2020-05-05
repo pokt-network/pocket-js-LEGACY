@@ -42,7 +42,8 @@
         "Tool"
     ],
     "author": "Pocket Network",
-    "authors": [{
+    "authors": [
+        {
             "name": "Pabel Nunez Landestoy",
             "email": "pabel@pokt.network",
             "homepage": "https://github.com/pabelnl"
