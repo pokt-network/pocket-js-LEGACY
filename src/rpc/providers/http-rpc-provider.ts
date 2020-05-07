@@ -2,13 +2,12 @@ import { IRPCProvider } from "./i-rpc-provider"
 import axios from "axios"
 import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
-import { debuglog } from "util"
 
 /**
  * @author Luis C. de León <luis@pokt.network>
  * @description The HttpRpcProvider class implements the IRCProvider interface.
  */
-export class HttpRpcProvider implements IRPCProvider{
+export class HttpRpcProvider implements IRPCProvider {
     public readonly baseURL: URL
     /**
      * Utility function to send requests.

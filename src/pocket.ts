@@ -14,7 +14,6 @@ import { RequestHash } from "./rpc/models/input/request-hash"
 import { ChallengeRequest } from "./rpc/models/input/challenge-request"
 import { ChallengeResponse } from "./rpc/models/output/challenge-response"
 import { RelayMeta } from "./rpc/models/input/relay-meta"
-import { type } from "os"
 
 /**
  *

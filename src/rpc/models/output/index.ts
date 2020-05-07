@@ -1,5 +1,3 @@
-// created from 'create-ts-index'
-
 export * from './challenge-response'
 export * from './consensus-relay-response'
 export * from './dispatch-response'

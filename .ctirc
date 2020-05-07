@@ -7,6 +7,7 @@
     'typings',
     '__test__',
     '__tests__',
+    'dist',
     'node_modules',
   ],
   fileExcludePatterns: [],
@@ -19,12 +20,11 @@
   includeCWD: true,
   quote: "'",
   targetExts: [
-    'ts',
-    'tsx',
+    'ts'
   ],
   useSemicolon: false,
   useTimestamp: false,
   verbose: false,
-  withoutComment: false,
+  withoutComment: true,
   withoutBackupFile: true
 }

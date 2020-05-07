@@ -1,5 +1,3 @@
-// created from 'create-ts-index'
-
 export * from './config'
 export * from './keybase'
 export * from './routing-table'
