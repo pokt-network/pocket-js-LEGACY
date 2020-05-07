@@ -1,5 +1,4 @@
-import { Block } from "../block"
-import { BlockMeta } from "../block-meta"
+import { ResultTx } from "../result-tx"
 
 /**
  *
@@ -17,33 +16,37 @@ export class QueryBlockTxsResponse {
   public static fromJSON(json: string): QueryBlockTxsResponse {
     try {
       const rawObjValue = JSON.parse(json)
-      const block = Block.fromJSON(JSON.stringify(rawObjValue.block))
-      const blockHeader = BlockMeta.fromJSON(JSON.stringify(rawObjValue.block_meta))
+      const resultTxs: ResultTx[] = []
+
+      rawObjValue.txs.forEach((tx: any) => {
+        const resultTx = ResultTx.fromJSON(JSON.stringify(tx))
+        resultTxs.push(resultTx)
+      })
 
       return new QueryBlockTxsResponse(
-        block,
-        blockHeader
+        resultTxs,
+        rawObjValue.total_count
       )
     } catch (error) {
       throw error
     }
   }
 
-  public readonly block: Block
-  public readonly blockMeta: BlockMeta
+  public readonly resultTx: ResultTx[]
+  public readonly totalCount: number
 
   /**
-   * Query Block transaction Response.
+   * Query Account transaction Response.
    * @constructor
-   * @param {Block} block - 
-   * @param {BlockMeta} blockMeta - 
+   * @param {ResultTx[]} resultTx - List of transactions.
+   * @param {number} totalCount - Transaction count
    */
   constructor(
-    block: Block,
-    blockMeta: BlockMeta
+    resultTx: ResultTx[],
+    totalCount: number
   ) {
-    this.block = block
-    this.blockMeta = blockMeta
+    this.resultTx = resultTx
+    this.totalCount = totalCount
 
     if (!this.isValid()) {
       throw new TypeError("Invalid QueryBlockTxsResponse properties.")
@@ -56,9 +59,15 @@ export class QueryBlockTxsResponse {
    * @memberof QueryBlockTxsResponse
    */
   public toJSON() {
+    const resultTxs: {}[] = []
+
+    this.resultTx.forEach(resultTx => {
+      const resultTxObj = resultTx.toJSON()
+      resultTxs.push(resultTxObj)
+    })
     return {
-      block: this.block.toJSON(),
-      block_meta: this.blockMeta.toJSON()
+      txs: resultTxs,
+      total_count: this.totalCount
     }
   }
   /**
@@ -68,7 +77,7 @@ export class QueryBlockTxsResponse {
    * @memberof QueryBlockTxsResponse
    */
   public isValid(): boolean {
-    return this.block.isValid() &&
-      this.blockMeta.isValid()
+    return this.resultTx !== undefined &&
+      this.totalCount !== undefined
   }
 }

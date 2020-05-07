@@ -87,7 +87,7 @@ export class QueryNamespace {
             )
 
             const response = await this.rpcProvider.send(
-                V1RPCRoutes.QueryBlock.toString(),
+                V1RPCRoutes.QueryBlockTxs.toString(),
                 payload,
                 timeout
             )

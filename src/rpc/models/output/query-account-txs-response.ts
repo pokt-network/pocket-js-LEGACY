@@ -38,8 +38,8 @@ export class QueryAccountTxsResponse {
   /**
    * Query Account transaction Response.
    * @constructor
-   * @param {ResultTx[]} resultTx - 
-   * @param {number} totalCount - 
+   * @param {ResultTx[]} resultTx - List of transactions.
+   * @param {number} totalCount - Transaction count
    */
   constructor(
     resultTx: ResultTx[],
