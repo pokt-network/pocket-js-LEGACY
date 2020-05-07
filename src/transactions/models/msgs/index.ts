@@ -1,5 +1,3 @@
-// created from 'create-ts-index'
-
 export * from './msg-app-stake'
 export * from './msg-app-unjail'
 export * from './msg-app-unstake'
