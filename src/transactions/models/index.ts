@@ -1,5 +1,3 @@
-// created from 'create-ts-index'
-
 export * from './msgs'
 export * from './amino-encodable'
 export * from './coin-denom'
