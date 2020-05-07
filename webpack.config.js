@@ -1,25 +1,29 @@
 const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
     entry: './src/index.ts',
     devtool: 'inline-source-map',
     module: {
         rules: [{
-            test: /\.tsx?$/,
+            test: /\.ts?$/,
             loader: 'ts-loader',
+            exclude: [
+                /tests/,
+                /node_modules\/@pokt-network\/amino-js\/dist\/node.js/
+            ],
             options: {
-                // disable type checker - we will use it in fork plugin
                 transpileOnly: true
             }
         }, ],
     },
-    plugins: [new ForkTsCheckerWebpackPlugin()],
+    plugins: [new ForkTsCheckerWebpackPlugin(), new BundleAnalyzerPlugin()],
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.ts', '.js'],
     },
     output: {
-        filename: 'bundle.js',
+        filename: 'web.js',
         path: path.resolve(__dirname, 'dist'),
         library: 'PocketJS'
     },
