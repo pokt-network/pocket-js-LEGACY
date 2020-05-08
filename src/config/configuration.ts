@@ -13,7 +13,7 @@ export class Configuration {
   public readonly sessionBlockFrequency: number = 25
   public readonly blockTime: number = 60000
   public readonly maxSessionRefreshRetries: number = 3
-  public readonly validateRelayResponses: boolean = false
+  public readonly validateRelayResponses: boolean = true
 
   /**
    * Stores multiple properties used to interact with the Pocket Network.
@@ -38,7 +38,7 @@ export class Configuration {
     sessionBlockFrequency: number = 25,
     blockTime: number = 60000,
     maxSessionRefreshRetries: number = 3,
-    validateRelayResponses: boolean = false
+    validateRelayResponses: boolean = true
   ) {
     this.maxDispatchers = maxDispatchers
     this.requestTimeOut = requestTimeOut
