@@ -1,5 +1,5 @@
 import { RelayProofResponse } from "./relay-proof-response"
-
+import { RelayRequest } from "../input"
 
 /**
  *
@@ -17,11 +17,14 @@ export class RelayResponse {
   public static fromJSON(json: string): RelayResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const proof = RelayProofResponse.fromJSON(JSON.stringify(jsonObject.proof))
+      const proof = RelayProofResponse.fromJSON(JSON.stringify(jsonObject.response.proof))
+      const relayRequest = RelayRequest.fromJSON(JSON.stringify(jsonObject.request))
+
       return new RelayResponse(
-        jsonObject.signature,
-        jsonObject.payload,
-        proof
+        jsonObject.response.signature,
+        jsonObject.response.payload,
+        proof,
+        relayRequest
       )
     } catch (error) {
       throw error
@@ -31,16 +34,18 @@ export class RelayResponse {
   public readonly signature: string
   public readonly payload: string
   public readonly proof: RelayProofResponse
+  public readonly relayRequest: RelayRequest
   /**
    * Relay Response.
    * @constructor
    * @param {string} signature - Signature.
    * @param {string} payload - Payload string.
    */
-  constructor(signature: string, payload: string, proof: RelayProofResponse) {
+  constructor(signature: string, payload: string, proof: RelayProofResponse, relayRequest: RelayRequest) {
     this.signature = signature
     this.payload = payload
     this.proof = proof
+    this.relayRequest = relayRequest
 
     if (!this.isValid()) {
       throw new TypeError("Invalid RelayResponse properties.")
@@ -54,9 +59,12 @@ export class RelayResponse {
    */
   public toJSON() {
     return {
-      payload: this.payload,
-      signature: this.signature,
-      proof: this.proof.toJSON()
+      response: {
+        payload: this.payload,
+        signature: this.signature,
+        proof: this.proof.toJSON(),
+      },
+      request: this.relayRequest.toJSON()
     }
   }
   /**
@@ -69,7 +77,8 @@ export class RelayResponse {
     return (
       this.signature.length !== 0 &&
       this.payload.length !== 0 &&
-      this.proof.isValid()
+      this.proof.isValid() &&
+      this.relayRequest.isValid()
     )
   }
 }

@@ -52,7 +52,7 @@ export class RelayProof {
    * Creates a Proof object using a JSON string
    * @param {BigInt} entropy - Entropy big int value.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
-   * @param {string} servicePubKey - Service Public Key.
+   * @param {string} servicerPubKey - Servicer Public Key.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} token - PocketAAT token.
    * @param {RequestHash} requestHash - RequestHash object.
@@ -62,7 +62,7 @@ export class RelayProof {
   public static bytes(
     entropy: BigInt,
     sessionBlockHeight: BigInt,
-    servicePubKey: string,
+    servicerPubKey: string,
     blockchain: string,
     token: PocketAAT,
     requestHash: RequestHash
@@ -70,7 +70,7 @@ export class RelayProof {
     const proofJSON = {
       entropy: Number(entropy.toString()),
       session_block_height: Number(sessionBlockHeight.toString()),
-      servicer_pub_key: servicePubKey,
+      servicer_pub_key: servicerPubKey,
       blockchain: blockchain,
       signature: "",
       token: RelayProof.hashAAT(token),
@@ -116,7 +116,7 @@ export class RelayProof {
 
   public readonly entropy: BigInt
   public readonly sessionBlockHeight: BigInt
-  public readonly servicePubKey: string
+  public readonly servicerPubKey: string
   public readonly blockchain: string
   public readonly token: PocketAAT
   public readonly signature: string
@@ -127,7 +127,7 @@ export class RelayProof {
    * @constructor
    * @param {BigInt} entropy - Index entropy value.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
-   * @param {string} servicePubKey - Service PublicKey.
+   * @param {string} servicerPubKey - Service PublicKey.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} token - Application Authentication Token object.
    * @param {string} signature - Proof's signature.
@@ -136,7 +136,7 @@ export class RelayProof {
   constructor(
     entropy: BigInt,
     sessionBlockHeight: BigInt,
-    servicePubKey: string,
+    servicerPubKey: string,
     blockchain: string,
     token: PocketAAT,
     signature: string,
@@ -144,7 +144,7 @@ export class RelayProof {
   ) {
     this.entropy = entropy
     this.sessionBlockHeight = sessionBlockHeight
-    this.servicePubKey = servicePubKey
+    this.servicerPubKey = servicerPubKey
     this.blockchain = blockchain
     this.token = token
     this.signature = signature
@@ -165,7 +165,7 @@ export class RelayProof {
     return {
       entropy: Number(this.entropy.toString()),
       session_block_height: Number(this.sessionBlockHeight.toString()),
-      servicer_pub_key: this.servicePubKey,
+      servicer_pub_key: this.servicerPubKey,
       blockchain: this.blockchain,
       aat: {
         version: this.token.version,
@@ -187,7 +187,7 @@ export class RelayProof {
     return this.requestHash.isValid() &&
       this.blockchain.length !== 0 &&
       Number(this.entropy.toString()) !== undefined &&
-      Hex.isHex(this.servicePubKey) &&
+      Hex.isHex(this.servicerPubKey) &&
       Number(this.sessionBlockHeight) > 0 &&
       this.token.isValid()
   }

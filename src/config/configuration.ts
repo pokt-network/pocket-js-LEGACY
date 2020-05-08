@@ -13,6 +13,7 @@ export class Configuration {
   public readonly sessionBlockFrequency: number = 25
   public readonly blockTime: number = 60000
   public readonly maxSessionRefreshRetries: number = 3
+  public readonly validateRelayResponses: boolean = false
 
   /**
    * Stores multiple properties used to interact with the Pocket Network.
@@ -25,6 +26,7 @@ export class Configuration {
    * @param {number} sessionBlockFrequency - (optional) Amount of blocks that need to elapse for a new session to be tumbled, look at https://github.com/pokt-network/pocket-network-genesis for more information
    * @param {number} blockTime - (optional) Amount of time (in milliseconds) for a new block to be produced in the Pocket Network
    * @param {number} maxSessionRefreshRetries - (optional) Amount of times to perform a session refresh in case of getting error code 1124 (Invalid Session)
+   * @param {boolean} validateRelayResponses - (optional) If True the relay responses are validated againt's the relay request information, False will not validate
    * @memberof Configuration
    */
   constructor(
@@ -35,11 +37,13 @@ export class Configuration {
     acceptDisputedResponses: boolean = false,
     sessionBlockFrequency: number = 25,
     blockTime: number = 60000,
-    maxSessionRefreshRetries: number = 3
+    maxSessionRefreshRetries: number = 3,
+    validateRelayResponses: boolean = false
   ) {
     this.maxDispatchers = maxDispatchers
     this.requestTimeOut = requestTimeOut
     this.maxSessions = maxSessions
+    this.validateRelayResponses = validateRelayResponses
     if (consensusNodeCount % 2 === 1 || consensusNodeCount === 0) {
       this.consensusNodeCount = consensusNodeCount
     }else {

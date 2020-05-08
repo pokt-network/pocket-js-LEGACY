@@ -3,7 +3,6 @@ import {Hex} from "./hex"
 import {RelayProof, RelayResponse} from "../rpc/models"
 import {typeGuard} from "./type-guard"
 import {MajorityResponse} from "../rpc/models/input/majority-response"
-import {validateAddressHex} from "./key-pair"
 
 
 /**
@@ -46,7 +45,12 @@ export function validateRelayResponse(relay: RelayResponse): Error | undefined {
     switch (true) {
         // This should be a better check for validity
         case !Hex.isHex(relay.signature):
-            return new Error("Invalid string is not hex: " + relay.signature)
+            return new Error("Invalid signature, is not hex: " + relay.signature)
+        case relay.relayRequest.proof.servicerPubKey !== relay.proof.servicerPubKey:
+            return new Error("Request servicer public key is different than the response public key.")
+        case relay.relayRequest.proof.signature !== relay.proof.signature:
+            return new Error("Request proof signature is different than the response proof signature.")
+
         default:
             return undefined
     }
@@ -65,8 +69,8 @@ export function validateRelayProof(proof: RelayProof): Error | undefined  {
             return new Error("Invalid entropy. The entropy needs to be a number: " + proof.entropy)
         case !Hex.isHex(proof.signature):
             return new Error("Invalid string is not hex: " + proof.signature)
-        case !Hex.isHex(proof.servicePubKey):
-            return new Error("Invalid string is not hex: " + proof.servicePubKey)
+        case !Hex.isHex(proof.servicerPubKey):
+            return new Error("Invalid string is not hex: " + proof.servicerPubKey)
         case Number(proof.sessionBlockHeight) === 0:
             return new Error("The Block Height needs to be bigger than 0")
         case !proof.token.isValid():

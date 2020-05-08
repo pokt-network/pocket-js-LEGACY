@@ -1,6 +1,8 @@
 import { RelayProof } from "../relay-proof"
 import { RelayPayload } from "./relay-payload"
 import { RelayMeta } from "./relay-meta"
+import { RequestHash } from "./request-hash"
+import { PocketAAT } from "../../../pocket"
 /**
  *
  *
@@ -17,10 +19,30 @@ export class RelayRequest {
   public static fromJSON(json: string): RelayRequest {
     try {
       const jsonObject = JSON.parse(json)
+      const relayPayload = RelayPayload.fromJSON(JSON.stringify(jsonObject.payload))
+      const relayMeta = RelayMeta.fromJSON(JSON.stringify(jsonObject.meta))
+      const requestHash = new RequestHash(relayPayload, relayMeta)
+
+      const pocketAAT = new PocketAAT(
+        jsonObject.proof.aat.version,
+        jsonObject.proof.aat.client_pub_key,
+        jsonObject.proof.aat.app_pub_key,
+        jsonObject.proof.aat.signature
+      )
+      const relayProof = new RelayProof(
+        BigInt(jsonObject.proof.entropy),
+        BigInt(jsonObject.proof.session_block_height),
+        jsonObject.proof.servicer_pub_key,
+        jsonObject.proof.blockchain,
+        pocketAAT,
+        jsonObject.proof.signature,
+        requestHash
+      )
+
       return new RelayRequest(
-        RelayPayload.fromJSON(JSON.stringify(jsonObject.payload)),
-        RelayMeta.fromJSON(JSON.stringify(jsonObject.meta)),
-        RelayProof.fromJSON(JSON.stringify(jsonObject.proof))
+        relayPayload,
+        relayMeta,
+        relayProof
       )
     } catch (error) {
       throw error
@@ -68,7 +90,7 @@ export class RelayRequest {
    */
   public isValid(): boolean {
     return this.payload.isValid() &&
-    this.meta.isValid()&& 
-    this.proof.isValid()
+      this.meta.isValid() &&
+      this.proof.isValid()
   }
 }

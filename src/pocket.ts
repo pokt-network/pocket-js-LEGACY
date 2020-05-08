@@ -271,7 +271,7 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
       // Send relay
-      const result = await this.innerRpc!.client.relay(relay, configuration.requestTimeOut)
+      const result = await this.innerRpc!.client.relay(relay, configuration.validateRelayResponses, configuration.requestTimeOut)
 
       // Check session out of sync error
       if (typeGuard(result, RpcError)) {
