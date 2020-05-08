@@ -1,9 +1,8 @@
 import { IRPCProvider } from "./i-rpc-provider"
 import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
-import { Pocket } from "../../pocket"
+import { Pocket, PocketAAT } from "../../pocket"
 import { RelayResponse } from "../models"
-import { PocketAAT } from "../../../lib"
 
 /**
  * @author Pabel Nunez L. <pabel@pokt.network>
@@ -17,6 +16,8 @@ export class PocketRpcProvider implements IRPCProvider {
     /**
      * Utility function to send requests.
      * @param {Pocket} pocket - Pocket Instance.
+     * @param {PocketAAT} aat - Pocket AAT.
+     * @param {string} blockchain - Blockchain Id.
      */
     public constructor(pocket: Pocket, aat: PocketAAT, blockchain: string) {
         this.pocket = pocket
