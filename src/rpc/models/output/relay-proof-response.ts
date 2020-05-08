@@ -48,7 +48,7 @@ export class RelayProofResponse {
   
   public readonly entropy: BigInt
   public readonly sessionBlockHeight: BigInt
-  public readonly servicePubKey: string
+  public readonly servicerPubKey: string
   public readonly blockchain: string
   public readonly token: PocketAAT
   public readonly signature: string
@@ -59,7 +59,7 @@ export class RelayProofResponse {
    * @constructor
    * @param {BigInt} entropy - Index entropy value.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
-   * @param {string} servicePubKey - Service PublicKey.
+   * @param {string} servicerPubKey - Service PublicKey.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} token - Application Authentication Token object.
    * @param {string} signature - Proof's signature.
@@ -68,7 +68,7 @@ export class RelayProofResponse {
   constructor(
       entropy: BigInt,
       sessionBlockHeight: BigInt,
-      servicePubKey: string,
+      servicerPubKey: string,
       blockchain: string,
       token: PocketAAT,
       signature: string,
@@ -76,7 +76,7 @@ export class RelayProofResponse {
   ) {
     this.entropy = entropy
     this.sessionBlockHeight = sessionBlockHeight
-    this.servicePubKey = servicePubKey
+    this.servicerPubKey = servicerPubKey
     this.blockchain = blockchain
     this.token = token
     this.signature = signature
@@ -97,7 +97,7 @@ export class RelayProofResponse {
     return {
       entropy: Number(this.entropy.toString()),
       session_block_height: Number(this.sessionBlockHeight.toString()),
-      servicer_pub_key: this.servicePubKey,
+      servicer_pub_key: this.servicerPubKey,
       blockchain: this.blockchain,
       aat: {
         version: this.token.version,
@@ -116,10 +116,9 @@ export class RelayProofResponse {
    * @memberof Proof
    */
   public isValid(): boolean {
-    // TODO: Add requestHash lenght validation after next core update
     return this.blockchain.length !== 0 &&
         Number(this.entropy.toString()) !== undefined &&
-        Hex.isHex(this.servicePubKey) &&
+        Hex.isHex(this.servicerPubKey) &&
         Number(this.sessionBlockHeight) > 0 &&
         this.token.isValid()
   }

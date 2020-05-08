@@ -1,5 +1,5 @@
 import { IRPCProvider } from "../providers"
-import { typeGuard } from "../.."
+import { typeGuard, validateRelayResponse } from "../.."
 import { RawTxResponse, RpcError, RawTxRequest, V1RPCRoutes, RelayRequest, RelayResponse, DispatchRequest, DispatchResponse } from ".."
 
 export class ClientNamespace {
@@ -64,6 +64,7 @@ export class ClientNamespace {
      */
     public async relay(
         request: RelayRequest,
+        validateResponse: boolean,
         timeout: number = 60000
     ): Promise<RelayResponse | RpcError> {
         try {
@@ -73,8 +74,17 @@ export class ClientNamespace {
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
                 const relayResponse = RelayResponse.fromJSON(
-                    response
+                    JSON.stringify({request: request, response: JSON.parse(response)})
                 )
+                // Check if the relay response
+                if (validateResponse) {
+                    if (validateRelayResponse(relayResponse) !== undefined){
+                        return new RpcError(
+                            "912",
+                            "Relay response validation failed due to a missmatch between the relay request and relay response"
+                        )
+                    }
+                }
                 return relayResponse
             } else {
                 return new RpcError(

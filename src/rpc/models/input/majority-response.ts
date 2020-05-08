@@ -3,7 +3,8 @@
  */
 import {validateMajorityResponse} from "../../../utils/validator"
 import {typeGuard} from "../../../utils"
-import {RelayResponse} from "../output"
+import {RelayResponse, RelayProofResponse} from "../output"
+import { RelayRequest } from "./relay-request"
 
 
 export class MajorityResponse {
@@ -23,11 +24,7 @@ export class MajorityResponse {
             if (Array.isArray(jsonObject.majority_responses)) {
                 jsonObject.majority_responses.forEach((relay: any) => {
                     if (relay !== null) {
-                        const newRelay = new RelayResponse(
-                            relay.signature,
-                            relay.payload,
-                            relay.proof
-                        )
+                        const newRelay = RelayResponse.fromJSON(JSON.stringify(relay))
                         relays.push(newRelay)
                     }
                 })
