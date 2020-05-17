@@ -1,7 +1,7 @@
 import { IRPCProvider } from "./i-rpc-provider"
 import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
-import { Pocket, PocketAAT } from "../../pocket"
+import { Pocket, PocketAAT, HttpMethod } from "../../pocket"
 import { RelayResponse } from "../models"
 
 /**
@@ -34,8 +34,7 @@ export class PocketRpcProvider implements IRPCProvider {
      */
     public async send(path: string, payload: string): Promise<string | RpcError> {
         try {
-            this.pocket
-            const relayResponse = await this.pocket.sendRelay(payload, this.blockchain, this.aat, undefined, undefined, undefined, path, undefined, false)
+            const relayResponse = await this.pocket.sendRelay(payload, this.blockchain, this.aat, undefined, undefined, HttpMethod.NA, path, undefined, false)
 
             if (typeGuard(relayResponse, RelayResponse)) {
                 return relayResponse.payload
