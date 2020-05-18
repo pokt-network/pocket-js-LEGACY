@@ -6,13 +6,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:11.6
+      - image: circleci/node:12.5
 
     working_directory: ~/repo
 
     steps:
       - checkout
       - run: npm install
-      - run: npm build
-      - run: npm run lint
       - run: npm run test:unit

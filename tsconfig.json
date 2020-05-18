@@ -3,7 +3,6 @@
     /* Basic Options */
     "target": "es5",
     "module": "commonjs",
-    "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,
