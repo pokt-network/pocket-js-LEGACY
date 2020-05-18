@@ -17,9 +17,9 @@ import { RelayMeta } from "./rpc/models/input/relay-meta"
 
 /**
  *
- * HttpMethod enum with the possible Staking status values
+ * HTTPMethod enum with the possible Staking status values
  */
-export enum HttpMethod {
+export enum HTTPMethod {
   POST = "POST",
   GET = "GET",
   DELETE = "DELETE",
@@ -90,7 +90,7 @@ export class Pocket {
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {Configuration} configuration - Pocket configuration object.
    * @param {RelayHeaders} headers - (Optional) An object holding the HTTP Headers.
-   * @param {HttpMethod} method - (Optional) HTTP method for REST API calls.
+   * @param {HTTPMethod} method - (Optional) HTTP method for REST API calls.
    * @param {string} path - (Optional) REST API path.
    * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @returns {ConsensusRelayResponse | ChallengeResponse | Error} - A Consensus Relay Response object, Challenge response or error.
@@ -102,7 +102,7 @@ export class Pocket {
     pocketAAT: PocketAAT,
     configuration: Configuration = this.configuration,
     headers?: RelayHeaders,
-    method: HttpMethod = HttpMethod.NA,
+    method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node
   ): Promise<ConsensusRelayResponse | ChallengeResponse | Error> {
@@ -169,7 +169,7 @@ export class Pocket {
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {Configuration} configuration - Pocket configuration object.
    * @param {RelayHeaders} headers - (Optional) An object holding the HTTP Headers.
-   * @param {string} method - (Optional) HTTP method for REST API calls.
+   * @param {HTTPMethod} method - (Optional) HTTP method for REST API calls.
    * @param {string} path - (Optional) REST API path.
    * @param {Node} node - (Optional) Session node which will receive the Relay.
    * @param {boolean} consensusEnabled - (Optional) True or false if the relay will be sent to multiple nodes for consensus, default is false.
@@ -182,7 +182,7 @@ export class Pocket {
     pocketAAT: PocketAAT,
     configuration: Configuration = this.configuration,
     headers?: RelayHeaders,
-    method: HttpMethod = HttpMethod.NA,
+    method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node,
     consensusEnabled: boolean = false
