@@ -5,12 +5,11 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "./lib",
+    "outDir": "./dist",
     "strict": true,
     "alwaysStrict": true,
     "lib": ["es5", "es6", "dom"],
     "downlevelIteration": true,
-    "resolveJsonModule": true,
     "declaration": true,
     "esModuleInterop": true,
     "watch": false
