@@ -36,6 +36,23 @@ export class RawTxResponse {
                         logs.push(txLogOrError as TxLog)
                     }
                 }
+            } else {
+                // Try to parse error from raw_logs
+                const rawLog = rawTxResObj.raw_log
+                if (rawLog) {
+                    try {
+                        const rawLogObj = JSON.parse(rawLog)
+                        if (typeGuard(rawLogObj, Object)) {
+                            return new Error(`${rawLogObj.message ? `Error Code: ${rawLogObj.code}, Error Message: ${rawLogObj.message}` : "No error message received" }`)
+                        } else {
+                            return new Error(`Error parsing error logs, received raw_log: ${rawLog}`)
+                        }
+                    } catch (rawLogErr) {
+                        return new Error(`Error parsing error logs, received raw_log: ${rawLog}`)
+                    }
+                } else {
+                    return new Error("Unsuccesful transaction, no logs received")
+                }
             }
 
             return new RawTxResponse(
