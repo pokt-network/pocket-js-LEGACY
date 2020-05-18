@@ -22,6 +22,7 @@ import { RelayMeta } from "./rpc/models/input/relay-meta"
 export enum HttpMethod {
   POST = "POST",
   GET = "GET",
+  DELETE = "DELETE",
   NA = ""
 }
 
