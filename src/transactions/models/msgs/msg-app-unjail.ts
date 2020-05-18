@@ -34,4 +34,13 @@ export class MsgAppUnjail extends TxMsg {
             }
         }
     }
+
+    /**
+     * Converts an Msg Object to StdTx
+     * @returns {any} - Msg type key value.
+     * @memberof MsgAppUnjail
+     */
+    public toStdTxMsgObj(): any {
+        return this.toStdSignDocMsgObj()
+    }
 }

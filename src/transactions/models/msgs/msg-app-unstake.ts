@@ -34,4 +34,13 @@ export class MsgAppUnstake extends TxMsg {
             }
         }
     }
+
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgAppUnstake
+     */
+    public toStdTxMsgObj(): any {
+        return this.toStdSignDocMsgObj()
+    }
 }

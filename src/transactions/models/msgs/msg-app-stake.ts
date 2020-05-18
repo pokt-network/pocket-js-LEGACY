@@ -53,6 +53,25 @@ export class MsgAppStake extends TxMsg {
                 chains: this.chains,
                 pubkey: {
                     type: "crypto/ed25519_public_key",
+                    value: this.pubKey.toString("hex")
+                },
+                value: this.amount
+            }
+        }
+    }
+
+    /**
+     * Converts an Msg Object for StdTx encoding
+     * @returns {any} - Msg type key value.
+     * @memberof MsgAppStake
+     */
+    public toStdTxMsgObj(): any {
+        return {
+            type: this.AMINO_KEY,
+            value: {
+                chains: this.chains,
+                pubkey: {
+                    type: "crypto/ed25519_public_key",
                     value: bytesToBase64(this.pubKey)
                 },
                 value: this.amount
