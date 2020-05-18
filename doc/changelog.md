@@ -1,4 +1,4 @@
-## 0.3.2-RC
+## 0.4.0-RC
 - Replaced webpack with browserify.
 - Multiple fixes for the web version.
 - Added HttpMethod enum for sendRelay.
