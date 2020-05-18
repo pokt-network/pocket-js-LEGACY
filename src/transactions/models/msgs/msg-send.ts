@@ -44,4 +44,13 @@ export class MsgSend extends TxMsg {
             } 
         }
     }
+
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgSend
+     */
+    public toStdTxMsgObj(): any {
+        return this.toStdSignDocMsgObj()
+    }
 }

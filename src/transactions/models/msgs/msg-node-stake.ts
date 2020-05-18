@@ -7,6 +7,8 @@ import { validatePublicKey, validateServiceURL } from "../../.."
  */
 export class MsgNodeStake extends TxMsg {
     public readonly AMINO_KEY: string = "pos/MsgStake"
+    public readonly DEFAULT_PORT: string = "443"
+    public readonly DEFAULT_PROTOCOL: string = "https:"
     public readonly pubKey: Buffer
     public readonly chains: string[]
     public readonly amount: string
@@ -24,6 +26,11 @@ export class MsgNodeStake extends TxMsg {
         this.chains = chains
         this.amount = amount
         this.serviceURL = serviceURL
+
+        if (!!!this.serviceURL.port) {
+            this.serviceURL.port = "443"
+        }
+
         const amountNumber = Number(this.amount) || -1
         if (isNaN(amountNumber)) {
             throw new Error("Amount is not a valid number")
@@ -39,9 +46,18 @@ export class MsgNodeStake extends TxMsg {
     }
 
     /**
+     * Returns the parsed serviceURL
+     * @returns {string} - Parsed serviceURL
+     * @memberof MsgNodeStake
+     */
+    private getParsedServiceURL(): string {
+        return `${this.serviceURL.protocol ? this.serviceURL.protocol : this.DEFAULT_PROTOCOL}//${this.serviceURL.hostname}:${this.serviceURL.port ? this.serviceURL.port : this.DEFAULT_PORT}`
+    }
+
+    /**
      * Converts an Msg Object to StdSignDoc
      * @returns {any} - Msg type key value.
-     * @memberof MsgAppUnstake
+     * @memberof MsgNodeStake
      */
     public toStdSignDocMsgObj(): any {
         return {
@@ -50,9 +66,29 @@ export class MsgNodeStake extends TxMsg {
                 chains: this.chains,
                 public_key: {
                     type: "crypto/ed25519_public_key",
+                    value: this.pubKey.toString("hex")
+                },
+                service_url: this.getParsedServiceURL(),
+                value: this.amount
+            }
+        }
+    }
+
+    /**
+     * Converts an Msg Object to StdSignDoc
+     * @returns {any} - Msg type key value.
+     * @memberof MsgNodeStake
+     */
+    public toStdTxMsgObj(): any {
+        return {
+            type: this.AMINO_KEY,
+            value: {
+                chains: this.chains,
+                public_key: {
+                    type: "crypto/ed25519_public_key",
                     value: bytesToBase64(this.pubKey)
                 },
-                service_url: this.serviceURL.toString(),
+                service_url: this.getParsedServiceURL(),
                 value: this.amount
             }
         }

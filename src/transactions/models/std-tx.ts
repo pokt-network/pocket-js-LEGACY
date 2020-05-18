@@ -7,7 +7,7 @@ import { marshalPosmintTx } from "@pokt-network/amino-js"
 /**
  * Represents a StdTx object to send a Transaction
  */
-export class StdTx implements IAminoEncodable{
+export class StdTx implements IAminoEncodable {
     private readonly AMINO_TYPE: string = "posmint/StdTx"
     private readonly stdSignDoc: StdSignDoc
     private readonly signatures: TxSignature[]
@@ -20,7 +20,7 @@ export class StdTx implements IAminoEncodable{
         this.stdSignDoc = stdSignDoc
         this.signatures = signatures
     }
-    
+
     /**
      * Marshal the StdTx class properties with amino
      * @returns {Buffer} - Buffer representation of the marshal object.
@@ -30,7 +30,7 @@ export class StdTx implements IAminoEncodable{
         // Parse PosmintMsg list
         const msgList: PosmintMsg[] = []
         this.stdSignDoc.msgs.forEach(txMsg => {
-            const stdSignMsgObj = txMsg.toStdSignDocMsgObj()
+            const stdSignMsgObj = txMsg.toStdTxMsgObj()
             msgList.push({
                 type: stdSignMsgObj.type,
                 value: stdSignMsgObj.value

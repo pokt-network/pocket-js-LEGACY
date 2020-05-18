@@ -33,4 +33,13 @@ export class MsgNodeUnstake extends TxMsg {
             }
         }
     }
+
+    /**
+     * Converts an Msg Object to StdTx
+     * @returns {any} - Msg type key value.
+     * @memberof MsgNodeUnstake
+     */
+    public toStdTxMsgObj(): any {
+        return this.toStdSignDocMsgObj()
+    }
 }

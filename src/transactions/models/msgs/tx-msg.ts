@@ -4,4 +4,5 @@
  */
 export abstract class TxMsg {
     public abstract toStdSignDocMsgObj(): any
+    public abstract toStdTxMsgObj(): any
 }
