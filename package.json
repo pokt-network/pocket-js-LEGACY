@@ -6,26 +6,25 @@
     },
     "description": "Pocket-js core package with the main functionalities to interact with the Pocket Network.",
     "license": "MIT",
-    "main": "lib/src/index.js",
-    "types": "lib/src/index.d.ts",
+    "main": "index.js",
+    "types": "dist/node.d.ts",
     "files": [
-        "lib/src/**/*",
         "dist/**/*"
     ],
     "directories": {
         "tests": "./tests"
     },
     "scripts": {
-        "browserify": "browserify lib/index.js --standalone PocketLib > dist/bundle.js",
+        "browserify": "browserify browserify.js --standalone PocketJS > dist/web.js",
         "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
         "test:integration": "nyc mocha --require ts-node/register \"tests/src/integration/**/*.ts\" --timeout 0 --exit",
-        "build": "rm -r lib & cti create ./src & npm run lint & tsc",
-        "prepare": "rm -r lib & cti create ./src & npm run lint & tsc",
-        "prepackage": "rm -r lib & cti create ./src & npm run lint & tsc",
+        "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run browserify",
+        "prepare": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run browserify",
+        "prepackage": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run browserify",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "update": "rm -r node_modules/ && rm package-lock.json && npm install",
         "lint": "tslint -p tsconfig.json",
-        "prepublishOnly": "npm run browserify"
+        "prepublishOnly": "npm run build"
     },
     "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/core",
     "homepage": "https://github.com/pokt-network/pocket-js",
