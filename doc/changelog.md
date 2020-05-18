@@ -1,7 +1,7 @@
 ## 0.4.0-RC
 - Replaced webpack with browserify.
 - Multiple fixes for the web version.
-- Added HttpMethod enum for sendRelay.
+- Added HTTPMethod enum for sendRelay.
 - Fixed appStake and appUnstake functions.
 - Updated serviceUrl validation.
 
