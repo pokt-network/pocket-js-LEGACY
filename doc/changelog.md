@@ -1,3 +1,10 @@
+## 0.3.2-RC
+- Replaced webpack with browserify.
+- Multiple fixes for the web version.
+- Added HttpMethod enum for sendRelay.
+- Fixed appStake and appUnstake functions.
+- Updated serviceUrl validation.
+
 ## 0.3.1-RC
 - Fixes for queryBlockTxs RPC Call.
 
