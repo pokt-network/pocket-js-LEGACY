@@ -9,7 +9,7 @@ export class StdSignDoc implements IAminoEncodable{
 
     public readonly entropy: string
     public readonly chainID: string
-    public readonly msgs: TxMsg[]
+    public readonly msg: TxMsg
     public readonly fee: string
     public readonly feeDenom: CoinDenom
     public readonly memo: string
@@ -17,17 +17,17 @@ export class StdSignDoc implements IAminoEncodable{
 
     /**
      * Constructor for the StdSignDoc class
-     * @throws {Error} Throws an error if the msgs list is empty or the fee is not a number
+     * @throws {Error} Throws an error if the fee is not a number
      * @param {string} entropy - Random int64.
      * @param {string} chainId - The chainId of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
      * @param {string | undefined} memo - The memo field for this account
      */
-    public constructor(entropy: string, chainID: string, msgs: TxMsg[], fee: string, feeDenom?: CoinDenom, memo?: string) {
+    public constructor(entropy: string, chainID: string, msg: TxMsg, fee: string, feeDenom?: CoinDenom, memo?: string) {
         this.entropy = entropy
         this.chainID = chainID
-        this.msgs = msgs
+        this.msg = msg
         this.fee = fee
         this.feeDenom = feeDenom ? feeDenom : CoinDenom.Upokt
         this.memo = memo ? memo : ""
@@ -37,8 +37,6 @@ export class StdSignDoc implements IAminoEncodable{
         
         if (isNaN(feeNumber) || feeNumber < 0) {
             throw new Error("Invalid fee or < 0")
-        } else if (msgs.length === 0) {
-            throw new Error("No messages found in the msgs list")
         } else if (this.chainID.length === 0) {
             throw new Error("Empty chain id")
         }
@@ -57,9 +55,7 @@ export class StdSignDoc implements IAminoEncodable{
                 denom: this.feeDenom
             }],
             memo: this.memo,
-            msgs: this.msgs.map((value) => {
-                return value.toStdSignDocMsgObj()
-            })
+            msg: this.msg.toStdSignDocMsgObj()
         }
         try {
             return Buffer.from(JSON.stringify(stdSignDocValue).replace(/\\/g, ""), "utf8")

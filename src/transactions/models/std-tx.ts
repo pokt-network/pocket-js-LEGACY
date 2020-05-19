@@ -10,15 +10,15 @@ import { marshalPosmintTx } from "@pokt-network/amino-js"
 export class StdTx implements IAminoEncodable {
     private readonly AMINO_TYPE: string = "posmint/StdTx"
     private readonly stdSignDoc: StdSignDoc
-    private readonly signatures: TxSignature[]
+    private readonly signature: TxSignature
 
     /**
      * @param stdSignDoc {StdSignDoc} The model form which the bytes for signature were produced
-     * @param signatures {TxSignature[]} The list of signatures for this transaction
+     * @param signature {TxSignature} The signature for this transaction
      */
-    public constructor(stdSignDoc: StdSignDoc, signatures: TxSignature[]) {
+    public constructor(stdSignDoc: StdSignDoc, signature: TxSignature) {
         this.stdSignDoc = stdSignDoc
-        this.signatures = signatures
+        this.signature = signature
     }
 
     /**
@@ -27,30 +27,20 @@ export class StdTx implements IAminoEncodable {
      * @memberof StdTx
      */
     public marshalAmino(): Buffer {
-        // Parse PosmintMsg list
-        const msgList: PosmintMsg[] = []
-        this.stdSignDoc.msgs.forEach(txMsg => {
-            const stdSignMsgObj = txMsg.toStdTxMsgObj()
-            msgList.push({
-                type: stdSignMsgObj.type,
-                value: stdSignMsgObj.value
-            })
-        })
+        // Get the txMsg object
+        const txMsg = this.stdSignDoc.msg.toStdTxMsgObj()
 
-        // Parse PosmintStdSignature list
-        const signatureList: PosmintStdSignature[] = []
-        this.signatures.forEach(txSignature => {
-            signatureList.push(txSignature.toPosmintStdSignature())
-        })
+        // Get the signature object
+        const txSignature = this.signature.toPosmintStdSignature()
 
         // Create StdTx object
         const stdTx: PosmintStdTx = {
-            msg: msgList,
+            msg: txMsg,
             fee: [{
                 amount: this.stdSignDoc.fee,
                 denom: this.stdSignDoc.feeDenom
             }],
-            signatures: signatureList,
+            signature: txSignature,
             memo: this.stdSignDoc.memo,
             entropy: this.stdSignDoc.entropy
         }

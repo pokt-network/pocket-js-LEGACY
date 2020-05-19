@@ -38,9 +38,9 @@ export class MsgSend extends TxMsg {
         return { 
             type: this.AMINO_KEY, 
             value: { 
-                Amount: this.amount,
-                FromAddress: this.fromAddress.toLowerCase(), 
-                ToAddress: this.toAddress.toLowerCase()
+                amount: this.amount,
+                from_address: this.fromAddress.toLowerCase(), 
+                to_address: this.toAddress.toLowerCase()
             } 
         }
     }
