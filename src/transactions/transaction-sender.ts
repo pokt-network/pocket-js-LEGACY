@@ -7,11 +7,11 @@ import { UnlockedAccount } from "../keybase/models"
 import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase } from ".."
 
 export class TransactionSender implements ITransactionSender {
-    private txMgs: TxMsg[] = []
+    private txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
     private pocket: Pocket
     private txSigner?: TransactionSigner
-    private txMsgErrors: Error[] = []
+    private txMsgError?: Error
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
@@ -30,7 +30,7 @@ export class TransactionSender implements ITransactionSender {
     }
 
     /**
-     * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
+     * Signs and submits a transaction to the network given the parameters for each Msg in the Msg list. Will empty the msg list after submission attempt
      * @param {string} chainID - The chainID of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
@@ -47,17 +47,18 @@ export class TransactionSender implements ITransactionSender {
         timeout?: number
     ): Promise<RawTxResponse | RpcError> {
         try { 
-            if (this.txMsgErrors.length === 1) {
-                return RpcError.fromError(this.txMsgErrors[0])
-            } else if (this.txMsgErrors.length > 1) {
-                return new RpcError("0", this.txMsgErrors[0].message + " and another " + (this.txMsgErrors.length - 1) + " errors")
+            if (this.txMsgError !== undefined) {
+                const rpcError = RpcError.fromError(this.txMsgError) 
+                this.txMsg = undefined
+                this.txMsgError = undefined
+                return rpcError
             }
 
-            if (this.txMgs.length === 0) {
+            if (this.txMsg === undefined) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
-            const stdSignDoc = new StdSignDoc(entropy, chainID, this.txMgs, fee, feeDenom, memo)
+            const stdSignDoc = new StdSignDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
             let txSignatureOrError
             const bytesToSign = stdSignDoc.marshalAmino()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
@@ -74,10 +75,11 @@ export class TransactionSender implements ITransactionSender {
 
             const txSignature = txSignatureOrError as TxSignature
             const addressHex = addressFromPublickey(txSignature.pubKey)
-            const transaction = new StdTx(stdSignDoc, [txSignature])
+            const transaction = new StdTx(stdSignDoc, txSignature)
             const encodedTxBytes = transaction.marshalAmino()
-            // Clean messages accumulated on submit
-            this.txMgs = []
+            // Clean message and error
+            this.txMsg = undefined
+            this.txMsgError = undefined
             const response = await this.pocket.rpc()!.client.rawtx(addressHex, encodedTxBytes, timeout)
             
             return response
@@ -100,9 +102,9 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgSend(fromAddress, toAddress, amount))
+            this.txMsg = new MsgSend(fromAddress, toAddress, amount)
         } catch (error) {
-            this.txMsgErrors.push(error)
+            this.txMsgError = error
         }
         return this
     }
@@ -121,9 +123,9 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount))
+            this.txMsg = new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
         } catch (error) {
-            this.txMsgErrors.push(error)
+            this.txMsgError = error
         }
         return this
     }
@@ -138,9 +140,9 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgAppUnstake(address))
+            this.txMsg = new MsgAppUnstake(address)
         } catch (error) {
-            this.txMsgErrors.push(error)
+            this.txMsgError = error
         }
         return this
     }
@@ -155,9 +157,9 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgAppUnjail(address))
+            this.txMsg = new MsgAppUnjail(address)
         } catch (error) {
-            this.txMsgErrors.push(error)
+            this.txMsgError = error
         }
         return this
     }
@@ -179,9 +181,9 @@ export class TransactionSender implements ITransactionSender {
         serviceURL: URL
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL))
+            this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
         } catch (error) {
-            this.txMsgErrors.push(error)
+            this.txMsgError = error
         }
         return this
     }
@@ -196,9 +198,9 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgNodeUnstake(address))
+            this.txMsg = new MsgNodeUnstake(address)
         } catch (error) {
-            this.txMsgErrors.push(error)
+            this.txMsgError = error
         }
         return this
     }
@@ -214,9 +216,9 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMgs.push(new MsgNodeUnjail(address))
+            this.txMsg = new MsgNodeUnjail(address)
         } catch (error) {
-            this.txMsgErrors.push(error)
+            this.txMsgError = error
         }
         return this
     }
