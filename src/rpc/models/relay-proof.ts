@@ -109,8 +109,10 @@ export class RelayProof {
    * @memberof RelayProof
    */
   private static hashRequest(request: RequestHash): string {
-    const requestObj = JSON.stringify(request.toJSON())
-    return Buffer.from(requestObj).toString('hex')
+    const requestObjStr = JSON.stringify(request.toJSON())
+    const hash = sha3_256.create()
+    hash.update(requestObjStr)
+    return hash.hex()
   }
 
 
