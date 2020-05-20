@@ -17,12 +17,12 @@ export class RelayResponse {
   public static fromJSON(json: string): RelayResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const proof = RelayProofResponse.fromJSON(JSON.stringify(jsonObject.response.proof))
+      const proof = RelayProofResponse.fromJSON(JSON.stringify(jsonObject.request.proof))
       const relayRequest = RelayRequest.fromJSON(JSON.stringify(jsonObject.request))
 
       return new RelayResponse(
         jsonObject.response.signature,
-        jsonObject.response.payload,
+        jsonObject.response.response,
         proof,
         relayRequest
       )
