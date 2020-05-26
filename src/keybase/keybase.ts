@@ -12,7 +12,8 @@ import {
     validateAddressHex
 } from "../utils/key-pair"
 import { IKVStore } from ".."
-
+import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 /**
  * @author Luis C. de León <luis@pokt.network>
  * @description The Keybase class allows storage, operations and persistence of accounts.
@@ -423,6 +424,107 @@ export class Keybase {
         }
         const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         return unlockedAccount.privateKey
+    }
+
+    /**
+     * @description Creates a Portable Private Key(PPK) by exporting to an armored JSON
+     * @param {string} privateKey - Account raw private key.
+     * @param {string} password - Desired password for the PPK.
+     * @param {string} hint - (Optional) Private key hint.
+     * @returns {Promise<string | Error>} 
+     * @memberof Keybase
+     */
+    public async exportPPK(
+        privateKey: string,
+        password: string,
+        hint: string = ""
+    ): Promise<string | Error> {
+        // Constants
+        const secParam = 12
+        const ivLength = 12
+        const algorithm = "aes-256-gcm"
+        try {
+            // Generate the salt using the secParam
+            const salt = await bcrypt.genSalt(secParam)
+            const bcryptHash = await bcrypt.hash(password, salt)
+            // Create a sha256-hash using the bcrypt resulted hash
+            const encryptionKeyHex = sha256(bcryptHash)
+            // Create the nonce from the first 12 bytes of the sha256 bcrypt hash
+            const iv = Buffer.allocUnsafe(ivLength);
+            Buffer.from(encryptionKeyHex, "hex").copy(iv, 0, 0, ivLength);
+            // Generate ciphertext by using the privateKey, nonce and sha256 bcrypt hash
+            const cipher = await crypto.createCipheriv(algorithm, Buffer.from(encryptionKeyHex, "hex"), iv)
+            let cipherText = cipher.update(privateKey, "utf8", "hex");
+            cipherText += cipher.final("hex")
+            // Concatenate the iv + ciphertext final + auth tag
+            cipherText = iv.toString("hex") + cipherText + cipher.getAuthTag().toString("hex")
+            // Returns the Armored JSON string
+            return JSON.stringify({
+                kdf: "bcrypt",
+                salt: salt,
+                secparam: secParam.toString(),
+                hint: hint,
+                ciphertext: Buffer.from(cipherText, "hex").toString("base64")
+            })
+        } catch (error) {
+            return error
+        }
+    }
+    /**
+     * @description Imports a Portable Private Key(PPK) an armored JSON and stores in the keybase
+     * @param {string} password - Desired password for the PPK.
+     * @param {string} jsonStr - Armored JSON with the PPK information.
+     * @param {string} passphrase - Desired passphrase to store the account in the keybase.
+     * @returns {Promise<Account | Error>} 
+     * @memberof Keybase
+     */
+    public async importPPk(
+        password: string,
+        jsonStr: string,
+        passphrase: string
+    ): Promise<Account | Error> {
+        if (password.length === 0 || jsonStr.length === 0 || passphrase.length === 0) {
+            return new Error("One or more parameters are empty strings.")
+        }
+        try {
+            // Constants
+            const jsonObject = JSON.parse(jsonStr)
+            const ivLength = Number(jsonObject.secparam);
+            const tagLength = 16;
+            const algorithm = "aes-256-gcm"
+
+            // Retrieve the salt
+            const decryptSalt = jsonObject.salt
+            // Bcrypt hash
+            const bcryptHash = await bcrypt.hash(password, decryptSalt)
+            // Create a sha256-hash key using the bcrypt resulted hash
+            const key = sha256(bcryptHash)
+            const keyBuffer = Buffer.from(key, "hex")
+            // Create a buffer from the ciphertext
+            const inputBuffer = Buffer.from(jsonObject.ciphertext, 'base64');
+
+            // Create empty iv, tag and data constants
+            const iv = Buffer.allocUnsafe(ivLength);
+            const tag = Buffer.allocUnsafe(tagLength);
+            const data = Buffer.alloc(inputBuffer.length - ivLength - tagLength, 0);
+            // Copy the bytes in range for the following
+            inputBuffer.copy(iv, 0, 0, ivLength);
+            inputBuffer.copy(tag, 0, inputBuffer.length - tagLength);
+            inputBuffer.copy(data, 0, ivLength);
+
+            // Create the decipher
+            const decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv)
+            // Set the auth tag
+            decipher.setAuthTag(tag);
+            // Update the decipher with the data to utf8
+            let result = decipher.update(data, undefined, 'utf8');
+            result += decipher.final('utf8');
+
+            // Return the imported account or error
+            return await this.importAccount(Buffer.from(result, "hex"), passphrase)
+        } catch (error) {
+            return error
+        }
     }
 
     // Private interface
