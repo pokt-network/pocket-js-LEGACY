@@ -93,7 +93,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a list of validator nodes', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const validatorResponse = await pocket.rpc()!.query.getValidators(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(1), undefined, 1, 10)
+            const validatorResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(1), undefined, 1, 10)
             expect(typeGuard(validatorResponse, QueryValidatorsResponse)).to.be.true
         }).timeout(0)
 
@@ -288,7 +288,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should returns an error trying to get a list of nodes due to the block height less than 0.', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const nodeResponse = await pocket.rpc()!.query.getValidators(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(-1), undefined, 1, 10)
+            const nodeResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(-1), undefined, 1, 10)
             expect(typeGuard(nodeResponse, RpcError)).to.be.true
         }).timeout(0)
 
