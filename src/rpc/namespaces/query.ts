@@ -237,7 +237,7 @@ export class QueryNamespace {
      * @param {number} timeout - (optional) Request timeout.
      * @memberof QueryNamespace
      */
-    public async getValidators(
+    public async getNodes(
         stakingStatus: StakingStatus = StakingStatus.Staked,
         jailedStatus: JailedStatus = JailedStatus.Unjailed,
         blockHeight: BigInt = BigInt(0),
