@@ -7,7 +7,7 @@
     "description": "Pocket-js core package with the main functionalities to interact with the Pocket Network.",
     "license": "MIT",
     "main": "index.js",
-    "types": "dist/node.d.ts",
+    "types": "dist/index.d.ts",
     "files": [
         "dist/**/*"
     ],
