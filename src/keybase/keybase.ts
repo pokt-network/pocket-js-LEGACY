@@ -11,7 +11,7 @@ import {
     validatePrivateKey,
     validateAddressHex
 } from "../utils/key-pair"
-import { IKVStore } from ".."
+import { IKVStore, Hex } from ".."
 import crypto from 'crypto'
 
 /**
@@ -425,7 +425,68 @@ export class Keybase {
         const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         return unlockedAccount.privateKey
     }
-    
+        /**
+     * @description Creates a Portable Private Key(PPK) using an Account
+     * @param {Account} account - Account object.
+     * @param {string} password - Desired password for the PPK.
+     * @param {string} hint - (Optional) Private key hint.
+     * @param {string} passphrase - Passphrase to store the account in the keybase.
+     * @returns {Promise<string | Error>} 
+     * @memberof Keybase
+     */
+    public async exportPPKfromAccount(
+        account: Account,
+        password: string,
+        hint: string = "",
+        passphrase: string
+    ): Promise<string | Error> {
+        // Verify mandatory parameters
+        if (password.length <= 0 || passphrase.length <= 0) {
+            return new Error("Wrong password or passphrase format, please try again with valid information.")
+        }
+        // Unlock the account
+        const unlockAccountOrError = await this.unlockAccount(account.addressHex, passphrase, 0)
+        if (!typeGuard(unlockAccountOrError, Error)) {
+            // Get the PPK
+            const ppkStrOrError = await this.exportPPK(account.encryptedPrivateKeyHex, password, hint)
+            // Return the ppk or error
+            return ppkStrOrError
+        }else {
+            return unlockAccountOrError
+        }
+    }
+    /**
+     * @description Creates a Portable Private Key(PPK) using an unlocked Account
+     * @param {string} addressHex - Account's address hex.
+     * @param {string} password - Desired password for the PPK.
+     * @param {string} hint - (Optional) Private key hint.
+     * @returns {Promise<string | Error>} 
+     * @memberof Keybase
+     */
+    public async exportPPKfromUnlockedAccount(
+        addressHex: string,
+        password: string,
+        hint: string = ""
+    ): Promise<string | Error> {
+        // Verify mandatory parameters
+        if (!Hex.validateAddress(addressHex) || password.length <= 0) {
+            return new Error("Wrong address or password format, please try again with valid information.")
+        }
+        // Check if the account is unlocked
+        const isUnlocked = await this.isUnlocked(addressHex)
+        if (isUnlocked) {
+            // Retrieve the account
+            const account = await this.getAccount(addressHex)
+            // Check for error
+            if(typeGuard(account, Error)) return account
+            // Get the PPK
+            const ppkStrOrError = await this.exportPPK(account.encryptedPrivateKeyHex, password, hint)
+            // Return the ppk or error
+            return ppkStrOrError
+        }else {
+            return new Error("Account is not unlocked, please unlock account and try again.")
+        }
+    }
     /**
      * @description Creates a Portable Private Key(PPK) by exporting to an armored JSON
      * @param {string} privateKey - Account raw private key.
@@ -439,6 +500,10 @@ export class Keybase {
         password: string,
         hint: string = ""
     ): Promise<string | Error> {
+        // Check parameters
+        if (privateKey.length <= 0 || password.length <= 0) {
+            return new Error("Invalid export PPK properties, please try again with valid information.")
+        }
         // Constants
         const scryptHashLength = 32
         const scryptOptions = {
@@ -448,7 +513,6 @@ export class Keybase {
             maxmem: Number.MAX_SAFE_INTEGER
         }
         const secParam = 12
-        const ivLength = 12
         const algorithm = "aes-256-gcm"
         try {
             // Generate the salt using the secParam
@@ -457,11 +521,11 @@ export class Keybase {
             // Create a sha256-hash using the Scrypt resulted hash
             // const encryptionKeyHex = sha256(scryptHash)
             // Create the nonce from the first 12 bytes of the sha256 Scrypt hash
-            const iv = Buffer.allocUnsafe(ivLength);
-            scryptHash.copy(iv, 0, 0, ivLength);
+            const iv = Buffer.allocUnsafe(secParam)
+            scryptHash.copy(iv, 0, 0, secParam)
             // Generate ciphertext by using the privateKey, nonce and sha256 Scrypt hash
             const cipher = await crypto.createCipheriv(algorithm, scryptHash, iv)
-            let cipherText = cipher.update(privateKey, "utf8", "hex");
+            let cipherText = cipher.update(privateKey, "utf8", "hex")
             cipherText += cipher.final("hex")
             // Concatenate the ciphertext final + auth tag
             cipherText = cipherText + cipher.getAuthTag().toString("hex")
@@ -477,6 +541,48 @@ export class Keybase {
             return error
         }
     }
+        /**
+     * @description Imports a Portable Private Key(PPK) an armored JSON and stores in the keybase
+     * @param {string} password - Desired password for the PPK.
+     * @param {string} salt - Salt hex value.
+     * @param {string} secParam - Security param.
+     * @param {string} hint - (Optional) ppk hint
+     * @param {string} cipherText - Generated ciphertext.
+     * @param {string} passphrase - Passphrase to store in the keybase.
+     * @returns {Promise<Account | Error>} 
+     * @memberof Keybase
+     */
+    public async importPPK(
+        password: string,
+        salt: string,
+        secParam: number = 12,
+        hint: string = "",
+        cipherText: string,
+        passphrase: string
+    ): Promise<Account | Error> {
+        const kdf = "scrypt"
+        // Check the parameters
+        if (password.length === 0 ||
+            passphrase.length === 0
+        ) {
+            return new Error("The password or passphrase is invalid.")
+        }else {
+            // Create a JSON string using the parameters
+            const jsonStr = JSON.stringify({
+                kdf: kdf,
+                salt: salt,
+                secparam: secParam,
+                hint: hint,
+                ciphertext: cipherText
+            })
+            // Validate the jsonStr
+            if (!this.validatePPKJSON(jsonStr)) return new Error("Failed to validate the ppk information, please try again with valid information.")
+            // Create ppk
+            const ppkOrError = await this.importPPKFromJSON(password, jsonStr, passphrase)
+            // Return PPK or Error
+            return ppkOrError
+        }
+    }
     /**
      * @description Imports a Portable Private Key(PPK) an armored JSON and stores in the keybase
      * @param {string} password - Desired password for the PPK.
@@ -485,20 +591,22 @@ export class Keybase {
      * @returns {Promise<Account | Error>} 
      * @memberof Keybase
      */
-    public async importPPk(
+    public async importPPKFromJSON(
         password: string,
         jsonStr: string,
         passphrase: string
     ): Promise<Account | Error> {
-        if (password.length === 0 || jsonStr.length === 0 || passphrase.length === 0) {
+        if (password.length === 0 || 
+            !this.validatePPKJSON(jsonStr) || 
+            passphrase.length === 0) {
             return new Error("One or more parameters are empty strings.")
         }
         try {
             // Constants
             const jsonObject = JSON.parse(jsonStr)
             const scryptHashLength = 32
-            const ivLength = Number(jsonObject.secparam);
-            const tagLength = 16;
+            const ivLength = Number(jsonObject.secparam)
+            const tagLength = 16
             const algorithm = "aes-256-gcm"
             const scryptOptions = {
                 N: 32768,
@@ -510,25 +618,21 @@ export class Keybase {
             const decryptSalt = Buffer.from(jsonObject.salt, "hex")
             // Scrypt hash
             const scryptHash = await crypto.scryptSync(password, decryptSalt, scryptHashLength, scryptOptions)
-            // Create a sha256-hash key using the Scrypt resulted hash
-            // const key = sha256(scryptHash)
-            // const keyBuffer = Buffer.from(key, "hex")
-            const keyBuffer = scryptHash
             // Create a buffer from the ciphertext
-            const inputBuffer = Buffer.from(jsonObject.ciphertext, 'base64');
+            const inputBuffer = Buffer.from(jsonObject.ciphertext, 'base64')
 
             // Create empty iv, tag and data constants
-            const iv = keyBuffer.slice(0, ivLength);
-            const tag = inputBuffer.slice(inputBuffer.length - tagLength);
-            const data = inputBuffer.slice(0, inputBuffer.length - tagLength);
+            const iv = scryptHash.slice(0, ivLength)
+            const tag = inputBuffer.slice(inputBuffer.length - tagLength)
+            const data = inputBuffer.slice(0, inputBuffer.length - tagLength)
 
             // Create the decipher
-            const decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv)
+            const decipher = crypto.createDecipheriv(algorithm, scryptHash, iv)
             // Set the auth tag
-            decipher.setAuthTag(tag);
+            decipher.setAuthTag(tag)
             // Update the decipher with the data to utf8
-            let result = decipher.update(data, undefined, "utf8");
-            result += decipher.final("utf8");
+            let result = decipher.update(data, undefined, "utf8")
+            result += decipher.final("utf8")
 
             // Return the imported account or error
             return await this.importAccount(Buffer.from(result, "hex"), passphrase)
@@ -732,5 +836,32 @@ export class Keybase {
      */
     private generateAccountStoreKeyFromAddressHex(addressHex: string): string {
         return this.ACCOUNT_STORE_PREFIX + addressHex
+    }
+
+    /**
+     * Validates the PPK json string properties
+     * @param {string} jsonStr - JSON String holding the ppk information.
+     * @returns {boolean} True or false.
+     * @memberof Keybase
+     */
+    private validatePPKJSON(jsonStr: string): boolean{
+        const jsonObject = JSON.parse(jsonStr)
+        // Check if undefined
+        if (jsonObject.kdf === undefined ||
+            jsonObject.salt === undefined ||
+            jsonObject.secparam === undefined ||
+            jsonObject.ciphertext === undefined
+        ) {
+            return false
+        }
+        // Validate the properties
+        if (jsonObject.kdf !== "scrypt" ||
+            !Hex.isHex(jsonObject.salt) ||
+            jsonObject.secparam <= 0 ||
+            jsonObject.ciphertext.length <= 0
+        ) {
+            return false
+        }
+        return true
     }
 }
