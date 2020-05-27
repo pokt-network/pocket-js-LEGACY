@@ -425,7 +425,7 @@ export class Keybase {
         const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         return unlockedAccount.privateKey
     }
-        /**
+    /**
      * @description Creates a Portable Private Key(PPK) using an Account
      * @param {Account} account - Account object.
      * @param {string} password - Desired password for the PPK.
@@ -541,7 +541,7 @@ export class Keybase {
             return error
         }
     }
-        /**
+    /**
      * @description Imports a Portable Private Key(PPK) an armored JSON and stores in the keybase
      * @param {string} password - Desired password for the PPK.
      * @param {string} salt - Salt hex value.
