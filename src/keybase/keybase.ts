@@ -425,7 +425,7 @@ export class Keybase {
         const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         return unlockedAccount.privateKey
     }
-
+    
     /**
      * @description Creates a Portable Private Key(PPK) by exporting to an armored JSON
      * @param {string} privateKey - Account raw private key.
@@ -440,12 +440,13 @@ export class Keybase {
         hint: string = ""
     ): Promise<string | Error> {
         // Constants
+        const bcryptVersion = "a"
         const secParam = 12
         const ivLength = 12
         const algorithm = "aes-256-gcm"
         try {
             // Generate the salt using the secParam
-            const salt = await bcrypt.genSalt(secParam)
+            const salt = await bcrypt.genSaltSync(secParam, bcryptVersion)
             const bcryptHash = await bcrypt.hash(password, salt)
             // Create a sha256-hash using the bcrypt resulted hash
             const encryptionKeyHex = sha256(bcryptHash)
@@ -456,8 +457,8 @@ export class Keybase {
             const cipher = await crypto.createCipheriv(algorithm, Buffer.from(encryptionKeyHex, "hex"), iv)
             let cipherText = cipher.update(privateKey, "utf8", "hex");
             cipherText += cipher.final("hex")
-            // Concatenate the iv + ciphertext final + auth tag
-            cipherText = iv.toString("hex") + cipherText + cipher.getAuthTag().toString("hex")
+            // Concatenate the ciphertext final + auth tag
+            cipherText = cipherText + cipher.getAuthTag().toString("hex")
             // Returns the Armored JSON string
             return JSON.stringify({
                 kdf: "bcrypt",
@@ -504,21 +505,17 @@ export class Keybase {
             const inputBuffer = Buffer.from(jsonObject.ciphertext, 'base64');
 
             // Create empty iv, tag and data constants
-            const iv = Buffer.allocUnsafe(ivLength);
-            const tag = Buffer.allocUnsafe(tagLength);
-            const data = Buffer.alloc(inputBuffer.length - ivLength - tagLength, 0);
-            // Copy the bytes in range for the following
-            inputBuffer.copy(iv, 0, 0, ivLength);
-            inputBuffer.copy(tag, 0, inputBuffer.length - tagLength);
-            inputBuffer.copy(data, 0, ivLength);
+            const iv = keyBuffer.slice(0, ivLength);
+            const tag = inputBuffer.slice(inputBuffer.length - tagLength);
+            const data = inputBuffer.slice(0, inputBuffer.length - tagLength);
 
             // Create the decipher
             const decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv)
             // Set the auth tag
             decipher.setAuthTag(tag);
             // Update the decipher with the data to utf8
-            let result = decipher.update(data, undefined, 'utf8');
-            result += decipher.final('utf8');
+            let result = decipher.update(data, undefined, "utf8");
+            result += decipher.final("utf8");
 
             // Return the imported account or error
             return await this.importAccount(Buffer.from(result, "hex"), passphrase)

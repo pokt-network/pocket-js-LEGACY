@@ -1,4 +1,3 @@
-import { Node } from "../rpc/models/node"
 /**
  *
  *
