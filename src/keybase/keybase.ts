@@ -510,7 +510,7 @@ export class Keybase {
             N: 32768,
             r: 8,
             p: 1,
-            maxmem: Number.MAX_SAFE_INTEGER
+            maxmem: 4294967290
         }
         const secParam = 12
         const algorithm = "aes-256-gcm"
@@ -612,7 +612,7 @@ export class Keybase {
                 N: 32768,
                 r: 8,
                 p: 1,
-                maxmem: Number.MAX_SAFE_INTEGER
+                maxmem: 4294967290
             }
             // Retrieve the salt
             const decryptSalt = Buffer.from(jsonObject.salt, "hex")
