@@ -12,8 +12,8 @@ import {
     validateAddressHex
 } from "../utils/key-pair"
 import { IKVStore } from ".."
-import bcrypt from 'bcrypt'
 import crypto from 'crypto'
+
 /**
  * @author Luis C. de León <luis@pokt.network>
  * @description The Keybase class allows storage, operations and persistence of accounts.
@@ -440,29 +440,35 @@ export class Keybase {
         hint: string = ""
     ): Promise<string | Error> {
         // Constants
-        const bcryptVersion = "a"
+        const scryptHashLength = 32
+        const scryptOptions = {
+            N: 32768,
+            r: 8,
+            p: 1,
+            maxmem: Number.MAX_SAFE_INTEGER
+        }
         const secParam = 12
         const ivLength = 12
         const algorithm = "aes-256-gcm"
         try {
             // Generate the salt using the secParam
-            const salt = await bcrypt.genSaltSync(secParam, bcryptVersion)
-            const bcryptHash = await bcrypt.hash(password, salt)
-            // Create a sha256-hash using the bcrypt resulted hash
-            const encryptionKeyHex = sha256(bcryptHash)
-            // Create the nonce from the first 12 bytes of the sha256 bcrypt hash
+            const salt = await crypto.randomBytes(16)
+            const scryptHash = await crypto.scryptSync(password, salt, scryptHashLength, scryptOptions)
+            // Create a sha256-hash using the Scrypt resulted hash
+            // const encryptionKeyHex = sha256(scryptHash)
+            // Create the nonce from the first 12 bytes of the sha256 Scrypt hash
             const iv = Buffer.allocUnsafe(ivLength);
-            Buffer.from(encryptionKeyHex, "hex").copy(iv, 0, 0, ivLength);
-            // Generate ciphertext by using the privateKey, nonce and sha256 bcrypt hash
-            const cipher = await crypto.createCipheriv(algorithm, Buffer.from(encryptionKeyHex, "hex"), iv)
+            scryptHash.copy(iv, 0, 0, ivLength);
+            // Generate ciphertext by using the privateKey, nonce and sha256 Scrypt hash
+            const cipher = await crypto.createCipheriv(algorithm, scryptHash, iv)
             let cipherText = cipher.update(privateKey, "utf8", "hex");
             cipherText += cipher.final("hex")
             // Concatenate the ciphertext final + auth tag
             cipherText = cipherText + cipher.getAuthTag().toString("hex")
             // Returns the Armored JSON string
             return JSON.stringify({
-                kdf: "bcrypt",
-                salt: salt,
+                kdf: "scrypt",
+                salt: salt.toString("hex"),
                 secparam: secParam.toString(),
                 hint: hint,
                 ciphertext: Buffer.from(cipherText, "hex").toString("base64")
@@ -490,17 +496,24 @@ export class Keybase {
         try {
             // Constants
             const jsonObject = JSON.parse(jsonStr)
+            const scryptHashLength = 32
             const ivLength = Number(jsonObject.secparam);
             const tagLength = 16;
             const algorithm = "aes-256-gcm"
-
+            const scryptOptions = {
+                N: 32768,
+                r: 8,
+                p: 1,
+                maxmem: Number.MAX_SAFE_INTEGER
+            }
             // Retrieve the salt
-            const decryptSalt = jsonObject.salt
-            // Bcrypt hash
-            const bcryptHash = await bcrypt.hash(password, decryptSalt)
-            // Create a sha256-hash key using the bcrypt resulted hash
-            const key = sha256(bcryptHash)
-            const keyBuffer = Buffer.from(key, "hex")
+            const decryptSalt = Buffer.from(jsonObject.salt, "hex")
+            // Scrypt hash
+            const scryptHash = await crypto.scryptSync(password, decryptSalt, scryptHashLength, scryptOptions)
+            // Create a sha256-hash key using the Scrypt resulted hash
+            // const key = sha256(scryptHash)
+            // const keyBuffer = Buffer.from(key, "hex")
+            const keyBuffer = scryptHash
             // Create a buffer from the ciphertext
             const inputBuffer = Buffer.from(jsonObject.ciphertext, 'base64');
 
