@@ -12,7 +12,8 @@ import {
     validateAddressHex
 } from "../utils/key-pair"
 import { IKVStore, Hex } from ".."
-import crypto from 'crypto'
+import * as cryptoLib from 'crypto'
+import scrypt from "scrypt-js"
 
 /**
  * @author Luis C. de León <luis@pokt.network>
@@ -516,15 +517,14 @@ export class Keybase {
         const algorithm = "aes-256-gcm"
         try {
             // Generate the salt using the secParam
-            const salt = await crypto.randomBytes(16)
-            const scryptHash = await crypto.scryptSync(password, salt, scryptHashLength, scryptOptions)
-            // Create a sha256-hash using the Scrypt resulted hash
-            // const encryptionKeyHex = sha256(scryptHash)
+            const salt = await cryptoLib.randomBytes(16)
+            const scryptHash = await scrypt.syncScrypt(Buffer.from(password, "utf8"), salt, scryptOptions.N, scryptOptions.r, scryptOptions.p, scryptHashLength)
             // Create the nonce from the first 12 bytes of the sha256 Scrypt hash
+            const scryptHashBuffer = Buffer.from(scryptHash)
             const iv = Buffer.allocUnsafe(secParam)
-            scryptHash.copy(iv, 0, 0, secParam)
+            scryptHashBuffer.copy(iv, 0, 0, secParam)
             // Generate ciphertext by using the privateKey, nonce and sha256 Scrypt hash
-            const cipher = await crypto.createCipheriv(algorithm, scryptHash, iv)
+            const cipher = await cryptoLib.createCipheriv(algorithm, scryptHashBuffer, iv)
             let cipherText = cipher.update(privateKey, "utf8", "hex")
             cipherText += cipher.final("hex")
             // Concatenate the ciphertext final + auth tag
@@ -617,7 +617,7 @@ export class Keybase {
             // Retrieve the salt
             const decryptSalt = Buffer.from(jsonObject.salt, "hex")
             // Scrypt hash
-            const scryptHash = await crypto.scryptSync(password, decryptSalt, scryptHashLength, scryptOptions)
+            const scryptHash = await scrypt.syncScrypt(Buffer.from(password, "utf8"), decryptSalt, scryptOptions.N, scryptOptions.r, scryptOptions.p, scryptHashLength)
             // Create a buffer from the ciphertext
             const inputBuffer = Buffer.from(jsonObject.ciphertext, 'base64')
 
@@ -627,7 +627,7 @@ export class Keybase {
             const data = inputBuffer.slice(0, inputBuffer.length - tagLength)
 
             // Create the decipher
-            const decipher = crypto.createDecipheriv(algorithm, scryptHash, iv)
+            const decipher = cryptoLib.createDecipheriv(algorithm, Buffer.from(scryptHash), iv)
             // Set the auth tag
             decipher.setAuthTag(tag)
             // Update the decipher with the data to utf8
