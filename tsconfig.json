@@ -17,6 +17,7 @@
     "node_modules",
     "**/*.spec.ts",
     "lib",
-    "tests"
+    "tests",
+    "build"
   ]
 }
