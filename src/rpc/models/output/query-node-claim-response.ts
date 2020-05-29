@@ -1,4 +1,4 @@
-import { QueryNodeReceiptsResponse } from "./query-node-receipts-response"
+import { MsgClaim } from "./msg-claim"
 
 /**
  *
@@ -15,27 +15,27 @@ export class QueryNodeClaimResponse {
    */
   public static fromJSON(json: string): QueryNodeClaimResponse {
     try {
-      const nodeReceiptsResponse = QueryNodeReceiptsResponse.fromJSON(json)
+      const msgClaim = MsgClaim.fromJSON(json)
 
       return new QueryNodeClaimResponse(
-        nodeReceiptsResponse
+        msgClaim
       )
     } catch (error) {
       throw error
     }
   }
 
-  public readonly nodeReceiptsResponse: QueryNodeReceiptsResponse
+  public readonly msgClaim: MsgClaim
 
   /**
    * Query Node Claim Response.
    * @constructor
-   * @param {QueryNodeReceiptsResponse} nodeReceiptsResponse - Node receipts response object.
+   * @param {MsgClaim} msgClaim - Message claim object.
    */
   constructor(
-    nodeReceiptsResponse: QueryNodeReceiptsResponse
+    msgClaim: MsgClaim
   ) {
-    this.nodeReceiptsResponse = nodeReceiptsResponse
+    this.msgClaim = msgClaim
 
     if (!this.isValid()) {
       throw new TypeError("Invalid QueryNodeClaimResponse properties.")
@@ -48,7 +48,7 @@ export class QueryNodeClaimResponse {
    * @memberof QueryNodeClaimResponse
    */
   public toJSON() {
-    return this.nodeReceiptsResponse.toJSON()
+    return this.msgClaim.toJSON()
   }
   /**
    *
@@ -57,6 +57,6 @@ export class QueryNodeClaimResponse {
    * @memberof QueryNodeClaimResponse
    */
   public isValid(): boolean {
-    return this.nodeReceiptsResponse.isValid()
+    return this.msgClaim.isValid()
   }
 }

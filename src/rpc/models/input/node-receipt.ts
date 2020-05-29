@@ -36,6 +36,7 @@ export class NodeReceipt {
   public readonly sessionBlockHeight: BigInt
   public readonly height: BigInt
   public readonly receiptType: string
+
   /**
    * Node Receipt.
    * @constructor

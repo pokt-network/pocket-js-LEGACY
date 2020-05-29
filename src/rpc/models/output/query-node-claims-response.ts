@@ -1,4 +1,5 @@
 import { StoredReceipt } from "../stored-receipt"
+import { MsgClaim } from "./msg-claim"
 
 /**
  *
@@ -15,27 +16,33 @@ export class QueryNodeClaimsResponse {
    */
   public static fromJSON(json: string): QueryNodeClaimsResponse {
     try {
-      const storedReceipt = StoredReceipt.fromJSON(json)
+      const jsonObject = JSON.parse(json)
+      const msgClaims: MsgClaim[] = []
+
+      jsonObject.forEach((claim: any) => {
+        const msgClaim = MsgClaim.fromJSON(JSON.stringify(claim))
+        msgClaims.push(msgClaim)
+      })
 
       return new QueryNodeClaimsResponse(
-        storedReceipt
+        msgClaims
       )
     } catch (error) {
       throw error
     }
   }
 
-  public readonly storedReceipt: StoredReceipt
+  public readonly msgClaims: MsgClaim[]
 
   /**
    * Query Node Claims Response.
    * @constructor
-   * @param {StoredReceipt} storedReceipt - Stored receipt object.
+   * @param {MsgClaim[]} msgClaims - Stored receipt object.
    */
   constructor(
-    storedReceipt: StoredReceipt
+    msgClaims: MsgClaim[]
   ) {
-    this.storedReceipt = storedReceipt
+    this.msgClaims = msgClaims
 
     if (!this.isValid()) {
       throw new TypeError("Invalid QueryNodeClaimsResponse properties.")
@@ -48,7 +55,7 @@ export class QueryNodeClaimsResponse {
    * @memberof QueryNodeClaimsResponse
    */
   public toJSON() {
-    return this.storedReceipt.toJSON()
+    return JSON.parse(JSON.stringify(this.msgClaims))
   }
   /**
    *
@@ -57,6 +64,11 @@ export class QueryNodeClaimsResponse {
    * @memberof QueryNodeClaimsResponse
    */
   public isValid(): boolean {
-    return this.storedReceipt.isValid()
+    this.msgClaims.forEach(msg => {
+      if (!msg.isValid()) {
+        return false
+      }
+    })
+    return true
   }
 }
