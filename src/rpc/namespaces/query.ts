@@ -7,6 +7,8 @@ import { QueryAccountTxsResponse } from "../models/output/query-account-txs-resp
 import { JailedStatus } from "../models/jailed-status"
 import { QueryValidatorsResponse } from "../models"
 import { QueryBlockTxsResponse } from "../models/output/query-block-txs-response"
+import { QueryNodeClaimResponse } from "../models/output/query-node-claim-response"
+import { QueryNodeClaimsResponse } from "../models/output/query-node-claims-response"
 
 export class QueryNamespace {
     public readonly rpcProvider: IRPCProvider
@@ -384,6 +386,8 @@ export class QueryNamespace {
     public async getNodeReceipts(
         address: string,
         blockHeight: BigInt = BigInt(0),
+        page: number = 1,
+        perPage: number = 30,
         timeout: number = 60000
     ): Promise<QueryNodeReceiptsResponse | RpcError> {
         try {
@@ -397,7 +401,9 @@ export class QueryNamespace {
 
             const payload = JSON.stringify({
                 address: address,
-                height: Number(blockHeight.toString())
+                height: Number(blockHeight.toString()),
+                page: page,
+                per_page: perPage
             })
 
             const response = await this.rpcProvider.send(
@@ -439,11 +445,11 @@ export class QueryNamespace {
                 return new RpcError("0", "Invalid Node Receipt")
             }
 
-            const payload = JSON.stringify(nodeReceipt.toJSON())
+            const payload = nodeReceipt.toJSON()
 
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeReceipt.toString(),
-                payload,
+                JSON.stringify(payload),
                 timeout
             )
 
@@ -823,6 +829,100 @@ export class QueryNamespace {
                     response
                 )
                 return queryAccountTxsResponse
+            } else {
+                return new RpcError(
+                    response.code,
+                    "Failed to retrieve the supply information: " + response.message
+                )
+            }
+        } catch (err) {
+            return new RpcError("0", err)
+        }
+    }
+    /**
+     * Returns the list of all pending claims submitted by node address at height,  height = 0 is used as latest
+     * @param {string} address - Node's address.
+     * @param {BigInt} height - Block height.
+     * @param {nuber} page - (Optional) Page number, default 1.
+     * @param {nuber} perPage - (Optional) Per page amount of records, default 30.
+     * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
+     * @memberof QueryNamespace
+     */
+    public async getNodeClaim(
+        address: string,
+        height: BigInt,
+        page: number = 1,
+        perPage: number = 30,
+        timeout: number = 60000
+    ): Promise<QueryNodeClaimResponse | RpcError> {
+        try {
+            if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
+                return new RpcError("0", "Invalid Address Hex")
+            }
+
+            const payload = JSON.stringify(
+                {
+                    address: address,
+                    height: Number(height.toString()),
+                    page: page,
+                    per_page: perPage
+                }
+            )
+
+            const response = await this.rpcProvider.send(
+                V1RPCRoutes.NodeClaim.toString(),
+                payload,
+                timeout
+            )
+
+            // Check if response is an error
+            if (!typeGuard(response, RpcError)) {
+                const queryNodeClaimResponse = QueryNodeClaimResponse.fromJSON(
+                    response
+                )
+                return queryNodeClaimResponse
+            } else {
+                return new RpcError(
+                    response.code,
+                    "Failed to retrieve the supply information: " + response.message
+                )
+            }
+        } catch (err) {
+            return new RpcError("0", err)
+        }
+    }
+    /**
+     * Returns the node pending claim for specific session
+     * @param {string} address - Node's address.
+     * @param {BigInt} height - Block height.
+     * @param {nuber} page - (Optional) Page number, default 1.
+     * @param {nuber} perPage - (Optional) Per page amount of records, default 30.
+     * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
+     * @memberof QueryNamespace
+     */
+    public async getNodeClaims(
+        nodeReceipt: NodeReceipt, 
+        timeout: number = 60000
+    ): Promise<QueryNodeClaimsResponse | RpcError> {
+        try {
+            if (nodeReceipt.isValid()) {
+                return new RpcError("0", "Invalid Node receipt")
+            }
+
+            const payload = JSON.stringify(nodeReceipt.toJSON())
+
+            const response = await this.rpcProvider.send(
+                V1RPCRoutes.NodeClaims.toString(),
+                payload,
+                timeout
+            )
+
+            // Check if response is an error
+            if (!typeGuard(response, RpcError)) {
+                const queryNodeClaimsResponse = QueryNodeClaimsResponse.fromJSON(
+                    response
+                )
+                return queryNodeClaimsResponse
             } else {
                 return new RpcError(
                     response.code,
