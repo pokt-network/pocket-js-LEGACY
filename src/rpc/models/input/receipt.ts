@@ -1,29 +1,30 @@
 import { Hex } from "../../../utils"
+import { EvidenceType } from "../evidence-type"
 
 /**
  *
  *
- * @class NodeReceipt
+ * @class Receipt
  */
-export class NodeReceipt {
+export class Receipt {
   /**
    *
-   * Creates a NodeReceipt object using a JSON string
+   * Creates a Receipt object using a JSON string
    * @param {String} json - JSON string.
-   * @returns {NodeReceipt} - NodeReceipt object.
-   * @memberof NodeReceipt
+   * @returns {Receipt} - Receipt object.
+   * @memberof Receipt
    */
-  public static fromJSON(json: string): NodeReceipt {
+  public static fromJSON(json: string): Receipt {
     try {
       const jsonObject = JSON.parse(json)
-
-      return new NodeReceipt(
+      const evidenceType = EvidenceType.getType(jsonObject.evidence_type)
+      return new Receipt(
         jsonObject.address,
         jsonObject.blockchain,
         jsonObject.app_pubkey,
         BigInt(jsonObject.session_block_height),
         BigInt(jsonObject.height),
-        jsonObject.evidence_type
+        evidenceType
       )
     } catch (error) {
       throw error
@@ -35,17 +36,17 @@ export class NodeReceipt {
   public readonly appPubKey: string
   public readonly sessionBlockHeight: BigInt
   public readonly height: BigInt
-  public readonly receiptType: string
+  public readonly evidenceType: EvidenceType
 
   /**
-   * Node Receipt.
+   * Receipt.
    * @constructor
    * @param {string} address - Node address.
    * @param {string} blockchain - Blockchain hash.
    * @param {string} appPubKey - Application Key associated with a client.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @param {BigInt} height - Current height.
-   * @param {string} receiptType - Receipt type.
+   * @param {EvidenceType} evidenceType - Evidence type.
    */
   constructor(
     address: string,
@@ -53,24 +54,24 @@ export class NodeReceipt {
     appPubKey: string,
     sessionBlockHeight: BigInt,
     height: BigInt,
-    receiptType: string
+    evidenceType: EvidenceType
   ) {
     this.address = address
     this.blockchain = blockchain
     this.appPubKey = appPubKey
     this.sessionBlockHeight = sessionBlockHeight
     this.height = height
-    this.receiptType = receiptType
+    this.evidenceType = evidenceType
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid NodeReceipt properties.")
+      throw new TypeError("Invalid Receipt properties.")
     }
   }
   /**
    *
-   * Creates a JSON object with the NodeReceipt properties
+   * Creates a JSON object with the Receipt properties
    * @returns {JSON} - JSON Object.
-   * @memberof NodeReceipt
+   * @memberof Receipt
    */
   public toJSON() {
     return {
@@ -79,14 +80,14 @@ export class NodeReceipt {
       blockchain: this.blockchain,
       height: Number(this.height.toString()),
       session_block_height: Number(this.sessionBlockHeight.toString()),
-      receipt_type: this.receiptType
+      evidence_type: this.evidenceType
     }
   }
   /**
    *
-   * Check if the NodeReceipt object is valid
+   * Check if the Receipt object is valid
    * @returns {boolean} - True or false.
-   * @memberof NodeReceipt
+   * @memberof Receipt
    */
   public isValid(): boolean {
     return (
@@ -97,7 +98,7 @@ export class NodeReceipt {
       Hex.byteLength(this.appPubKey) === 32 &&
       this.sessionBlockHeight !== undefined &&
       this.height !== undefined &&
-      this.receiptType.length > 0
+      this.evidenceType >= 0 
     )
   }
 }

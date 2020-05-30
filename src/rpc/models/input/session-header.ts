@@ -17,8 +17,7 @@ export class SessionHeader {
       return new SessionHeader(
         jsonObject.app_public_key,
         jsonObject.chain,
-        BigInt(jsonObject.session_height),
-        Number(jsonObject.session_timestamp)
+        BigInt(jsonObject.session_height)
       )
     } catch (error) {
       throw error

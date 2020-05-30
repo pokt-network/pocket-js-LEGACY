@@ -1,4 +1,5 @@
 import { NodeReceipt } from "../input"
+import { Receipt } from "../input/receipt"
 /**
  *
  *
@@ -15,7 +16,7 @@ export class QueryNodeReceiptResponse {
   public static fromJSON(json: string): QueryNodeReceiptResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const storedReceipt = NodeReceipt.fromJSON(JSON.stringify(jsonObject))
+      const storedReceipt = Receipt.fromJSON(JSON.stringify(jsonObject))
       
       return new QueryNodeReceiptResponse(storedReceipt)
     } catch (error) {
@@ -23,14 +24,14 @@ export class QueryNodeReceiptResponse {
     }
   }
 
-  public readonly nodeReceipt: NodeReceipt
+  public readonly nodeReceipt: Receipt
 
   /**
    * QueryNodeReceiptResponse.
    * @constructor
-   * @param {storedReceipt} nodeReceipt - Amount staked by the node.
+   * @param {Receipt} nodeReceipt - Amount staked by the node.
    */
-  constructor(nodeReceipt: NodeReceipt) {
+  constructor(nodeReceipt: Receipt) {
     this.nodeReceipt = nodeReceipt
   }
   /**
