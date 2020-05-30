@@ -395,7 +395,7 @@ export class QueryNamespace {
                 return new RpcError("101", "block height can't be lower than 0")
             }
 
-            if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
+            if (!Hex.validateAddress(address)) {
                 return new RpcError("0", "Invalid Address Hex")
             }
 
@@ -414,7 +414,6 @@ export class QueryNamespace {
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-
                 const queryNodeReceiptsResponse = QueryNodeReceiptsResponse.fromJSON(
                     response
                 )
@@ -437,12 +436,19 @@ export class QueryNamespace {
      * @memberof QueryNamespace
      */
     public async getNodeReceipt(
-        nodeReceipt: NodeReceipt,
+        address: string,
+        appPubKey: string,
+        blockchain: string,
+        height: BigInt,
+        sessionBlockHeight: BigInt,
+        receiptType : string,
         timeout: number = 60000
     ): Promise<QueryNodeReceiptResponse | RpcError> {
         try {
+            const nodeReceipt = new NodeReceipt(address, blockchain, appPubKey, sessionBlockHeight, height, receiptType)
+
             if (!nodeReceipt.isValid()) {
-                return new RpcError("0", "Invalid Node Receipt")
+                return new RpcError("0", "Invalid Node Receipt information")
             }
 
             const payload = nodeReceipt.toJSON()
@@ -868,7 +874,7 @@ export class QueryNamespace {
             )
 
             const response = await this.rpcProvider.send(
-                V1RPCRoutes.NodeClaim.toString(),
+                V1RPCRoutes.QueryNodeClaim.toString(),
                 payload,
                 timeout
             )
@@ -921,7 +927,7 @@ export class QueryNamespace {
             )
 
             const response = await this.rpcProvider.send(
-                V1RPCRoutes.NodeClaims.toString(),
+                V1RPCRoutes.QueryNodeClaims.toString(),
                 payload,
                 timeout
             )
@@ -932,6 +938,50 @@ export class QueryNamespace {
                     response
                 )
                 return queryNodeClaimsResponse
+            } else {
+                return new RpcError(
+                    response.code,
+                    "Failed to retrieve the supply information: " + response.message
+                )
+            }
+        } catch (err) {
+            return new RpcError("0", err)
+        }
+    }
+    /**
+     * Returns the node parameters at the specified height,  height = 0 is used as latest
+     * @param {nuber} height - Block height.
+     * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
+     * @memberof QueryNamespace
+     */
+    public async getAllParams(
+        height: BigInt,
+        timeout: number = 60000
+    ): Promise<QueryNodeClaimResponse | RpcError> {
+        try {
+            
+            if (Number(height.toString()) < 0) {
+                return new RpcError("0", "Block height can't be lower than 0")
+            }
+
+            const payload = JSON.stringify(
+                {
+                    height: Number(height.toString())
+                }
+            )
+
+            const response = await this.rpcProvider.send(
+                V1RPCRoutes.QueryAllParams.toString(),
+                payload,
+                timeout
+            )
+
+            // Check if response is an error
+            if (!typeGuard(response, RpcError)) {
+                const queryNodeClaimResponse = QueryNodeClaimResponse.fromJSON(
+                    response
+                )
+                return queryNodeClaimResponse
             } else {
                 return new RpcError(
                     response.code,

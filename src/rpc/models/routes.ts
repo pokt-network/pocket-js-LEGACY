@@ -27,10 +27,11 @@ export enum V1RPCRoutes {
   QueryPocketParams = Versions.V1 + "/query/pocketparams",
   QuerySupportedChains = Versions.V1 + "/query/supportedchains",
   QuerySupply = Versions.V1 + "/query/supply",
+  QueryNodeClaim = Versions.V1 + "/query/nodeclaim",
+  QueryNodeClaims = Versions.V1 + "/query/nodeclaims",
+  QueryAllParams = Versions.V1 + "/query/allparams",
   ClientRawTx = Versions.V1 + "/client/rawtx",
   ClientDispatch = Versions.V1 + "/client/dispatch",
   ClientRelay = Versions.V1 + "/client/relay",
-  ClientChallenge = Versions.V1 + "/client/challenge",
-  NodeClaim = Versions.V1 + "/client/nodeclaim",
-  NodeClaims = Versions.V1 + "/client/nodeclaims"
+  ClientChallenge = Versions.V1 + "/client/challenge"
 }

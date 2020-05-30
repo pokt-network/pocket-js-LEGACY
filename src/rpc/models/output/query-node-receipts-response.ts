@@ -12,11 +12,11 @@ export class QueryNodeReceiptsResponse {
    * @returns {QueryNodeReceiptsResponse} - QueryNodeReceiptsResponse object.
    * @memberof QueryNodeReceiptsResponse
    */
-  public static fromJSON(json: string): QueryNodeReceiptsResponse {
+  public static fromJSON(json: any): QueryNodeReceiptsResponse {
     try {
-      const jsonObject = JSON.parse(json)
+      const jsonObject = JSON.parse(JSON.stringify(json))
       const receipts: StoredReceipt[] = []
-  
+
       jsonObject.result.forEach(function(receiptJSON: {}) {
         const receipt = StoredReceipt.fromJSON(JSON.stringify(receiptJSON))
         receipts.push(receipt)
@@ -25,7 +25,7 @@ export class QueryNodeReceiptsResponse {
         return new QueryNodeReceiptsResponse(
           receipts as StoredReceipt[],
           jsonObject.page,
-          jsonObject.per_page
+          jsonObject.total_pages
         )
       } else {
         throw new Error("Failed to parse QueryNodeReceiptsResponse")
@@ -37,17 +37,17 @@ export class QueryNodeReceiptsResponse {
 
   public readonly storedReceipts: StoredReceipt[]
   public readonly page: number
-  public readonly perPage: number
+  public readonly totalPages: number
 
   /**
    * QueryNodeReceiptsResponse.
    * @constructor
    * @param {StoredReceipt[]} storedReceipts - Stored receipts array.
    */
-  constructor(storedReceipts: StoredReceipt[], page: number, perPage: number) {
+  constructor(storedReceipts: StoredReceipt[], page: number, totalPages: number) {
     this.storedReceipts = storedReceipts
     this.page = page
-    this.perPage = perPage
+    this.totalPages = totalPages
   }
   /**
    *
@@ -63,7 +63,7 @@ export class QueryNodeReceiptsResponse {
     const jsonObject = {
       result: JSON.parse(JSON.stringify(receiptsListJSON)),
       page: this.page,
-      per_page: this.perPage
+      per_page: this.totalPages
     }
     return jsonObject
   }

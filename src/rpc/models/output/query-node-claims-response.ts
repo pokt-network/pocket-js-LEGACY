@@ -19,13 +19,15 @@ export class QueryNodeClaimsResponse {
       const jsonObject = JSON.parse(json)
       const msgClaims: MsgClaim[] = []
 
-      jsonObject.forEach((claim: any) => {
+      jsonObject.result.forEach((claim: any) => {
         const msgClaim = MsgClaim.fromJSON(JSON.stringify(claim))
         msgClaims.push(msgClaim)
       })
 
       return new QueryNodeClaimsResponse(
-        msgClaims
+        msgClaims,
+        jsonObject.page,
+        jsonObject.total_pages
       )
     } catch (error) {
       throw error
@@ -33,6 +35,8 @@ export class QueryNodeClaimsResponse {
   }
 
   public readonly msgClaims: MsgClaim[]
+  public readonly page: number
+  public readonly totalPages: number
 
   /**
    * Query Node Claims Response.
@@ -40,9 +44,13 @@ export class QueryNodeClaimsResponse {
    * @param {MsgClaim[]} msgClaims - Stored receipt object.
    */
   constructor(
-    msgClaims: MsgClaim[]
+    msgClaims: MsgClaim[],
+    page: number,
+    totalPages: number
   ) {
     this.msgClaims = msgClaims
+    this.page = page
+    this.totalPages = totalPages
 
     if (!this.isValid()) {
       throw new TypeError("Invalid QueryNodeClaimsResponse properties.")
@@ -55,7 +63,15 @@ export class QueryNodeClaimsResponse {
    * @memberof QueryNodeClaimsResponse
    */
   public toJSON() {
-    return JSON.parse(JSON.stringify(this.msgClaims))
+    return JSON.parse(
+      JSON.stringify(
+        {
+          page: this.page,
+          total_pages: this.totalPages,
+          result: this.msgClaims
+        }
+      )
+    )
   }
   /**
    *

@@ -14,34 +14,44 @@ export class StoredReceipt {
    * @memberof StoredReceipt
    */
   public static fromJSON(json: string): StoredReceipt {
-    const jsonObject = JSON.parse(json)
+    try {
+      const jsonObject = JSON.parse(json)
 
-    return new StoredReceipt(
-      SessionHeader.fromJSON(JSON.stringify(jsonObject.session_header)),
-      jsonObject.servicer_address,
-      BigInt(jsonObject.total_relays)
-    )
+      return new StoredReceipt(
+        SessionHeader.fromJSON(JSON.stringify(jsonObject.header)),
+        jsonObject.address,
+        BigInt(jsonObject.total),
+        jsonObject.evidence_type
+      )
+    } catch (error) {
+      throw error 
+    }
+
   }
 
   public readonly sessionHeader: SessionHeader
-  public readonly servicerAddress: string
-  public readonly totalRelays: BigInt
+  public readonly address: string
+  public readonly total: BigInt
+  public readonly evidenceType: number
 
   /**
    * StoredReceipt.
    * @constructor
    * @param {SessionHeader} sessionHeader - Session Header.
-   * @param {string} servicerAddress - Servicer address.
-   * @param {BigInt} totalRelays - Total amount of relays.
+   * @param {string} address - Servicer address.
+   * @param {BigInt} total - Total amount of relays.
+   * @param {number} evidenceType - Evidence type.
    */
   constructor(
     sessionHeader: SessionHeader,
-    servicerAddress: string,
-    totalRelays: BigInt
+    address: string,
+    total: BigInt,
+    evidenceType: number
   ) {
     this.sessionHeader = sessionHeader
-    this.servicerAddress = servicerAddress
-    this.totalRelays = totalRelays
+    this.address = address
+    this.total = total
+    this.evidenceType = evidenceType
   }
   /**
    *
@@ -51,9 +61,10 @@ export class StoredReceipt {
    */
   public toJSON() {
     return {
-      servicer_address: this.servicerAddress,
+      servicer_address: this.address,
       session_header: this.sessionHeader.toJSON(),
-      total_relays: Number(this.totalRelays.toString())
+      total_relays: Number(this.total.toString()),
+      evidence_type: this.evidenceType
     }
   }
   /**
@@ -63,8 +74,10 @@ export class StoredReceipt {
    * @memberof StoredReceipt
    */
   public isValid(): boolean {
-    return this.servicerAddress.length !== 0 &&
-    Number(this.totalRelays.toString()) >= 0 &&
-    this.sessionHeader.isValid()
+    return this.address.length !== 0 &&
+    Number(this.total.toString()) >= 0 &&
+    this.sessionHeader.isValid() &&
+    this.evidenceType >= 0 &&
+    this.evidenceType <= 2
   }
 }
