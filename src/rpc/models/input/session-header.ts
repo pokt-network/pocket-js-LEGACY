@@ -19,7 +19,7 @@ export class SessionHeader {
         jsonObject.app_public_key,
         jsonObject.chain,
         BigInt(jsonObject.session_height),
-        Number(jsonObject.session_timestamp)
+        Number(jsonObject.session_timestamp || "0")
       )
     } catch (error) {
       throw error
