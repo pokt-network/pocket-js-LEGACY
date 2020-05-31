@@ -264,10 +264,10 @@ export class NockUtil {
 
     public static mockGetNodeReceipts(code: number = 200): nock.Scope {
         const sessionHeader = new SessionHeader(applicationPublicKey, "ETH04", BigInt(5))
-        const storedProof01 = new StoredReceipt(sessionHeader, addressHex, BigInt(100))
-        const storedProof02 = new StoredReceipt(sessionHeader, addressHex, BigInt(200))
+        const storedProof01 = new StoredReceipt(sessionHeader, addressHex, BigInt(100), 1)
+        const storedProof02 = new StoredReceipt(sessionHeader, addressHex, BigInt(200), 1)
 
-        const queryNodeProofsResponse = new QueryNodeReceiptsResponse([storedProof01, storedProof02])
+        const queryNodeProofsResponse = new QueryNodeReceiptsResponse([storedProof01], 1, 20)
         const data: any = this.createData(code, queryNodeProofsResponse.toJSON())
 
         const response = this.getResponseObject(data, code)
@@ -275,8 +275,9 @@ export class NockUtil {
     }
 
     public static mockGetNodeReceipt(code: number = 200): nock.Scope {
-        const nodeProof = new NodeReceipt(addressHex, "ETH04", applicationPublicKey, BigInt(5), BigInt(5), "receiptType")
-        const queryNodeProofResponse = new QueryNodeReceiptResponse(nodeProof)
+        const sessionHeader = new SessionHeader(applicationPublicKey, "ETH04", BigInt(5))
+        const storedProof01 = new StoredReceipt(sessionHeader, addressHex, BigInt(100), 1)
+        const queryNodeProofResponse = new QueryNodeReceiptResponse(storedProof01)
         const data: any = this.createData(code, queryNodeProofResponse.toJSON())
 
         const response = this.getResponseObject(data, code)

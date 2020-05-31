@@ -5,7 +5,7 @@ import { ChallengeRequest } from "../models/input/challenge-request"
 import { ChallengeResponse } from "../models/output/challenge-response"
 import { QueryAccountTxsResponse } from "../models/output/query-account-txs-response"
 import { JailedStatus } from "../models/jailed-status"
-import { QueryValidatorsResponse } from "../models"
+import { QueryValidatorsResponse, QueryAllParamsResponse } from "../models"
 import { QueryBlockTxsResponse } from "../models/output/query-block-txs-response"
 import { QueryNodeClaimResponse } from "../models/output/query-node-claim-response"
 import { QueryNodeClaimsResponse } from "../models/output/query-node-claims-response"
@@ -431,7 +431,12 @@ export class QueryNamespace {
     /**
      *
      * Retrieves the node receipt information
-     * @param {NodeReceipt} nodeReceipt - Node's address.
+     * @param {string} address - Node's address.
+     * @param {string} appPubKey - Node's address.
+     * @param {string} blockchain - Node's address.
+     * @param {BigInt} height - Node's address.
+     * @param {BigInt} sessionBlockHeight - Node's address.
+     * @param {string} receiptType - Node's address.
      * @param {number} timeout - Request timeout.
      * @memberof QueryNamespace
      */
@@ -957,7 +962,7 @@ export class QueryNamespace {
     public async getAllParams(
         height: BigInt,
         timeout: number = 60000
-    ): Promise<QueryNodeClaimResponse | RpcError> {
+    ): Promise<QueryAllParamsResponse | RpcError> {
         try {
             
             if (Number(height.toString()) < 0) {
@@ -978,10 +983,10 @@ export class QueryNamespace {
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-                const queryNodeClaimResponse = QueryNodeClaimResponse.fromJSON(
+                const queryAllParamsResponse = QueryAllParamsResponse.fromJSON(
                     response
                 )
-                return queryNodeClaimResponse
+                return queryAllParamsResponse
             } else {
                 return new RpcError(
                     response.code,
