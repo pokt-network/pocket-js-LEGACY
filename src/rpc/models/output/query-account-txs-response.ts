@@ -36,7 +36,7 @@ export class QueryAccountTxsResponse {
   public readonly totalCount: number
 
   /**
-   * Query Account transaction Response.
+   * Query Account transaction list Response.
    * @constructor
    * @param {ResultTx[]} resultTx - List of transactions.
    * @param {number} totalCount - Transaction count

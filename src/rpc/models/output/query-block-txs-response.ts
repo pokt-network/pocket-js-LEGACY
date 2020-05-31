@@ -3,7 +3,7 @@ import { ResultTx } from "../result-tx"
 /**
  *
  *
- * @class QQueryBlockTxsResponse
+ * @class QueryBlockTxsResponse
  */
 export class QueryBlockTxsResponse {
   /**
@@ -36,7 +36,7 @@ export class QueryBlockTxsResponse {
   public readonly totalCount: number
 
   /**
-   * Query Account transaction Response.
+   * Query block transactions Response.
    * @constructor
    * @param {ResultTx[]} resultTx - List of transactions.
    * @param {number} totalCount - Transaction count

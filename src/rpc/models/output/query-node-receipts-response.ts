@@ -14,7 +14,7 @@ export class QueryNodeReceiptsResponse {
    */
   public static fromJSON(json: any): QueryNodeReceiptsResponse {
     try {
-      const jsonObject = JSON.parse(JSON.stringify(json))
+      const jsonObject = JSON.parse(json)
       const receipts: StoredReceipt[] = []
 
       jsonObject.result.forEach(function(receiptJSON: {}) {
@@ -63,7 +63,7 @@ export class QueryNodeReceiptsResponse {
     const jsonObject = {
       result: JSON.parse(JSON.stringify(receiptsListJSON)),
       page: this.page,
-      per_page: this.totalPages
+      total_pages: this.totalPages
     }
     return jsonObject
   }

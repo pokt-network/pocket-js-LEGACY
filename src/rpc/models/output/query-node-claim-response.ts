@@ -16,7 +16,7 @@ export class QueryNodeClaimResponse {
   public static fromJSON(json: string): QueryNodeClaimResponse {
     try {
       const jsonObject = JSON.parse(json)
-      const msgClaim = MsgClaim.fromJSON(jsonObject.value)
+      const msgClaim = MsgClaim.fromJSON(JSON.stringify(jsonObject.value))
 
       return new QueryNodeClaimResponse(
         msgClaim
