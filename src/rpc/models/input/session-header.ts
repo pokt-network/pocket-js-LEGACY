@@ -14,10 +14,12 @@ export class SessionHeader {
   public static fromJSON(json: string): SessionHeader {
     try {
       const jsonObject = JSON.parse(json)
+
       return new SessionHeader(
         jsonObject.app_public_key,
         jsonObject.chain,
-        BigInt(jsonObject.session_height)
+        BigInt(jsonObject.session_height),
+        Number(jsonObject.session_timestamp)
       )
     } catch (error) {
       throw error
