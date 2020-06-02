@@ -78,7 +78,7 @@ export class ResultTx {
   public toJSON() {
     return {
       hash: this.hash,
-      height: this.height,
+      height: Number(this.height.toString()),
       index: this.index,
       tx_result: this.txResult.toJSON(),
       tx: this.tx.toString("hex"),
