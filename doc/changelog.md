@@ -1,3 +1,12 @@
+## 0.5.0-RC
+- New nodeClaim/nodeClaims RPC calls.
+- New allParams RPC calls.
+- Fixed package.json types.
+- Portable Private Key implementation.
+- Added pagination to nodeReceipt and nodeReceipts.
+- Fixed staking/unstaking and unjailing calls.
+- Updated PocketAAT to 0.1.1.
+
 ## 0.4.0-RC
 - Replaced webpack with browserify.
 - Multiple fixes for the web version.
