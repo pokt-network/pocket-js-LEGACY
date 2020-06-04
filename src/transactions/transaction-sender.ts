@@ -4,8 +4,7 @@ import { TxMsg, CoinDenom, StdSignDoc, TxSignature, StdTx, MsgSend,
 } from "./models/"
 import { ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount } from "../keybase/models"
-import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase } from ".."
-import { RawTxRequest } from "../../dist"
+import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase, RawTxRequest } from ".."
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
