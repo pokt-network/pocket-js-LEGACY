@@ -1,3 +1,6 @@
+## 0.5.1-RC
+- Added createTransaction to TransactionSender interface.
+
 ## 0.5.0-RC
 - New nodeClaim/nodeClaims RPC calls.
 - New allParams RPC calls.
