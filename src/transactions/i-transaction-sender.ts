@@ -1,6 +1,7 @@
 import { CoinDenom } from "./models/coin-denom"
 import { RawTxResponse } from "../rpc/models/output/raw-tx-response"
 import { RpcError } from ".."
+import { RawTxRequest } from "../rpc/models/input/raw-tx-request"
 
 /**
  * Interface indicating all MsgTypes possible in a Pocket Network transaction and a function to submit the transaction to the network
@@ -9,11 +10,10 @@ export interface ITransactionSender {
     /**
      * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
      * @param {string} chainID - The chainID of the network to be sent to
-     * @param {Node} node - The Node object to send the transaction to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount
      * @param {string | undefined} memo - The memo field for this account
-     * @param {Configuration | undefined} configuration - Alternative configuration to be used
+     * @param {number | undefined} timeout - The timeout in milliseconds
      * @returns {Promise<RawTxResponse | RpcError>} - A Raw Tx Response object or Rpc error
      * @memberof ITransactionSender
      */
@@ -24,6 +24,23 @@ export interface ITransactionSender {
         memo?: string,
         timeout?: number
     ): Promise<RawTxResponse | RpcError>
+
+    /**
+     * Signs and creates a transaction object that can be submitted to the network given the parameters and called upon Msgs. 
+     * Will empty the msg list after succesful creation
+     * @param {string} chainID - The chainID of the network to be sent to
+     * @param {string} fee - The amount to pay as a fee for executing this transaction
+     * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount
+     * @param {string | undefined} memo - The memo field for this account
+     * @returns {Promise<RawTxRequest | RpcError>} - A Raw Tx Request object or Rpc error
+     * @memberof ITransactionSender
+     */
+    createTransaction(
+        chainID: string,
+        fee: string,
+        feeDenom?: CoinDenom,
+        memo?: string
+    ): Promise<RawTxRequest | RpcError>
 
     /**
      * Adds a MsgSend TxMsg for this transaction
