@@ -5,6 +5,7 @@ import { TxMsg, CoinDenom, StdSignDoc, TxSignature, StdTx, MsgSend,
 import { ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount } from "../keybase/models"
 import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase } from ".."
+import { RawTxRequest } from "../../dist"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
@@ -26,6 +27,61 @@ export class TransactionSender implements ITransactionSender {
 
         if (this.unlockedAccount === undefined && this.txSigner === undefined) {
             throw new Error("Need to define unlockedAccount or txSigner")
+        }
+    }
+
+    /**
+     * Signs and creates a transaction object that can be submitted to the network given the parameters and called upon Msgs.
+     * Will empty the msg list after succesful creation
+     * @param {string} chainID - The chainID of the network to be sent to
+     * @param {string} fee - The amount to pay as a fee for executing this transaction
+     * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
+     * @param {string | undefined} memo - The memo field for this account
+     * @returns {Promise<RawTxResponse | RpcError>} - A Raw transaction Response object or Rpc error.
+     * @memberof TransactionSender
+     */
+    public async createTransaction(
+        chainID: string,
+        fee: string,
+        feeDenom?: CoinDenom,
+        memo?: string
+    ): Promise<RawTxRequest | RpcError> {
+        try {
+            if (this.txMsgError !== undefined) {
+                const rpcError = RpcError.fromError(this.txMsgError)
+                this.txMsg = undefined
+                this.txMsgError = undefined
+                return rpcError
+            }
+
+            if (this.txMsg === undefined) {
+                return new RpcError("0", "No messages configured for this transaction")
+            }
+            const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
+            const stdSignDoc = new StdSignDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
+            let txSignatureOrError
+            const bytesToSign = stdSignDoc.marshalAmino()
+            if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
+                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
+            } else if (this.txSigner !== undefined) {
+                txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
+            } else {
+                return new RpcError("0", "No account or TransactionSigner specified")
+            }
+
+            if (!typeGuard(txSignatureOrError, TxSignature)) {
+                return new RpcError("0", "Error generating signature for transaction")
+            }
+
+            const txSignature = txSignatureOrError as TxSignature
+            const addressHex = addressFromPublickey(txSignature.pubKey)
+            const transaction = new StdTx(stdSignDoc, txSignature)
+            const encodedTxBytes = transaction.marshalAmino()
+
+            const txRequest = new RawTxRequest(addressHex.toString("hex"), encodedTxBytes.toString("hex"))
+            return txRequest
+        } catch (error) {
+            return RpcError.fromError(error)
         }
     }
 
