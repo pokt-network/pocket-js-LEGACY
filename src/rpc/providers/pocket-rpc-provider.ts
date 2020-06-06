@@ -37,7 +37,18 @@ export class PocketRpcProvider implements IRPCProvider {
             const relayResponse = await this.pocket.sendRelay(payload, this.blockchain, this.aat, undefined, undefined, HTTPMethod.NA, path, undefined, false)
 
             if (typeGuard(relayResponse, RelayResponse)) {
-                return relayResponse.payload
+                // return relayResponse.payload
+                let result = relayResponse.payload
+                try {
+                    result = JSON.parse(result)
+                    while (typeGuard(result, "string")) {
+                        result = JSON.parse(result)
+                    }
+                    
+                    return result
+                } catch (error) {
+                    return RpcError.fromError(error)
+                }
             } else {
                 return relayResponse as RpcError
             }
