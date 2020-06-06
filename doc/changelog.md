@@ -1,4 +1,4 @@
-## 0.5.1-RC
+## 0.5.2-RC
 - Fixes for send rawTx response fails while using PocketRpcProvider.
 
 ## 0.5.1-RC

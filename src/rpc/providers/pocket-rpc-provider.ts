@@ -41,8 +41,10 @@ export class PocketRpcProvider implements IRPCProvider {
                 let result = relayResponse.payload
                 try {
                     result = JSON.parse(result)
-                    while (typeGuard(result, "string")) {
+                    let count = 0
+                    while (typeGuard(result, "string") || count == 10) {
                         result = JSON.parse(result)
+                        count++
                     }
                     
                     return result
