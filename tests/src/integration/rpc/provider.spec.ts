@@ -60,11 +60,30 @@ describe("Pocket Provider Query Interface", async () => {
             expect(typeGuard(accountResponse, String)).to.be.true
         }).timeout(0)
 
+        it('should successfully retrieve an account information using the rpc query call', async () => {
+            const pocket = await getPocketDefaultInstance()
+            const clientPassphrase = "1234"
+            const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
+            expect(typeGuard(clientAccountOrError, Error)).to.be.false
+            const clientAccount = clientAccountOrError as Account
+            
+            const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
+            expect(error).to.be.undefined
+
+            const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+            
+            const provider = new PocketRpcProvider(pocket, aat, pocketBlockchain)
+            pocket.rpc(provider)
+            
+            const accountResponse = await pocket.rpc()!.query.getAccount("20421fe2cbfbd7fc7f120a1d8eb7bc223cfcf2d5")
+            expect(typeGuard(accountResponse, String)).to.be.true
+        }).timeout(0)
+
     })
     // describe("Error scenarios", async () => {
     //     it('should returns an error trying to get a block due block height lower than 0.', async () => {
     //         const pocket = getPocketDefaultInstance()
-
+            
     //         const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(-1))
     //         expect(typeGuard(blockResponse, RpcError)).to.be.true
     //     }).timeout(0)
