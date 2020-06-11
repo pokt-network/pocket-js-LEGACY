@@ -127,9 +127,9 @@ export class SessionManager {
       } else {
         return currentSession
       }
+    } else {
+      return await this.requestCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
     }
-
-    return new RpcError("500", "Session not found")
   }
 
   /**
