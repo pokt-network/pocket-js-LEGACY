@@ -1,3 +1,8 @@
+## 0.5.3-RC
+- Updated the RPC call response parsing to be more forgiving in some scenarios.
+- Fixed the "Session not found" intermittent issue.
+- Added rejectSelfSignedCertificates configuration flag.
+
 ## 0.5.2-RC
 - Fixes for send rawTx response fails while using PocketRpcProvider.
 
