@@ -73,7 +73,7 @@ export class SessionManager {
     const rpc = new RPC(new HttpRpcProvider(dispatcher))
     const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, sessionBlockHeight)
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
-    const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut)
+    const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
 
     if (typeGuard(result, DispatchResponse)) {
       let session: Session

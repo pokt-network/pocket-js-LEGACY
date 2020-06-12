@@ -2,6 +2,7 @@ import { IRPCProvider } from "./i-rpc-provider"
 import axios from "axios"
 import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
+import * as https from 'https'
 
 /**
  * @author Luis C. de León <luis@pokt.network>
@@ -21,12 +22,16 @@ export class HttpRpcProvider implements IRPCProvider {
      * @param {string} path - Request path
      * @param {string} payload - Request payload to send.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @returns {string | RpcError} Response string or RpcError
      * @memberof HttpRpcProvider
      */
-    public async send(path: string, payload: string, timeout: number): Promise<string | RpcError> {
+    public async send(path: string, payload: string, timeout: number = 10000, rejectSelfSignedCertificates: boolean = true): Promise<string | RpcError> {
         try {
             const axiosInstance = axios.create({
+                httpsAgent: new https.Agent({  
+                    rejectUnauthorized: rejectSelfSignedCertificates
+                  }),
                 baseURL: this.baseURL.toString(),
                 headers: {
                     "Content-Type": "application/json"

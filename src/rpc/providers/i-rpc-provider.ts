@@ -7,6 +7,7 @@ export interface IRPCProvider {
     send(
         path: string,
         payload: string,
-        timeout: number
+        timeout: number, 
+        rejectSelfSignedCertificates: boolean
     ): Promise<string | RpcError>
 }

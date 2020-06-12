@@ -13,6 +13,7 @@ export class Configuration {
   public readonly blockTime: number = 60000
   public readonly maxSessionRefreshRetries: number = 3
   public readonly validateRelayResponses: boolean = true
+  public readonly rejectSelfSignedCertificates: boolean = true
 
   /**
    * Stores multiple properties used to interact with the Pocket Network.
@@ -26,6 +27,7 @@ export class Configuration {
    * @param {number} blockTime - (optional) Amount of time (in milliseconds) for a new block to be produced in the Pocket Network
    * @param {number} maxSessionRefreshRetries - (optional) Amount of times to perform a session refresh in case of getting error code 1124 (Invalid Session)
    * @param {boolean} validateRelayResponses - (optional) If True the relay responses are validated againt's the relay request information, False will not validate
+   * @param {boolean} rejectSelfSignedCertificates - (optional) If True the HTTP RPC provider will force certificates to come from CAs, False will allow self signed
    * @memberof Configuration
    */
   constructor(
@@ -37,21 +39,23 @@ export class Configuration {
     sessionBlockFrequency: number = 25,
     blockTime: number = 60000,
     maxSessionRefreshRetries: number = 3,
-    validateRelayResponses: boolean = true
+    validateRelayResponses: boolean = true,
+    rejectSelfSignedCertificates: boolean = true
   ) {
     this.maxDispatchers = maxDispatchers
-    this.requestTimeOut = requestTimeOut
     this.maxSessions = maxSessions
-    this.validateRelayResponses = validateRelayResponses
     if (consensusNodeCount % 2 === 1 || consensusNodeCount === 0) {
       this.consensusNodeCount = consensusNodeCount
     }else {
       throw new Error("Failed to instantiate a Configuration class object due to consensusNodeCount not being an odd number.")
     }
+    this.requestTimeOut = requestTimeOut
     this.acceptDisputedResponses = acceptDisputedResponses
     this.sessionBlockFrequency = sessionBlockFrequency
     this.blockTime = blockTime
     this.maxSessionRefreshRetries = maxSessionRefreshRetries
+    this.validateRelayResponses = validateRelayResponses
+    this.rejectSelfSignedCertificates = rejectSelfSignedCertificates
   }
   public setconsensusNodeCount(v: number){
     this.consensusNodeCount = v
