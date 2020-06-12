@@ -28,7 +28,6 @@ export class PocketRpcProvider implements IRPCProvider {
      * Utility function to send a request to the pocket blockchain.
      * @param {string} path - Request path
      * @param {string} payload - Request payload to send.
-     * @param {number} timeout - Request timeout.
      * @returns {string | RpcError} Response string or RpcError
      * @memberof PocketRpcProvider
      */

@@ -18,18 +18,20 @@ export class ClientNamespace {
      * @param {Buffer | string} fromAddress - The address of the sender
      * @param {Buffer | string} tx - The amino encoded transaction bytes
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @returns {Promise<RawTxResponse | RpcError>} - A Raw transaction Response object or Rpc error.
      * @memberof ClientNamespace
      */
     public async rawtx(
         fromAddress: Buffer | string,
         tx: Buffer | string,
-        timeout: number = 60000
+        timeout: number = 60000,
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<RawTxResponse | RpcError> {
         try {
             const request = new RawTxRequest(fromAddress.toString('hex'), tx.toString('hex'))
             const payload = JSON.stringify(request.toJSON())
-            const response = await this.rpcProvider.send(V1RPCRoutes.ClientRawTx.toString(), payload, timeout)
+            const response = await this.rpcProvider.send(V1RPCRoutes.ClientRawTx.toString(), payload, timeout, rejectSelfSignedCertificates)
 
             // Check if response is an error
             if (typeGuard(response, RpcError)) {
@@ -59,17 +61,19 @@ export class ClientNamespace {
      * Sends a relay
      * @param {RelayRequest} request - Payload object containing the needed parameters.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @returns {Promise<RelayResponse | RpcError>} - A Relay Response object or Rpc error
      * @memberof ClientNamespace
      */
     public async relay(
         request: RelayRequest,
         validateResponse: boolean,
-        timeout: number = 60000
+        timeout: number = 60000,
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<RelayResponse | RpcError> {
         try {
             const payload = JSON.stringify(request.toJSON())
-            const response = await this.rpcProvider.send(V1RPCRoutes.ClientRelay.toString(), payload, timeout)
+            const response = await this.rpcProvider.send(V1RPCRoutes.ClientRelay.toString(), payload, timeout, rejectSelfSignedCertificates)
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
@@ -100,18 +104,21 @@ export class ClientNamespace {
      * Sends a dispatch request
      * @param {DispatchRequest} request - Request object containing the needed parameters.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @returns {Promise<DispatchResponse | RpcError>} - A Dispatch Response object or Rpc error
      * @memberof ClientNamespace
      */
     public async dispatch(
         request: DispatchRequest,
-        timeout: number = 60000
+        timeout: number = 60000,
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<DispatchResponse | RpcError> {
         try {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.ClientDispatch.toString(),
                 JSON.stringify(request.toJSON()),
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {

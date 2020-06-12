@@ -25,11 +25,13 @@ export class QueryNamespace {
      * Query a Block information
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getBlock(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryBlockResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -40,7 +42,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryBlock.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
@@ -66,6 +69,7 @@ export class QueryNamespace {
      * @param {number} page - Page number, default 1.
      * @param {number} perPage - Records count per page, default 30.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getBlockTxs(
@@ -73,7 +77,8 @@ export class QueryNamespace {
         prove: boolean,
         page: number = 1,
         perPage: number = 30,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryBlockTxsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -91,7 +96,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryBlockTxs.toString(),
                 payload,
-                timeout
+                timeout,
+                rejectSelfSignedCertificates
             )
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
@@ -114,11 +120,13 @@ export class QueryNamespace {
      * Retrieves a transaction information
      * @param {string} txHash - Transaction hash.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getTX(
         txHash: string,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryTXResponse | RpcError> {
         try {
             if (!Hex.isHex(txHash) && Hex.byteLength(txHash) !== 20) {
@@ -130,7 +138,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryTX.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -153,16 +162,19 @@ export class QueryNamespace {
      *
      * Get the current network block height
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getHeight(
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryHeightResponse | RpcError> {
         try {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryHeight.toString(),
                 "",
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -187,12 +199,14 @@ export class QueryNamespace {
      * @param {string} address - Account's address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getBalance(
         address: string,
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryBalanceResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -208,7 +222,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryBalance.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -237,6 +252,7 @@ export class QueryNamespace {
      * @param {number} page - (optional) Page number, default 1.
      * @param {number} perPage - (optional) Records count per page, default 30.
      * @param {number} timeout - (optional) Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getNodes(
@@ -246,7 +262,8 @@ export class QueryNamespace {
         blockchain: string = "",
         page: number = 1,
         perPage: number = 30,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryValidatorsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -267,7 +284,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodes.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -292,12 +310,14 @@ export class QueryNamespace {
      * @param {string} address - Node address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getNode(
         address: string,
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryNodeResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -316,7 +336,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNode.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -340,11 +361,13 @@ export class QueryNamespace {
      * Retrieves the node params
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getNodeParams(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryNodeParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -356,7 +379,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeParams.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -381,6 +405,7 @@ export class QueryNamespace {
      * @param {string} address - Node's address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getNodeReceipts(
@@ -388,7 +413,8 @@ export class QueryNamespace {
         blockHeight: BigInt = BigInt(0),
         page: number = 1,
         perPage: number = 30,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryNodeReceiptsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -409,7 +435,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeReceipts.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -438,6 +465,7 @@ export class QueryNamespace {
      * @param {BigInt} sessionBlockHeight - Node's address.
      * @param {string} receiptType - Node's address.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getNodeReceipt(
@@ -447,7 +475,8 @@ export class QueryNamespace {
         height: BigInt,
         sessionBlockHeight: BigInt,
         receiptType : string,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryNodeReceiptResponse | RpcError> {
         try {
             const nodeReceipt = new NodeReceipt(address, blockchain, appPubKey, sessionBlockHeight, height, receiptType)
@@ -461,7 +490,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeReceipt.toString(),
                 JSON.stringify(payload),
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -490,6 +520,7 @@ export class QueryNamespace {
      * @param {BigInt} page - (optional) Block's number.
      * @param {BigInt} perPage - (optional) Block's number.
      * @param {number} timeout - (optional) Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getApps(
@@ -498,7 +529,8 @@ export class QueryNamespace {
         blockchain: string = "",
         page: number = 1,
         perPage: number = 30,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryAppsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -518,7 +550,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryApps.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -543,12 +576,14 @@ export class QueryNamespace {
      * @param {string} address - Address of the app.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getApp(
         address: string,
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryAppResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -567,7 +602,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryApp.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -591,11 +627,13 @@ export class QueryNamespace {
      * Retrieves app params.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getAppParams(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryAppParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -607,7 +645,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryAppParams.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -631,11 +670,13 @@ export class QueryNamespace {
      * Retrieves the pocket params.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getPocketParams(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryPocketParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -647,7 +688,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryPocketParams.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -672,11 +714,13 @@ export class QueryNamespace {
      * Retrieves supported chains
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getSupportedChains(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QuerySupportedChainsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -688,7 +732,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QuerySupportedChains.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -714,11 +759,13 @@ export class QueryNamespace {
      * Retrieves current supply information
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getSupply(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QuerySupplyResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -734,7 +781,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QuerySupply.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -759,11 +807,13 @@ export class QueryNamespace {
      * Retrieves current Account information
      * @param {string} address - Account's address.
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getAccount(
         address: string,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryAccountResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -775,7 +825,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryAccount.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -803,6 +854,7 @@ export class QueryNamespace {
      * @param {number} page - (optional) Page number, default 1.
      * @param {number} perPage - (optional) Records count per page, default 30.
      * @param {number} timeout - (optional) Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getAccountTxs(
@@ -811,7 +863,8 @@ export class QueryNamespace {
         prove: boolean,
         page: number = 1,
         perPage: number = 30,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryAccountTxsResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -831,7 +884,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryAccountTxs.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -859,6 +913,7 @@ export class QueryNamespace {
      * @param {nuber} sessionBlockHeight - Session block height.
      * @param {nuber} receiptType - Receipt type, can be "relay" or "challenge".
      * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getNodeClaim(
@@ -868,7 +923,8 @@ export class QueryNamespace {
         height: BigInt,
         sessionBlockHeight: BigInt,
         receiptType: string,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryNodeClaimResponse | RpcError> {
         try {
             // Create a node receipt object
@@ -881,7 +937,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeClaim.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -907,6 +964,7 @@ export class QueryNamespace {
      * @param {nuber} page - (Optional) Page number, default 1.
      * @param {nuber} perPage - (Optional) Per page amount of records, default 30.
      * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getNodeClaims(
@@ -914,7 +972,8 @@ export class QueryNamespace {
         height: BigInt,
         page: number = 1,
         perPage: number = 30,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryNodeClaimsResponse | RpcError> {
         try {
 
@@ -934,7 +993,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryNodeClaims.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -957,11 +1017,13 @@ export class QueryNamespace {
      * Returns the node parameters at the specified height,  height = 0 is used as latest
      * @param {nuber} height - Block height.
      * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async getAllParams(
         height: BigInt,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<QueryAllParamsResponse | RpcError> {
         try {
             
@@ -978,7 +1040,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.QueryAllParams.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
@@ -1002,11 +1065,13 @@ export class QueryNamespace {
      * Retrieves a ChallengeResponse object.
      * @param {ChallengeRequest} request - The ChallengeRequest
      * @param {number} timeout - Request timeout.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
     public async requestChallenge(
         request: ChallengeRequest,
-        timeout: number = 60000
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
     ): Promise<ChallengeResponse | RpcError> {
         try {
             const payload = JSON.stringify(request.toJSON())
@@ -1014,7 +1079,8 @@ export class QueryNamespace {
             const response = await this.rpcProvider.send(
                 V1RPCRoutes.ClientChallenge.toString(),
                 payload,
-                timeout
+                timeout, 
+                rejectSelfSignedCertificates
             )
 
             // Check if response is an error
