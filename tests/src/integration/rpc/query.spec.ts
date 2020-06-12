@@ -9,7 +9,7 @@ import {
     Configuration, HttpRpcProvider, Pocket, typeGuard,
     QueryAccountResponse, QueryBlockResponse, QueryTXResponse,
     QueryHeightResponse, QueryBalanceResponse, StakingStatus,
-    QueryValidatorsResponse, QueryNodeResponse, QueryNodeParamsResponse,
+    QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse,
     QueryNodeReceiptsResponse, NodeReceipt, QueryNodeReceiptResponse,
     QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse,
     QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse,
@@ -68,14 +68,14 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a block information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(261))
+            const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(1))
             expect(typeGuard(blockResponse, QueryBlockResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a transaction information', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const txResponse = await pocket.rpc()!.query.getTX("E2ED1429911C45B8187FBED7D6AC59FF690F2D60CFD32C22676D5D2FA5E71BEA")
+            const txResponse = await pocket.rpc()!.query.getTX("5254B0525744FD4078341A6C2868C3C4BD4C7C73C4581BD1FDFF81096C1629A4")
             expect(typeGuard(txResponse, QueryTXResponse)).to.be.true
         }).timeout(0)
 
@@ -96,8 +96,8 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a list of validator nodes', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const validatorResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(1), undefined, 1, 10)
-            expect(typeGuard(validatorResponse, QueryValidatorsResponse)).to.be.true
+            const nodesResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(1), "", 1, 10)
+            expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a node information', async () => {
@@ -156,20 +156,20 @@ describe("Pocket RPC Query Interface", async () => {
             expect(typeGuard(supplyResponse, QuerySupplyResponse)).to.be.true
         }).timeout(0)
 
-        // it('should successfully retrieve a challenge response', async () => {
-        //     const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
-        //     const dispatcher = new URL(env.getPOKTRPC())
-        //     const configuration = new Configuration(5, 1000, undefined, 40000)
-        //     const rpcProvider = new HttpRpcProvider(dispatcher)
-        //     const pocket = getPocketDefaultInstance()
+        // // it('should successfully retrieve a challenge response', async () => {
+        // //     const env = EnvironmentHelper.getNetwork(process.env.localhost_env_url)
+        // //     const dispatcher = new URL(env.getPOKTRPC())
+        // //     const configuration = new Configuration(5, 1000, undefined, 40000)
+        // //     const rpcProvider = new HttpRpcProvider(dispatcher)
+        // //     const pocket = getPocketDefaultInstance()
 
-        //     const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse(), NockUtil.getMockRelayResponse()])
-        //     const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
-        //     const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
+        // //     const majorityResponse: MajorityResponse = new MajorityResponse([NockUtil.getMockRelayResponse(), NockUtil.getMockRelayResponse()])
+        // //     const minorityResponse: MinorityResponse = new MinorityResponse(NockUtil.getMockRelayResponse())
+        // //     const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
 
-        //     const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
-        //     expect(typeGuard(challengeResponse, ChallengeResponse)).to.be.true
-        // }).timeout(0)
+        // //     const challengeResponse = await pocket.rpc()!.query.requestChallenge(challengeRequest)
+        // //     expect(typeGuard(challengeResponse, ChallengeResponse)).to.be.true
+        // // }).timeout(0)
 
         it('should successfully retrieve an account transaction list with the proof object by setting the prove boolean to true', async () => {
             const pocket = getPocketDefaultInstance()
@@ -195,7 +195,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a block transaction list with the proof object by setting the prove boolean to true', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const blockTxsResponse = await pocket.rpc()!.query.getBlockTxs(BigInt(187), true, 1, 10)
+            const blockTxsResponse = await pocket.rpc()!.query.getBlockTxs(BigInt(9), true, 1, 10)
             expect(typeGuard(blockTxsResponse, QueryBlockTxsResponse)).to.be.true
         }).timeout(0)
 
@@ -397,17 +397,6 @@ describe("Pocket RPC Query Interface", async () => {
             const nodeReceiptsResponse = await pocket.rpc()!.query.getNodeReceipts(addressHex, BigInt(-1))
             expect(typeGuard(nodeReceiptsResponse, RpcError)).to.be.true
         }).timeout(0)
-
-        // Figure out test
-        // it('should returns an error trying to get a receipt of a node due to internal server error.', async () => {
-        //     // NockUtil.mockGetNodeReceipt(500)
-
-        //     const nodeReceipt = new NodeReceipt(addressHex, "ETH10", applicationPublicKey, BigInt(0), BigInt(0))
-        //     const pocket = getPocketDefaultInstance()
-
-        //     const nodeReceiptResponse = await pocket.rpc.query.getNodeReceipt(nodeReceipt)
-        //     expect(typeGuard(nodeReceiptResponse, RpcError)).to.be.true
-        // }).timeout(0)
 
         it('should returns an error trying to get a list of apps due to the block height being less than 0.', async () => {
             // NockUtil.mockGetApps(500)

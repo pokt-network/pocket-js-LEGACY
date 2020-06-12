@@ -2,6 +2,7 @@ import nock from 'nock'
 import enums = require("../../src/rpc/models/routes")
 import { LocalNet } from "./env"
 import {
+    Event,
     PocketAAT,
     Transaction,
     Hex,
@@ -36,7 +37,7 @@ import {
     QueryAppParamsResponse,
     QueryPocketParamsResponse,
     QuerySupportedChainsResponse,
-    QuerySupplyResponse, RelayResponse, RelayPayload, DispatchResponse, RelayRequest
+    QuerySupplyResponse, RelayResponse, RelayPayload, DispatchResponse, RelayRequest, ResponseDeliverTx
 } from '../../src'
 import { SessionHeader } from '../../src/rpc/models/input/session-header'
 import { RelayProof } from '../../src/rpc/models/relay-proof'
@@ -197,10 +198,11 @@ export class NockUtil {
 
     public static mockGetTx(code: number = 200): nock.Scope {
         const hash = "f6d04ee2490e85f3f9ade95b80948816bd9b2986d5554aae347e7d21d93b6fb5"
-        const txHex: Hex = hash
-        const simpleProof = new SimpleProof(BigInt(10), BigInt(1), txHex, [txHex])
+        const simpleProof = new SimpleProof(BigInt(10), BigInt(1), hash, [hash])
         const txProof = new TxProof(hash, "data", simpleProof)
-        const tx = new Transaction(hash, BigInt(3), BigInt(1), txHex, txProof)
+        const event = new Event("type", [{"key": "key value","value": "test"}])
+        const txResult = new ResponseDeliverTx(0, ["9292"], "logs", "info", BigInt(0), BigInt(0), [event], "")
+        const tx = new Transaction(hash, BigInt(3), BigInt(1), hash, txProof, txResult)
 
         const queryTXResponse = new QueryTXResponse(tx)
 
@@ -289,7 +291,7 @@ export class NockUtil {
         const app01 = new Application(addressHex, applicationPublicKey, false, StakingStatus.Staked, ["ETH04"], BigInt(100), BigInt(1000))
         const app02 = new Application(addressHex, applicationPublicKey, false, StakingStatus.Unstaking, ["ETH04"], BigInt(200), BigInt(2000))
 
-        const queryAppsResponse = new QueryAppsResponse([app01, app02])
+        const queryAppsResponse = new QueryAppsResponse([app01, app02], 1, 1)
         const data: any = this.createData(code, queryAppsResponse.toJSON())
         const response = this.getResponseObject(data, code)
 

@@ -68,6 +68,19 @@ export class Hex {
   }
 
   /**
+   *
+   *  Validates if a provided public key is a valid hex and byte length 32
+   * @param {string} str - Address to be verified.
+   * @returns {boolean} - True or false.
+   */
+  public static validatePublicKey(str: string): boolean {
+    if (Hex.isHex(str) && Hex.byteLength(str) === 32) {
+      return true
+    }
+    return false
+  }
+
+  /**
    * referenced from https://stackoverflow.com/a/10121740
    * Checks the lenght of a provided string
    * @param {string} str - Provided string.
