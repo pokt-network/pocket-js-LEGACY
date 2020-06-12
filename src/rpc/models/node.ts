@@ -96,10 +96,25 @@ export class Node {
    * @memberof Node
    */
   public isValid() {
-    return Hex.isHex(this.address) &&
-    Hex.isHex(this.publicKey) &&
+    let validAddress = true
+    let validPubKey = true
+    let validServiceUrl = true
+
+    if (this.address) {
+      validAddress = Hex.isHex(this.address)
+    }
+
+    if (this.publicKey) {
+      validPubKey = Hex.isHex(this.publicKey)
+    }
+    if (this.serviceURL && this.serviceURL.pathname) {
+      validServiceUrl = this.serviceURL.pathname.length !== 0
+    }
+
+    return validAddress &&
+    validPubKey &&
     this.jailed !== undefined &&
-    this.serviceURL.pathname.length !== 0 &&
+    validServiceUrl &&
     this.status !== undefined &&
     Number(this.stakedTokens.toString()) >= 0
   }

@@ -14,7 +14,7 @@ export class PocketParams {
   public static fromJSON(json: string): PocketParams {
     try {
       const jsonObject = JSON.parse(json)
-
+      
       return new PocketParams(
         BigInt(jsonObject.session_node_count),
         BigInt(jsonObject.proof_waiting_period),

@@ -59,6 +59,11 @@ export class PartSetHeader {
    * @memberof PartSetHeader
    */
   public isValid(): boolean {
-    return Hex.isHex(this.hash) && Number(this.total.toString()) >= 0
+    let validHash = true
+
+    if (this.hash) {
+      validHash = Hex.isHex(this.hash)
+    }
+    return validHash && Number(this.total.toString()) >= 0
   }
 }

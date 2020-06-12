@@ -15,9 +15,7 @@ export class QueryAppResponse {
    */
   public static fromJSON(json: string): QueryAppResponse {
     try {
-      const jsonObject = JSON.parse(json)
-
-      return new QueryAppResponse(Application.fromJSON(JSON.stringify(jsonObject)))
+      return new QueryAppResponse(Application.fromJSON(json))
     } catch (error) {
       throw error
     }
@@ -26,7 +24,7 @@ export class QueryAppResponse {
   public readonly application: Application
 
   /**
-   * Relay Response.
+   * Query app Response.
    * @constructor
    * @param {Application} application - Application object.
    */
@@ -34,7 +32,7 @@ export class QueryAppResponse {
     this.application = application
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Query app properties length.")
     }
   }
   /**

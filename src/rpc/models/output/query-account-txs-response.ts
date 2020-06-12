@@ -18,10 +18,12 @@ export class QueryAccountTxsResponse {
       const rawObjValue = JSON.parse(json)
       const resultTxs: ResultTx[] = []
 
-      rawObjValue.txs.forEach((tx: any) => {
-        const resultTx = ResultTx.fromJSON(JSON.stringify(tx))
-        resultTxs.push(resultTx)
-      })
+      if (rawObjValue.txs) {
+        rawObjValue.txs.forEach((tx: any) => {
+          const resultTx = ResultTx.fromJSON(JSON.stringify(tx))
+          resultTxs.push(resultTx)
+        })
+      }
 
       return new QueryAccountTxsResponse(
         resultTxs,
@@ -59,12 +61,12 @@ export class QueryAccountTxsResponse {
    * @memberof QueryAccountTxsResponse
    */
   public toJSON() {
-    const resultTxs: {}[] = []
+    const resultTxs: object[] = []
 
     this.resultTx.forEach(resultTx => {
-      const resultTxObj = resultTx.toJSON()
-      resultTxs.push(resultTxObj)
+      resultTxs.push(resultTx.toJSON())
     })
+    
     return {
       txs: resultTxs,
       total_count: this.totalCount

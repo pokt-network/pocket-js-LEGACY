@@ -102,11 +102,20 @@ export class Application {
    * @memberof Application
    */
   public isValid() {
-    return Hex.isHex(this.address) &&
-    Hex.byteLength(this.address) === 20 &&
+    let validAddress = true
+    let validPubKey = true
+    
+    if (this.address) {
+      validAddress = Hex.validateAddress(this.address)
+    }
+
+    if (this.publicKey) {
+      validPubKey = Hex.validatePublicKey(this.publicKey)
+    }
+
+    return validAddress &&
     this.chains.length > 0 &&
-    Hex.isHex(this.publicKey) &&
-    Hex.byteLength(this.publicKey) === 32 &&
+    validPubKey &&
     this.jailed !== undefined &&
     Number(this.maxRelays.toString()) >= 0 &&
     this.status !== undefined &&

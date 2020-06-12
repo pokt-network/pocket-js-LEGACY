@@ -5,7 +5,7 @@ import { ChallengeRequest } from "../models/input/challenge-request"
 import { ChallengeResponse } from "../models/output/challenge-response"
 import { QueryAccountTxsResponse } from "../models/output/query-account-txs-response"
 import { JailedStatus } from "../models/jailed-status"
-import { QueryValidatorsResponse, QueryAllParamsResponse } from "../models"
+import { QueryNodesResponse, QueryAllParamsResponse } from "../models"
 import { QueryBlockTxsResponse } from "../models/output/query-block-txs-response"
 import { QueryNodeClaimResponse } from "../models/output/query-node-claim-response"
 import { QueryNodeClaimsResponse } from "../models/output/query-node-claims-response"
@@ -264,7 +264,7 @@ export class QueryNamespace {
         perPage: number = 30,
         timeout: number = 60000, 
         rejectSelfSignedCertificates: boolean = true
-    ): Promise<QueryValidatorsResponse | RpcError> {
+    ): Promise<QueryNodesResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
                 return new RpcError("101", "block height can't be lower than 0")
@@ -290,10 +290,10 @@ export class QueryNamespace {
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-                const queryValidatorsResponse = QueryValidatorsResponse.fromJSON(
+                const queryNodesResponse = QueryNodesResponse.fromJSON(
                     response
                 )
-                return queryValidatorsResponse
+                return queryNodesResponse
             } else {
                 return new RpcError(
                     response.code,

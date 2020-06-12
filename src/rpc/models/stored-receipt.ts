@@ -1,4 +1,5 @@
 import { SessionHeader } from "./input/session-header"
+import { Hex } from "../../utils"
 
 /**
  *
@@ -74,10 +75,15 @@ export class StoredReceipt {
    * @memberof StoredReceipt
    */
   public isValid(): boolean {
-    return this.address.length !== 0 &&
+    let validAddress = true
+
+    if (this.address) {
+      validAddress = Hex.validateAddress(this.address)
+    }
+
+    return validAddress &&
     Number(this.total.toString()) >= 0 &&
     this.sessionHeader.isValid() &&
-    this.evidenceType >= 0 &&
-    this.evidenceType <= 2
+    this.evidenceType >= 0
   }
 }

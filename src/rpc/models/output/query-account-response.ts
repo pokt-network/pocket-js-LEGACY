@@ -16,23 +16,23 @@ export class QueryAccountResponse {
   public static fromJSON(json: string): QueryAccountResponse {
     try {
       const rawObjValue = JSON.parse(json)
-      const address = rawObjValue.address.toString()
       let balance = "0"
       const coins = rawObjValue.coins
+
       if (coins && typeGuard(coins, Array) && coins.length === 1) {
         const coinObj: any = coins[0] as any
         balance = coinObj.amount || "0"
       }
 
-      return new QueryAccountResponse(address, balance, rawObjValue.public_key)
+      return new QueryAccountResponse(rawObjValue.address, balance, rawObjValue.public_key)
     } catch (error) {
       throw error
     }
   }
 
-  public readonly address: string
-  public readonly balance: string
-  public readonly publicKey: string
+  public readonly address: string | null
+  public readonly balance: string | null
+  public readonly publicKey: string | null
 
   /**
    * Query Account Response.
@@ -77,7 +77,16 @@ export class QueryAccountResponse {
    * @memberof QueryAccountResponse
    */
   public isValid(): boolean {
-    return validateAddressHex(this.address) === undefined &&
-      validatePublicKey(this.publicKey)
+    let validAddress = true
+    let validPubKey = true
+    
+    if (this.address) {
+      validAddress = validateAddressHex(this.address) === undefined ? true : false
+    }
+    if (this.publicKey) {
+      validPubKey = validatePublicKey(this.publicKey)
+    }
+    return  validAddress === true &&
+    validPubKey === true
   }
 }

@@ -51,7 +51,7 @@ export class QuerySupportedChainsResponse {
     this.supportedChains.forEach(chain => {
       chainsJSON.push(chain)
     })
-    return JSON.parse(JSON.stringify(chainsJSON))
+    return chainsJSON
   }
   /**
    *

@@ -16,31 +16,34 @@ export class QueryAppsResponse {
     try {
       const jsonObject = JSON.parse(json)
       const apps: Application[] = []
-
+      
       if (Array.isArray(jsonObject.result)) {
         jsonObject.result.forEach(function (appJSON: {}) {
           const app = Application.fromJSON(JSON.stringify(appJSON))
           apps.push(app)
         })
-        return new QueryAppsResponse(apps as Application[])
-      } else {
-        const app = Application.fromJSON(JSON.stringify(jsonObject))
-        return new QueryAppsResponse([app])
       }
+      return new QueryAppsResponse(apps, jsonObject.page, jsonObject.total_pages)
     } catch (error) {
       throw error
     }
   }
 
   public readonly applications: Application[]
+  public readonly page: number
+  public readonly totalPages: number
 
   /**
    * QueryAppsResponse.
    * @constructor
    * @param {Application[]} applications - Amount staked by the node.
+   * @param {number} page - Current page.
+   * @param {number} totalPages - Total amount of pages.
    */
-  constructor(applications: Application[]) {
+  constructor(applications: Application[], page: number, totalPages: number) {
     this.applications = applications
+    this.page = page
+    this.totalPages = totalPages
   }
   /**
    *
@@ -49,10 +52,26 @@ export class QueryAppsResponse {
    * @memberof QueryAppsResponse
    */
   public toJSON() {
-    const appListJSON: Application[] = []
+    const appListJSON: object[] = []
     this.applications.forEach(app => {
-      appListJSON.push(app)
+      appListJSON.push(app.toJSON())
     })
-    return JSON.parse(JSON.stringify(appListJSON))
+
+    return {
+      result: appListJSON,
+      page: this.page,
+      total_pages: this.totalPages
+    }
+  }
+  /**
+   *
+   * Check if the QueryAppsResponse object is valid
+   * @returns {boolean} - True or false.
+   * @memberof QueryAppsResponse
+   */
+  public isValid(): boolean {
+    return this.applications !== undefined &&
+    this.page >= 0 &&
+    this.totalPages >= 0
   }
 }

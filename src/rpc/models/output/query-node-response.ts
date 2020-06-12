@@ -14,14 +14,17 @@ export class QueryNodeResponse {
    * @memberof QueryNodeResponse
    */
   public static fromJSON(json: string): QueryNodeResponse {
-    const jsonObject = JSON.parse(json)
-    return new QueryNodeResponse(Node.fromJSON(JSON.stringify(jsonObject)))
+    try {
+      return new QueryNodeResponse(Node.fromJSON(json))
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly node: Node
 
   /**
-   * Relay Response.
+   * Node Response.
    * @constructor
    * @param {Node} node - Node object.
    */
@@ -29,7 +32,7 @@ export class QueryNodeResponse {
     this.node = node
 
     if (!this.isValid()) {
-      throw new TypeError("Invalid properties length.")
+      throw new TypeError("Invalid Node Response properties length.")
     }
   }
   /**
