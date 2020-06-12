@@ -47,7 +47,7 @@ export class PocketRpcProvider implements IRPCProvider {
                         }
                     }
                     
-                    return result
+                    return JSON.stringify(result)
                 } catch (error) {
                     return RpcError.fromError(error)
                 }
