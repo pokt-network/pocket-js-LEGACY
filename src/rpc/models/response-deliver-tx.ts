@@ -18,10 +18,12 @@ export class ResponseDeliverTx {
       const jsonObject = JSON.parse(json)
       const events: Event[] = []
 
-      jsonObject.events.forEach((eventObj: any) => {
-        const event = Event.fromJSON(JSON.stringify(eventObj))
-        events.push(event)
-      })
+      if (jsonObject.events) {
+        jsonObject.events.forEach((eventObj: any) => {
+          const event = Event.fromJSON(JSON.stringify(eventObj))
+          events.push(event)
+        })
+      }
 
       return new ResponseDeliverTx(
         jsonObject.code,
@@ -90,9 +92,13 @@ export class ResponseDeliverTx {
    */
   public toJSON() {
     const events: object[] = []
-    this.events.forEach(function (event: Event) {
-      events.push(event.toJSON())
-    })
+
+    if (this.events.length > 0) {
+      this.events.forEach(function (event: Event) {
+        events.push(event.toJSON())
+      })
+    }
+
     return {
       code: this.code,
       data: this.data,

@@ -15,9 +15,7 @@ export class QueryPocketParamsResponse {
    */
   public static fromJSON(json: string): QueryPocketParamsResponse {
     try {
-      const jsonObject = JSON.parse(json)
-
-      return new QueryPocketParamsResponse(PocketParams.fromJSON(JSON.stringify(jsonObject)))
+      return new QueryPocketParamsResponse(PocketParams.fromJSON(json))
     } catch (error) {
       throw error
     }

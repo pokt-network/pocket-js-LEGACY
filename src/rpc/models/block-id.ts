@@ -61,6 +61,11 @@ export class BlockID {
    * @memberof BlockID
    */
   public isValid(): boolean {
-    return Hex.isHex(this.hash) && this.parts.isValid()
+    let validHash = true
+
+    if (this.hash) {
+      validHash = Hex.isHex(this.hash)
+    }
+    return validHash && this.parts.isValid()
   }
 }

@@ -107,12 +107,17 @@ export class CommitSignature {
    * @memberof CommitSignature
    */
   public isValid(): boolean {
+    let validatorAddressIsValid = true
+
+    if (this.validatorAddress) {
+      validatorAddressIsValid = Hex.isHex(this.validatorAddress)
+    }
+
     return this.blockID.isValid() &&
-    Number(this.height.toString()) > 0 &&
+    Number(this.height.toString()) >= 0 &&
     this.round >= 0 &&
     this.signature.length !== 0 &&
     this.timestamp.length !== 0 &&
-    Hex.isHex(this.validatorAddress) &&
-    this.validatorIndex !== undefined
+    validatorAddressIsValid
   }
 }

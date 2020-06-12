@@ -25,31 +25,41 @@ export class QueryAllParamsResponse {
       const govParams: IAllParams[] = []
       const nodeParams: IAllParams[] = []
       const pocketParams: IAllParams[] = []
+      
+      if (rawObjValue.app_params) {
+        rawObjValue.app_params.forEach((obj: any) => {
+          const param = {paramKey: obj.param_key, paramValue: obj.param_value}
+          appParams.push(param)
+        })  
+      }
 
-      rawObjValue.app_params.forEach((obj: any) => {
-        const param = {paramKey: obj.param_key, paramValue: obj.param_value}
-        appParams.push(param)
-      })
+      if (rawObjValue.auth_params) {
+        rawObjValue.auth_params.forEach((obj: any) => {
+          const param = {paramKey: obj.param_key, paramValue: obj.param_value}
+          authParams.push(param)
+        })
+      }
 
-      rawObjValue.auth_params.forEach((obj: any) => {
-        const param = {paramKey: obj.param_key, paramValue: obj.param_value}
-        authParams.push(param)
-      })
+      if (rawObjValue.gov_params) {
+        rawObjValue.gov_params.forEach((obj: any) => {
+          const param = {paramKey: obj.param_key, paramValue: obj.param_value}
+          govParams.push(param)
+        })
+      }
 
-      rawObjValue.gov_params.forEach((obj: any) => {
-        const param = {paramKey: obj.param_key, paramValue: obj.param_value}
-        govParams.push(param)
-      })
+      if (rawObjValue.node_params) {
+        rawObjValue.node_params.forEach((obj: any) => {
+          const param = {paramKey: obj.param_key, paramValue: obj.param_value}
+          nodeParams.push(param)
+        })
+      }
 
-      rawObjValue.node_params.forEach((obj: any) => {
-        const param = {paramKey: obj.param_key, paramValue: obj.param_value}
-        nodeParams.push(param)
-      })
-
-      rawObjValue.pocket_params.forEach((obj: any) => {
-        const param = {paramKey: obj.param_key, paramValue: obj.param_value}
-        pocketParams.push(param)
-      })
+      if (rawObjValue.pocket_params) {
+        rawObjValue.pocket_params.forEach((obj: any) => {
+          const param = {paramKey: obj.param_key, paramValue: obj.param_value}
+          pocketParams.push(param)
+        })
+      }
 
       return new QueryAllParamsResponse(
         appParams,

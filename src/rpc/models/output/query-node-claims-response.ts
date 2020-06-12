@@ -19,10 +19,12 @@ export class QueryNodeClaimsResponse {
       const jsonObject = JSON.parse(json)
       const msgClaims: MsgClaim[] = []
 
-      jsonObject.result.forEach((claim: any) => {
-        const msgClaim = MsgClaim.fromJSON(JSON.stringify(claim))
-        msgClaims.push(msgClaim)
-      })
+      if (jsonObject.result) {
+        jsonObject.result.forEach((claim: any) => {
+          const msgClaim = MsgClaim.fromJSON(JSON.stringify(claim))
+          msgClaims.push(msgClaim)
+        })
+      }
 
       return new QueryNodeClaimsResponse(
         msgClaims,
@@ -63,15 +65,17 @@ export class QueryNodeClaimsResponse {
    * @memberof QueryNodeClaimsResponse
    */
   public toJSON() {
-    return JSON.parse(
-      JSON.stringify(
-        {
-          page: this.page,
-          total_pages: this.totalPages,
-          result: this.msgClaims
-        }
-      )
-    )
+    const msgClaimsList: object[] = []
+
+    this.msgClaims.forEach(msgClaim => {
+      msgClaimsList.push(msgClaim.toJSON())
+    })
+
+    return {
+      page: this.page,
+      total_pages: this.totalPages,
+      result: msgClaimsList
+    }
   }
   /**
    *
@@ -80,11 +84,13 @@ export class QueryNodeClaimsResponse {
    * @memberof QueryNodeClaimsResponse
    */
   public isValid(): boolean {
-    this.msgClaims.forEach(msg => {
-      if (!msg.isValid()) {
-        return false
-      }
-    })
+    if (this.msgClaims.length > 0) {
+      this.msgClaims.forEach(msg => {
+        if (!msg.isValid()) {
+          return false
+        }
+      })
+    }
     return true
   }
 }

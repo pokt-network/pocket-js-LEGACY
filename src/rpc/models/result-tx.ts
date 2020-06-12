@@ -25,7 +25,7 @@ export class ResultTx {
         BigInt(jsonObject.height),
         jsonObject.index,
         responseDeliverTx,
-        jsonObject.tx,
+        Buffer.from(jsonObject.tx, "base64"),
         txProof
       )
     } catch (error) {
@@ -81,7 +81,7 @@ export class ResultTx {
       height: Number(this.height.toString()),
       index: this.index,
       tx_result: this.txResult.toJSON(),
-      tx: this.tx.toString("hex"),
+      tx: this.tx.toString("base64"),
       proof: this.txProof.toJSON()
     }
   }

@@ -144,7 +144,7 @@ export class BlockHeader {
    */
   public isValid(): boolean {
     return this.chainID.length !== 0 &&
-      Number(this.height.toString()) > 0 &&
+      Number(this.height.toString()) >= 0 &&
       this.lastBlockID.isValid() &&
       Number(this.numTXs.toString()) >= 0 &&
       this.time.length !== 0 &&

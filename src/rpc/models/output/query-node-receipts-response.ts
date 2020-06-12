@@ -17,19 +17,18 @@ export class QueryNodeReceiptsResponse {
       const jsonObject = JSON.parse(json)
       const receipts: StoredReceipt[] = []
 
-      jsonObject.result.forEach(function(receiptJSON: {}) {
-        const receipt = StoredReceipt.fromJSON(JSON.stringify(receiptJSON))
-        receipts.push(receipt)
-      })
-      if (receipts !== undefined) {
-        return new QueryNodeReceiptsResponse(
-          receipts as StoredReceipt[],
-          jsonObject.page,
-          jsonObject.total_pages
-        )
-      } else {
-        throw new Error("Failed to parse QueryNodeReceiptsResponse")
+      if (jsonObject.result) {
+        jsonObject.result.forEach(function(receiptJSON: {}) {
+          const receipt = StoredReceipt.fromJSON(JSON.stringify(receiptJSON))
+          receipts.push(receipt)
+        })
       }
+
+      return new QueryNodeReceiptsResponse(
+        receipts as StoredReceipt[],
+        jsonObject.page,
+        jsonObject.total_pages
+      )
     } catch (error) {
       throw error
     }
@@ -56,12 +55,14 @@ export class QueryNodeReceiptsResponse {
    * @memberof QueryNodeReceiptsResponse
    */
   public toJSON() {
-    const receiptsListJSON: StoredReceipt[] = []
+    const receiptsListJSON: object[] = []
+
     this.storedReceipts.forEach(receipt => {
-      receiptsListJSON.push(receipt)
+      receiptsListJSON.push(receipt.toJSON())
     })
+
     const jsonObject = {
-      result: JSON.parse(JSON.stringify(receiptsListJSON)),
+      result: receiptsListJSON,
       page: this.page,
       total_pages: this.totalPages
     }
@@ -75,11 +76,13 @@ export class QueryNodeReceiptsResponse {
    * @memberof QueryNodeReceiptsResponse
    */
   public isValid(): boolean {
-    this.storedReceipts.forEach(receipt => {
-      if (!receipt.isValid()) {
-        return false
-      }
-    })
+    if (this.storedReceipts.length > 0) {
+      this.storedReceipts.forEach(receipt => {
+        if (!receipt.isValid()) {
+          return false
+        }
+      })
+    }
     return true
   }
 }

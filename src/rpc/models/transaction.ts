@@ -91,10 +91,14 @@ export class Transaction {
    * @memberof Transaction
    */
   public isValid(): boolean {
-    return Hex.isHex(this.hash) &&
+    let validHash = true
+
+    if (this.hash) {
+      validHash = Hex.isHex(this.hash)
+    }
+    return validHash &&
     Number(this.height.toString()) >= 0 &&
     Number(this.index.toString()) >= 0  &&
-    this.tx !== undefined &&
     this.txResult.isValid()
   }
 }

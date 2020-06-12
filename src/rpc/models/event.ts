@@ -22,13 +22,14 @@ export class Event {
       const jsonObject = JSON.parse(json)
       const attributesArray: IKVPair[] = []
 
-      jsonObject.attributes.forEach(function (attribute: IKVPair) {
-        const key = Buffer.from(attribute.key, 'base64').toString('ascii')
-        const value = Buffer.from(attribute.value, 'base64').toString('ascii')
-        const kvPair = { "key": key, "value": value }
-        attributesArray.push(kvPair)
-      })
-
+      if (jsonObject.attributes) {
+        jsonObject.attributes.forEach(function (attribute: IKVPair) {
+          const key = Buffer.from(attribute.key, 'base64').toString('ascii')
+          const value = Buffer.from(attribute.value, 'base64').toString('ascii')
+          const kvPair = { "key": key, "value": value }
+          attributesArray.push(kvPair)
+        })
+      }
       return new Event(
         jsonObject.type,
         attributesArray,

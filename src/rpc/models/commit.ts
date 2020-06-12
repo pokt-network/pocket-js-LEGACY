@@ -18,8 +18,9 @@ export class Commit {
     try {
       const jsonObject = JSON.parse(json)
       const signatureList: CommitSignature[] = []
-
-      if (Array.isArray(jsonObject.precommits)) {
+      const blockID = BlockID.fromJSON(JSON.stringify(jsonObject.block_id))
+      
+      if (jsonObject.precommits) {
         jsonObject.precommits.forEach((commit: any) => {
           if (commit !== null) {
             const commitSignature = new CommitSignature(
@@ -35,17 +36,8 @@ export class Commit {
             signatureList.push(commitSignature)
           }
         })
-        return new Commit(
-          BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
-          signatureList
-        ) 
-      }else {
-        return new Commit(
-          BlockID.fromJSON(JSON.stringify(jsonObject.block_id)),
-        [CommitSignature.fromJSON(JSON.stringify(jsonObject.precommits))]
-        ) 
       }
-
+        return new Commit(blockID, signatureList) 
     } catch (error) {
       throw error
     }
@@ -75,10 +67,13 @@ export class Commit {
    * @memberof Commit
    */
   public toJSON() {
-    const signatureList: any[] = []
-    this.precommits.forEach(signature => {
-      signatureList.push(signature.toJSON())
-    })
+    const signatureList: object[] = []
+
+    if (this.precommits.length > 0) {
+      this.precommits.forEach(signature => {
+        signatureList.push(signature.toJSON())
+      })
+    }
 
     return {
       block_id: this.blockID.toJSON(),
