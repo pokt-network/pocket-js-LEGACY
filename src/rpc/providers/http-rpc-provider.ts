@@ -40,9 +40,13 @@ export class HttpRpcProvider implements IRPCProvider {
             })
             const response = await axiosInstance.post(path, payload)
             if (response.status === 200) {
-                if (typeGuard(response.data, 'string')) {
-                    return JSON.parse(response.data)
+                
+                for (let index = 0; index <= 10; index++) {
+                    if (typeGuard(response.data, "string")) {
+                        response.data = JSON.parse(response.data)
+                    }
                 }
+
                 return JSON.stringify(response.data)
             } else {
                 return new RpcError(response.status.toString(), JSON.stringify(response.data))
