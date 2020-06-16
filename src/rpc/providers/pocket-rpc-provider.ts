@@ -2,7 +2,7 @@ import { IRPCProvider } from "./i-rpc-provider"
 import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
 import { Pocket, PocketAAT, HTTPMethod } from "../../pocket"
-import { RelayResponse } from "../models"
+import { RelayResponse, ConsensusRelayResponse, ChallengeResponse } from "../models"
 
 /**
  * @author Pabel Nunez L. <pabel@pokt.network>
@@ -38,7 +38,25 @@ export class PocketRpcProvider implements IRPCProvider {
         try {
             if (this.enableConsensusRelay) {
                 const relayResponse = await this.pocket.sendConsensusRelay(payload, this.blockchain, this.aat, undefined, undefined, HTTPMethod.NA, path, undefined)
-                return this.handleReponse(relayResponse)
+                if (typeGuard(relayResponse, ConsensusRelayResponse)) {
+                    if (relayResponse.majorityResponse && relayResponse.majorityResponse.relays.length > 0) {
+                        return this.handleReponse(relayResponse.majorityResponse.relays[0])
+                    }else{
+                        return new RpcError("", "Failed to retrieve a majority response relay from the consensus response")
+                    }
+                }else if(typeGuard(relayResponse, ChallengeResponse)){
+                    let result = JSON.parse(relayResponse.response)
+                
+                    for (let index = 0; index <= 10; index++) {
+                        if (typeGuard(result, "string")) {
+                            result = JSON.parse(result)
+                        }
+                    }
+                    
+                    return JSON.stringify(result)
+                }else {
+                    return RpcError.fromError(relayResponse)
+                }
             }else {
                 const relayResponse = await this.pocket.sendRelay(payload, this.blockchain, this.aat, undefined, undefined, HTTPMethod.NA, path, undefined, false)
                 return this.handleReponse(relayResponse)
