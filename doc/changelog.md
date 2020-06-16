@@ -1,4 +1,8 @@
-## 0.5.3-RC
+## 0.5.4-RC
+- Added consensus relay support to the PocketRpcProvider.
+- Fixed Send Transaction failing in some scenarios.
+  
+## 0.5.3-RC   
 - Updated the RPC call response parsing to be more forgiving in some scenarios.
 - Fixed the "Session not found" intermittent issue.
 - Added rejectSelfSignedCertificates configuration flag.
