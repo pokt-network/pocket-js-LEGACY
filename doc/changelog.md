@@ -1,3 +1,6 @@
+## 0.5.5-RC
+- Fixes for the staking status of nodes and apps.
+
 ## 0.5.4-RC
 - Added consensus relay support to the PocketRpcProvider.
 - Fixed Send Transaction failing in some scenarios.
