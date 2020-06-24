@@ -1,3 +1,6 @@
+## 0.5.6-RC
+- Fixed an issue with the Portable Private Key functionalities.
+
 ## 0.5.5-RC
 - Fixes for the staking status of nodes and apps.
 

@@ -428,15 +428,15 @@ export class Keybase {
     }
     /**
      * @description Creates a Portable Private Key(PPK) using an Account
-     * @param {Account} account - Account object.
+     * @param {string} addressHex - Account's address hex.
      * @param {string} password - Desired password for the PPK.
      * @param {string} hint - (Optional) Private key hint.
-     * @param {string} passphrase - Passphrase to store the account in the keybase.
+     * @param {string} passphrase - Passphrase to unlock the account in the keybase.
      * @returns {Promise<string | Error>} 
      * @memberof Keybase
      */
     public async exportPPKfromAccount(
-        account: Account,
+        addressHex: string,
         password: string,
         hint: string = "",
         passphrase: string
@@ -446,46 +446,14 @@ export class Keybase {
             return new Error("Wrong password or passphrase format, please try again with valid information.")
         }
         // Unlock the account
-        const unlockAccountOrError = await this.unlockAccount(account.addressHex, passphrase, 0)
-        if (!typeGuard(unlockAccountOrError, Error)) {
+        const unlockedAccountOrError = await this.getUnlockedAccount(addressHex, passphrase)
+        if (!typeGuard(unlockedAccountOrError, Error)) {
             // Get the PPK
-            const ppkStrOrError = await this.exportPPK(account.encryptedPrivateKeyHex, password, hint)
+            const ppkStrOrError = await this.exportPPK(unlockedAccountOrError.privateKey.toString("hex"), password, hint)
             // Return the ppk or error
             return ppkStrOrError
         }else {
-            return unlockAccountOrError
-        }
-    }
-    /**
-     * @description Creates a Portable Private Key(PPK) using an unlocked Account
-     * @param {string} addressHex - Account's address hex.
-     * @param {string} password - Desired password for the PPK.
-     * @param {string} hint - (Optional) Private key hint.
-     * @returns {Promise<string | Error>} 
-     * @memberof Keybase
-     */
-    public async exportPPKfromUnlockedAccount(
-        addressHex: string,
-        password: string,
-        hint: string = ""
-    ): Promise<string | Error> {
-        // Verify mandatory parameters
-        if (!Hex.validateAddress(addressHex) || password.length <= 0) {
-            return new Error("Wrong address or password format, please try again with valid information.")
-        }
-        // Check if the account is unlocked
-        const isUnlocked = await this.isUnlocked(addressHex)
-        if (isUnlocked) {
-            // Retrieve the account
-            const account = await this.getAccount(addressHex)
-            // Check for error
-            if(typeGuard(account, Error)) return account
-            // Get the PPK
-            const ppkStrOrError = await this.exportPPK(account.encryptedPrivateKeyHex, password, hint)
-            // Return the ppk or error
-            return ppkStrOrError
-        }else {
-            return new Error("Account is not unlocked, please unlock account and try again.")
+            return unlockedAccountOrError
         }
     }
     /**
