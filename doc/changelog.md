@@ -1,3 +1,7 @@
+## 0.5.7-RC
+- Fixed sendRelay failing to send proper relay proof while using the instance in static environments.
+- Fixed consensusRelay not setting up the majority response in some scenarios.
+  
 ## 0.5.6-RC
 - Fixed an issue with the Portable Private Key functionalities.
 
