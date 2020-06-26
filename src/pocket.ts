@@ -210,7 +210,7 @@ export class Pocket {
           return RpcError.fromError(serviceNodeOrError as Error)
         }
         serviceNode = serviceNodeOrError as Node
-      } else {
+      }else {
         // Provide a random service node from the session
         if (node !== undefined) {
           if (currentSession.isNodeInSession(node)) {
@@ -234,7 +234,7 @@ export class Pocket {
 
       // Assign session service node to the rpc instance
       const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL)
-      this.rpc(serviceProvider)
+      const rpc = new RPC(serviceProvider)
 
       // Create Relay Payload
       const relayPayload = new RelayPayload(data, method, path, headers || null)
@@ -259,7 +259,6 @@ export class Pocket {
         pocketAAT,
         requestHash
       )
-
       // Sign
       const signatureOrError = await this.keybase.signWithUnlockedAccount(clientAddressHex, proofBytes)
       if (typeGuard(signatureOrError, Error)) {
@@ -282,7 +281,7 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
       // Send relay
-      const result = await this.innerRpc!.client.relay(relay, configuration.validateRelayResponses, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
+      const result = await rpc.client.relay(relay, configuration.validateRelayResponses, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
 
       // Check session out of sync error
       if (typeGuard(result, RpcError)) {
