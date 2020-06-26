@@ -29,16 +29,13 @@ const nodeAddress = "20421fe2cbfbd7fc7f120a1d8eb7bc223cfcf2d5"
 dotenv.config()
 const env = EnvironmentHelper.getLocalNet()
 const dispatcher = new URL(env.getPOKTRPC())
-const configuration = new Configuration(5, 1000, undefined, 40000)
-const appPubKeyHex = "3895f3a84afb824d7e2e63c5042a93ccdb13e0f891d5d61d10289df50d6c251d"
-const appPrivKeyHex = "7ae62c4d807a85fb5e60ffd80d30b3132b836fd3506cc0d4cef87d9dd118db0d3895f3a84afb824d7e2e63c5042a93ccdb13e0f891d5d61d10289df50d6c251d"
+const configuration = new Configuration(5, 1000, 5, 40000, true, undefined, undefined, undefined, undefined, false)
 
 //
 const clientPubKeyHex = "6220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
 const clientPrivateKey = "c86b5424ab1d73da92522d21adbd48b217a66b61f78fa8e2c93e9ea47afa55716220b1e1364c4f120914d80000b63bdac6a58fc3dbb2ff063bcfcb4f8915a49b"
 const walletAppPublicKey = "a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea"
 const walletAppAATSignature = "7949373c02eff36a87a2b847319a804eaed5f664c8333a3cb6c3ad14dbe98380ef1c53bee321e95670b123a1c4993ce02f130a98ec00ea6cac926a410b5f920f"
-const walletPrivateKey = "cc295ffce930181ed01d38ce2934988c17787bdbfb53e6d6d6bbc3a71e4bf537a7e8ec112d0c7bcb2521fe783eac704b874a148541f9e9d43bbb9f831503abea" 
 const clientPassphrase = "123"
 const blockchain = "0002"
 
@@ -55,7 +52,17 @@ const aat = new PocketAAT(
 async function getPocketDefaultInstance(): Promise<Pocket> {
     return new Pocket([dispatcher], undefined, configuration)
 }
-async function getPocketWithPocketRpcProviderInstance(): Promise<Pocket> {
+
+function getPocketRpcProvider(pocket: Pocket, aat: PocketAAT, consensusEnabled: boolean): PocketRpcProvider {
+    const pocketRpcProvider = new PocketRpcProvider(
+        pocket,
+        aat,
+        blockchain,
+        consensusEnabled
+    )
+    return pocketRpcProvider
+}
+async function getPocketWithPocketRpcProviderInstance(consensusEnabled: boolean = false): Promise<Pocket> {
     const pocket = await getPocketDefaultInstance()
     // Import Client Account
     const clientAccountOrError = await pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), clientPassphrase)
@@ -63,11 +70,7 @@ async function getPocketWithPocketRpcProviderInstance(): Promise<Pocket> {
     // Unlock client account
     const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
 
-    const pocketRpcProvider = new PocketRpcProvider(
-        pocket,
-        aat,
-        blockchain
-    )
+    const pocketRpcProvider = getPocketRpcProvider(pocket, aat, consensusEnabled)
     return new Pocket([dispatcher], pocketRpcProvider, configuration)
 }
 
@@ -92,25 +95,46 @@ describe("Pocket Provider Query Interface", async () => {
 
         it('should successfully retrieve an account information using the rpc query call', async () => {
             const pocket = await getPocketWithPocketRpcProviderInstance()
-            
-            const accountResponse = await pocket.rpc()!.query.getAccount("19c0551853f19ce1b7a4a1ede775c6e3db431b0f")
+            const providerBefore = pocket.rpc
+            const accountResponse = await pocket.rpc()!.query.getAccount("0594a790e92d423e565652ae16678f3329ec9985")
+            const providerAfter = pocket.rpc
             expect(typeGuard(accountResponse, QueryAccountResponse)).to.be.true
+            expect(providerBefore).to.be.equal(providerAfter)
         }).timeout(0)
 
         it('should successfully retrieve an block information using the rpc query call', async () => {
             const pocket = await getPocketWithPocketRpcProviderInstance()
-
+            const providerBefore = pocket.rpc
             const accountResponse = await pocket.rpc()!.query.getBlock(BigInt(9))
+            const providerAfter = pocket.rpc
             expect(typeGuard(accountResponse, QueryBlockResponse)).to.be.true
+            expect(providerBefore).to.be.equal(providerAfter)
         })
 
+        it('should successfully retrieve an account information with consensus enabled', async () => {
+            const pocket = await getPocketWithPocketRpcProviderInstance(true)
+            const providerBefore = pocket.rpc
+            const accountResponse = await pocket.rpc()!.query.getAccount("0594a790e92d423e565652ae16678f3329ec9985")
+            const providerAfter = pocket.rpc
+            expect(typeGuard(accountResponse, QueryAccountResponse)).to.be.true
+            expect(providerBefore).to.be.equal(providerAfter)
+        }).timeout(0)
+
+        it('should successfully retrieve an block information with consensus enabled', async () => {
+            const pocket = await getPocketWithPocketRpcProviderInstance(true)
+            const providerBefore = pocket.rpc
+            const accountResponse = await pocket.rpc()!.query.getBlock(BigInt(9))
+            const providerAfter = pocket.rpc
+            expect(typeGuard(accountResponse, QueryBlockResponse)).to.be.true
+            expect(providerBefore).to.be.equal(providerAfter)
+        })
     })
-    // describe("Error scenarios", async () => {
-    //     it('should returns an error trying to get a block due block height lower than 0.', async () => {
-    //         const pocket = getPocketDefaultInstance()
+    describe("Error scenarios", async () => {
+        it('should returns an error trying to get a block due block height lower than 0.', async () => {
+            const pocket = await getPocketWithPocketRpcProviderInstance()
             
-    //         const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(-1))
-    //         expect(typeGuard(blockResponse, RpcError)).to.be.true
-    //     }).timeout(0)
-    // })
+            const blockResponse = await pocket.rpc()!.query.getBlock(BigInt(-1))
+            expect(typeGuard(blockResponse, RpcError)).to.be.true
+        }).timeout(0)
+    })
 })

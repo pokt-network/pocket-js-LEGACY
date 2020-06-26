@@ -77,8 +77,9 @@ export class ConsensusRelayResponse {
       }else{
         throw new Error("Majority response is equal to 1, it should be 2 responses.")
       }
-      
       this.minorityResponse = new MinorityResponse(minorityResponse[0])
+    }else {
+      this.majorityResponse = new MajorityResponse(majorityResponse)
     }
 
     if (!this.isValid()) {
