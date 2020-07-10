@@ -247,7 +247,7 @@ export class Pocket {
       }
 
       // Produce signature payload
-      const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight) + BigInt(currentSession.getBlocksSinceCreation(configuration)))
+      const relayMeta = new RelayMeta(BigInt( Number(BigInt(currentSession.sessionHeader.sessionBlockHeight)) + Number(BigInt(currentSession.getBlocksSinceCreation(configuration)))) )
       const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
 
