@@ -9,8 +9,8 @@ export class Configuration {
   public consensusNodeCount: number = 0
   public readonly requestTimeOut: number = 0
   public readonly acceptDisputedResponses: boolean = false
-  public readonly sessionBlockFrequency: number = 25
-  public readonly blockTime: number = 60000
+  public readonly sessionBlockFrequency: number = 4
+  public readonly blockTime: number = 900000
   public readonly maxSessionRefreshRetries: number = 3
   public readonly validateRelayResponses: boolean = true
   public readonly rejectSelfSignedCertificates: boolean = true
