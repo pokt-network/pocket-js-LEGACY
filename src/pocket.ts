@@ -247,7 +247,7 @@ export class Pocket {
       }
 
       // Produce signature payload
-      const relayMeta = new RelayMeta(BigInt( Number(BigInt(currentSession.sessionHeader.sessionBlockHeight)) + Number(BigInt(currentSession.getBlocksSinceCreation(configuration)))) )
+      const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight))
       const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
 
@@ -287,7 +287,11 @@ export class Pocket {
       if (typeGuard(result, RpcError)) {
         const rpcError = result as RpcError
         // Refresh the current session if we get this error code
-        if (rpcError.code === "1124") {
+        if (
+          rpcError.code === "60" // InvalidBlockHeightError = errors.New("the block height passed is invalid")
+          ||
+          rpcError.code === "75" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
+        ) {
           let sessionRefreshed = false
           for (let retryIndex = 0; retryIndex < configuration.maxSessionRefreshRetries; retryIndex++) {
             // Get the current session

@@ -53,7 +53,13 @@ export class HttpRpcProvider implements IRPCProvider {
             }
         } catch (error) {
             if (error.response !== undefined && error.response.data !== undefined) {
-                return RpcError.fromRelayError(error, JSON.stringify(error.response.data))
+                const regex = /Code: (\d+)/g
+                const codeExtract = regex.exec(error.response.data.message)
+                let code = "0"
+                if (codeExtract) {
+                    code = codeExtract[1]
+                }
+                return RpcError.fromRelayError(error, code, error.response.data)
             }
             return RpcError.fromError(error)
         }
