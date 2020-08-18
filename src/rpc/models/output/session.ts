@@ -108,14 +108,6 @@ export class Session {
   }
 
   /**
-   * Returns the amount of blocks that have passed since the session timestamp
-   */
-  public getBlocksSinceCreation(configuration: Configuration): number {
-    const blocksPassed = Math.ceil((Math.floor(Date.now() / 1000) - this.sessionHeader.sessionTimestamp) / (configuration.blockTime / 1000))
-    return blocksPassed
-  }
-
-  /**
    *
    * Creates a JSON object with the Session properties
    * @returns {JSON} - JSON Object.

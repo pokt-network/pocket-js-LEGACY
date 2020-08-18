@@ -47,15 +47,13 @@ export class SessionManager {
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
-   * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @returns {Promise}
    * @memberof SessionManager
    */
   public async requestCurrentSession(
     pocketAAT: PocketAAT,
     chain: string,
-    configuration: Configuration,
-    sessionBlockHeight: BigInt = BigInt(0)
+    configuration: Configuration
   ): Promise<Session | RpcError> {
     const dispatcher = this.routingTable.getDispatcher()
 
@@ -71,7 +69,7 @@ export class SessionManager {
       this.sessionMap.set(key, new Queue())
     }
     const rpc = new RPC(new HttpRpcProvider(dispatcher))
-    const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, sessionBlockHeight)
+    const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, BigInt(0))
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
     const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
 
@@ -104,31 +102,25 @@ export class SessionManager {
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
-   * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @returns {Promise}
    * @memberof SessionManager
    */
   public async getCurrentSession(
     pocketAAT: PocketAAT,
     chain: string,
-    configuration: Configuration,
-    sessionBlockHeight: BigInt = BigInt(0)
+    configuration: Configuration
   ): Promise<Session | RpcError> {
 
     const key = this.getSessionKey(pocketAAT, chain)
     if (!this.sessionMap.has(key)) {
-      return await this.requestCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
+      return await this.requestCurrentSession(pocketAAT, chain, configuration)
     }
 
     const currentSession = (this.sessionMap.get(key) as Queue<Session>).front
     if (currentSession !== undefined) {
-      if (currentSession.getBlocksSinceCreation(configuration) >= configuration.sessionBlockFrequency) {
-        return await this.requestCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
-      } else {
-        return currentSession
-      }
+      return currentSession
     } else {
-      return await this.requestCurrentSession(pocketAAT, chain, configuration, sessionBlockHeight)
+      return await this.requestCurrentSession(pocketAAT, chain, configuration)
     }
   }
 

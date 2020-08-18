@@ -18,8 +18,7 @@ export class SessionHeader {
       return new SessionHeader(
         jsonObject.app_public_key,
         jsonObject.chain,
-        BigInt(jsonObject.session_height),
-        Number(jsonObject.session_timestamp || "0")
+        BigInt(jsonObject.session_height)
       )
     } catch (error) {
       throw error
@@ -29,7 +28,6 @@ export class SessionHeader {
   public readonly applicationPubKey: string
   public readonly chain: string
   public readonly sessionBlockHeight: BigInt
-  public readonly sessionTimestamp: number
 
   /**
    * Request for Session.
@@ -42,13 +40,11 @@ export class SessionHeader {
   constructor(
     applicationPubKey: string,
     chain: string,
-    sessionBlockHeight: BigInt,
-    sessionTimestamp: number = 0
+    sessionBlockHeight: BigInt
   ) {
     this.applicationPubKey = applicationPubKey
     this.chain = chain
     this.sessionBlockHeight = sessionBlockHeight
-    this.sessionTimestamp = sessionTimestamp
 
     if (!this.isValid()) {
       throw new TypeError("Invalid SessionHeader properties.")
@@ -64,8 +60,7 @@ export class SessionHeader {
     return {
       app_public_key: this.applicationPubKey,
       chain: this.chain,
-      session_height: Number(this.sessionBlockHeight.toString()),
-      session_timestamp: this.sessionTimestamp
+      session_height: Number(this.sessionBlockHeight.toString())
     }
   }
   /**
@@ -78,8 +73,7 @@ export class SessionHeader {
     return (
       this.applicationPubKey.length !== 0 &&
       this.chain.length !== 0 &&
-      Number(this.sessionBlockHeight.toString()) >= 0 &&
-      this.sessionTimestamp >= 0
+      Number(this.sessionBlockHeight.toString()) >= 0
     )
   }
 }

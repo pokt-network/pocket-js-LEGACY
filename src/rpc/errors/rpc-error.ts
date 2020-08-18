@@ -16,12 +16,13 @@ export class RpcError extends Error {
   /**
    * Creates a RpcError from an Error object
    * @param {Error} error - Error object.
+   * @param {string} code - Error code
    * @param {string} data - Relay error payload.
    * @returns {RpcError} - RpcError object.
    * @memberof RpcError
    */
-  public static fromRelayError(error: Error, data: string): RpcError {
-    return new RpcError("0", error.message+": "+data)
+  public static fromRelayError(error: Error, code: string, data: string): RpcError {
+    return new RpcError(code, error.message+": "+JSON.stringify(data))
   }
 
   /**
