@@ -1,3 +1,9 @@
+## 0.5.9-RC
+- Improved the way sessions are refreshed; instead of timing blocks, it will retry dispatch
+
+## 0.5.8-RC
+- Changed the way the Relay session height is computed
+
 ## 0.5.7-RC
 - Fixed sendRelay failing to send proper relay proof while using the instance in static environments.
 - Fixed consensusRelay not setting up the majority response in some scenarios.
