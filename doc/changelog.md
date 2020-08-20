@@ -1,3 +1,6 @@
+## 0.6.0-RC
+- Updated dependencies
+
 ## 0.5.9-RC
 - Improved the way sessions are refreshed; instead of timing blocks, it will retry dispatch
 
