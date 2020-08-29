@@ -280,12 +280,14 @@ export class Pocket {
 
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
+      console.log(relayMeta)
       // Send relay
       const result = await rpc.client.relay(relay, configuration.validateRelayResponses, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
 
       // Check session out of sync error
       if (typeGuard(result, RpcError)) {
         const rpcError = result as RpcError
+        console.log(rpcError)
         // Refresh the current session if we get this error code
         if (
           rpcError.code === "60" // InvalidBlockHeightError = errors.New("the block height passed is invalid")
@@ -294,6 +296,7 @@ export class Pocket {
         ) {
           let sessionRefreshed = false
           for (let retryIndex = 0; retryIndex < configuration.maxSessionRefreshRetries; retryIndex++) {
+            console.log("retrying session")
             // Get the current session
             const currentSessionOrError = await this.sessionManager.requestCurrentSession(pocketAAT, blockchain, configuration)
             if (typeGuard(currentSessionOrError, RpcError)) {
