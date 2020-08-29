@@ -304,7 +304,7 @@ export class Pocket {
               continue
             } else if (typeGuard(currentSessionOrError, Session)) {
               const newSession = currentSessionOrError as Session
-              if (newSession.sessionKey === currentSessionOrError.sessionKey) {
+              if (newSession.sessionHeader.sessionBlockHeight === currentSessionOrError.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
                 continue
               }

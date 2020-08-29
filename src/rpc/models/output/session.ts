@@ -1,6 +1,5 @@
 import { Node } from "../node"
 import { SessionHeader } from "../input/session-header"
-import { Configuration } from "../../../config/configuration"
 
 /**
  *
@@ -17,11 +16,6 @@ export class Session {
    */
   public static fromJSON(json: string): Session {
     const jsonObject = JSON.parse(json)
-
-    // Compute the session timestamp from the number of blocks since dispatch
-    const sessionBlockAge = Number( BigInt(jsonObject.block_height) - BigInt(jsonObject.session.header.session_height))
-    jsonObject.session.header.session_timestamp = Math.floor( (Date.now() / 1000) - (sessionBlockAge * 60))
-    
     const sessionHeader = SessionHeader.fromJSON(JSON.stringify(jsonObject.session.header))
     const sessionNodes: Node[] = []
 
