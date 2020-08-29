@@ -310,12 +310,12 @@ export class Pocket {
               const newSession = currentSessionOrError as Session
               console.log("got session")
               console.log(newSession)
-              if (newSession.sessionHeader.sessionBlockHeight === currentSessionOrError.sessionHeader.sessionBlockHeight) {
+              if (newSession.sessionHeader.sessionBlockHeight === currentSession.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
                 console.log("nsb")
                 console.log(newSession.sessionHeader.sessionBlockHeight)
                 console.log("csb")
-                console.log(newSession.sessionHeader.sessionBlockHeight)
+                console.log(currentSession.sessionHeader.sessionBlockHeight)
                 continue
               }
             }
