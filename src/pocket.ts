@@ -287,6 +287,7 @@ export class Pocket {
       // Check session out of sync error
       if (typeGuard(result, RpcError)) {
         const rpcError = result as RpcError
+        console.log("initial error")
         console.log(rpcError)
         // Refresh the current session if we get this error code
         if (
@@ -299,16 +300,26 @@ export class Pocket {
             console.log("retrying session")
             // Get the current session
             const currentSessionOrError = await this.sessionManager.requestCurrentSession(pocketAAT, blockchain, configuration)
+            console.log("currentSessionOrError")
+            console.log(currentSessionOrError)
             if (typeGuard(currentSessionOrError, RpcError)) {
               // If error or same session, don't even retry relay
+              console.log("got rpcerror")
               continue
             } else if (typeGuard(currentSessionOrError, Session)) {
               const newSession = currentSessionOrError as Session
+              console.log("got session")
+              console.log(newSession)
               if (newSession.sessionHeader.sessionBlockHeight === currentSessionOrError.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
+                console.log("nsb")
+                console.log(newSession.sessionHeader.sessionBlockHeight)
+                console.log("csb")
+                console.log(newSession.sessionHeader.sessionBlockHeight)
                 continue
               }
             }
+            console.log("refreshed")
             sessionRefreshed = true
             break
           }
@@ -316,11 +327,14 @@ export class Pocket {
           if (sessionRefreshed) {
             // If a new session is succesfully obtained retry the relay
             // This won't cause an endless loop because the relay will only be retried only if the session was refreshed
+            console.log("relay again")
             return this.sendRelay(data, blockchain, pocketAAT, configuration, headers, method, path, node, consensusEnabled)
           } else {
+            console.log("return error 1")
             return rpcError
           }
         } else {
+          console.log("return error 2")
           return rpcError
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
@@ -330,9 +344,11 @@ export class Pocket {
         }
         return new ConsensusNode(serviceNode, false, result)
       } else {
+        console.log("return result 3")
         return result
       }
     } catch (error) {
+      console.log("caught error")
       return RpcError.fromError(error)
     }
   }
