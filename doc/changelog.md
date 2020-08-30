@@ -1,3 +1,6 @@
+## 0.6.1-RC
+- Fixed session refresh mechanism
+
 ## 0.6.0-RC
 - Updated dependencies
 

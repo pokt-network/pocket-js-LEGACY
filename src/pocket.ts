@@ -280,47 +280,48 @@ export class Pocket {
 
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
-      console.log(relayMeta)
+
       // Send relay
-      const result = await rpc.client.relay(relay, configuration.validateRelayResponses, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
+      const result = await rpc.client.relay(
+        relay,
+        configuration.validateRelayResponses,
+        configuration.requestTimeOut,
+        configuration.rejectSelfSignedCertificates
+      )
 
       // Check session out of sync error
       if (typeGuard(result, RpcError)) {
         const rpcError = result as RpcError
-        console.log("initial error")
-        console.log(rpcError)
         // Refresh the current session if we get this error code
         if (
-          rpcError.code === "60" // InvalidBlockHeightError = errors.New("the block height passed is invalid")
-          ||
+          rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
           rpcError.code === "75" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
         ) {
+          // Remove outdated session
+          this.sessionManager.destroySession(pocketAAT, blockchain)
           let sessionRefreshed = false
-          for (let retryIndex = 0; retryIndex < configuration.maxSessionRefreshRetries; retryIndex++) {
-            console.log("retrying session")
+          for (
+            let retryIndex = 0;
+            retryIndex < configuration.maxSessionRefreshRetries;
+            retryIndex++
+          ) {
             // Get the current session
-            const newSessionOrError = await this.sessionManager.requestCurrentSession(pocketAAT, blockchain, configuration)
-            console.log("newSessionOrError")
-            console.log(newSessionOrError)
+            const newSessionOrError = await this.sessionManager.requestCurrentSession(
+              pocketAAT,
+              blockchain,
+              configuration
+            )
             if (typeGuard(newSessionOrError, RpcError)) {
               // If error or same session, don't even retry relay
-              console.log("got rpcerror")
               continue
             } else if (typeGuard(newSessionOrError, Session)) {
               const newSession = newSessionOrError as Session
-              console.log("got session")
-              console.log(newSession)
               if (newSession.sessionHeader.sessionBlockHeight === currentSession.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
-                console.log("nsb")
-                console.log(newSession.sessionHeader.sessionBlockHeight)
-                console.log("csb")
-                console.log(currentSession.sessionHeader.sessionBlockHeight)
                 continue
               }
               currentSession = newSession as Session
             }
-            console.log("refreshed")
             sessionRefreshed = true
             break
           }
@@ -328,14 +329,21 @@ export class Pocket {
           if (sessionRefreshed) {
             // If a new session is succesfully obtained retry the relay
             // This won't cause an endless loop because the relay will only be retried only if the session was refreshed
-            console.log("relay again")
-            return this.sendRelay(data, blockchain, pocketAAT, configuration, headers, method, path, node, consensusEnabled)
+            return this.sendRelay(
+              data,
+              blockchain,
+              pocketAAT,
+              configuration,
+              headers,
+              method,
+              path,
+              node,
+              consensusEnabled
+            )
           } else {
-            console.log("return error 1")
             return rpcError
           }
         } else {
-          console.log("return error 2")
           return rpcError
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
@@ -345,11 +353,9 @@ export class Pocket {
         }
         return new ConsensusNode(serviceNode, false, result)
       } else {
-        console.log("return result 3")
         return result
       }
     } catch (error) {
-      console.log("caught error")
       return RpcError.fromError(error)
     }
   }

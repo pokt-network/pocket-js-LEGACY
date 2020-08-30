@@ -71,9 +71,9 @@ export class SessionManager {
     const rpc = new RPC(new HttpRpcProvider(dispatcher))
     const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, BigInt(0))
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
-    console.log(dispatchRequest)
+
     const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
-    console.log(result)
+
     if (typeGuard(result, DispatchResponse)) {
       let session: Session
       try {
@@ -86,7 +86,6 @@ export class SessionManager {
 
       if (session !== undefined) {
         const key = this.getSessionKey(pocketAAT, chain)
-        console.log('saving session')
         return this.saveSession(key, session, configuration)
       } else {
         return new RpcError(
