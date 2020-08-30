@@ -195,8 +195,8 @@ export class Pocket {
         return currentSessionOrError as RpcError
       }
 
-      // Set the currentSession
-      const currentSession = currentSessionOrError as Session
+      // Set the currentSession; may be refreshed below if the block height is stale
+      let currentSession = currentSessionOrError as Session
 
       // Determine the service node
       let serviceNode: Node
@@ -299,15 +299,15 @@ export class Pocket {
           for (let retryIndex = 0; retryIndex < configuration.maxSessionRefreshRetries; retryIndex++) {
             console.log("retrying session")
             // Get the current session
-            const currentSessionOrError = await this.sessionManager.requestCurrentSession(pocketAAT, blockchain, configuration)
-            console.log("currentSessionOrError")
-            console.log(currentSessionOrError)
-            if (typeGuard(currentSessionOrError, RpcError)) {
+            const newSessionOrError = await this.sessionManager.requestCurrentSession(pocketAAT, blockchain, configuration)
+            console.log("newSessionOrError")
+            console.log(newSessionOrError)
+            if (typeGuard(newSessionOrError, RpcError)) {
               // If error or same session, don't even retry relay
               console.log("got rpcerror")
               continue
-            } else if (typeGuard(currentSessionOrError, Session)) {
-              const newSession = currentSessionOrError as Session
+            } else if (typeGuard(newSessionOrError, Session)) {
+              const newSession = newSessionOrError as Session
               console.log("got session")
               console.log(newSession)
               if (newSession.sessionHeader.sessionBlockHeight === currentSession.sessionHeader.sessionBlockHeight) {
@@ -318,6 +318,7 @@ export class Pocket {
                 console.log(currentSession.sessionHeader.sessionBlockHeight)
                 continue
               }
+              currentSession = newSession as Session
             }
             console.log("refreshed")
             sessionRefreshed = true
