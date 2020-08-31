@@ -154,7 +154,7 @@ export class SessionManager {
    * @param {Session} session - The session to save
    * @param {Configuration} configuration - The configuration to use
    */
-  private saveSession(
+  public saveSession(
     key: string,
     session: Session,
     configuration: Configuration
