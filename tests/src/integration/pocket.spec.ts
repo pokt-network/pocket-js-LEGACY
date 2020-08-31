@@ -9,6 +9,8 @@ import {
     Configuration,
     HttpRpcProvider,
     Pocket,
+    Session,
+    SessionHeader,
     typeGuard,
     Account,
     PocketAAT,
@@ -41,6 +43,10 @@ const appPubKeyHex = "3895f3a84afb824d7e2e63c5042a93ccdb13e0f891d5d61d10289df50d
 const appPrivKeyHex = "7ae62c4d807a85fb5e60ffd80d30b3132b836fd3506cc0d4cef87d9dd118db0d3895f3a84afb824d7e2e63c5042a93ccdb13e0f891d5d61d10289df50d6c251d"
 const blockchain = "0022"
 
+type MutableSession = {
+    -readonly [K in keyof Session]: Session[K] 
+}
+
 describe("Pocket Interface functionalities", async () => {
     it('should instantiate a Pocket instance due to a valid configuration is being used', () => {
         try {
@@ -70,6 +76,7 @@ describe("Pocket Interface functionalities", async () => {
                 expect(typeGuard(relayResponse, RelayResponse)).to.be.true
             })
 
+
             it("should send and validate a relay given the correct parameters", async () => {
                 // In this test, we set the configuration flag for 'validateRelayResponses' to true.
                 // The relay response will validate with the relay request 
@@ -89,6 +96,35 @@ describe("Pocket Interface functionalities", async () => {
                 const relayResponse = await pocket.sendRelay(relayData, blockchain, aat)
                 expect(typeGuard(relayResponse, RelayResponse)).to.be.true
             })
+
+            
+            it("should send a relay with an outdated session and retry the relay after receiving a new session", async () => {
+                const config = new Configuration(5, 1000, 5, 40000, false, undefined, undefined, undefined, true)
+                const pocket = new Pocket([dispatchURL], rpcProvider, config)
+                // Generate client account
+                const clientPassphrase = "1234"
+                const clientAccountOrError = await pocket.keybase.createAccount(clientPassphrase)
+                expect(typeGuard(clientAccountOrError, Error)).to.be.false
+                const clientAccount = clientAccountOrError as Account
+                const error = await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
+                expect(error).to.be.undefined
+                // Generate AAT
+                const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), appPubKeyHex, appPrivKeyHex)
+                const currentSessionOrError = await pocket.sessionManager.getCurrentSession(aat, blockchain, config)
+                expect(typeGuard(currentSessionOrError, Session)).to.be.true
+                const currentSession = currentSessionOrError as Session
+                const mutableSession: MutableSession = currentSession
+                const oldSessionHeader = mutableSession.sessionHeader.toJSON()
+                const newSessionHeader = new SessionHeader(oldSessionHeader.app_public_key, oldSessionHeader.chain, BigInt(1))
+                mutableSession.sessionHeader = newSessionHeader
+                pocket.sessionManager.destroySession(aat, blockchain)
+                pocket.sessionManager.saveSession(pocket.sessionManager.getSessionKey(aat, blockchain), mutableSession, config)
+                // Let's submit a relay!
+                const relayData = '{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBalance\",\"params\":[\"0x050ea4ab4183E41129B7D72A492DaBf52B27EdB5\",\"latest\"],\"id\":67}'
+                const relayResponse = await pocket.sendRelay(relayData, blockchain, aat)
+                expect(typeGuard(relayResponse, RelayResponse)).to.be.true
+            })
+
 
             it("should send multiple relays for different clients given the correct parameters", async () => {
                 const pocket = new Pocket([dispatchURL], rpcProvider, configuration)

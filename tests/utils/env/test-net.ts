@@ -2,7 +2,7 @@ import { Environment } from "./environment"
 
 export class TestNet extends Environment {
 
-    private readonly ip: string = 'http://node1.testnet.pokt.network'
+    private readonly ip: string = 'https://node1.testnet.pokt.network'
 
     public getTendermintRPC(): string {
         return this.ip + ':26657'
@@ -11,6 +11,6 @@ export class TestNet extends Environment {
         return this.ip + ':26656'
     }
     public getPOKTRPC(): string {
-        return this.ip + ':8081'
+        return this.ip + ':443'
     }
 }
