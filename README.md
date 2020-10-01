@@ -46,7 +46,7 @@ These instructions will outline how to start developing with the Pocket-JS SDK.
 
 You should have a basic knowledge of blockchain technology and JavaScript. You will also need to install the [NPM tool](https://www.npmjs.com/get-npm).
 
-To obtain POKT to stake for bandwidth or to obtain an Application Authentication Token (AAT) for an already staked application, please use the [Pocket Dashboard](https://dashboard.pokt.network/). Once you have a signed AAT or the private keys for a staked application, you can get started using Pocket-JS with the examples below.
+To obtain POKT to stake for bandwidth or to obtain an Application Authentication Token (AAT) for an already staked application, please use the [Pocket Dashboard](https://dashboard.pokt.network/). Once you have a signed AAT or the private keys for a staked application, you can get started using Pocket-JS.
 
 ### Installation
 
