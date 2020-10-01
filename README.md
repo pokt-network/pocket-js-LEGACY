@@ -94,7 +94,7 @@ Once you have your AAT, include it with your project as a JSON file.
 const aat = require('./aat.json')
 ```
 
-To unlock the AAT for use in your application, you must first import and unlock the AAT's client account indicated by the ```clientPublicKey``` field.  Include that account's PPK in another JSON file. The PPK file is obtained from the [Pocket Dashboard](https://dashboard.pokt.network/) when creating an App or through the [Pocket Core CLI](https://github.com/pokt-network/pocket-core) with ```pocket accounts export```.
+To unlock the AAT for use in your application, you must first import and unlock the AAT's client account indicated by the ```clientPublicKey``` field. The PPK file is obtained from the [Pocket Dashboard](https://dashboard.pokt.network/) when creating an App or through the [Pocket Core CLI](https://github.com/pokt-network/pocket-core) with ```pocket accounts export```.
 
 A properly-formed ppk.json file will start with ```{"kdf":"scrypt"```. Include it with your project as a JSON file along with the passphrase used when creating it:
 ```javascript
