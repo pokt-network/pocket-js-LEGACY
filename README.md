@@ -72,8 +72,9 @@ const pocketInstance = new Pocket([dispatchURL], rpcProvider, configuration)
 // See https://docs.pokt.network/docs/supported-networks-on-mainnet for blockchain choices
 const blockchain = "0022" // Ethereum mainnet
 ```
-
+---
 ### Use an AAT to connect to any blockchain:
+
 An Application Authentication Token is a token signed by an account that has staked for bandwidth as an App on the Pocket blockchain. You can create an Application Authentication Token (AAT) for multiple clients using the [Pocket Core CLI](https://github.com/pokt-network/pocket-core) or the retrieve your App's AAT from the [Pocket Dashboard](https://dashboard.pokt.network/) App Detail page.
 
 An example of a properly-formed AAT:
@@ -137,7 +138,7 @@ unlockAAT(aat, accountPPK, accountPassphrase).then(pocketAAT => {
     })
 })
 ```
-
+---
 ### Use private keys to connect to any blockchain:
 If you instead include the staked application's public and private keys, you can generate the AAT on-the-fly:
 ```javascript
@@ -180,7 +181,7 @@ unlockAccount(accountPrivateKey, accountPublicKey, accountPassphrase).then(pocke
     })
 })
 ```
-
+---
 ### Query the Pocket blockchain without using an account:
 ```javascript
 const accountAddress = "36b783a1189f605969f438dfaece2a4b38c65752"
