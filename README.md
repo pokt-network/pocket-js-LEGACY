@@ -14,7 +14,7 @@ Official Javascript client for connecting an application to the Pocket Network o
   <a href="https://nodejs.org/"><img  src="https://img.shields.io/badge/node-%3E%3D%2011.6.0-brightgreen"/></a>
 </div>
 
-<h1 align="left">Overview</h1>
+## Overview
   <div align="left">
     <a  href="https://github.com/pokt-network/pocket-js/releases">
       <img src="https://img.shields.io/github/release-pre/pokt-network/pocket-js.svg"/>
@@ -36,6 +36,8 @@ Official Javascript client for connecting an application to the Pocket Network o
     </a>
 </div>
 
+Pocket-JS is the core client used for sending relays to any network that is [currently supported](https://docs.pokt.network/docs/supported-networks) on the Pocket Network.
+
 ## Getting Started
 
 These instructions will outline how to start developing with the Pocket-JS SDK.
@@ -43,6 +45,8 @@ These instructions will outline how to start developing with the Pocket-JS SDK.
 ### Requirements
 
 You should have a basic knowledge of blockchain technology and JavaScript. You will also need to install the [NPM tool](https://www.npmjs.com/get-npm).
+
+To obtain POKT to stake for bandwidth or to obtain an Application Authentication Token (AAT) for an already staked application, please use the [Pocket Dashboard](https://dashboard.pokt.network/). Once you have a signed AAT or the private keys for a staked application, you can get started using Pocket-JS with the examples below.
 
 ### Installation
 
@@ -52,9 +56,7 @@ npm install --save pocket-js
 
 ## Documentation
 
-For detailed instructions on integrating Pocket-JS into your DApp, [visit our developer portal](https://pocket-network.readme.io) for tutorials and additional information about the Pocket Network.
-
-To obtain POKT to stake for bandwidth or to obtain an Application Authentication Token (AAT) for an already staked application, please use the [Pocket Dashboard](https://dashboard.pokt.network/). Once you have a signed AAT or the private keys for a staked application, you can get started using Pocket-JS with the examples below:
+[Visit our developer portal](https://docs.pokt.network/docs/developers-overview) for tutorials and information about the Pocket Network or get started with the examples below:
 
 ### For all of the following examples, start with this initialization code:
 ```javascript
@@ -94,7 +96,7 @@ const aat = require('./aat.json')
 
 To unlock the AAT for use in your application, you must first import and unlock the AAT's client account indicated by the ```clientPublicKey``` field.  Include that account's PPK in another JSON file. The PPK file is obtained from the [Pocket Dashboard](https://dashboard.pokt.network/) when creating an App or through the [Pocket Core CLI](https://github.com/pokt-network/pocket-core) with ```pocket accounts export```.
 
-A properly-formed ppk.json file will start with ```{"kdf":"scrypt"```
+A properly-formed ppk.json file will start with ```{"kdf":"scrypt"```. Include it with your project as a JSON file along with the passphrase used when creating it:
 ```javascript
 const accountPPK = require('./ppk.json')
 const accountPassphrase = 'Qwerty1234!'
