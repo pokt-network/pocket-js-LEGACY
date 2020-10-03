@@ -51,7 +51,7 @@ To obtain POKT to stake for bandwidth or to obtain an Application Authentication
 ### Installation
 
 ```
-npm install --save pocket-js
+npm install --save @pokt-network/pocket-js
 ```
 
 ## Documentation
@@ -72,7 +72,7 @@ const configuration = new Configuration(5, 1000, 0, 40000)
 const pocketInstance = new Pocket([dispatchURL], rpcProvider, configuration)
 
 // See https://docs.pokt.network/docs/supported-networks-on-mainnet for blockchain choices
-const blockchain = "0022" // Ethereum mainnet
+const blockchain = "0021" // Ethereum mainnet
 ```
 ---
 ### Use an AAT to connect to any blockchain:
