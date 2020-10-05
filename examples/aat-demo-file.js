@@ -1,6 +1,6 @@
 const PocketJS = require('@pokt-network/pocket-js');
 const { Pocket, Configuration, Provider, PocketAAT } = PocketJS;
-const accountPPK = require(`./testnetPK.json`) //modify
+const accountPPK = require(`./ppk.json`) //modify
 const aat = require('./aat.json') //modify
 
 // decrpytion PPK passphrase. 
