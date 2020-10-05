@@ -1,18 +1,15 @@
 const PocketJS = require('@pokt-network/pocket-js');
-const testPPK = require(`./testnetPK.json`) //modify
+const { Pocket, Configuration, Provider, PocketAAT } = PocketJS;
+const accountPPK = require(`./testnetPK.json`) //modify
 const aat = require('./aat.json') //modify
-const Pocket = PocketJS.Pocket;
-const Configuration = PocketJS.Configuration;
-const Provider = PocketJS.HttpRpcProvider;
-const PocketAAT = PocketJS.PocketAAT;
 
 // decrpytion PPK passphrase. 
-const testppkPassphrase = 'Kirito!' //modify
+const accountPassphrase = 'Kirito!' //modify
 
 /*
 Create an array of dispatchers that will be connecting you to a Pocket Node. A list of Dispatchers can be found here: https://docs.pokt.network/v2.1/docs/known-dispatcher-list
 */
-const dispatchers = [new URL("https://node3.testnet.pokt.network:443"), new URL("https://node2.testnet.pokt.network:443")];
+const dispatchURL = [new URL("https://node3.testnet.pokt.network:443"), new URL("https://node2.testnet.pokt.network:443")];
 
 
 /* 
@@ -36,7 +33,7 @@ const blockchain = "0022";
 const configuration = new Configuration(5, 1000, 5, 4000,true,undefined, undefined, undefined, undefined, false)
 
 // create RPC provider 
-const rpcProvider = new Provider(dispatchers)
+const rpcProvider = new Provider(dispatchURL)
 
 /*
  create a pocket instance and stores muliple configuration options for your node
@@ -45,18 +42,18 @@ const rpcProvider = new Provider(dispatchers)
   - configuration:(optional) configuration object
   - store: (optional)Save data using a Key/Value relationship. This object save information in memory.
 */
-const pocket = new Pocket(dispatchers, rpcProvider, configuration)
+const pocketInstance = new Pocket(dispatchURL, rpcProvider, configuration)
 
 
 // This is only called once to setup the Pocket Instance and AAT
-async function unlockAAT(aat, testPPK, testppkPassphrase) {
+async function unlockAAT(aat, accountPPK, accountPassphrase) {
     try {
-        const account = await pocket.keybase.importPPKFromJSON(
-            testppkPassphrase,
-            JSON.stringify(testPPK),
-            testppkPassphrase
+        const account = await pocketInstance.keybase.importPPKFromJSON(
+            accountPassphrase,
+            JSON.stringify(accountPPK),
+            accountPassphrase
         )
-        await pocket.keybase.unlockAccount(account.addressHex, testppkPassphrase, 0)
+        await pocketInstance.keybase.unlockAccount(account.addressHex, accountPassphrase, 0)
         return await PocketAAT.fromSignature(
             aat.version,
             account.publicKey.toString('hex'),
@@ -71,14 +68,14 @@ async function unlockAAT(aat, testPPK, testppkPassphrase) {
 // Call this every time you want to fetch RPC data
 async function sendRelay(rpcQuery, blockchain, pocketAAT) {
     try {
-        return await pocket.sendRelay(rpcQuery, blockchain, pocketAAT)
+        return await pocketInstance.sendRelay(rpcQuery, blockchain, pocketAAT)
     } catch (e) {
         console.log(e)
     }
 }
 
 
-unlockAAT(aat, testPPK, testppkPassphrase).then(pocketAAT => {
+unlockAAT(aat, accountPPK, accountPassphrase).then(pocketAAT => {
     rpcQuery = '{"jsonrpc":"2.0","id":1,"method":"net_version","params":[]}'
     sendRelay(rpcQuery, blockchain, pocketAAT).then(result => {
         console.log(result.payload);

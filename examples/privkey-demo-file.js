@@ -1,14 +1,11 @@
 const PocketJS = require('@pokt-network/pocket-js');
-const Pocket = PocketJS.Pocket;
-const Configuration = PocketJS.Configuration;
-const Provider = PocketJS.HttpRpcProvider;
-const PocketAAT = PocketJS.PocketAAT;
+const { Pocket, Configuration, HttpRpcProvider, PocketAAT } = PocketJS;
 
 
 /*
 Create an array of dispatchers that will be connecting you to a Pocket Node. A list of Dispatchers can be found here: https://docs.pokt.network/v2.1/docs/known-dispatcher-list
 */
-const dispatchers = [new URL("https://node3.testnet.pokt.network:443"), new URL("https://node2.testnet.pokt.network:443")];
+const dispatchURL = [new URL("https://node3.testnet.pokt.network:443"), new URL("https://node2.testnet.pokt.network:443")];
 
 
 /* 
@@ -32,7 +29,7 @@ const blockchain = "0022";
 const configuration = new Configuration(5, 1000, 5, 4000,true,undefined, undefined, undefined, undefined, false)
 
 // create RPC provider 
-const rpcProvider = new Provider(dispatchers)
+const rpcProvider = new HttpRpcProvider(dispatchURL)
 
 /*
  create a pocket instance and stores muliple configuration options for your node
@@ -41,7 +38,7 @@ const rpcProvider = new Provider(dispatchers)
   - configuration:(optional) configuration object
   - store: (optional)Save data using a Key/Value relationship. This object save information in memory.
 */
-const pocket = new Pocket(dispatchers, rpcProvider, configuration)
+const pocketInstance = new Pocket(dispatchURL, rpcProvider, configuration)
 
 const accountPrivateKey = '32gd642...'
 const accountPublicKey = '1d5c...'
@@ -50,7 +47,7 @@ const accountPassphrase = 'PocketRocks!'
 // This is only called once to setup the Pocket Instance and AAT
 async function unlockAccount(accountPrivateKey, accountPublicKey, accountPassphrase) {
     try {
-        const account = await pocket.keybase.importAccount(
+        const account = await pocketInstance.keybase.importAccount(
             Buffer.from(accountPrivateKey, 'hex'),
             accountPassphrase
         )
