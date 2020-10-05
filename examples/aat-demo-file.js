@@ -1,15 +1,15 @@
 const PocketJS = require('@pokt-network/pocket-js');
-const { Pocket, Configuration, Provider, PocketAAT } = PocketJS;
+const { Pocket, Configuration, HttpRpcProvider, PocketAAT } = PocketJS;
 const accountPPK = require(`./ppk.json`) //modify
 const aat = require('./aat.json') //modify
 
-// decrpytion PPK passphrase. 
+// decryption PPK passphrase. 
 const accountPassphrase = 'Kirito!' //modify
 
 /*
-Create an array of dispatchers that will be connecting you to a Pocket Node. A list of Dispatchers can be found here: https://docs.pokt.network/v2.1/docs/known-dispatcher-list
+Create an array of dispatchers that will provide a session to connect with the Pocket Network. A list of Dispatchers can be found here: https://docs.pokt.network/v2.1/docs/known-dispatcher-list
 */
-const dispatchURL = [new URL("https://node3.testnet.pokt.network:443"), new URL("https://node2.testnet.pokt.network:443")];
+const dispatcherList = [new URL("https://node3.testnet.pokt.network:443"), new URL("https://node2.testnet.pokt.network:443")];
 
 
 /* 
@@ -33,7 +33,7 @@ const blockchain = "0022";
 const configuration = new Configuration(5, 1000, 5, 4000,true,undefined, undefined, undefined, undefined, false)
 
 // create RPC provider 
-const rpcProvider = new Provider(dispatchURL)
+const rpcProvider = new HttpRpcProvider(dispatcherList)
 
 /*
  create a pocket instance and stores muliple configuration options for your node
@@ -42,7 +42,7 @@ const rpcProvider = new Provider(dispatchURL)
   - configuration:(optional) configuration object
   - store: (optional)Save data using a Key/Value relationship. This object save information in memory.
 */
-const pocketInstance = new Pocket(dispatchURL, rpcProvider, configuration)
+const pocketInstance = new Pocket(dispatcherList, rpcProvider, configuration)
 
 
 // This is only called once to setup the Pocket Instance and AAT
