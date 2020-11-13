@@ -1,3 +1,6 @@
+## 0.6.2-RC
+- Updated RawTxResponse rawLogs to be optional
+
 ## 0.6.1-RC
 - Fixed session refresh mechanism
 
