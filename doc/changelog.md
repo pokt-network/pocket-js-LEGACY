@@ -1,3 +1,6 @@
+## 0.6.3-RC
+- Fixed query AccountTxs failing to parse sent txs response for some scenarios.
+
 ## 0.6.2-RC
 - Updated RawTxResponse rawLogs to be optional
 

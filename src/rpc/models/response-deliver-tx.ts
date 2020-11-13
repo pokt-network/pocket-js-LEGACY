@@ -25,9 +25,11 @@ export class ResponseDeliverTx {
         })
       }
 
+      const data = jsonObject.data !== undefined && jsonObject.data !== null ? jsonObject.data : ""
+
       return new ResponseDeliverTx(
         jsonObject.code,
-        jsonObject.data,
+        data,
         jsonObject.log,
         jsonObject.info,
         BigInt(jsonObject.gasWanted),
@@ -117,9 +119,6 @@ export class ResponseDeliverTx {
    */
   public isValid() {
     return this.code >= 0 &&
-      this.data !== undefined &&
-      this.log.length > 0 &&
-      this.info.length >= 0 &&
       Number(this.gasWanted.toString()) >= 0 &&
       Number(this.gasUsed.toString()) >= 0
   }
