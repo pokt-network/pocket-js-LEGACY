@@ -13,9 +13,10 @@ export class RawTxResponse {
     public static fromJSON(jsonStr: string): RawTxResponse | Error {
         try {
             const rawTxResObj = JSON.parse(jsonStr)
+            const logs: TxLog[] = []
             let height: BigInt
             let hash: string
-            const logs: TxLog[] = []
+
             if (rawTxResObj.height !== undefined) {
                 height = BigInt(rawTxResObj.height)
             } else {
@@ -27,31 +28,14 @@ export class RawTxResponse {
             } else {
                 return new Error("Invalid tx hash: " + rawTxResObj.txhash)
             }
-
+            // Parse the logs if they are available
             if (rawTxResObj.logs && typeGuard(rawTxResObj.logs, Array)) {
-                const rawLogObjs = rawTxResObj.logs as Array<{}>
-                for (let i = 0; i < rawLogObjs.length; i++) {
-                    const txLogOrError = TxLog.fromJSONObj(rawLogObjs[i])
+                const logObjs = rawTxResObj.logs as Array<{}>
+                for (let i = 0; i < logObjs.length; i++) {
+                    const txLogOrError = TxLog.fromJSONObj(logObjs[i])
                     if (typeGuard(txLogOrError, TxLog)) {
                         logs.push(txLogOrError as TxLog)
                     }
-                }
-            } else {
-                // Try to parse error from raw_logs
-                const rawLog = rawTxResObj.raw_log
-                if (rawLog) {
-                    try {
-                        const rawLogObj = JSON.parse(rawLog)
-                        if (typeGuard(rawLogObj, Object)) {
-                            return new Error(`${rawLogObj.message ? `Error Code: ${rawLogObj.code}, Error Message: ${rawLogObj.message}` : "No error message received" }`)
-                        } else {
-                            return new Error(`Error parsing error logs, received raw_log: ${rawLog}`)
-                        }
-                    } catch (rawLogErr) {
-                        return new Error(`Error parsing error logs, received raw_log: ${rawLog}`)
-                    }
-                } else {
-                    return new Error("Unsuccesful transaction, no logs received")
                 }
             }
 
