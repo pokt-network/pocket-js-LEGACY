@@ -1,3 +1,6 @@
+## 0.6.4-RC
+- Updated RPC Call getBlock to support pocket-core Beta-0.5.2.x.
+  
 ## 0.6.3-RC
 - Fixed query AccountTxs failing to parse sent txs response for some scenarios.
 

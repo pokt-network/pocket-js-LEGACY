@@ -17,9 +17,14 @@ export class QueryBlockResponse {
   public static fromJSON(json: string): QueryBlockResponse {
     try {
       const jsonObject = JSON.parse(json)
-    
+      
+      const blockMeta = jsonObject.block_meta !== undefined ? jsonObject.block_meta : {
+        block_id: jsonObject.block_id,
+        header: jsonObject.block.header
+      }
+
       return new QueryBlockResponse(
-        BlockMeta.fromJSON(JSON.stringify(jsonObject.block_meta)),
+        BlockMeta.fromJSON(JSON.stringify(blockMeta)),
         Block.fromJSON(JSON.stringify(jsonObject.block))
       )
     } catch (error) {
