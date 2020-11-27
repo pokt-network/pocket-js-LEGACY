@@ -5,6 +5,7 @@ import { Configuration } from "../config"
 import { DispatchResponse } from "../rpc/models/output/dispatch-response"
 import { RpcError } from "../rpc/errors/rpc-error"
 import { RPC } from "../rpc/rpc"
+import { Node } from "../rpc/models"
 import { DispatchRequest } from "../rpc/models/input/dispatch-request"
 import { typeGuard } from "../utils/type-guard"
 import { Queue } from "./queue"
@@ -42,6 +43,20 @@ export class SessionManager {
     }
   }
 
+  /**
+   * Adds a new node to the routing table dispatcher's list
+   * @param {Node} dispatcher - New dispatcher.
+   * @memberof SessionManager
+   */
+  public addNewDispatcher(dispatcher: Node) {
+    this.routingTable.addDispatcher(dispatcher.serviceURL)
+  }
+
+  /**
+   * Returns the routing table dispatcher's count
+   * @returns {Number} - Dispatcher's count.
+   * @memberof SessionManager
+   */
   public getDispatchersCount() {
     return this.routingTable.dispatchersCount
   }
@@ -90,15 +105,6 @@ export class SessionManager {
 
       if (session !== undefined) {
         const key = this.getSessionKey(pocketAAT, chain)
-        
-        // Add new dispatchers to the routing table
-        for (let index = 0; index < session.sessionNodes.length; index++) {
-          const node = session.sessionNodes[index]
-          
-          if (node.serviceURL) {
-            this.routingTable.addDispatcher(node.serviceURL)
-          }
-        }
         
         return this.saveSession(key, session, configuration)
       } else {
