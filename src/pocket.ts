@@ -35,7 +35,6 @@ export class Pocket {
   public readonly configuration: Configuration
   public readonly keybase: Keybase
   public readonly sessionManager: SessionManager
-  public readonly routingTable: RoutingTable
   private innerRpc?: RPC
 
   /**
@@ -54,8 +53,8 @@ export class Pocket {
   ) {
     this.configuration = configuration
     try {
-      this.routingTable = new RoutingTable(dispatchers, configuration, store)
-      this.sessionManager = new SessionManager(this.routingTable, store)
+      const routingTable = new RoutingTable(dispatchers, configuration, store)
+      this.sessionManager = new SessionManager(routingTable, store)
       this.keybase = new Keybase(store)
     } catch (error) {
       throw error
@@ -64,6 +63,10 @@ export class Pocket {
     if (rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)
     }
+  }
+
+  public getDispatchersCount() {
+    return this.sessionManager.getDispatchersCount()
   }
 
   /**
