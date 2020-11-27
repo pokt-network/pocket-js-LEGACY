@@ -65,6 +65,11 @@ export class Pocket {
     }
   }
 
+  /**
+   * Returns the Session Manager's routing table dispatcher's count
+   * @returns {Number} - Dispatcher's count.
+   * @memberof Pocket
+   */
   public getDispatchersCount() {
     return this.sessionManager.getDispatchersCount()
   }
@@ -356,6 +361,9 @@ export class Pocket {
         }
         return new ConsensusNode(serviceNode, false, result)
       } else {
+        // Add the used session node to the routing table dispatcher's list
+        this.sessionManager.addNewDispatcher(serviceNode)
+
         return result
       }
     } catch (error) {
