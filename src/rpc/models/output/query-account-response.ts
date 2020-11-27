@@ -16,6 +16,11 @@ export class QueryAccountResponse {
   public static fromJSON(json: string): QueryAccountResponse {
     try {
       const rawObjValue = JSON.parse(json)
+      
+      if (rawObjValue === null) {
+        throw new Error("Account doesn't exist in the world state.")
+      }
+
       let balance = "0"
       const coins = rawObjValue.coins
 
