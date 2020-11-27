@@ -3,11 +3,18 @@
  * @description Unit tests for the Routing Table
  */
 import { expect } from 'chai'
-import { InMemoryKVStore, Configuration, RoutingTable, Node } from '../../../../src'
+import { InMemoryKVStore, Configuration, RoutingTable, Pocket, Account, PocketAAT } from '../../../../src'
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
 const dispatcher = new URL("http://127.0.0.1:8080")
 const store = new InMemoryKVStore()
+const configuration = new Configuration(30, 1000, undefined, 40000, true, undefined, undefined, undefined, undefined, false)
+//
+const clientPrivateKey = ""
+const walletAppPublicKey = ""
+const walletPrivateKey = ""
+const clientPassphrase = "123"
+const blockchain = "0002"
 
 describe('Routing Table tests',() => {
     it('should initialize a routing table', () => {
@@ -96,6 +103,33 @@ describe('Routing Table tests',() => {
         expect(readDispatchers[0]).to.be.an.instanceof(URL)
         expect(readDispatchers[1]).to.be.an.instanceof(URL)
         expect(readDispatchers[2]).to.be.an.instanceof(URL)
+    }).timeout(0)
+
+    it("should be able to add new nodes to the session manager's routing table using the ones provided in the new session", async () => {                
+        // Instantiate Pocket
+        const pocket = new Pocket([dispatcher], undefined, configuration)
+
+        // Import Client Account
+        const clientAccountOrError = await pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), clientPassphrase)
+        const clientAccount = clientAccountOrError as Account
+        
+        // Unlock client account
+        await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
+    
+        // Create AAT for imported account
+        const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), walletAppPublicKey, walletPrivateKey)
+
+        const firstDispatchersCount = pocket.getDispatchersCount()
+
+        await pocket.sessionManager.requestCurrentSession(aat, blockchain, configuration)
+
+        const secondDispatchersCount = pocket.getDispatchersCount()
+
+        await pocket.sessionManager.requestCurrentSession(aat, blockchain, configuration)
+    
+        const thirdDispatchersCount = pocket.getDispatchersCount()
+
+        expect(firstDispatchersCount).to.be.below(secondDispatchersCount).to.be.below(thirdDispatchersCount)
     }).timeout(0)
 
 }).timeout(0)

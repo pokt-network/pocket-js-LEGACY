@@ -838,7 +838,7 @@ export class QueryNamespace {
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the supply information: " + response.message
+                    "Failed to retrieve the account information: " + response.message
                 )
             }
         } catch (err) {
