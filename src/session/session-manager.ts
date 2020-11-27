@@ -42,6 +42,10 @@ export class SessionManager {
     }
   }
 
+  public getDispatchersCount() {
+    return this.routingTable.dispatchersCount
+  }
+
   /**
    * Request a new session object. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -86,8 +90,19 @@ export class SessionManager {
 
       if (session !== undefined) {
         const key = this.getSessionKey(pocketAAT, chain)
+        
+        // Add new dispatchers to the routing table
+        for (let index = 0; index < session.sessionNodes.length; index++) {
+          const node = session.sessionNodes[index]
+          
+          if (node.serviceURL) {
+            this.routingTable.addDispatcher(node.serviceURL)
+          }
+        }
+        
         return this.saveSession(key, session, configuration)
       } else {
+        // Remove node from dispatcher if it failed 3 times
         return new RpcError(
           "500",
           "Error decoding session from Dispatch response"
