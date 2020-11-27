@@ -1,3 +1,6 @@
+## 0.6.5-RC
+- Nodes used for relay request are now added to the routing table dispatcher's list.
+  
 ## 0.6.4-RC
 - Updated RPC Call getBlock to support pocket-core Beta-0.5.2.x.
   
