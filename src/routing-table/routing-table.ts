@@ -13,7 +13,7 @@ export class RoutingTable {
   public readonly configuration: Configuration
   public readonly localNodesFileName = ""
   private readonly dispatchersKey: string = "DISPATCHER_KEY"
-  private readonly store: IKVStore
+  public readonly store: IKVStore
   /**
    * Creates an instance of routing.
    * @param {URL[]} dispatchers - Array holding the initial dispatcher url(s).
