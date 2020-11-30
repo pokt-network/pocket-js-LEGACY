@@ -27,11 +27,10 @@ export class SessionManager {
   /**
    * Creates an instance of SessionManager.
    * @param {RoutingTable} routingTable - Element that supplies a default list of node(s) .
-   * @param {IKVStore} store - KVStore implementation.
    * @memberof SessionManager
    */
-  constructor(routingTable: RoutingTable, store: IKVStore) {
-    this.store = store
+  constructor(routingTable: RoutingTable) {
+    this.store = routingTable.store
     this.routingTable = routingTable
     this.sessionMap = new Map()
 
