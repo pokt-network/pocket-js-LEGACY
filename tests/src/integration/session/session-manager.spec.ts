@@ -3,7 +3,7 @@
  * @description Integration tests for the Session Manager
  */
 import { expect } from 'chai'
-import { InMemoryKVStore, Configuration, RoutingTable, PocketRpcProvider, Pocket, Account, PocketAAT, SessionManager, Session } from '../../../../src'
+import { InMemoryKVStore, Configuration, PocketRpcProvider, Pocket, Account, PocketAAT, SessionManager, Session } from '../../../../src'
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
 const dispatcher = new URL("http://localhost:8081")
@@ -20,8 +20,7 @@ describe('Session Manager tests',() => {
 
     it('should initialize a session manager instance', () => {
         const configuration = new Configuration(5, 200, undefined, 40000)
-        const routingTable = new RoutingTable([dispatcher], configuration, store)
-        const sessionManager = new SessionManager(routingTable)
+        const sessionManager = new SessionManager([dispatcher], configuration, store)
 
         expect(sessionManager).to.be.an.instanceof(SessionManager)
     }).timeout(0)

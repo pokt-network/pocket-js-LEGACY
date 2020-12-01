@@ -1,5 +1,8 @@
 ## 0.6.5-RC
 - Nodes used for relay request are now added to the routing table dispatcher's list.
+- Removed IKVStore property from the Session Manager class.
+- Updated Session Manager constructor, no routing table is needed to instantiate the class.
+- Added integration tests for the Session Manager.
   
 ## 0.6.4-RC
 - Updated RPC Call getBlock to support pocket-core Beta-0.5.2.x.
