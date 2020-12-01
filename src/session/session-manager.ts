@@ -19,26 +19,26 @@ import { sha3_256 } from "js-sha3"
  */
 
 export class SessionManager {
-  private readonly store: IKVStore
   private readonly sessionMap: Map<string, Queue<Session>>
   private readonly routingTable: RoutingTable
   private readonly sessionMapKey: string = "SESSIONS_KEY"
 
   /**
    * Creates an instance of SessionManager.
-   * @param {RoutingTable} routingTable - Element that supplies a default list of node(s) .
+   * @param {URL[]} dispatchers - Dispatcher's list.
+   * @param {Configuration} configuration - Pocket Configuration.
+   * @param {IKVStore} store - KVStore implementation.
    * @memberof SessionManager
    */
-  constructor(routingTable: RoutingTable) {
-    this.store = routingTable.store
-    this.routingTable = routingTable
+  constructor(dispatchers: URL[], configuration: Configuration , store: IKVStore) {
+    this.routingTable = new RoutingTable(dispatchers, configuration, store)
     this.sessionMap = new Map()
 
-    if (this.store.has(this.sessionMapKey)) {
-      this.sessionMap = this.store.get(this.sessionMapKey)
+    if (this.routingTable.store.has(this.sessionMapKey)) {
+      this.sessionMap = this.routingTable.store.get(this.sessionMapKey)
     } else {
       this.sessionMap = new Map()
-      this.store.add(this.sessionMapKey, this.sessionMap)
+      this.routingTable.store.add(this.sessionMapKey, this.sessionMap)
     }
   }
 

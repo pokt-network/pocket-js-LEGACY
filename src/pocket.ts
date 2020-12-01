@@ -53,8 +53,7 @@ export class Pocket {
   ) {
     this.configuration = configuration
     try {
-      const routingTable = new RoutingTable(dispatchers, configuration, store)
-      this.sessionManager = new SessionManager(routingTable)
+      this.sessionManager = new SessionManager(dispatchers, configuration, store)
       this.keybase = new Keybase(store)
     } catch (error) {
       throw error
