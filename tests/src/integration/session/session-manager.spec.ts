@@ -6,7 +6,7 @@ import { expect } from 'chai'
 import { InMemoryKVStore, Configuration, PocketRpcProvider, Pocket, Account, PocketAAT, SessionManager, Session } from '../../../../src'
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
-const dispatcher = new URL("http://localhost:8081")
+const dispatcher = new URL("https://node1.testnet.pokt.network:443")
 const store = new InMemoryKVStore()
 const configuration = new Configuration(30, 1000, undefined, 40000, true, undefined, undefined, undefined, undefined, false)
 //
@@ -111,6 +111,40 @@ describe('Session Manager tests',() => {
         const thirdDispatchersCount = pocket.getDispatchersCount()
 
         expect(firstDispatchersCount).to.be.below(secondDispatchersCount).to.be.below(thirdDispatchersCount)
+    }).timeout(0)
+
+    it('should request five new sessions using three good and two bad node dispatchers', async () => {
+        const dispatchers = [
+            new URL("https://node1.testnet.pokt.network"), 
+            new URL("https://badnode1.testnet.pokt.network"), 
+            new URL("https://node2.testnet.pokt.network"), 
+            new URL("https://badnode1.testnet.pokt.network"),
+            new URL("https://node3.testnet.pokt.network") 
+        ]
+
+        const configuration = new Configuration(5, 200, undefined, 40000)
+        // Instantiate Pocket
+        const pocket = new Pocket(dispatchers, undefined, configuration)
+
+        // Import Client Account
+        const clientAccountOrError = await pocket.keybase.importAccount(Buffer.from(clientPrivateKey, "hex"), clientPassphrase)
+        const clientAccount = clientAccountOrError as Account
+        
+        // Unlock client account
+        await pocket.keybase.unlockAccount(clientAccount.addressHex, clientPassphrase, 0)
+
+        // Create AAT for imported account
+        const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), walletAppPublicKey, walletPrivateKey)
+        
+        // Session array for storage
+        const sessions: Session[] = []
+
+        for (let index = 0; index < 5; index++) {
+            const session = await pocket.sessionManager.requestCurrentSession(aat, blockchain, configuration)
+            sessions.push(session as Session)
+        }
+        
+        expect(sessions.length).to.be.equal(5)
     }).timeout(0)
 
 }).timeout(0)

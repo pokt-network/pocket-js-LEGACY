@@ -2,6 +2,7 @@
 - Nodes used for relay request are now added to the routing table dispatcher's list.
 - Removed IKVStore property from the Session Manager class.
 - Updated Session Manager constructor, no routing table is needed to instantiate the class.
+- Failing dispatcher's are now being removed from the routing table.
 - Added integration tests for the Session Manager.
   
 ## 0.6.4-RC
