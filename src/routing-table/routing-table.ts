@@ -76,14 +76,16 @@ export class RoutingTable {
 
   /**
    * Gets a dispatcher url for the Pocket network rpc calls
-   * @returns {URL | RpcError} Dispatcher url or rpc error
+   * @returns {URL | Error} Dispatcher url or error
    * @memberof Routing
    */
-  public getDispatcher(): URL | RpcError {
+  public getDispatcher(): URL | Error {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
-    if (dispatchers.length < 0) {
-      return new RpcError("101", "Dispatcher not found in routing table.")
+
+    if (dispatchers.length <= 0) {
+      return new Error("No dispatcher's available.")
     }
+
     return dispatchers[Math.floor(Math.random() * dispatchers.length)]
   }
 
@@ -121,7 +123,9 @@ export class RoutingTable {
       disptachers.splice(0, 1)
     }
 
-    this.store.add(this.dispatchersKey, disptachers)
+    const shuffledDispatchers = disptachers.sort(() => Math.random() - 0.5)
+
+    this.store.add(this.dispatchersKey, shuffledDispatchers)
   }
 
   /**
@@ -132,10 +136,15 @@ export class RoutingTable {
    */
   public deleteDispatcher(url: URL): boolean {
     // Cycle through the list of nodes, find a match, splice it off
-    const disptachers = this.store.get(this.dispatchersKey) as URL[]
-    for (let i = 0; i < disptachers.length; i++) {
-      if (disptachers[i].hash === url.hash) {
-        disptachers.splice(i, 1)
+    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
+
+    for (let i = 0; i < dispatchers.length; i++) {
+      if (dispatchers[i].host === url.host) {
+        dispatchers.splice(i, 1)
+        // Shuffle the dispatcher's list
+        const shuffledDispatchers = dispatchers.sort(() => Math.random() - 0.5)
+        // Update the store
+        this.store.add(this.dispatchersKey, shuffledDispatchers)
         return true
       }
     }
