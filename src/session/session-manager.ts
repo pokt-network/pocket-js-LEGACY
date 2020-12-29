@@ -72,24 +72,25 @@ export class SessionManager {
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration
-  ): Promise<Session | RpcError> {
+  ): Promise<Session | Error> {
+    // Retrieve a dispatcher from the routing table
     const dispatcher = this.routingTable.getDispatcher()
 
-    if (!typeGuard(dispatcher, URL)) {
-      return new RpcError(
-        "500",
-        "Dispatcher URL is invalid"
-      )
+    if (typeGuard(dispatcher, Error)) {
+      return dispatcher
     }
 
     const key = this.getSessionKey(pocketAAT, chain)
+
     if (!this.sessionMap.has(key)) {
       this.sessionMap.set(key, new Queue())
     }
+
     const rpc = new RPC(new HttpRpcProvider(dispatcher))
     const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, BigInt(0))
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
 
+    // Perform a dispatch request
     const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
 
     if (typeGuard(result, DispatchResponse)) {
@@ -99,7 +100,7 @@ export class SessionManager {
           JSON.stringify(result.toJSON())
         )
       } catch (error) {
-        return RpcError.fromError(error)
+        return error
       }
 
       if (session !== undefined) {
@@ -108,13 +109,13 @@ export class SessionManager {
         return this.saveSession(key, session, configuration)
       } else {
         // Remove node from dispatcher if it failed 3 times
-        return new RpcError(
-          "500",
-          "Error decoding session from Dispatch response"
-        )
+        return new Error("Error decoding session from Dispatch response")
       }
     } else {
-      return result
+      // Remove the failed dispatcher from the routing table
+      this.routingTable.deleteDispatcher(dispatcher)
+      // Request the session again
+      return await this.requestCurrentSession(pocketAAT, chain, configuration)
     }
   }
 
@@ -130,7 +131,7 @@ export class SessionManager {
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration
-  ): Promise<Session | RpcError> {
+  ): Promise<Session | Error> {
 
     const key = this.getSessionKey(pocketAAT, chain)
     if (!this.sessionMap.has(key)) {
