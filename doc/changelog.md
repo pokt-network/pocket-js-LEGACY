@@ -4,6 +4,7 @@
 - Updated Session Manager constructor, no routing table is needed to instantiate the class.
 - Failing dispatcher's are now being removed from the routing table.
 - Added integration tests for the Session Manager.
+- Bumped axios version to 0.21.1.
   
 ## 0.6.4-RC
 - Updated RPC Call getBlock to support pocket-core Beta-0.5.2.x.
