@@ -5,6 +5,7 @@ import { TxMsg, CoinDenom, StdSignDoc, TxSignature, StdTx, MsgSend,
 import { ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount } from "../keybase/models"
 import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase, RawTxRequest } from ".."
+import { TxSignerFactory } from "./factory/tx-signer-factory"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
@@ -56,10 +57,10 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMsg === undefined) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
+            const signer = TxSignerFactory.createSigner(true);
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
-            const stdSignDoc = new StdSignDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
             let txSignatureOrError
-            const bytesToSign = stdSignDoc.marshalAmino()
+            const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
                 txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
             } else if (this.txSigner !== undefined) {
@@ -74,8 +75,7 @@ export class TransactionSender implements ITransactionSender {
 
             const txSignature = txSignatureOrError as TxSignature
             const addressHex = addressFromPublickey(txSignature.pubKey)
-            const transaction = new StdTx(stdSignDoc, txSignature)
-            const encodedTxBytes = transaction.marshalAmino()
+            const encodedTxBytes = signer.marshalTx(txSignature)
 
             const txRequest = new RawTxRequest(addressHex.toString("hex"), encodedTxBytes.toString("hex"))
             return txRequest
@@ -112,10 +112,11 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMsg === undefined) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
+
+            const signer = TxSignerFactory.createSigner(true);
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
-            const stdSignDoc = new StdSignDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
             let txSignatureOrError
-            const bytesToSign = stdSignDoc.marshalAmino()
+            const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
                 txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
             } else if (this.txSigner !== undefined) {
@@ -130,8 +131,7 @@ export class TransactionSender implements ITransactionSender {
 
             const txSignature = txSignatureOrError as TxSignature
             const addressHex = addressFromPublickey(txSignature.pubKey)
-            const transaction = new StdTx(stdSignDoc, txSignature)
-            const encodedTxBytes = transaction.marshalAmino()
+            const encodedTxBytes = signer.marshalTx(txSignature)
             // Clean message and error
             this.txMsg = undefined
             this.txMsgError = undefined

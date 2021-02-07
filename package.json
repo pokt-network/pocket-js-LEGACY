@@ -81,7 +81,9 @@
         "node-localstorage": "^2.1.5",
         "pbkdf2": "^3.0.17",
         "scrypt-js": "^3.0.1",
-        "tsify": "^4.0.1"
+        "ts-proto": "^1.54.0",
+        "tsify": "^4.0.1",
+        "typedarray-to-buffer": "^4.0.0"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^1.0.1",
