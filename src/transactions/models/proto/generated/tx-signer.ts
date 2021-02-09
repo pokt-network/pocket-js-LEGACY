@@ -546,7 +546,3 @@ function longToNumber(long: Long): number {
   }
   return long.toNumber();
 }
-
-util.Long = Long as any;
-configure();
-
