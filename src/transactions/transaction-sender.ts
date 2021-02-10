@@ -57,7 +57,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMsg === undefined) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
-            const signer = TxSignerFactory.createSigner(true)
+            const signer = TxSignerFactory.createSigner(this.pocket.configuration.useLegacyTxSignature)
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
             let txSignatureOrError
             const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
@@ -113,7 +113,7 @@ export class TransactionSender implements ITransactionSender {
                 return new RpcError("0", "No messages configured for this transaction")
             }
 
-            const signer = TxSignerFactory.createSigner(true)
+            const signer = TxSignerFactory.createSigner(this.pocket.configuration.useLegacyTxSignature)
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
             let txSignatureOrError
             const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
