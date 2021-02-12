@@ -52,7 +52,7 @@ export class StdSignDoc implements IAminoEncodable{
             entropy: this.entropy,
             fee: [{
                 amount: this.fee,
-                denom: this.feeDenom
+                denom: this.feeDenom.toLowerCase()
             }],
             memo: this.memo,
             msg: this.msg.toStdSignDocMsgObj()

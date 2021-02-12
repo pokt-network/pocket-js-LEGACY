@@ -21,7 +21,7 @@ export class ProtoTxSignerFactory implements ITxSignerFactory {
         }
 
         this.txMessage = msg.toStdTxMsgObj()
-        this.coin = {amount: fee, denom: feeDenom !== undefined ? CoinDenom[feeDenom] : 'pokt'}
+        this.coin = {amount: fee, denom: feeDenom !== undefined ? CoinDenom[feeDenom].toLowerCase() : 'pokt'}
     
         this.doc = {ChainID: chainID, fee: enc.encode(fee), memo: memoString, msg: msg.toStdSignDocMsgObj(), entropy: parseInt(entropy, 10)}
         return Buffer.from(StdSignDoc.encode(this.doc).finish())

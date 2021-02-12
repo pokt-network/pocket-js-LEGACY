@@ -38,7 +38,7 @@ export class StdTx implements IAminoEncodable {
             msg: txMsg,
             fee: [{
                 amount: this.stdSignDoc.fee,
-                denom: this.stdSignDoc.feeDenom
+                denom: this.stdSignDoc.feeDenom.toLowerCase()
             }],
             signature: txSignature,
             memo: this.stdSignDoc.memo,
