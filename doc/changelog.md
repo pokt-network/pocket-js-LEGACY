@@ -1,3 +1,7 @@
+## 0.6.6-RC
+- Added ProtoBuf encoding for transaction signing.
+- Added useLegacyTxSignature property flag to the Configuration Class for backwards compatibility with AminoJS(default).
+
 ## 0.6.5-RC
 - Nodes used for relay request are now added to the routing table dispatcher's list.
 - Removed IKVStore property from the Session Manager class.
