@@ -1,0 +1,38 @@
+{
+  "name": "@pokt-network/pocket-js-rpc",
+  "version": "0.0.1-rc",
+  "description": "Pocket Network RPC client",
+  "main": "src/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
+    "prepare": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
+    "prepackage": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
+    "lint": "tslint -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "pocket",
+    "pocket-js",
+    "network",
+    "blockchain",
+    "sdk",
+    "typscript",
+    "javascript",
+    "rpc"
+  ],
+  "author": "Pocket Network",
+  "license": "MIT",
+  "dependencies": {
+    "@pokt-network/pocket-js-http-provider": "file:../http-provider",
+    "@pokt-network/pocket-js-relay-models": "file:../relay-models",
+    "@pokt-network/pocket-js-rpc-models": "file:../rpc-models",
+    "@pokt-network/pocket-js-utils": "file:../utils"
+  },
+  "devDependencies": {
+    "create-ts-index": "^1.12.0",
+    "tslint": "^6.1.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.2"
+  }
+}
