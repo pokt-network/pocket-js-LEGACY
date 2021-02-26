@@ -1,0 +1,38 @@
+{
+  "name": "@pokt-network/pocket-js-routing-table",
+  "version": "0.0.1-rc",
+  "description": "Pocket-JS Routing table",
+  "main": "src/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
+    "prepare": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
+    "prepackage": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
+    "lint": "tslint -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "pocket-js",
+    "pocket",
+    "network",
+    "blockchain",
+    "sdk",
+    "typescript",
+    "javascript",
+    "routing-table"
+  ],
+  "author": "Pocket Network",
+  "license": "MIT",
+  "devDependencies": {
+    "create-ts-index": "^1.12.0",
+    "tslint": "^6.1.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "@pokt-network/pocket-js-configuration": "file:../configuration",
+    "@pokt-network/pocket-js-rpc-models": "file:../rpc-models",
+    "@pokt-network/pocket-js-storage": "file:../storage",
+    "@pokt-network/pocket-js-utils": "file:../utils"
+  }
+}
