@@ -8,7 +8,8 @@ import { IRPCProvider, HttpRpcProvider } from "../packages/http-provider"
 import { Keybase, UnlockedAccount, Account } from "../packages/keybase"
 import { Node } from "../packages/rpc-models"
 import { PocketAAT } from "@pokt-network/aat-js"
-import { TransactionSigner, ITransactionSender, InMemoryKVStore, IKVStore, TransactionSender } from "../packages/transactions"
+import { TransactionSigner, ITransactionSender, TransactionSender } from "../packages/transactions"
+import { InMemoryKVStore, IKVStore } from "../packages/storage"
 
 /**
  *
