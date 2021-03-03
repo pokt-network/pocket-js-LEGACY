@@ -7,22 +7,22 @@ import { UnlockedAccount, Keybase } from "@pokt-network/pocket-js-keybase"
 import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
 import { TxSignerFactory } from "./factory/tx-signer-factory"
-import { Pocket } from "../../../src/"
+import { IPocket } from "@pokt-network/pocket-js-main-interface"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
-    private pocket: Pocket
+    private pocket: IPocket
     private txSigner?: TransactionSigner
     private txMsgError?: Error
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
-     * @param {Pocket} pocket - Pocket instance 
+     * @param {IPocket} pocket - IPocket instance 
      * @param {UnlockedAccount} unlockedAccount - Unlocked account 
      * @param {TransactionSigner} txSigner - Transaction signer
      */
-    public constructor(pocket: Pocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
+    public constructor(pocket: IPocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
         this.unlockedAccount = unlockedAccount
         this.txSigner = txSigner
         this.pocket = pocket
