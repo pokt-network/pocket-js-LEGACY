@@ -7,7 +7,7 @@ import { RelayHeaders, RelayResponse } from "@pokt-network/pocket-js-relay-model
 import { ConsensusRelayResponse, ChallengeResponse, ConsensusNode } from "@pokt-network/pocket-js-rpc-models";
 import { Keybase } from "@pokt-network/pocket-js-keybase";
 import { SessionManager } from "@pokt-network/pocket-js-session-manager";
-// import { ITransactionSender, TransactionSigner } from "@pokt-network/pocket-js-transactions";
+import { ITransactionSender, TransactionSigner } from "@pokt-network/pocket-js-transactions";
 
 /**
  *
@@ -97,28 +97,28 @@ export interface IPocket {
     ): Promise<RelayResponse | ConsensusNode | RpcError>
 
 
-    // /**
-    //  * Creates an ITransactionSender given a private key
-    //  * @param {Buffer | string} privateKey 
-    //  * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
-    //  * @memberof Pocket
-    //  */
-    // withPrivateKey(privateKey: Buffer | string): ITransactionSender | Error
+    /**
+     * Creates an ITransactionSender given a private key
+     * @param {Buffer | string} privateKey 
+     * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
+     * @memberof Pocket
+     */
+    withPrivateKey(privateKey: Buffer | string): ITransactionSender | Error
 
-    // /**
-    //  * Creates an ITransactionSender given an already imported account into this instanc keybase
-    //  * @param {Buffer | string} address - address of the account
-    //  * @param {string} passphrase - passphrase for the account
-    //  * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
-    //  * @memberof Pocket
-    //  */
-    // withImportedAccount(address: Buffer | string, passphrase: string): Promise<ITransactionSender | Error>
+    /**
+     * Creates an ITransactionSender given an already imported account into this instanc keybase
+     * @param {Buffer | string} address - address of the account
+     * @param {string} passphrase - passphrase for the account
+     * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
+     * @memberof Pocket
+     */
+    withImportedAccount(address: Buffer | string, passphrase: string): Promise<ITransactionSender | Error>
     
-    // /**
-    //  * Creates an ITransactionSender given a {TransactionSigner} function
-    //  * @param {TransactionSigner} txSigner - Function which will sign the transaction bytes
-    //  * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
-    //  * @memberof Pocket
-    //  */
-    // withTxSigner(txSigner: TransactionSigner): ITransactionSender | Error
+    /**
+     * Creates an ITransactionSender given a {TransactionSigner} function
+     * @param {TransactionSigner} txSigner - Function which will sign the transaction bytes
+     * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
+     * @memberof Pocket
+     */
+    withTxSigner(txSigner: TransactionSigner): ITransactionSender | Error
 }
