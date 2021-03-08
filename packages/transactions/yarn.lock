@@ -67,14 +67,14 @@
 "@pokt-network/pocket-js-http-provider@../http-provider/", "@pokt-network/pocket-js-http-provider@file:../http-provider":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-http-provider-0.0.1-rc-9456a6e7-037f-489a-b982-71368e328b53-1615212419196/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-http-provider-0.0.1-rc-df5b3762-9270-4afe-ac98-58601792f728-1615229702344/node_modules/@pokt-network/utils"
     axios "^0.21.1"
 
 "@pokt-network/pocket-js-keybase@file:../keybase":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-storage" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-0c9b958f-dd44-4db1-aead-afb8cb704383-1615212419200/node_modules/@pokt-network/storage"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-0c9b958f-dd44-4db1-aead-afb8cb704383-1615212419200/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-storage" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-89630cd0-ffda-4aba-9d2e-7541018ee704-1615229702348/node_modules/@pokt-network/storage"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-89630cd0-ffda-4aba-9d2e-7541018ee704-1615229702348/node_modules/@pokt-network/utils"
     "@types/scrypt-js" "^2.0.4"
     scrypt-js "^3.0.1"
 
@@ -82,56 +82,56 @@
   version "0.0.1-rc"
   dependencies:
     "@pokt-network/aat-js" "0.1.1-rc"
-    "@pokt-network/pocket-js-configuration" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/configuration"
-    "@pokt-network/pocket-js-http-provider" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/http-provider"
-    "@pokt-network/pocket-js-keybase" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/keybase"
-    "@pokt-network/pocket-js-relay-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/relay-models"
-    "@pokt-network/pocket-js-rpc" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/rpc"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-session-manager" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/session-manager"
-    "@pokt-network/pocket-js-transactions" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/transactions"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-b22b790a-4695-45b9-8244-3136c3e7ed80-1615212419204/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-configuration" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/configuration"
+    "@pokt-network/pocket-js-http-provider" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/http-provider"
+    "@pokt-network/pocket-js-keybase" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/keybase"
+    "@pokt-network/pocket-js-relay-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/relay-models"
+    "@pokt-network/pocket-js-rpc" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/rpc"
+    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/rpc-models"
+    "@pokt-network/pocket-js-session-manager" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/session-manager"
+    "@pokt-network/pocket-js-transactions" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/transactions"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-eef41432-b84f-4e50-983f-ebf2f5e4dca1-1615229702353/node_modules/@pokt-network/utils"
 
 "@pokt-network/pocket-js-relay-models@file:../relay-models":
   version "0.0.1-rc"
   dependencies:
     "@pokt-network/aat-js" "^0.1.1-rc"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-relay-models-0.0.1-rc-37d880ce-bdc3-46a1-94d4-7f38663163ed-1615212419208/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-relay-models-0.0.1-rc-93d9486b-a118-4b00-8562-0d217909f411-1615229702376/node_modules/@pokt-network/utils"
     js-sha3 "^0.8.0"
 
 "@pokt-network/pocket-js-routing-table@file:../routing-table":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-configuration" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-bbd581b7-b2e5-4232-932f-5a73938c5634-1615212419225/node_modules/@pokt-network/configuration"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-bbd581b7-b2e5-4232-932f-5a73938c5634-1615212419225/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-storage" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-bbd581b7-b2e5-4232-932f-5a73938c5634-1615212419225/node_modules/@pokt-network/storage"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-bbd581b7-b2e5-4232-932f-5a73938c5634-1615212419225/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-configuration" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-7727bf2b-93c3-4a8f-8552-2bc601ba66f8-1615229702383/node_modules/@pokt-network/configuration"
+    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-7727bf2b-93c3-4a8f-8552-2bc601ba66f8-1615229702383/node_modules/@pokt-network/rpc-models"
+    "@pokt-network/pocket-js-storage" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-7727bf2b-93c3-4a8f-8552-2bc601ba66f8-1615229702383/node_modules/@pokt-network/storage"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-7727bf2b-93c3-4a8f-8552-2bc601ba66f8-1615229702383/node_modules/@pokt-network/utils"
 
 "@pokt-network/pocket-js-rpc-models@file:../rpc-models":
   version "0.0.1-rc"
   dependencies:
     "@pokt-network/aat-js" "^0.1.1-rc"
-    "@pokt-network/pocket-js-relay-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-c6862e72-3e60-490d-9a45-eeee3f096a1c-1615212419210/node_modules/@pokt-network/relay-models"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-c6862e72-3e60-490d-9a45-eeee3f096a1c-1615212419210/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-relay-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-c94b5e6e-1f8a-4f88-b6e9-b085ee9baa8d-1615229702374/node_modules/@pokt-network/relay-models"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-c94b5e6e-1f8a-4f88-b6e9-b085ee9baa8d-1615229702374/node_modules/@pokt-network/utils"
 
 "@pokt-network/pocket-js-rpc@../rpc", "@pokt-network/pocket-js-rpc@file:../rpc":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-http-provider" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-db87eb4d-a964-43a2-80f0-381c9bb8f556-1615212419209/node_modules/@pokt-network/http-provider"
-    "@pokt-network/pocket-js-relay-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-db87eb4d-a964-43a2-80f0-381c9bb8f556-1615212419209/node_modules/@pokt-network/relay-models"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-db87eb4d-a964-43a2-80f0-381c9bb8f556-1615212419209/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-db87eb4d-a964-43a2-80f0-381c9bb8f556-1615212419209/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-http-provider" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-fb984cbf-eb77-485d-82e6-c75adfd60fe2-1615229702375/node_modules/@pokt-network/http-provider"
+    "@pokt-network/pocket-js-relay-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-fb984cbf-eb77-485d-82e6-c75adfd60fe2-1615229702375/node_modules/@pokt-network/relay-models"
+    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-fb984cbf-eb77-485d-82e6-c75adfd60fe2-1615229702375/node_modules/@pokt-network/rpc-models"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-fb984cbf-eb77-485d-82e6-c75adfd60fe2-1615229702375/node_modules/@pokt-network/utils"
 
 "@pokt-network/pocket-js-session-manager@file:../session-manager":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-configuration" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-5c550470-bee1-4d27-863c-538f739dc5f5-1615212419212/node_modules/@pokt-network/configuration"
-    "@pokt-network/pocket-js-http-provider" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-5c550470-bee1-4d27-863c-538f739dc5f5-1615212419212/node_modules/@pokt-network/http-provider"
-    "@pokt-network/pocket-js-routing-table" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-5c550470-bee1-4d27-863c-538f739dc5f5-1615212419212/node_modules/@pokt-network/routing-table"
-    "@pokt-network/pocket-js-rpc" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-5c550470-bee1-4d27-863c-538f739dc5f5-1615212419212/node_modules/@pokt-network/rpc"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-5c550470-bee1-4d27-863c-538f739dc5f5-1615212419212/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-storage" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-5c550470-bee1-4d27-863c-538f739dc5f5-1615212419212/node_modules/@pokt-network/storage"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-5c550470-bee1-4d27-863c-538f739dc5f5-1615212419212/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-configuration" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-c9e83cd1-46ed-438d-87d2-3a8ecc37d72e-1615229702378/node_modules/@pokt-network/configuration"
+    "@pokt-network/pocket-js-http-provider" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-c9e83cd1-46ed-438d-87d2-3a8ecc37d72e-1615229702378/node_modules/@pokt-network/http-provider"
+    "@pokt-network/pocket-js-routing-table" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-c9e83cd1-46ed-438d-87d2-3a8ecc37d72e-1615229702378/node_modules/@pokt-network/routing-table"
+    "@pokt-network/pocket-js-rpc" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-c9e83cd1-46ed-438d-87d2-3a8ecc37d72e-1615229702378/node_modules/@pokt-network/rpc"
+    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-c9e83cd1-46ed-438d-87d2-3a8ecc37d72e-1615229702378/node_modules/@pokt-network/rpc-models"
+    "@pokt-network/pocket-js-storage" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-c9e83cd1-46ed-438d-87d2-3a8ecc37d72e-1615229702378/node_modules/@pokt-network/storage"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-c9e83cd1-46ed-438d-87d2-3a8ecc37d72e-1615229702378/node_modules/@pokt-network/utils"
 
 "@pokt-network/pocket-js-storage@file:../storage":
   version "0.0.1-rc"
@@ -149,12 +149,12 @@
     "@pokt-network/amino-js" "0.7.5-alpha.1"
     "@pokt-network/pocket-js-configuration" "../configuration/"
     "@pokt-network/pocket-js-http-provider" "../http-provider/"
-    "@pokt-network/pocket-js-keybase" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-066fd2ec-b5fe-4020-a8fb-296ec23f49ee-1615212419215/node_modules/@pokt-network/keybase"
-    "@pokt-network/pocket-js-main-interface" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-066fd2ec-b5fe-4020-a8fb-296ec23f49ee-1615212419215/node_modules/@pokt-network/main-interface"
+    "@pokt-network/pocket-js-keybase" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-535492df-7717-438d-890d-70587b3e7988-1615229702358/node_modules/@pokt-network/keybase"
+    "@pokt-network/pocket-js-main-interface" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-535492df-7717-438d-890d-70587b3e7988-1615229702358/node_modules/@pokt-network/main-interface"
     "@pokt-network/pocket-js-rpc" "../rpc"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-066fd2ec-b5fe-4020-a8fb-296ec23f49ee-1615212419215/node_modules/@pokt-network/rpc-models"
+    "@pokt-network/pocket-js-rpc-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-535492df-7717-438d-890d-70587b3e7988-1615229702358/node_modules/@pokt-network/rpc-models"
     "@pokt-network/pocket-js-test-utils" "../test-utils/"
-    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-066fd2ec-b5fe-4020-a8fb-296ec23f49ee-1615212419215/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-535492df-7717-438d-890d-70587b3e7988-1615229702358/node_modules/@pokt-network/utils"
     "@tendermint/belt" "^0.2.1"
     ts-proto "^1.54.0"
 
@@ -268,7 +268,7 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-8.2.1.tgz#f3f3ae4590c5386fc7c543aae9b78d4cf30ffee9"
   integrity sha512-NysN+bNqj6E0Hv4CTGWSlPzMW6vTKjDpOteycDkV4IWBsO+PU48JonrPzV9ODjiI2XrjmA05KInLgF5ivZ/YGQ==
 
-"@types/node@*", "@types/node@^14.14.31":
+"@types/node@*", "@types/node@^14.14.31", "@types/node@^14.14.32":
   version "14.14.32"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.32.tgz#90c5c4a8d72bbbfe53033f122341343249183448"
   integrity sha512-/Ctrftx/zp4m8JOujM5ZhwzlWLx22nbQJiVqz8/zE15gOeEW+uly3FSX4fGFpcfEvFzXcMCJwq9lGVWgyARXhg==

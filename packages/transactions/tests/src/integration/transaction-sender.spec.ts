@@ -7,6 +7,7 @@ import { ITransactionSender, TransactionSender, CoinDenom} from "../../../src"
 import { RawTxResponse } from "@pokt-network/pocket-js-rpc-models"
 import { EnvironmentHelper } from "@pokt-network/pocket-js-test-utils"
 import * as dotenv from "dotenv"
+import 'mocha';
 
 /** Specify the environment using using EnvironmentHelper.getLocalNet()
  * LocalNet will run the tests againt's a local network which can be setup in the .env file = localhost_env_url="http://35.245.7.53"
