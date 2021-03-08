@@ -11,6 +11,9 @@
     "lint": "tslint -p tsconfig.json",
     "prepublishOnly": "npm run build"
   },
+  "directories": {
+    "tests": "./tests"
+  },
   "keywords": [
     "pocket-js",
     "pocket",
@@ -24,15 +27,27 @@
   "author": "Pocket Network",
   "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/dotenv": "^8.2.0",
+    "@types/mocha": "^8.2.1",
+    "chai": "^4.2.0",
     "create-ts-index": "^1.12.0",
+    "mocha": "^7.1.1",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "@pokt-network/amino-js": "0.7.5-alpha.1",
+    "@pokt-network/pocket-js-configuration": "../configuration/",
+    "@pokt-network/pocket-js-http-provider": "../http-provider/",
     "@pokt-network/pocket-js-keybase": "file:../keybase",
     "@pokt-network/pocket-js-main-interface": "file:../main-interface",
+    "@pokt-network/pocket-js-rpc": "../rpc",
     "@pokt-network/pocket-js-rpc-models": "file:../rpc-models",
-    "@pokt-network/pocket-js-utils": "file:../utils"
+    "@pokt-network/pocket-js-test-utils": "../test-utils/",
+    "@pokt-network/pocket-js-utils": "file:../utils",
+    "@tendermint/belt": "^0.2.1",
+    "ts-proto": "^1.54.0"
   }
 }
