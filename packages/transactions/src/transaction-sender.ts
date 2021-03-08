@@ -1,32 +1,33 @@
 import { TxMsg, CoinDenom, TxSignature, MsgSend, 
     MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, 
-    MsgNodeUnstake, MsgNodeUnjail, TransactionSignature 
-} from "./models/"
-import { ITransactionSender, TransactionSigner} from "./index"
+    MsgNodeUnstake, MsgNodeUnjail, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount, Keybase } from "@pokt-network/pocket-js-keybase"
 import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
 import { TxSignerFactory } from "./factory/tx-signer-factory"
-import { IPocket } from "@pokt-network/pocket-js-main-interface"
+import { Configuration } from "@pokt-network/pocket-js-configuration"
+import { RPC } from "@pokt-network/pocket-js-rpc"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
-    private pocket: IPocket
+    private configuration: Configuration
+    private rpc: RPC
     private txSigner?: TransactionSigner
     private txMsgError?: Error
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
-     * @param {IPocket} pocket - IPocket instance 
+     * @param {Configuration} configuration - Pocket Configuration instance 
      * @param {UnlockedAccount} unlockedAccount - Unlocked account 
      * @param {TransactionSigner} txSigner - Transaction signer
      */
-    public constructor(pocket: IPocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
+    public constructor(rpc: RPC, configuration: Configuration, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
+        this.rpc = rpc
+        this.configuration = configuration
         this.unlockedAccount = unlockedAccount
         this.txSigner = txSigner
-        this.pocket = pocket
-
+        
         if (this.unlockedAccount === undefined && this.txSigner === undefined) {
             throw new Error("Need to define unlockedAccount or txSigner")
         }
@@ -59,7 +60,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMsg === undefined) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
-            const signer = TxSignerFactory.createSigner(this.pocket.configuration.useLegacyTxSignature)
+            const signer = TxSignerFactory.createSigner(this.configuration.useLegacyTxSignature)
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
             let txSignatureOrError
             const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
@@ -115,7 +116,7 @@ export class TransactionSender implements ITransactionSender {
                 return new RpcError("0", "No messages configured for this transaction")
             }
 
-            const signer = TxSignerFactory.createSigner(this.pocket.configuration.useLegacyTxSignature)
+            const signer = TxSignerFactory.createSigner(this.configuration.useLegacyTxSignature)
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
             let txSignatureOrError
             const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
@@ -137,7 +138,7 @@ export class TransactionSender implements ITransactionSender {
             // Clean message and error
             this.txMsg = undefined
             this.txMsgError = undefined
-            const response = await this.pocket.rpc()!.client.rawtx(addressHex, encodedTxBytes, timeout)
+            const response = await this.rpc.client.rawtx(addressHex, encodedTxBytes, timeout)
             
             return response
         } catch (error) {
