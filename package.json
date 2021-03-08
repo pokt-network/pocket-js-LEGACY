@@ -52,6 +52,7 @@
             "homepage": "https://github.com/nymd"
         }
     ],
-    "dependencies": {},
-    "devDependencies": {}
+    "devDependencies": {
+        "lerna": "^4.0.0"
+    }
 }
