@@ -1,3 +1,4 @@
+import { IKeybase } from './i-keybase';
 import { Account } from "./models/account"
 import Sodium from 'libsodium-wrappers'
 import { UnlockedAccount } from "./models/unlocked-account"
@@ -12,7 +13,7 @@ import {
     validatePrivateKey,
     validateAddressHex
 } from "@pokt-network/pocket-js-utils"
-import { IKVStore } from "@pokt-network/pocket-js-storage"
+import { IKVStore, InMemoryKVStore } from "@pokt-network/pocket-js-storage"
 import * as cryptoLib from 'crypto'
 import scrypt from "scrypt-js"
 
@@ -20,7 +21,7 @@ import scrypt from "scrypt-js"
  * @author Luis C. de León <luis@pokt.network>
  * @description The Keybase class allows storage, operations and persistence of accounts.
  */
-export class Keybase {
+export class Keybase implements IKeybase {
     /**
      * Utility function to sign an arbitrary payload with a valid ed25519 private key
      * @param {Buffer} privateKey - The private key to sign with
@@ -51,8 +52,8 @@ export class Keybase {
      * @param {IKVStore} store - The IKVStore to use to store encrypted accounts
      * @memberof Keybase
      */
-    constructor(store: IKVStore) {
-        this.store = store
+    constructor(store?: IKVStore) {
+        this.store = store ?? new InMemoryKVStore()
         this.unlockedAccounts = {}
     }
 
