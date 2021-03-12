@@ -2,7 +2,7 @@
   "name": "@pokt-network/pocket-js-test-utils",
   "version": "0.0.1-rc",
   "description": "PocketJS Utilities for Unit and Integration testing",
-  "main": "src/index.js",
+  "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",

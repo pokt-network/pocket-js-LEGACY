@@ -2,7 +2,7 @@
   "name": "@pokt-network/pocket-js-http-provider",
   "version": "0.0.1-rc",
   "description": "Pocket-JS HTTP Provider",
-  "main": "src/index.js",
+  "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
