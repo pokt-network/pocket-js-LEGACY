@@ -15,7 +15,7 @@ export class ProtoTxSignerFactory implements ITxSignerFactory {
         const enc = new TextEncoder()
         let memoString: string = ""
 
-        if(typeGuard(memo, String)) {
+        if(typeGuard(memo, "string")) {
             memoString = memo
         }
 
