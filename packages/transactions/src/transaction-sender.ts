@@ -7,6 +7,7 @@ import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
 import { TxSignerFactory } from "./factory/tx-signer-factory"
 import { Configuration } from "@pokt-network/pocket-js-configuration"
 import { RPC } from "@pokt-network/pocket-js-rpc"
+import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
@@ -18,13 +19,14 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
-     * @param {Configuration} configuration - Pocket Configuration instance 
-     * @param {UnlockedAccount} unlockedAccount - Unlocked account 
+     * @param {IRPCProvider} rpcProvider - RPC Provider instance
+     * @param {UnlockedAccount} unlockedAccount - Unlocked account
      * @param {TransactionSigner} txSigner - Transaction signer
+     * @param {Configuration} configuration - (Optional) Configuration instance
      */
-    public constructor(rpc: RPC, configuration: Configuration, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
-        this.rpc = rpc
-        this.configuration = configuration
+    public constructor(rpcProvider: IRPCProvider, configuration?: Configuration, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
+        this.rpc = new RPC(rpcProvider)
+        this.configuration = configuration ?? new Configuration()
         this.unlockedAccount = unlockedAccount
         this.txSigner = txSigner
         
