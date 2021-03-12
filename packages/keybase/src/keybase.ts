@@ -49,7 +49,7 @@ export class Keybase implements IKeybase {
 
     /**
      * @description Constructor for the Keybase class
-     * @param {IKVStore} store - The IKVStore to use to store encrypted accounts
+     * @param {IKVStore} store - (Optional) The IKVStore to use to store encrypted accounts
      * @memberof Keybase
      */
     constructor(store?: IKVStore) {
