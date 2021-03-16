@@ -2,7 +2,7 @@
   "name": "@pokt-network/pocket-js-utils",
   "version": "0.0.1-rc",
   "description": "Package of utilities used on Pocket-JS",
-  "main": "src/index.js",
+  "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
