@@ -37,3 +37,17 @@ message DecCoin {
 	string denom = 1;
 	string amount = 2;
 }
+
+message MsgProtoStake {
+	bytes pub_key = 1;
+	repeated string chains = 2;
+	string value = 3;
+}
+
+message MsgBeginUnstake {
+	bytes Address = 1;
+}
+
+message MsgUnjail {
+	bytes AppAddr = 1;
+}
