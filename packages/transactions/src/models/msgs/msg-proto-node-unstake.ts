@@ -1,3 +1,4 @@
+import { MsgBeginNodeUnstake } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
 import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
@@ -27,13 +28,11 @@ export class MsgProtoNodeUnstake extends TxMsg {
      * @memberof MsgNodeUnstake
      */
     public toStdSignDocMsgObj(): any {
+        let data = { Address: Buffer.from(this.nodeAddress) }
+
         return Any.fromJSON({
-            "@type": this.KEY,
-            "address": {
-                "@type": "github.com/pokt-network/pocket-core/types.Address",
-                "value": this.nodeAddress.toLowerCase()
-            },
-            
+            "typeUrl": this.KEY,
+            "value": MsgBeginNodeUnstake.encode(data).finish(),
         });
     }
 

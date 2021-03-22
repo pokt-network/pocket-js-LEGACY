@@ -1,13 +1,13 @@
 import { MsgProtoNodeUnjail } from './models/msgs/msg-proto-node-unjail';
 import { MsgProtoNodeUnstake } from './models/msgs/msg-proto-node-unstake';
-import { MsgProtoNodeStake } from './models/msgs/msg-proto-node-stake';
+import { MsgProtoNodeStakeTx } from './models/msgs/msg-proto-node-stake';
 import { MsgProtoAppUnjail } from './models/msgs/msg-proto-app-unjail';
 import { MsgProtoAppUnstake } from './models/msgs/msg-proto-app-unstake';
 import { MsgProtoAppStake } from './models/msgs/msg-proto-app-stake';
 import { MsgProtoSend } from './models/msgs/msg-proto-send';
 import { TxMsg, CoinDenom, TxSignature, MsgSend, 
     MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, 
-    MsgNodeUnstake, MsgNodeUnjail, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
+    MsgNodeUnstake, MsgNodeUnjailTx, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount, Keybase } from "@pokt-network/pocket-js-keybase"
 import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
@@ -263,7 +263,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
             else
-                this.txMsg = new MsgProtoNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
+                this.txMsg = new MsgProtoNodeStakeTx(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
         } catch (error) {
             this.txMsgError = error
         }
@@ -302,7 +302,7 @@ export class TransactionSender implements ITransactionSender {
     ): ITransactionSender {
         try {
             if (this.configuration.useLegacyTxSignature)
-                this.txMsg = new MsgNodeUnjail(address)
+                this.txMsg = new MsgNodeUnjailTx(address)
             else
                 this.txMsg = new MsgProtoNodeUnjail(address)
         } catch (error) {

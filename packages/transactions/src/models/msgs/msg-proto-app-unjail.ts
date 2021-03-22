@@ -1,3 +1,4 @@
+import { MsgBeginUnstake, MsgUnjail } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
 import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
@@ -28,12 +29,11 @@ export class MsgProtoAppUnjail extends TxMsg {
      * @memberof MsgAppUnjail
      */
     public toStdSignDocMsgObj(): any {
+        let data = { AppAddr: Buffer.from(this.address)}
+
         return Any.fromJSON({
-            "@type": this.KEY,
-            "appAddr": {
-                "@type": "github.com/pokt-network/pocket-core/types.Address",
-                "value": this.address.toLowerCase()
-            },
+            "typeUrl": this.KEY,
+            "value": MsgUnjail.encode(data).finish()
         });
     }
 
