@@ -1,4 +1,4 @@
-import { Any } from './../../../../../dist/transactions/models/proto/generated/google/protobuf/any.d';
+import { Any } from '../proto/generated/google/protobuf/any';
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validatePublicKey, validateServiceURL } from "@pokt-network/pocket-js-utils"

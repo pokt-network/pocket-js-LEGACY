@@ -199,7 +199,7 @@ var globalThis: any = (() => {
   if (typeof self !== "undefined") return self;
   if (typeof window !== "undefined") return window;
   if (typeof global !== "undefined") return global;
-  throw "Unable to locate global object";
+  throw new Error("Unable to locate global object");
 })();
 
 const atob: (b64: string) => string =

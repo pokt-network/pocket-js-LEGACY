@@ -1,5 +1,5 @@
 import { MsgProtoStake } from '../proto/generated/tx-signer';
-import { Any } from '../../../../../dist/transactions/models/proto/generated/google/protobuf/any';
+import { Any } from '../proto/generated/google/protobuf/any';
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validatePublicKey } from "@pokt-network/pocket-js-utils"
