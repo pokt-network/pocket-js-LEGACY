@@ -49,17 +49,11 @@ export class MsgProtoAppStake extends TxMsg {
      * @memberof MsgAppStake
      */
     public toStdSignDocMsgObj(): any {
+        let data = {pubKey: Buffer.from(this.pubKey.toString("hex")), chains: this.chains, value: this.amount}
+
         return Any.fromJSON({
-            "@type": this.KEY,
-            "pubKey": {
-                "@type": "github.com/pokt-network/pocket-core/types.Address",
-                "value": this.pubKey.toString("hex")
-            },
-            "chains": this.chains,
-            "value": {
-                "@type": "github.com/pokt-network/pocket-core/types.BigInt",
-                "value": this.amount
-            }
+            "typeUrl": this.KEY,
+            "value": MsgProtoStake.encode(data).finish()
         });
     }
 

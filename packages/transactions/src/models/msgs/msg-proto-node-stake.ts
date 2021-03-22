@@ -1,3 +1,4 @@
+import { MsgProtoNodeStake } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
@@ -6,7 +7,7 @@ import { validatePublicKey, validateServiceURL } from "@pokt-network/pocket-js-u
 /**
  * Model representing a MsgNodeStake to stake as an Node in the Pocket Network
  */
-export class MsgProtoNodeStake extends TxMsg {
+export class MsgProtoNodeStakeTx extends TxMsg {
     public readonly KEY: string = "github.com/pokt-network/pocket-core/x/nodes/types.MsgProtoStake"
     public readonly DEFAULT_PORT: string = "443"
     public readonly DEFAULT_PROTOCOL: string = "https:"
@@ -61,6 +62,13 @@ export class MsgProtoNodeStake extends TxMsg {
      * @memberof MsgNodeStake
      */
     public toStdSignDocMsgObj(): any {
+        let data = { Publickey: Buffer.from(this.pubKey.toString("hex")), Chains: this.chains, value: this.amount, ServiceUrl: this.serviceURL.toString() }
+
+        return Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": MsgProtoNodeStake.encode(data).finish()
+        });
+
         return Any.fromJSON({
             "@type": this.KEY,
             "publickey": {

@@ -4,7 +4,7 @@ import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
 /**
  * Model representing a MsgNodeUnjail to unjail as an Node in the Pocket Network
  */
-export class MsgNodeUnjail extends TxMsg {
+export class MsgNodeUnjailTx extends TxMsg {
     public readonly AMINO_KEY: string = "pos/MsgUnjail"
     public readonly address: string
 
