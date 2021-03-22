@@ -56,6 +56,27 @@ export interface MsgUnjail {
   AppAddr: Uint8Array;
 }
 
+export interface MsgProtoNodeStake {
+  Publickey: Uint8Array;
+  Chains: string[];
+  value: string;
+  ServiceUrl: string;
+}
+
+export interface MsgBeginNodeUnstake {
+  Address: Uint8Array;
+}
+
+export interface MsgNodeUnjail {
+  ValidatorAddr: Uint8Array;
+}
+
+export interface MsgSend {
+  FromAddress: Uint8Array;
+  ToAddress: Uint8Array;
+  amount: string;
+}
+
 const baseProtoStdTx: object = { memo: "", entropy: 0 };
 
 export const ProtoStdTx = {
@@ -740,6 +761,330 @@ export const MsgUnjail = {
       message.AppAddr = object.AppAddr;
     } else {
       message.AppAddr = new Uint8Array();
+    }
+    return message;
+  },
+};
+
+const baseMsgProtoNodeStake: object = { Chains: "", value: "", ServiceUrl: "" };
+
+export const MsgProtoNodeStake = {
+  encode(message: MsgProtoNodeStake, writer: Writer = Writer.create()): Writer {
+    if (message.Publickey.length !== 0) {
+      writer.uint32(10).bytes(message.Publickey);
+    }
+    for (const v of message.Chains) {
+      writer.uint32(18).string(v!);
+    }
+    if (message.value !== "") {
+      writer.uint32(26).string(message.value);
+    }
+    if (message.ServiceUrl !== "") {
+      writer.uint32(34).string(message.ServiceUrl);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgProtoNodeStake {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgProtoNodeStake } as MsgProtoNodeStake;
+    message.Chains = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Publickey = reader.bytes();
+          break;
+        case 2:
+          message.Chains.push(reader.string());
+          break;
+        case 3:
+          message.value = reader.string();
+          break;
+        case 4:
+          message.ServiceUrl = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgProtoNodeStake {
+    const message = { ...baseMsgProtoNodeStake } as MsgProtoNodeStake;
+    message.Chains = [];
+    if (object.Publickey !== undefined && object.Publickey !== null) {
+      message.Publickey = bytesFromBase64(object.Publickey);
+    }
+    if (object.Chains !== undefined && object.Chains !== null) {
+      for (const e of object.Chains) {
+        message.Chains.push(String(e));
+      }
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = String(object.value);
+    } else {
+      message.value = "";
+    }
+    if (object.ServiceUrl !== undefined && object.ServiceUrl !== null) {
+      message.ServiceUrl = String(object.ServiceUrl);
+    } else {
+      message.ServiceUrl = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgProtoNodeStake): unknown {
+    const obj: any = {};
+    message.Publickey !== undefined &&
+      (obj.Publickey = base64FromBytes(
+        message.Publickey !== undefined ? message.Publickey : new Uint8Array()
+      ));
+    if (message.Chains) {
+      obj.Chains = message.Chains.map((e) => e);
+    } else {
+      obj.Chains = [];
+    }
+    message.value !== undefined && (obj.value = message.value);
+    message.ServiceUrl !== undefined && (obj.ServiceUrl = message.ServiceUrl);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgProtoNodeStake>): MsgProtoNodeStake {
+    const message = { ...baseMsgProtoNodeStake } as MsgProtoNodeStake;
+    message.Chains = [];
+    if (object.Publickey !== undefined && object.Publickey !== null) {
+      message.Publickey = object.Publickey;
+    } else {
+      message.Publickey = new Uint8Array();
+    }
+    if (object.Chains !== undefined && object.Chains !== null) {
+      for (const e of object.Chains) {
+        message.Chains.push(e);
+      }
+    }
+    if (object.value !== undefined && object.value !== null) {
+      message.value = object.value;
+    } else {
+      message.value = "";
+    }
+    if (object.ServiceUrl !== undefined && object.ServiceUrl !== null) {
+      message.ServiceUrl = object.ServiceUrl;
+    } else {
+      message.ServiceUrl = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgBeginNodeUnstake: object = {};
+
+export const MsgBeginNodeUnstake = {
+  encode(
+    message: MsgBeginNodeUnstake,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.Address.length !== 0) {
+      writer.uint32(10).bytes(message.Address);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgBeginNodeUnstake {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgBeginNodeUnstake } as MsgBeginNodeUnstake;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.Address = reader.bytes();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgBeginNodeUnstake {
+    const message = { ...baseMsgBeginNodeUnstake } as MsgBeginNodeUnstake;
+    if (object.Address !== undefined && object.Address !== null) {
+      message.Address = bytesFromBase64(object.Address);
+    }
+    return message;
+  },
+
+  toJSON(message: MsgBeginNodeUnstake): unknown {
+    const obj: any = {};
+    message.Address !== undefined &&
+      (obj.Address = base64FromBytes(
+        message.Address !== undefined ? message.Address : new Uint8Array()
+      ));
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgBeginNodeUnstake>): MsgBeginNodeUnstake {
+    const message = { ...baseMsgBeginNodeUnstake } as MsgBeginNodeUnstake;
+    if (object.Address !== undefined && object.Address !== null) {
+      message.Address = object.Address;
+    } else {
+      message.Address = new Uint8Array();
+    }
+    return message;
+  },
+};
+
+const baseMsgNodeUnjail: object = {};
+
+export const MsgNodeUnjail = {
+  encode(message: MsgNodeUnjail, writer: Writer = Writer.create()): Writer {
+    if (message.ValidatorAddr.length !== 0) {
+      writer.uint32(10).bytes(message.ValidatorAddr);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgNodeUnjail {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgNodeUnjail } as MsgNodeUnjail;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.ValidatorAddr = reader.bytes();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgNodeUnjail {
+    const message = { ...baseMsgNodeUnjail } as MsgNodeUnjail;
+    if (object.ValidatorAddr !== undefined && object.ValidatorAddr !== null) {
+      message.ValidatorAddr = bytesFromBase64(object.ValidatorAddr);
+    }
+    return message;
+  },
+
+  toJSON(message: MsgNodeUnjail): unknown {
+    const obj: any = {};
+    message.ValidatorAddr !== undefined &&
+      (obj.ValidatorAddr = base64FromBytes(
+        message.ValidatorAddr !== undefined
+          ? message.ValidatorAddr
+          : new Uint8Array()
+      ));
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgNodeUnjail>): MsgNodeUnjail {
+    const message = { ...baseMsgNodeUnjail } as MsgNodeUnjail;
+    if (object.ValidatorAddr !== undefined && object.ValidatorAddr !== null) {
+      message.ValidatorAddr = object.ValidatorAddr;
+    } else {
+      message.ValidatorAddr = new Uint8Array();
+    }
+    return message;
+  },
+};
+
+const baseMsgSend: object = { amount: "" };
+
+export const MsgSend = {
+  encode(message: MsgSend, writer: Writer = Writer.create()): Writer {
+    if (message.FromAddress.length !== 0) {
+      writer.uint32(10).bytes(message.FromAddress);
+    }
+    if (message.ToAddress.length !== 0) {
+      writer.uint32(18).bytes(message.ToAddress);
+    }
+    if (message.amount !== "") {
+      writer.uint32(26).string(message.amount);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgSend {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgSend } as MsgSend;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.FromAddress = reader.bytes();
+          break;
+        case 2:
+          message.ToAddress = reader.bytes();
+          break;
+        case 3:
+          message.amount = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSend {
+    const message = { ...baseMsgSend } as MsgSend;
+    if (object.FromAddress !== undefined && object.FromAddress !== null) {
+      message.FromAddress = bytesFromBase64(object.FromAddress);
+    }
+    if (object.ToAddress !== undefined && object.ToAddress !== null) {
+      message.ToAddress = bytesFromBase64(object.ToAddress);
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = String(object.amount);
+    } else {
+      message.amount = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgSend): unknown {
+    const obj: any = {};
+    message.FromAddress !== undefined &&
+      (obj.FromAddress = base64FromBytes(
+        message.FromAddress !== undefined
+          ? message.FromAddress
+          : new Uint8Array()
+      ));
+    message.ToAddress !== undefined &&
+      (obj.ToAddress = base64FromBytes(
+        message.ToAddress !== undefined ? message.ToAddress : new Uint8Array()
+      ));
+    message.amount !== undefined && (obj.amount = message.amount);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgSend>): MsgSend {
+    const message = { ...baseMsgSend } as MsgSend;
+    if (object.FromAddress !== undefined && object.FromAddress !== null) {
+      message.FromAddress = object.FromAddress;
+    } else {
+      message.FromAddress = new Uint8Array();
+    }
+    if (object.ToAddress !== undefined && object.ToAddress !== null) {
+      message.ToAddress = object.ToAddress;
+    } else {
+      message.ToAddress = new Uint8Array();
+    }
+    if (object.amount !== undefined && object.amount !== null) {
+      message.amount = object.amount;
+    } else {
+      message.amount = "";
     }
     return message;
   },
