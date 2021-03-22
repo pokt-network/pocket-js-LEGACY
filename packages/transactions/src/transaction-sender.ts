@@ -1,3 +1,10 @@
+import { MsgProtoNodeUnjail } from './models/msgs/msg-proto-node-unjail';
+import { MsgProtoNodeUnstake } from './models/msgs/msg-proto-node-unstake';
+import { MsgProtoNodeStake } from './models/msgs/msg-proto-node-stake';
+import { MsgProtoAppUnjail } from './models/msgs/msg-proto-app-unjail';
+import { MsgProtoAppUnstake } from './models/msgs/msg-proto-app-unstake';
+import { MsgProtoAppStake } from './models/msgs/msg-proto-app-stake';
+import { MsgProtoSend } from './models/msgs/msg-proto-send';
 import { TxMsg, CoinDenom, TxSignature, MsgSend, 
     MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, 
     MsgNodeUnstake, MsgNodeUnjail, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
@@ -162,7 +169,10 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            this.txMsg = new MsgSend(fromAddress, toAddress, amount)
+            if (this.configuration.useLegacyTxSignature)
+                this.txMsg = new MsgSend(fromAddress, toAddress, amount)
+            else
+                this.txMsg = new MsgProtoSend(fromAddress, toAddress, amount)
         } catch (error) {
             this.txMsgError = error
         }
@@ -183,7 +193,10 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            this.txMsg = new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
+            if (this.configuration.useLegacyTxSignature)
+                this.txMsg = new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
+            else
+                this.txMsg = new MsgProtoAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
         } catch (error) {
             this.txMsgError = error
         }
@@ -200,7 +213,10 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMsg = new MsgAppUnstake(address)
+            if (this.configuration.useLegacyTxSignature)
+                this.txMsg = new MsgAppUnstake(address)
+            else
+                this.txMsg = new MsgProtoAppUnstake(address)
         } catch (error) {
             this.txMsgError = error
         }
@@ -217,7 +233,10 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMsg = new MsgAppUnjail(address)
+            if (this.configuration.useLegacyTxSignature)
+                this.txMsg = new MsgAppUnjail(address)
+            else
+                this.txMsg = new MsgProtoAppUnjail(address)
         } catch (error) {
             this.txMsgError = error
         }
@@ -241,7 +260,10 @@ export class TransactionSender implements ITransactionSender {
         serviceURL: URL
     ): ITransactionSender {
         try {
-            this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
+            if (this.configuration.useLegacyTxSignature)
+                this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
+            else
+                this.txMsg = new MsgProtoNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
         } catch (error) {
             this.txMsgError = error
         }
@@ -258,7 +280,10 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMsg = new MsgNodeUnstake(address)
+            if (this.configuration.useLegacyTxSignature)
+                this.txMsg = new MsgNodeUnstake(address)
+            else
+                this.txMsg = new MsgProtoNodeUnstake(address)
         } catch (error) {
             this.txMsgError = error
         }
@@ -276,7 +301,10 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            this.txMsg = new MsgNodeUnjail(address)
+            if (this.configuration.useLegacyTxSignature)
+                this.txMsg = new MsgNodeUnjail(address)
+            else
+                this.txMsg = new MsgProtoNodeUnjail(address)
         } catch (error) {
             this.txMsgError = error
         }

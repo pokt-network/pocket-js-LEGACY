@@ -51,3 +51,26 @@ message MsgBeginUnstake {
 message MsgUnjail {
 	bytes AppAddr = 1;
 }
+
+message MsgProtoNodeStake {
+	bytes Publickey = 1;
+	repeated string Chains = 2;
+	string value = 3;
+	string ServiceUrl = 4;
+}
+
+message MsgBeginNodeUnstake {
+	bytes Address = 1;
+}
+
+message MsgNodeUnjail {
+	bytes ValidatorAddr = 1;
+}
+
+message MsgSend {
+	bytes FromAddress = 1;
+	bytes ToAddress = 2;
+	string amount = 3;
+}
+
+
