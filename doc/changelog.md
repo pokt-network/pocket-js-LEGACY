@@ -1,3 +1,6 @@
+## 0.6.7-RC
+- Improved session management.
+  
 ## 0.6.6-RC
 - Added ProtoBuf encoding for transaction signing.
 - Added useLegacyTxSignature property flag to the Configuration Class for backwards compatibility with AminoJS(default).
