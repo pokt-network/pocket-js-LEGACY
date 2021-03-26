@@ -300,12 +300,7 @@ export class Pocket {
       if (typeGuard(result, RpcError)) {
         const rpcError = result as RpcError
         // Refresh the current session if we get this error code
-        if (
-          rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
-          rpcError.code === "75" ||
-          rpcError.code === "14" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
-        ) {
-          // Remove outdated session
+        var callback = async (rpcError: RpcError): Promise<RelayResponse | ConsensusNode | RpcError> => {
           this.sessionManager.destroySession(pocketAAT, blockchain)
           let sessionRefreshed = false
           for (
@@ -351,9 +346,10 @@ export class Pocket {
           } else {
             return rpcError
           }
-        } else {
-          return rpcError
         }
+
+        return this.validateRPCError(rpcError, callback);
+
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
         // Handle consensus
         if (currentSession.sessionNodes.indexOf(serviceNode)) {
@@ -368,6 +364,18 @@ export class Pocket {
       }
     } catch (error) {
       return RpcError.fromError(error)
+    }
+  }
+
+  public async validateRPCError(rpcError: RpcError, callback: (rpcError: RpcError) => Promise<RelayResponse | ConsensusNode | RpcError>): Promise<RelayResponse | ConsensusNode | RpcError> {
+    if (
+      rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
+      rpcError.code === "75" ||
+      rpcError.code === "14" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
+    ) {
+      return callback(rpcError);
+    } else {
+      return rpcError;
     }
   }
 
