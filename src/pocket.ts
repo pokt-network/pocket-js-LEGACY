@@ -302,7 +302,8 @@ export class Pocket {
         // Refresh the current session if we get this error code
         if (
           rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
-          rpcError.code === "75" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
+          rpcError.code === "75" ||
+          rpcError.code === "14" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
         ) {
           // Remove outdated session
           this.sessionManager.destroySession(pocketAAT, blockchain)
