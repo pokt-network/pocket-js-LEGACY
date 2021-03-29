@@ -1,5 +1,5 @@
 import { TxMsg } from "./tx-msg"
-import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
+import { typeGuard, validateAddressHex } from './../../../utils'
 
 /**
  * Model representing a MsgNodeUnjail to unjail as an Node in the Pocket Network

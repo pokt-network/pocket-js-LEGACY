@@ -2,7 +2,7 @@ import { MsgProtoStake } from '../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
-import { validatePublicKey } from "@pokt-network/pocket-js-utils"
+import { validatePublicKey } from './../../../utils'
 
 /**
  * Model representing a MsgAppStake to stake as an Application in the Pocket Network

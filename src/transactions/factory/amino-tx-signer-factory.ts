@@ -1,4 +1,5 @@
-import { RpcError, typeGuard } from '@pokt-network/pocket-js-utils'
+import { typeGuard } from './../../utils'
+import { RpcError } from './../../rpc'
 import { TxSignature } from './../models/tx-signature'
 import { StdTx } from './../models/std-tx'
 import { CoinDenom } from './../models/coin-denom'

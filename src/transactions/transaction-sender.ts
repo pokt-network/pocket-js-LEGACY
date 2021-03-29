@@ -1,42 +1,32 @@
-import { MsgProtoNodeUnjail } from './models/msgs/msg-proto-node-unjail';
-import { MsgProtoNodeUnstake } from './models/msgs/msg-proto-node-unstake';
-import { MsgProtoNodeStakeTx } from './models/msgs/msg-proto-node-stake';
-import { MsgProtoAppUnjail } from './models/msgs/msg-proto-app-unjail';
-import { MsgProtoAppUnstake } from './models/msgs/msg-proto-app-unstake';
-import { MsgProtoAppStake } from './models/msgs/msg-proto-app-stake';
-import { MsgProtoSend } from './models/msgs/msg-proto-send';
-import { TxMsg, CoinDenom, TxSignature, MsgSend, 
-    MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, 
-    MsgNodeUnstake, MsgNodeUnjailTx, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
-import { UnlockedAccount, Keybase } from "@pokt-network/pocket-js-keybase"
-import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-js-utils"
-import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
+import { MsgNodeUnjailTx, MsgProtoSend, MsgProtoAppStake, MsgProtoAppUnstake, MsgProtoAppUnjail, MsgProtoNodeStakeTx, MsgProtoNodeUnstake, MsgProtoNodeUnjail } from './models/msgs';
+import {
+    TxMsg, CoinDenom, StdSignDoc, TxSignature, StdTx, MsgSend,
+    MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake,
+    MsgNodeUnstake, TransactionSignature
+} from "./models/"
+import { ITransactionSender, TransactionSigner } from "./index"
+import { UnlockedAccount } from "../keybase/models"
+import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase, RawTxRequest } from ".."
 import { TxSignerFactory } from "./factory/tx-signer-factory"
-import { Configuration } from "@pokt-network/pocket-js-configuration"
-import { RPC } from "@pokt-network/pocket-js-rpc"
-import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
-    private configuration: Configuration
-    private rpc: RPC
+    private pocket: Pocket
     private txSigner?: TransactionSigner
     private txMsgError?: Error
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
-     * @param {IRPCProvider} rpcProvider - RPC Provider instance
-     * @param {UnlockedAccount} unlockedAccount - Unlocked account
+     * @param {Pocket} pocket - Pocket instance 
+     * @param {UnlockedAccount} unlockedAccount - Unlocked account 
      * @param {TransactionSigner} txSigner - Transaction signer
-     * @param {Configuration} configuration - (Optional) Configuration instance
      */
-    public constructor(rpcProvider: IRPCProvider, configuration?: Configuration, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
-        this.rpc = new RPC(rpcProvider)
-        this.configuration = configuration ?? new Configuration()
+    public constructor(pocket: Pocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
         this.unlockedAccount = unlockedAccount
         this.txSigner = txSigner
-        
+        this.pocket = pocket
+
         if (this.unlockedAccount === undefined && this.txSigner === undefined) {
             throw new Error("Need to define unlockedAccount or txSigner")
         }
@@ -69,7 +59,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMsg === undefined) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
-            const signer = TxSignerFactory.createSigner(this.configuration.useLegacyTxSignature)
+            const signer = TxSignerFactory.createSigner(this.pocket.configuration.useLegacyTxSignature)
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
             let txSignatureOrError
             const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
@@ -113,9 +103,9 @@ export class TransactionSender implements ITransactionSender {
         memo?: string,
         timeout?: number
     ): Promise<RawTxResponse | RpcError> {
-        try { 
+        try {
             if (this.txMsgError !== undefined) {
-                const rpcError = RpcError.fromError(this.txMsgError) 
+                const rpcError = RpcError.fromError(this.txMsgError)
                 this.txMsg = undefined
                 this.txMsgError = undefined
                 return rpcError
@@ -125,7 +115,7 @@ export class TransactionSender implements ITransactionSender {
                 return new RpcError("0", "No messages configured for this transaction")
             }
 
-            const signer = TxSignerFactory.createSigner(this.configuration.useLegacyTxSignature)
+            const signer = TxSignerFactory.createSigner(this.pocket.configuration.useLegacyTxSignature)
             const entropy = Number(BigInt(Math.floor(Math.random() * 99999999999999999)).toString()).toString()
             let txSignatureOrError
             const bytesToSign = signer.marshalStxDoc(entropy, chainID, this.txMsg, fee, feeDenom, memo)
@@ -147,8 +137,8 @@ export class TransactionSender implements ITransactionSender {
             // Clean message and error
             this.txMsg = undefined
             this.txMsgError = undefined
-            const response = await this.rpc.client.rawtx(addressHex, encodedTxBytes, timeout)
-            
+            const response = await this.pocket.rpc()!.client.rawtx(addressHex, encodedTxBytes, timeout)
+
             return response
         } catch (error) {
             return RpcError.fromError(error)
@@ -169,7 +159,7 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxSignature)
+            if (this.pocket.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgSend(fromAddress, toAddress, amount)
             else
                 this.txMsg = new MsgProtoSend(fromAddress, toAddress, amount)
@@ -193,7 +183,7 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxSignature)
+            if (this.pocket.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
             else
                 this.txMsg = new MsgProtoAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
@@ -213,7 +203,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxSignature)
+            if (this.pocket.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgAppUnstake(address)
             else
                 this.txMsg = new MsgProtoAppUnstake(address)
@@ -233,7 +223,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxSignature)
+            if (this.pocket.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgAppUnjail(address)
             else
                 this.txMsg = new MsgProtoAppUnjail(address)
@@ -260,7 +250,7 @@ export class TransactionSender implements ITransactionSender {
         serviceURL: URL
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxSignature)
+            if (this.pocket.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
             else
                 this.txMsg = new MsgProtoNodeStakeTx(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
@@ -280,7 +270,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxSignature)
+            if (this.pocket.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgNodeUnstake(address)
             else
                 this.txMsg = new MsgProtoNodeUnstake(address)
@@ -301,7 +291,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxSignature)
+            if (this.pocket.configuration.useLegacyTxSignature)
                 this.txMsg = new MsgNodeUnjailTx(address)
             else
                 this.txMsg = new MsgProtoNodeUnjail(address)

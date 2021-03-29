@@ -1,7 +1,7 @@
 import { MsgBeginUnstake, MsgUnjail } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
-import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
+import { typeGuard, validateAddressHex } from './../../../utils'
 
 /**
  * Model representing a MsgAppUnjail to unjail an Application in the Pocket Network

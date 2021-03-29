@@ -1,6 +1,6 @@
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
-import { validatePublicKey, validateServiceURL } from "@pokt-network/pocket-js-utils"
+import { validateServiceURL, validatePublicKey } from './../../../utils'
 
 /**
  * Model representing a MsgNodeStake to stake as an Node in the Pocket Network
