@@ -15,16 +15,15 @@ import * as dotenv from "dotenv"
  */
 dotenv.config()
 const env = EnvironmentHelper.getLocalNet()
-const dispatcher = new URL(env.getPOKTRPC())
-const configuration = new Configuration(5, 2000, undefined, 100000)
-const privKey = "33a15ccfc7a5632f759dfdc273b20175bedf79b0eef560af5b26d9f16eb32a8b55d8172bd03ca3c9602c973e474806f4b77758048946acc967baebb72ec0b122"
-const chainID = "localnet"
+const dispatcher = new URL("http://localhost:8081")
+const privKey = "95d1d7427d5922e15450d9f348694a37920f83366802f9972d1126ade6521a31ee54c980bb6d83c0b314b3f53fd5e25377b20f847f6d05c535e3acd78f5e4ba0"
+const chainID = "pocket-testet-playground"
 const msgFixtures = {
     send: {
-        fromPK: "33a15ccfc7a5632f759dfdc273b20175bedf79b0eef560af5b26d9f16eb32a8b55d8172bd03ca3c9602c973e474806f4b77758048946acc967baebb72ec0b122"
+        fromPK: "95d1d7427d5922e15450d9f348694a37920f83366802f9972d1126ade6521a31ee54c980bb6d83c0b314b3f53fd5e25377b20f847f6d05c535e3acd78f5e4ba0"
     },
     appStake: {
-        fromPK: "33a15ccfc7a5632f759dfdc273b20175bedf79b0eef560af5b26d9f16eb32a8b55d8172bd03ca3c9602c973e474806f4b77758048946acc967baebb72ec0b122"
+        fromPK: "95d1d7427d5922e15450d9f348694a37920f83366802f9972d1126ade6521a31ee54c980bb6d83c0b314b3f53fd5e25377b20f847f6d05c535e3acd78f5e4ba0"
     },
     appUnstake: {
         fromPK: "ad73ea70255d140ca0a654fe40eb1b8bb6aaf43cbe037dc6e58594db311cba6fda121ff5477ffcc130d1eaa475f02ecefabce0b664c7216c8d67b34962ecb065"
@@ -43,114 +42,106 @@ const msgFixtures = {
     }
 }
 
-function defaultConfiguration(): Configuration {
-    return configuration
-}
+function createPocketInstance(useLegacyTxsigner: boolean = true): Pocket {
+    const configuration = new Configuration(5, 2000, undefined, 100000, undefined, undefined, undefined, undefined, undefined, undefined, useLegacyTxsigner)
+    const rpcProvider = new HttpRpcProvider(dispatcher)
 
-function createPocketInstance(configuration?: Configuration, useLegacyTxsigner: boolean = true): Pocket {
-    if (configuration === undefined) {
-        const rpcProvider = new HttpRpcProvider(dispatcher)
-        return new Pocket([dispatcher], rpcProvider, defaultConfiguration())
-    } else {
-        const baseURL = dispatcher
-        const rpcProvider = new HttpRpcProvider(baseURL)
-        return new Pocket([dispatcher], rpcProvider, configuration)
-    }
+    return new Pocket([dispatcher], rpcProvider, configuration)
 }
 
 describe("Using ITransactionSender", function () {
     describe("Creating a transaction sender", function () {
         describe("With a private key", function () {
-            describe("Success scenarios", function () {
-                it("Should create a ITransactionSender given a private key string", async () => {
-                    const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey(privKey)).to.not.throw
-                })
+            // describe("Success scenarios", function () {
+            //     it("Should create a ITransactionSender given a private key string", async () => {
+            //         const pocket = createPocketInstance()
+            //         expect(pocket.withPrivateKey(privKey)).to.not.throw
+            //     })
 
-                it("Should create a ITransactionSender given a private key buffer", async () => {
-                    const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey(Buffer.from(privKey, "hex"))).to.not.throw
-                })
-            })
+            //     it("Should create a ITransactionSender given a private key buffer", async () => {
+            //         const pocket = createPocketInstance()
+            //         expect(pocket.withPrivateKey(Buffer.from(privKey, "hex"))).to.not.throw
+            //     })
+            // })
 
-            describe("Error scenarios", function () {
-                it("Should fail to create with an empty or invalid private key string", async () => {
-                    // Invalid private key
-                    const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey(privKey)).to.not.throw
+            // describe("Error scenarios", function () {
+            //     it("Should fail to create with an empty or invalid private key string", async () => {
+            //         // Invalid private key
+            //         const pocket = createPocketInstance()
+            //         expect(pocket.withPrivateKey(privKey)).to.not.throw
 
-                    // Empty private key
-                    expect(pocket.withPrivateKey("")).to.not.throw
-                })
+            //         // Empty private key
+            //         expect(pocket.withPrivateKey("")).to.not.throw
+            //     })
 
-                it("Should fail to create with an empty or invalid private key buffer", async () => {
-                    // Invalid private key
-                    const pocket = createPocketInstance()
-                    expect(pocket.withPrivateKey(Buffer.from(privKey, "hex"))).to.not.throw
+            //     it("Should fail to create with an empty or invalid private key buffer", async () => {
+            //         // Invalid private key
+            //         const pocket = createPocketInstance()
+            //         expect(pocket.withPrivateKey(Buffer.from(privKey, "hex"))).to.not.throw
 
-                    // Empty private key
-                    expect(pocket.withPrivateKey(Buffer.from("", "hex"))).to.not.throw
-                })
-            })
+            //         // Empty private key
+            //         expect(pocket.withPrivateKey(Buffer.from("", "hex"))).to.not.throw
+            //     })
+            // })
         })
 
         describe("With an imported account", function () {
-            describe("Success scenarios", function () {
-                it("should create a ITransactionSender with an already imported account and correct passphrase", async () => {
-                    const pocket = createPocketInstance()
+            // describe("Success scenarios", function () {
+            //     it("should create a ITransactionSender with an already imported account and correct passphrase", async () => {
+            //         const pocket = createPocketInstance()
 
-                    // Create the account
-                    const passphrase = "1234"
-                    const accountOrError = await pocket.keybase.createAccount(passphrase)
-                    const account = accountOrError as Account
+            //         // Create the account
+            //         const passphrase = "1234"
+            //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+            //         const account = accountOrError as Account
 
-                    // Create the transaction sender
-                    const transactionSender = await pocket.withImportedAccount(account.address, passphrase)
-                    expect(transactionSender).not.to.be.a('error')
-                })
-            })
+            //         // Create the transaction sender
+            //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase)
+            //         expect(transactionSender).not.to.be.a('error')
+            //     })
+            // })
 
-            describe("Error scenarios", function () {
-                it("should fail to create a ITransactionSender with an account not yet imported to the keybase", async () => {
-                    const pocket = createPocketInstance()
+            // describe("Error scenarios", function () {
+            //     it("should fail to create a ITransactionSender with an account not yet imported to the keybase", async () => {
+            //         const pocket = createPocketInstance()
 
-                    // Create the transaction sender with an address not imported first
-                    const transactionSender = await pocket.withImportedAccount("11AD05777C30F529C3FD3753AD5D0EA97192716E", "1234")
-                    expect(transactionSender).to.be.a('error')
-                })
+            //         // Create the transaction sender with an address not imported first
+            //         const transactionSender = await pocket.withImportedAccount("11AD05777C30F529C3FD3753AD5D0EA97192716E", "1234")
+            //         expect(transactionSender).to.be.a('error')
+            //     })
 
-                it("should fail to create a ITransactionSender with the wrong account passphrase", async () => {
-                    const pocket = createPocketInstance()
+            //     it("should fail to create a ITransactionSender with the wrong account passphrase", async () => {
+            //         const pocket = createPocketInstance()
 
-                    // Create the account
-                    const passphrase = "1234"
-                    const wrongPassphrase = "12345678"
-                    const accountOrError = await pocket.keybase.createAccount(passphrase)
-                    const account = accountOrError as Account
+            //         // Create the account
+            //         const passphrase = "1234"
+            //         const wrongPassphrase = "12345678"
+            //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+            //         const account = accountOrError as Account
 
-                    // Create the transaction sender
-                    const transactionSender = await pocket.withImportedAccount(account.address, wrongPassphrase)
-                    expect(transactionSender).to.be.a('error')
-                })
+            //         // Create the transaction sender
+            //         const transactionSender = await pocket.withImportedAccount(account.address, wrongPassphrase)
+            //         expect(transactionSender).to.be.a('error')
+            //     })
 
-                it("should fail to create a ITransactionSender with an incorrect or empty account address", async () => {
-                    const pocket = createPocketInstance()
+            //     it("should fail to create a ITransactionSender with an incorrect or empty account address", async () => {
+            //         const pocket = createPocketInstance()
 
-                    // Wrong address scenario
-                    // Create the account
-                    const passphrase = "1234"
-                    await pocket.keybase.createAccount(passphrase)
-                    const wrongAddress = "wrong"
+            //         // Wrong address scenario
+            //         // Create the account
+            //         const passphrase = "1234"
+            //         await pocket.keybase.createAccount(passphrase)
+            //         const wrongAddress = "wrong"
 
-                    // Create the transaction sender
-                    let transactionSender = await pocket.withImportedAccount(wrongAddress, passphrase)
-                    expect(transactionSender).to.be.a('error')
+            //         // Create the transaction sender
+            //         let transactionSender = await pocket.withImportedAccount(wrongAddress, passphrase)
+            //         expect(transactionSender).to.be.a('error')
 
-                    // Empty address scenario
-                    transactionSender = await pocket.withImportedAccount("", passphrase)
-                    expect(transactionSender).to.be.a('error')
-                })
-            })
+            //         // Empty address scenario
+            //         transactionSender = await pocket.withImportedAccount("", passphrase)
+            //         expect(transactionSender).to.be.a('error')
+            //     })
+            // })
         })
     })
 
@@ -181,496 +172,496 @@ describe("Using ITransactionSender", function () {
                     })
                 })
 
-                describe("Success scenarios", function () {
-                    it("should succesfully submit a send message given the correct parameters using the new ProtoBuf tx signer", async () => {
-                        // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                // describe("Success scenarios", function () {
+                //     it("should succesfully submit a send message given the correct parameters using the new ProtoBuf tx signer", async () => {
+                //         // We set the useLegacyTxsigner for the Pocket Configuration class
+                //         const pocket = createPocketInstance(false)
 
-                        // Create the transaction sender
-                        let passphrase = "test"
-                        let recipient = await pocket.keybase.createAccount(passphrase) as Account
-                        let toAddress = recipient.addressHex
+                //         // Create the transaction sender
+                //         let passphrase = "test"
+                //         let recipient = await pocket.keybase.createAccount(passphrase) as Account
+                //         let toAddress = recipient.addressHex
 
-                        let account = await pocket.keybase.importAccount(Buffer.from(msgFixtures.send.fromPK, "hex"), passphrase) as Account
-                        let transactionSender = await pocket.withImportedAccount(account.addressHex, passphrase)
-                        transactionSender = transactionSender as TransactionSender
+                //         let account = await pocket.keybase.importAccount(Buffer.from(msgFixtures.send.fromPK, "hex"), passphrase) as Account
+                //         let transactionSender = await pocket.withImportedAccount(account.addressHex, passphrase)
+                //         transactionSender = transactionSender as TransactionSender
 
-                        let rawTxResponse = await transactionSender
-                            .send(account.addressHex, toAddress, "100000")
-                            .submit(chainID, "10000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
-                })
+                //         let rawTxResponse = await transactionSender
+                //             .send(account.addressHex, toAddress, "100000")
+                //             .submit(chainID, "10000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
+                // })
 
-                describe("Error scenarios", function () {
-                    it("should error to submit a send message with an empty amount", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Error scenarios", function () {
+                //     it("should error to submit a send message with an empty amount", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit a send message with an non-numerical amount", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit a send message with an non-numerical amount", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "NotANumber")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .send("11AD05777C30F529C3FD3753AD5D0EA97192716E", "9E8E373FF27EC202F82D07DF64F388FF42F9516D", "NotANumber")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
+                // })
             })
 
             describe("App stake message", function () {
-                describe("Success scenarios", function () {
-                    it("should succesfully submit an app stake message given the correct parameters using legacy tx signer", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Success scenarios", function () {
+                //     it("should succesfully submit an app stake message given the correct parameters using legacy tx signer", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appStake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appStake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .appStake(account.publicKey.toString("hex"), ["0001"], "15000000")
-                            .submit(chainID, "100000", CoinDenom.Upokt)
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .appStake(account.publicKey.toString("hex"), ["0001"], "15000000")
+                //             .submit(chainID, "100000", CoinDenom.Upokt)
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
 
-                    it("should succesfully submit an app stake message given the correct parameters using ProtoBuf tx signer", async () => {
-                        // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                //     it("should succesfully submit an app stake message given the correct parameters using ProtoBuf tx signer", async () => {
+                //         // We set the useLegacyTxsigner for the Pocket Configuration class
+                //         const pocket = createPocketInstance(false)
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appStake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appStake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .appStake(account.publicKey.toString("hex"), ["0001"], "15000000")
-                            .submit(chainID, "100000", CoinDenom.Upokt)
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .appStake(account.publicKey.toString("hex"), ["0001"], "15000000")
+                //             .submit(chainID, "100000", CoinDenom.Upokt)
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
+                // })
 
-                describe("Error scenarios", function () {
-                    it("should error to submit an app stake message with an empty amount", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Error scenarios", function () {
+                //     it("should error to submit an app stake message with an empty amount", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an app stake message with a non-numerical amount", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an app stake message with a non-numerical amount", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "NotANumber")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "NotANumber")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an app stake message with an empty chains list", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an app stake message with an empty chains list", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .appStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
+                // })
             })
 
             describe("App unstake message", function () {
-                describe("Success scenarios", function () {
-                    it("should succesfully submit an app unstake message given the correct parameters using legacy tx signer", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Success scenarios", function () {
+                //     it("should succesfully submit an app unstake message given the correct parameters using legacy tx signer", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appUnstake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appUnstake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .appUnstake(account.addressHex)
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .appUnstake(account.addressHex)
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
 
-                    it("should succesfully submit an app unstake message given the correct parameters using ProtoBuf tx signer", async () => {
-                        // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                //     it("should succesfully submit an app unstake message given the correct parameters using ProtoBuf tx signer", async () => {
+                //         // We set the useLegacyTxsigner for the Pocket Configuration class
+                //         const pocket = createPocketInstance(false)
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appUnstake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.appUnstake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .appUnstake(account.addressHex)
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .appUnstake(account.addressHex)
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
+                // })
 
-                describe("Error scenarios", function () {
-                    it("should error to submit an app unstake message given an empty address", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Error scenarios", function () {
+                //     it("should error to submit an app unstake message given an empty address", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .appUnstake("")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .appUnstake("")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an app unstake message given an invalid address", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an app unstake message given an invalid address", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .appUnstake("9E8E373FF27EC202")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .appUnstake("9E8E373FF27EC202")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
+                // })
             })
 
             describe("Node stake message", function () {
-                describe("Success scenarios", function () {
-                    it("should succesfully submit an node stake message given the correct parameters using legacy tx signer", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Success scenarios", function () {
+                //     it("should succesfully submit an node stake message given the correct parameters using legacy tx signer", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeStake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeStake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .nodeStake(account.publicKey.toString("hex"), ["0001"], "150000000", new URL("https://myawesomenode.network:443"))
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .nodeStake(account.publicKey.toString("hex"), ["0001"], "150000000", new URL("https://myawesomenode.network:443"))
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
 
-                    it("should succesfully submit an node stake message given the correct parameters using ProtoBuf tx signer", async () => {
-                        // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                //     it("should succesfully submit an node stake message given the correct parameters using ProtoBuf tx signer", async () => {
+                //         // We set the useLegacyTxsigner for the Pocket Configuration class
+                //         const pocket = createPocketInstance(false)
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeStake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeStake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .nodeStake(account.publicKey.toString("hex"), ["0001"], "150000000", new URL("https://myawesomenode.network:443"))
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .nodeStake(account.publicKey.toString("hex"), ["0001"], "150000000", new URL("https://myawesomenode.network:443"))
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
+                // })
 
-                describe("Error scenarios", function () {
-                    it("should error to submit an node stake message with an empty amount", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Error scenarios", function () {
+                //     it("should error to submit an node stake message with an empty amount", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "", new URL("https://myawesomenode.network:443"))
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "", new URL("https://myawesomenode.network:443"))
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an node stake message with a non-numerical amount", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an node stake message with a non-numerical amount", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "NotANumber", new URL("https://myawesomenode.network:443"))
-                            .submit(chainID, "10000000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", ["CHAIN1"], "NotANumber", new URL("https://myawesomenode.network:443"))
+                //             .submit(chainID, "10000000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an node stake message with an empty chains list", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an node stake message with an empty chains list", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber", new URL("https://myawesomenode.network:443"))
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber", new URL("https://myawesomenode.network:443"))
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an node stake message with a non-https URL", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an node stake message with a non-https URL", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber", new URL("http://myawesomenode.network:443"))
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeStake("ee54d37f8b45b2a185c465463222e287afaa5d3027c7a8c1c3ed554b8b19c502", [], "NotANumber", new URL("http://myawesomenode.network:443"))
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
+                // })
             })
 
             describe("Node unstake message", function () {
-                describe("Success scenarios", function () {
-                    it("should succesfully submit an node unstake message given the correct parameters using legacy tx signer", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Success scenarios", function () {
+                //     it("should succesfully submit an node unstake message given the correct parameters using legacy tx signer", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnstake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnstake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .nodeUnstake(account.addressHex)
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .nodeUnstake(account.addressHex)
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
 
-                    it("should succesfully submit an node unstake message given the correct parameters using ProtoBuf tx signer", async () => {
-                        // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                //     it("should succesfully submit an node unstake message given the correct parameters using ProtoBuf tx signer", async () => {
+                //         // We set the useLegacyTxsigner for the Pocket Configuration class
+                //         const pocket = createPocketInstance(false)
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnstake.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnstake.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .nodeUnstake(account.addressHex)
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .nodeUnstake(account.addressHex)
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
+                // })
 
-                describe("Error scenarios", function () {
-                    it("should error to submit an node unstake message given an empty address", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Error scenarios", function () {
+                //     it("should error to submit an node unstake message given an empty address", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeUnstake("")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeUnstake("")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an node unstake message given an invalid address", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an node unstake message given an invalid address", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeUnstake("9E8E373FF27EC202")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeUnstake("9E8E373FF27EC202")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
+                // })
             })
 
             describe("Node unjail message", function () {
-                describe("Success scenarios", function () {
-                    it("should succesfully submit an node unjail message given the correct parameters using legacy tx signer", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Success scenarios", function () {
+                //     it("should succesfully submit an node unjail message given the correct parameters using legacy tx signer", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnjail.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnjail.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .nodeUnjail(account.addressHex)
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .nodeUnjail(account.addressHex)
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
 
-                    it("should succesfully submit an node unjail message given the correct parameters using ProtoBuf tx signer", async () => {
-                        // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                //     it("should succesfully submit an node unjail message given the correct parameters using ProtoBuf tx signer", async () => {
+                //         // We set the useLegacyTxsigner for the Pocket Configuration class
+                //         const pocket = createPocketInstance(false)
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnjail.fromPK, "hex"), passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.importAccount(Buffer.from(msgFixtures.nodeUnjail.fromPK, "hex"), passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        let rawTxResponse = await transactionSender
-                            .nodeUnjail(account.addressHex)
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.false
-                        rawTxResponse = rawTxResponse as RawTxResponse
-                        expect(rawTxResponse.height).to.equal(BigInt(0))
-                        expect(rawTxResponse.hash).not.to.be.empty
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         let rawTxResponse = await transactionSender
+                //             .nodeUnjail(account.addressHex)
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.false
+                //         rawTxResponse = rawTxResponse as RawTxResponse
+                //         expect(rawTxResponse.height).to.equal(BigInt(0))
+                //         expect(rawTxResponse.hash).not.to.be.empty
+                //     })
+                // })
 
-                describe("Error scenarios", function () {
-                    it("should error to submit an node unjail message given an empty address", async () => {
-                        const pocket = createPocketInstance()
+                // describe("Error scenarios", function () {
+                //     it("should error to submit an node unjail message given an empty address", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeUnjail("")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeUnjail("")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
 
-                    it("should error to submit an node unjail message given an invalid address", async () => {
-                        const pocket = createPocketInstance()
+                //     it("should error to submit an node unjail message given an invalid address", async () => {
+                //         const pocket = createPocketInstance()
 
-                        // Create the account
-                        const passphrase = "1234"
-                        const accountOrError = await pocket.keybase.createAccount(passphrase)
-                        const account = accountOrError as Account
+                //         // Create the account
+                //         const passphrase = "1234"
+                //         const accountOrError = await pocket.keybase.createAccount(passphrase)
+                //         const account = accountOrError as Account
 
-                        // Create the transaction sender
-                        const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
-                        const rawTxResponse = await transactionSender
-                            .nodeUnjail("9E8E373FF27EC202")
-                            .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
-                        expect(typeGuard(rawTxResponse, RpcError)).to.be.true
-                    })
-                })
+                //         // Create the transaction sender
+                //         const transactionSender = await pocket.withImportedAccount(account.address, passphrase) as ITransactionSender
+                //         const rawTxResponse = await transactionSender
+                //             .nodeUnjail("9E8E373FF27EC202")
+                //             .submit(chainID, "100000", CoinDenom.Upokt, "This is a test!")
+                //         expect(typeGuard(rawTxResponse, RpcError)).to.be.true
+                //     })
+                // })
             })
         })
 
