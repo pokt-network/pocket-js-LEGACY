@@ -1,7 +1,6 @@
 import { CoinDenom } from "./models/coin-denom"
-import { RawTxResponse } from "../rpc/models/output/raw-tx-response"
-import { RpcError } from ".."
-import { RawTxRequest } from "../rpc/models/input/raw-tx-request"
+import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
+import { RpcError } from "@pokt-network/pocket-js-utils"
 
 /**
  * Interface indicating all MsgTypes possible in a Pocket Network transaction and a function to submit the transaction to the network

@@ -1,10 +1,9 @@
-import { RpcError } from './../../rpc/errors/rpc-error'
+import { RpcError, typeGuard } from '@pokt-network/pocket-js-utils'
 import { TxSignature } from './../models/tx-signature'
 import { StdTx } from './../models/std-tx'
 import { CoinDenom } from './../models/coin-denom'
 import { StdSignDoc } from './../models/std-sign-doc'
 import { TxMsg } from '../models'
-import { typeGuard } from '../../utils'
 import { ITxSignerFactory } from './itx-signer-factory'
 
 export class AminoTxSignerFactory implements ITxSignerFactory {

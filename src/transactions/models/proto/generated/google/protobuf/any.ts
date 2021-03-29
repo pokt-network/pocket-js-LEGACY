@@ -42,13 +42,10 @@ export const protobufPackage = "google.protobuf";
  *  Example 4: Pack and unpack a message in Go
  *
  *      foo := &pb.Foo{...}
- *      any, err := anypb.New(foo)
- *      if err != nil {
- *        ...
- *      }
+ *      any, err := ptypes.MarshalAny(foo)
  *      ...
  *      foo := &pb.Foo{}
- *      if err := any.UnmarshalTo(foo); err != nil {
+ *      if err := ptypes.UnmarshalAny(any, foo); err != nil {
  *        ...
  *      }
  *
@@ -126,8 +123,12 @@ const baseAny: object = { typeUrl: "" };
 
 export const Any = {
   encode(message: Any, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.typeUrl);
-    writer.uint32(18).bytes(message.value);
+    if (message.typeUrl !== "") {
+      writer.uint32(10).string(message.typeUrl);
+    }
+    if (message.value.length !== 0) {
+      writer.uint32(18).bytes(message.value);
+    }
     return writer;
   },
 
@@ -165,6 +166,16 @@ export const Any = {
     return message;
   },
 
+  toJSON(message: Any): unknown {
+    const obj: any = {};
+    message.typeUrl !== undefined && (obj.typeUrl = message.typeUrl);
+    message.value !== undefined &&
+      (obj.value = base64FromBytes(
+        message.value !== undefined ? message.value : new Uint8Array()
+      ));
+    return obj;
+  },
+
   fromPartial(object: DeepPartial<Any>): Any {
     const message = { ...baseAny } as Any;
     if (object.typeUrl !== undefined && object.typeUrl !== null) {
@@ -178,16 +189,6 @@ export const Any = {
       message.value = new Uint8Array();
     }
     return message;
-  },
-
-  toJSON(message: Any): unknown {
-    const obj: any = {};
-    message.typeUrl !== undefined && (obj.typeUrl = message.typeUrl);
-    message.value !== undefined &&
-      (obj.value = base64FromBytes(
-        message.value !== undefined ? message.value : new Uint8Array()
-      ));
-    return obj;
   },
 };
 

@@ -1,3 +1,5 @@
+import { MsgProtoNodeStake } from './../proto/generated/tx-signer';
+import { Any } from '../proto/generated/google/protobuf/any';
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validatePublicKey, validateServiceURL } from "@pokt-network/pocket-js-utils"
@@ -5,8 +7,8 @@ import { validatePublicKey, validateServiceURL } from "@pokt-network/pocket-js-u
 /**
  * Model representing a MsgNodeStake to stake as an Node in the Pocket Network
  */
-export class MsgNodeStake extends TxMsg {
-    public readonly AMINO_KEY: string = "pos/MsgStake"
+export class MsgProtoNodeStakeTx extends TxMsg {
+    public readonly KEY: string = "github.com/pokt-network/pocket-core/x/nodes/types.MsgProtoStake"
     public readonly DEFAULT_PORT: string = "443"
     public readonly DEFAULT_PROTOCOL: string = "https:"
     public readonly pubKey: Buffer
@@ -60,18 +62,26 @@ export class MsgNodeStake extends TxMsg {
      * @memberof MsgNodeStake
      */
     public toStdSignDocMsgObj(): any {
-        return {
-            type: this.AMINO_KEY,
-            value: {
-                chains: this.chains,
-                public_key: {
-                    type: "crypto/ed25519_public_key",
-                    value: this.pubKey.toString("hex")
-                },
-                service_url: this.getParsedServiceURL(),
-                value: this.amount
-            }
-        }
+        let data = { Publickey: Buffer.from(this.pubKey.toString("hex")), Chains: this.chains, value: this.amount, ServiceUrl: this.serviceURL.toString() }
+
+        return Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": MsgProtoNodeStake.encode(data).finish()
+        });
+
+        return Any.fromJSON({
+            "@type": this.KEY,
+            "publickey": {
+                "@type": "github.com/pokt-network/pocket-core/types.Address",
+                "value": this.pubKey.toString("hex")
+            },
+            "chains": this.chains,
+            "value": {
+                "@type": "github.com/pokt-network/pocket-core/types.BigInt",
+                "value": this.amount
+            },
+            "serviceUrl": this.serviceURL
+        });
     }
 
     /**
@@ -80,17 +90,6 @@ export class MsgNodeStake extends TxMsg {
      * @memberof MsgNodeStake
      */
     public toStdTxMsgObj(): any {
-        return {
-            type: this.AMINO_KEY,
-            value: {
-                chains: this.chains,
-                public_key: {
-                    type: "crypto/ed25519_public_key",
-                    value: bytesToBase64(this.pubKey)
-                },
-                service_url: this.getParsedServiceURL(),
-                value: this.amount
-            }
-        }
+        this.toStdSignDocMsgObj();
     }
 }

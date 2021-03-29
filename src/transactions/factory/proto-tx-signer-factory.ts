@@ -1,8 +1,7 @@
-import { RpcError } from './../../rpc/errors/rpc-error'
+import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils"
 import { TxSignature } from './../models/tx-signature'
 import { CoinDenom } from './../models/coin-denom'
 import { TxMsg } from '../models'
-import { typeGuard } from '../../utils'
 import { ITxSignerFactory } from './itx-signer-factory'
 import { Coin, ProtoStdSignature, ProtoStdTx, StdSignDoc } from '../models/proto/generated/tx-signer'
 
@@ -16,7 +15,7 @@ export class ProtoTxSignerFactory implements ITxSignerFactory {
         const enc = new TextEncoder()
         let memoString: string = ""
 
-        if(typeGuard(memo, String)) {
+        if(typeGuard(memo, "string")) {
             memoString = memo
         }
 

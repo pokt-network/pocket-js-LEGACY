@@ -1,11 +1,13 @@
+import { MsgBeginUnstake } from './../proto/generated/tx-signer';
+import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
 import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
 
 /**
  * Model representing a MsgAppStake to unstake an Application in the Pocket Network
  */
-export class MsgAppUnstake extends TxMsg {
-    public readonly AMINO_KEY: string = "apps/MsgAppBeginUnstake"
+export class MsgProtoAppUnstake extends TxMsg {
+    public readonly KEY: string = "github.com/pokt-network/pocket-core/x/apps/types.MsgBeginUnstake"
     public readonly appAddress: string
 
     /**
@@ -27,12 +29,12 @@ export class MsgAppUnstake extends TxMsg {
      * @memberof MsgAppUnstake
      */
     public toStdSignDocMsgObj(): any {
-        return {
-            type: this.AMINO_KEY,
-            value: {
-                application_address: this.appAddress.toLowerCase()
-            }
-        }
+        let data = { Address: Buffer.from(this.appAddress) }
+
+        return Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": MsgBeginUnstake.encode(data).finish()
+        });
     }
 
     /**

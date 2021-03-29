@@ -1,13 +1,15 @@
+import { MsgSend } from './../proto/generated/tx-signer';
+import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
 
 /**
  * Model representing a MsgSend to send POKT from one account to another
  */
-export class MsgSend extends TxMsg {
+export class MsgProtoSend extends TxMsg {
     public readonly fromAddress: string
     public readonly toAddress: string
     public readonly amount: string
-    public readonly AMINO_KEY: string = "pos/Send"
+    public readonly KEY: string = "github.com/pokt-network/pocket-core/x/nodes/types.MsgSend"
 
     /**
      * Constructor this message
@@ -34,14 +36,14 @@ export class MsgSend extends TxMsg {
      * @memberof MsgSend
      */
     public toStdSignDocMsgObj(): any {
-        return { 
-            type: this.AMINO_KEY, 
-            value: { 
-                amount: this.amount,
-                from_address: this.fromAddress.toLowerCase(), 
-                to_address: this.toAddress.toLowerCase()
-            } 
-        }
+        let data = { FromAddress: Buffer.from(this.fromAddress), ToAddress: Buffer.from(this.toAddress), amount: this.amount }
+
+        let result = Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": MsgSend.encode(data).finish() 
+        });
+        
+        return result;
     }
 
     /**

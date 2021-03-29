@@ -1,4 +1,4 @@
-import { bytesToBase64, bytesToString } from "@tendermint/belt"
+import { bytesToBase64 } from "@tendermint/belt"
 import { PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pocket"
 
 /**

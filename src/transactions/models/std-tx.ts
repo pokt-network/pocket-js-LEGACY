@@ -1,7 +1,7 @@
 import { IAminoEncodable } from "./amino-encodable"
 import { StdSignDoc } from "./std-sign-doc"
 import { TxSignature } from "./tx-signature"
-import { PosmintStdTx, PosmintMsg, PosmintStdSignature } from "@pokt-network/amino-js/types/src/types/pocket"
+import { PosmintStdTx } from "@pokt-network/amino-js/types/src/types/pocket"
 import { marshalPosmintTx } from "@pokt-network/amino-js"
 
 /**

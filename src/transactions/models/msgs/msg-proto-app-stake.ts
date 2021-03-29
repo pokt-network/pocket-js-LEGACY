@@ -1,3 +1,5 @@
+import { MsgProtoStake } from '../proto/generated/tx-signer';
+import { Any } from '../proto/generated/google/protobuf/any';
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validatePublicKey } from "@pokt-network/pocket-js-utils"
@@ -5,8 +7,8 @@ import { validatePublicKey } from "@pokt-network/pocket-js-utils"
 /**
  * Model representing a MsgAppStake to stake as an Application in the Pocket Network
  */
-export class MsgAppStake extends TxMsg {
-    public readonly AMINO_KEY: string = "apps/MsgAppStake"
+export class MsgProtoAppStake extends TxMsg {
+    public readonly KEY: string = "github.com/pokt-network/pocket-core/x/apps/types.MsgProtoStake"
     public readonly pubKey: Buffer
     public readonly chains: string[]
     public readonly amount: string
@@ -39,7 +41,7 @@ export class MsgAppStake extends TxMsg {
      * @memberof MsgAppStake
      */
     public getMsgTypeKey(): string {
-        return this.AMINO_KEY
+        return this.KEY
     }
     /**
      * Converts an Msg Object to StdSignDoc
@@ -47,17 +49,12 @@ export class MsgAppStake extends TxMsg {
      * @memberof MsgAppStake
      */
     public toStdSignDocMsgObj(): any {
-        return {
-            type: this.AMINO_KEY,
-            value: {
-                chains: this.chains,
-                pubkey: {
-                    type: "crypto/ed25519_public_key",
-                    value: this.pubKey.toString("hex")
-                },
-                value: this.amount
-            }
-        }
+        let data = {pubKey: Buffer.from(this.pubKey.toString("hex")), chains: this.chains, value: this.amount}
+
+        return Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": MsgProtoStake.encode(data).finish()
+        });
     }
 
     /**
@@ -66,16 +63,6 @@ export class MsgAppStake extends TxMsg {
      * @memberof MsgAppStake
      */
     public toStdTxMsgObj(): any {
-        return {
-            type: this.AMINO_KEY,
-            value: {
-                chains: this.chains,
-                pubkey: {
-                    type: "crypto/ed25519_public_key",
-                    value: bytesToBase64(this.pubKey)
-                },
-                value: this.amount
-            }
-        }
+        return this.toStdSignDocMsgObj();
     }
 }
