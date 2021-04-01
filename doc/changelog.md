@@ -1,3 +1,12 @@
+## 0.6.8-RC
+- Multiple fixes for the ProtoBuf tx codec messages.
+- Renamed useLegacyTxSignature to useLegacyTxCodec.
+- Changed default tx codec to ProtoBuf.
+- Fixed entropy overflow.
+  
+## 0.6.7-RC
+- Improved session management.
+  
 ## 0.6.6-RC
 - Added ProtoBuf encoding for transaction signing.
 - Added useLegacyTxSignature property flag to the Configuration Class for backwards compatibility with AminoJS(default).
