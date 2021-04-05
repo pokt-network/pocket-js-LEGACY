@@ -1,3 +1,6 @@
+## 0.6.9-RC
+- Improved sendRelay error handling.
+  
 ## 0.6.8-RC
 - Multiple fixes for the ProtoBuf tx codec messages.
 - Renamed useLegacyTxSignature to useLegacyTxCodec.
