@@ -130,8 +130,8 @@ export class Pocket {
             firstResponse = consensusNodeResponse.relayResponse
           }
           consensusNodes.push(consensusNodeResponse)
-        } else if (typeGuard(consensusNodeResponse, RpcError)) {
-          return new Error("Relay error: " + consensusNodeResponse.message)
+        } else if (typeGuard(consensusNodeResponse, Error)) {
+          return consensusNodeResponse
         }
       }
       // Check consensus nodes length
@@ -192,13 +192,13 @@ export class Pocket {
     path = "",
     node?: Node,
     consensusEnabled: boolean = false
-  ): Promise<RelayResponse | ConsensusNode | RpcError> {
+  ): Promise<RelayResponse | ConsensusNode | Error> {
     try {
       // Get the current session
       const currentSessionOrError = await this.sessionManager.getCurrentSession(pocketAAT, blockchain, configuration)
 
-      if (typeGuard(currentSessionOrError, RpcError)) {
-        return currentSessionOrError as RpcError
+      if (typeGuard(currentSessionOrError, Error)) {
+        return currentSessionOrError
       }
 
       // Set the currentSession; may be refreshed below if the block height is stale
@@ -209,11 +209,12 @@ export class Pocket {
       // Check if consensus relay is enabled
       if (consensusEnabled) {
         if (this.configuration.consensusNodeCount > currentSession.sessionNodes.length) {
-          return new RpcError("", "Failed to send a consensus relay, number of max consensus nodes is higher thant the actual nodes in current session")
+          return new Error("Failed to send a consensus relay, number of max consensus nodes is higher thant the actual nodes in current session")
         }
         const serviceNodeOrError = currentSession.getUniqueSessionNode()
+
         if (typeGuard(serviceNodeOrError, Error)) {
-          return RpcError.fromError(serviceNodeOrError as Error)
+          return serviceNodeOrError
         }
         serviceNode = serviceNodeOrError as Node
       }else {
@@ -222,12 +223,13 @@ export class Pocket {
           if (currentSession.isNodeInSession(node)) {
             serviceNode = node as Node
           } else {
-            return new RpcError("0", "Provided Node is not part of the current session for this application, check your PocketAAT")
+            return new Error("Provided Node is not part of the current session for this application, check your PocketAAT")
           }
         } else {
           const serviceNodeOrError = currentSession.getSessionNode()
+
           if (typeGuard(serviceNodeOrError, Error)) {
-            return RpcError.fromError(serviceNodeOrError as Error)
+            return serviceNodeOrError
           }
           serviceNode = serviceNodeOrError as Node
         }
@@ -235,7 +237,7 @@ export class Pocket {
 
       // Final Service Node check
       if (serviceNode === undefined) {
-        return new RpcError("0", "Could not determine a Service Node to submit this relay")
+        return new Error("Could not determine a Service Node to submit this relay")
       }
 
       // Assign session service node to the rpc instance
@@ -248,8 +250,9 @@ export class Pocket {
       // Check if account is available for signing
       const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
       const isUnlocked = await this.keybase.isUnlocked(clientAddressHex)
+
       if (!isUnlocked) {
-        return new RpcError("0", "Client account " + clientAddressHex + " for this AAT is not unlocked")
+        return new Error("Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
 
       // Produce signature payload
@@ -265,11 +268,14 @@ export class Pocket {
         pocketAAT,
         requestHash
       )
+
       // Sign
       const signatureOrError = await this.keybase.signWithUnlockedAccount(clientAddressHex, proofBytes)
+
       if (typeGuard(signatureOrError, Error)) {
-        return new RpcError("0", "Error signing Relay proof")
+        return new Error("Error signing Relay proof: "+signatureOrError.message)
       }
+
       const signature = signatureOrError as Buffer
       const signatureHex = signature.toString("hex")
 
@@ -304,6 +310,7 @@ export class Pocket {
           rpcError.code === "75" ||
           rpcError.code === "14" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
         ) {
+          
           // Remove outdated session
           this.sessionManager.destroySession(pocketAAT, blockchain)
           let sessionRefreshed = false
@@ -318,7 +325,7 @@ export class Pocket {
               blockchain,
               configuration
             )
-            if (typeGuard(newSessionOrError, RpcError)) {
+            if (typeGuard(newSessionOrError, Error)) {
               // If error or same session, don't even retry relay
               continue
             } else if (typeGuard(newSessionOrError, Session)) {
@@ -348,10 +355,10 @@ export class Pocket {
               consensusEnabled
             )
           } else {
-            return rpcError
+            return new Error(rpcError.message)
           }
         } else {
-          return rpcError
+          return new Error(rpcError.message)
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
         // Handle consensus
@@ -366,7 +373,7 @@ export class Pocket {
         return result
       }
     } catch (error) {
-      return RpcError.fromError(error)
+      return error
     }
   }
 
