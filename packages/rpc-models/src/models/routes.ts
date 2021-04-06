@@ -19,8 +19,6 @@ export enum V1RPCRoutes {
   QueryNodes = Versions.V1 + "/query/nodes",
   QueryNode = Versions.V1 + "/query/node",
   QueryNodeParams = Versions.V1 + "/query/nodeparams",
-  QueryNodeReceipts = Versions.V1 + "/query/nodereceipts",
-  QueryNodeReceipt = Versions.V1 + "/query/nodereceipt",
   QueryApps = Versions.V1 + "/query/apps",
   QueryApp = Versions.V1 + "/query/app",
   QueryAppParams = Versions.V1 + "/query/appparams",

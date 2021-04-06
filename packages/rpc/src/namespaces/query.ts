@@ -1,12 +1,11 @@
 import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 import { typeGuard, Hex, RpcError } from "@pokt-network/pocket-js-utils"
 import { QueryBlockResponse, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, 
-    QueryBalanceResponse, QueryNodeResponse, QueryNodeParamsResponse, QueryNodeReceiptsResponse, 
-    NodeReceipt, QueryNodeReceiptResponse, QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse, 
-    QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse, 
-    StakingStatus, ChallengeRequest, ChallengeResponse, QueryAccountTxsResponse, JailedStatus, 
-    QueryNodesResponse, QueryAllParamsResponse, QueryBlockTxsResponse, QueryNodeClaimResponse, 
-    QueryNodeClaimsResponse } from "@pokt-network/pocket-js-rpc-models"
+    QueryBalanceResponse, QueryNodeResponse, QueryNodeParamsResponse, NodeReceipt, QueryAppsResponse, 
+    QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, 
+    QuerySupplyResponse, QueryAccountResponse, StakingStatus, ChallengeRequest, ChallengeResponse, 
+    QueryAccountTxsResponse, JailedStatus, QueryNodesResponse, QueryAllParamsResponse, QueryBlockTxsResponse, 
+    QueryNodeClaimResponse, QueryNodeClaimsResponse } from "@pokt-network/pocket-js-rpc-models"
 
 export class QueryNamespace {
     public readonly rpcProvider: IRPCProvider
@@ -397,118 +396,7 @@ export class QueryNamespace {
             return new RpcError("0", err)
         }
     }
-    /**
-     *
-     * Retrieves the node receipts information
-     * @param {string} address - Node's address.
-     * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
-     * @memberof QueryNamespace
-     */
-    public async getNodeReceipts(
-        address: string,
-        blockHeight: BigInt = BigInt(0),
-        page: number = 1,
-        perPage: number = 30,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
-    ): Promise<QueryNodeReceiptsResponse | RpcError> {
-        try {
-            if (Number(blockHeight.toString()) < 0) {
-                return new RpcError("101", "block height can't be lower than 0")
-            }
-
-            if (!Hex.validateAddress(address)) {
-                return new RpcError("0", "Invalid Address Hex")
-            }
-
-            const payload = JSON.stringify({
-                address: address,
-                height: Number(blockHeight.toString()),
-                page: page,
-                per_page: perPage
-            })
-
-            const response = await this.rpcProvider.send(
-                V1RPCRoutes.QueryNodeReceipts.toString(),
-                payload,
-                timeout, 
-                rejectSelfSignedCertificates
-            )
-
-            // Check if response is an error
-            if (!typeGuard(response, RpcError)) {
-                const queryNodeReceiptsResponse = QueryNodeReceiptsResponse.fromJSON(
-                    response
-                )
-                return queryNodeReceiptsResponse
-            } else {
-                return new RpcError(
-                    response.code,
-                    "Failed to retrieve the node receipts: " + response.message
-                )
-            }
-        } catch (err) {
-            return new RpcError("0", err)
-        }
-    }
-    /**
-     *
-     * Retrieves the node receipt information
-     * @param {string} address - Node's address.
-     * @param {string} appPubKey - Node's address.
-     * @param {string} blockchain - Node's address.
-     * @param {BigInt} height - Node's address.
-     * @param {BigInt} sessionBlockHeight - Node's address.
-     * @param {string} receiptType - Node's address.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
-     * @memberof QueryNamespace
-     */
-    public async getNodeReceipt(
-        address: string,
-        appPubKey: string,
-        blockchain: string,
-        height: BigInt,
-        sessionBlockHeight: BigInt,
-        receiptType : string,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
-    ): Promise<QueryNodeReceiptResponse | RpcError> {
-        try {
-            const nodeReceipt = new NodeReceipt(address, blockchain, appPubKey, sessionBlockHeight, height, receiptType)
-
-            if (!nodeReceipt.isValid()) {
-                return new RpcError("0", "Invalid Node Receipt information")
-            }
-
-            const payload = nodeReceipt.toJSON()
-
-            const response = await this.rpcProvider.send(
-                V1RPCRoutes.QueryNodeReceipt.toString(),
-                JSON.stringify(payload),
-                timeout, 
-                rejectSelfSignedCertificates
-            )
-
-            // Check if response is an error
-            if (!typeGuard(response, RpcError)) {
-
-                const queryNodeReceiptResponse = QueryNodeReceiptResponse.fromJSON(
-                    response
-                )
-                return queryNodeReceiptResponse
-            } else {
-                return new RpcError(
-                    response.code,
-                    "Failed to retrieve the node receipt: " + response.message
-                )
-            }
-        } catch (err) {
-            return err
-        }
-    }
+    
     /**
      *
      * Retrieves a list of apps
