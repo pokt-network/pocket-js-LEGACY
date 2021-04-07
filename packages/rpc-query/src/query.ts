@@ -6,9 +6,11 @@ import { QueryBlockResponse, V1RPCRoutes, QueryTXResponse, QueryHeightResponse,
     QuerySupplyResponse, QueryAccountResponse, StakingStatus, ChallengeRequest, ChallengeResponse, 
     QueryAccountTxsResponse, JailedStatus, QueryNodesResponse, QueryAllParamsResponse, QueryBlockTxsResponse, 
     QueryNodeClaimResponse, QueryNodeClaimsResponse } from "@pokt-network/pocket-js-rpc-models"
+import { IQuery } from "./i-query"
 
-export class QueryNamespace {
+export class QueryNamespace implements IQuery {
     public readonly rpcProvider: IRPCProvider
+
     /**
      * @description Query namespace class
      * @param {IRPCProvider} rpcProvider - RPC Provider interface object.
@@ -21,8 +23,9 @@ export class QueryNamespace {
      *
      * Query a Block information
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryBlockResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getBlock(
@@ -65,8 +68,9 @@ export class QueryNamespace {
      * @param {boolean} prove - True or false to include the tx proof.
      * @param {number} page - Page number, default 1.
      * @param {number} perPage - Records count per page, default 30.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryBlockTxsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getBlockTxs(
@@ -116,8 +120,9 @@ export class QueryNamespace {
      *
      * Retrieves a transaction information
      * @param {string} txHash - Transaction hash.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryTXResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getTX(
@@ -158,8 +163,9 @@ export class QueryNamespace {
     /**
      *
      * Get the current network block height
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryHeightResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getHeight(
@@ -195,8 +201,9 @@ export class QueryNamespace {
      * Retrieves an account balance
      * @param {string} address - Account's address.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryBalanceResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getBalance(
@@ -248,8 +255,9 @@ export class QueryNamespace {
      * @param {string} blockchain - (optional) Blockchain Identifier.
      * @param {number} page - (optional) Page number, default 1.
      * @param {number} perPage - (optional) Records count per page, default 30.
-     * @param {number} timeout - (optional) Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryNodesResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getNodes(
@@ -306,8 +314,9 @@ export class QueryNamespace {
      * Query a Node information
      * @param {string} address - Node address.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryNodeResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getNode(
@@ -357,8 +366,9 @@ export class QueryNamespace {
      *
      * Retrieves the node params
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryNodeParamsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getNodeParams(
@@ -405,8 +415,9 @@ export class QueryNamespace {
      * @param {string} blockchain - (optional) Blockchain identifier.
      * @param {BigInt} page - (optional) Block's number.
      * @param {BigInt} perPage - (optional) Block's number.
-     * @param {number} timeout - (optional) Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryAppsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getApps(
@@ -461,8 +472,9 @@ export class QueryNamespace {
      * Retrieves an app information
      * @param {string} address - Address of the app.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryAppResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getApp(
@@ -512,8 +524,9 @@ export class QueryNamespace {
      *
      * Retrieves app params.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryAppParamsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getAppParams(
@@ -555,8 +568,9 @@ export class QueryNamespace {
      *
      * Retrieves the pocket params.
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryPocketParamsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getPocketParams(
@@ -599,8 +613,9 @@ export class QueryNamespace {
      *
      * Retrieves supported chains
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QuerySupportedChainsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getSupportedChains(
@@ -644,8 +659,9 @@ export class QueryNamespace {
      *
      * Retrieves current supply information
      * @param {BigInt} blockHeight - Block's number.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QuerySupplyResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getSupply(
@@ -692,8 +708,9 @@ export class QueryNamespace {
      *
      * Retrieves current Account information
      * @param {string} address - Account's address.
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryAccountResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getAccount(
@@ -739,8 +756,9 @@ export class QueryNamespace {
      * @param {boolean} prove - True or false to include the tx proof.
      * @param {number} page - (optional) Page number, default 1.
      * @param {number} perPage - (optional) Records count per page, default 30.
-     * @param {number} timeout - (optional) Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryAccountTxsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getAccountTxs(
@@ -798,8 +816,9 @@ export class QueryNamespace {
      * @param {nuber} height - Block height.
      * @param {nuber} sessionBlockHeight - Session block height.
      * @param {nuber} receiptType - Receipt type, can be "relay" or "challenge".
-     * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryNodeClaimResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getNodeClaim(
@@ -849,8 +868,9 @@ export class QueryNamespace {
      * @param {BigInt} height - Block height.
      * @param {nuber} page - (Optional) Page number, default 1.
      * @param {nuber} perPage - (Optional) Per page amount of records, default 30.
-     * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryNodeClaimsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getNodeClaims(
@@ -902,8 +922,9 @@ export class QueryNamespace {
     /**
      * Returns the node parameters at the specified height,  height = 0 is used as latest
      * @param {nuber} height - Block height.
-     * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<QueryAllParamsResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async getAllParams(
@@ -950,8 +971,9 @@ export class QueryNamespace {
      *
      * Retrieves a ChallengeResponse object.
      * @param {ChallengeRequest} request - The ChallengeRequest
-     * @param {number} timeout - Request timeout.
-     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+     * @returns {Promise<ChallengeResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof QueryNamespace
      */
     public async requestChallenge(
