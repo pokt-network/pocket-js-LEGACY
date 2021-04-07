@@ -3,7 +3,7 @@ name: Feature request
 about: Request a feature for Pocket JS
 title: "[FEATURE REQUEST]"
 labels: enhancement
-assignees: andrewnguyen22
+assignees: pabelnl
 
 ---
 
