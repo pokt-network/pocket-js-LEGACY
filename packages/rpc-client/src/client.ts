@@ -2,9 +2,10 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 import { typeGuard, RpcError } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest, V1RPCRoutes, DispatchRequest, DispatchResponse, validateRelayResponse } from "@pokt-network/pocket-js-rpc-models"
 import { RelayRequest, RelayResponse } from "@pokt-network/pocket-js-relay-models"
+import { IClientNamespace } from "./i-client"
 
 
-export class ClientNamespace {
+export class ClientNamespace implements IClientNamespace {
 
     public readonly rpcProvider: IRPCProvider
     /**

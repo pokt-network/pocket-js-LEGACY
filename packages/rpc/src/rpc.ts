@@ -1,6 +1,6 @@
 import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
-import { ClientNamespace } from "./namespaces/client"
-import { QueryNamespace } from "./namespaces/query"
+import { ClientNamespace } from "@pokt-network/pocket-js-rpc-client"
+import { QueryNamespace } from "@pokt-network/pocket-js-rpc-query"
 
 /**
  * RPC Namespace

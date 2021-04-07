@@ -1,5 +1,5 @@
 {
-  "name": "@pokt-network/pocket-js-rpc",
+  "name": "@pokt-network/pocket-js-rpc-client",
   "version": "0.0.1-rc",
   "description": "Pocket Network RPC client",
   "main": "index.js",
@@ -26,8 +26,9 @@
   "license": "MIT",
   "dependencies": {
     "@pokt-network/pocket-js-http-provider": "../http-provider/",
-    "@pokt-network/pocket-js-rpc-client": "../rpc-client/",
-    "@pokt-network/pocket-js-rpc-query": "../rpc-query"
+    "@pokt-network/pocket-js-relay-models": "../relay-models/",
+    "@pokt-network/pocket-js-rpc-models": "../rpc-models/",
+    "@pokt-network/pocket-js-utils": "../utils/"
   },
   "devDependencies": {
     "@types/chai": "^4.2.7",
