@@ -44,13 +44,13 @@
     "@pokt-network/amino-js": "0.7.5-alpha.1",
     "@pokt-network/pocket-js-configuration": "../configuration/",
     "@pokt-network/pocket-js-http-provider": "../http-provider/",
-    "@pokt-network/pocket-js-keybase": "file:../keybase",
-    "@pokt-network/pocket-js-main-interface": "file:../main-interface",
-    "@pokt-network/pocket-js-rpc": "../rpc",
-    "@pokt-network/pocket-js-rpc-models": "file:../rpc-models",
-    "@pokt-network/pocket-js-test-utils": "../test-utils/",
-    "@pokt-network/pocket-js-utils": "file:../utils",
+    "@pokt-network/pocket-js-keybase": "../keybase/",
+    "@pokt-network/pocket-js-rpc-client": "../rpc-client",
+    "@pokt-network/pocket-js-rpc-models": "../rpc-models/",
+    "@pokt-network/pocket-js-utils": "../utils/",
     "@tendermint/belt": "^0.2.1",
-    "ts-proto": "^1.54.0"
+    "@types/varint": "^6.0.0",
+    "ts-proto": "^1.76.0",
+    "varint": "^6.0.0"
   }
 }

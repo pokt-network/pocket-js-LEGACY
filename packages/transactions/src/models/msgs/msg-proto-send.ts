@@ -9,7 +9,8 @@ export class MsgProtoSend extends TxMsg {
     public readonly fromAddress: string
     public readonly toAddress: string
     public readonly amount: string
-    public readonly KEY: string = "github.com/pokt-network/pocket-core/x/nodes/types.MsgSend"
+    public readonly KEY: string = "/x.nodes.MsgSend"
+    public readonly AMINO_KEY: string = "pos/Send"
 
     /**
      * Constructor this message
@@ -32,18 +33,18 @@ export class MsgProtoSend extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
-     * @returns {any} - Msg type key value.
+     * @returns {object} - Msg type key value.
      * @memberof MsgSend
      */
-    public toStdSignDocMsgObj(): any {
-        let data = { FromAddress: Buffer.from(this.fromAddress), ToAddress: Buffer.from(this.toAddress), amount: this.amount }
-
-        let result = Any.fromJSON({
-            "typeUrl": this.KEY,
-            "value": MsgSend.encode(data).finish() 
-        });
-        
-        return result;
+    public toStdSignDocMsgObj(): object {
+        return { 
+            type: this.AMINO_KEY, 
+            value: { 
+                amount: this.amount,
+                from_address: this.fromAddress.toLowerCase(), 
+                to_address: this.toAddress.toLowerCase()
+            } 
+        }
     }
 
     /**
@@ -52,6 +53,13 @@ export class MsgProtoSend extends TxMsg {
      * @memberof MsgSend
      */
     public toStdTxMsgObj(): any {
-        return this.toStdSignDocMsgObj()
+        const data = { FromAddress: Buffer.from(this.fromAddress, "hex"), ToAddress: Buffer.from(this.toAddress, "hex"), amount: this.amount }
+
+        const result = Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": Buffer.from(MsgSend.encode(data).finish()).toString("base64")
+        });
+
+        return result;
     }
 }

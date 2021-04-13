@@ -1,13 +1,14 @@
 import { MsgBeginNodeUnstake } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
-import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
+import { typeGuard, validateAddressHex } from '@pokt-network/pocket-js-utils'
 
 /**
  * Model representing a MsgNodeStake to unstake as an Node in the Pocket Network
  */
 export class MsgProtoNodeUnstake extends TxMsg {
-    public readonly KEY: string = "github.com/pokt-network/pocket-core/x/nodes/types.MsgBeginUnstake"
+    public readonly KEY: string = "/x.nodes.MsgBeginUnstake"
+    public readonly AMINO_KEY: string = "pos/MsgBeginUnstake"
     public readonly nodeAddress: string
 
     /**
@@ -24,16 +25,16 @@ export class MsgProtoNodeUnstake extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
-     * @returns {any} - Msg type key value.
+     * @returns {object} - Msg type key value.
      * @memberof MsgNodeUnstake
      */
-    public toStdSignDocMsgObj(): any {
-        let data = { Address: Buffer.from(this.nodeAddress) }
-
-        return Any.fromJSON({
-            "typeUrl": this.KEY,
-            "value": MsgBeginNodeUnstake.encode(data).finish(),
-        });
+    public toStdSignDocMsgObj(): object {
+        return {
+            type: this.AMINO_KEY,
+            value: {
+                validator_address: this.nodeAddress
+            }
+        }
     }
 
     /**
@@ -42,6 +43,11 @@ export class MsgProtoNodeUnstake extends TxMsg {
      * @memberof MsgNodeUnstake
      */
     public toStdTxMsgObj(): any {
-        return this.toStdSignDocMsgObj()
+        let data = { Address: Buffer.from(this.nodeAddress, "hex") }
+
+        return Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": MsgBeginNodeUnstake.encode(data).finish(),
+        });
     }
 }

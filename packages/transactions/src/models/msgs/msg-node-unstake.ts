@@ -1,5 +1,5 @@
 import { TxMsg } from "./tx-msg"
-import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
+import { typeGuard, validateAddressHex } from '@pokt-network/pocket-js-utils'
 
 /**
  * Model representing a MsgNodeStake to unstake as an Node in the Pocket Network
@@ -22,10 +22,10 @@ export class MsgNodeUnstake extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
-     * @returns {any} - Msg type key value.
+     * @returns {object} - Msg type key value.
      * @memberof MsgNodeUnstake
      */
-    public toStdSignDocMsgObj(): any {
+    public toStdSignDocMsgObj(): object {
         return {
             type: this.AMINO_KEY,
             value: {
