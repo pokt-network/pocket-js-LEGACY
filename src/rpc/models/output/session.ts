@@ -24,7 +24,7 @@ export class Session {
         sessionNodes.push(Node.fromJSON(JSON.stringify(jsonObject.session.nodes[i])))
       }
     }
-    return new Session(sessionHeader, jsonObject.key, sessionNodes)
+    return new Session(sessionHeader, jsonObject.session.key, sessionNodes)
   }
 
   public readonly sessionHeader: SessionHeader

@@ -61,7 +61,39 @@ export class SessionManager {
   }
 
   /**
-   * Request a new session object. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
+   * Update the current session using an already requested dispatch response. Returns a Promise with the Session object or an Error when something goes wrong.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {string} chain - Name of the Blockchain.
+   * @param {Configuration} configuration - Configuration object.
+   * @returns {Promise}
+   * @memberof SessionManager
+   */
+  public async updateCurrentSession(
+    dispatchResponse: DispatchResponse,
+    pocketAAT: PocketAAT,
+    chain: string,
+    configuration: Configuration
+  ): Promise<Session | Error> {
+    let session: Session
+    try {
+      session = Session.fromJSON(
+        JSON.stringify(dispatchResponse.toJSON())
+      )
+    } catch (error) {
+      return error
+    }
+
+    if (session !== undefined) {
+      const key = this.getSessionKey(pocketAAT, chain)
+
+      return this.saveSession(key, session, configuration)
+    } else {
+      // Remove node from dispatcher if it failed 3 times
+      return new Error("Error decoding session from Dispatch response")
+    }
+  }
+  /**
+   * Request a new session object. Returns a Promise with the Session object or an Error when something goes wrong.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
