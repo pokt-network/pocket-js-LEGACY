@@ -9,6 +9,10 @@ import { UnlockedAccount } from "../keybase/models"
 import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase, RawTxRequest } from ".."
 import { TxEncoderFactory } from "./factory/tx-encoder-factory"
 
+export interface IProcessedRawTxPayload {
+    addressHex: Buffer,
+    encodedTxBytes: Buffer,
+}
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
@@ -96,13 +100,12 @@ export class TransactionSender implements ITransactionSender {
      * @returns {Promise<RawTxResponse | RpcError>} - A Raw transaction Response object or Rpc error.
      * @memberof TransactionSender
      */
-    public async submit(
+     public async process(
         chainID: string,
         fee: string,
         feeDenom?: CoinDenom,
         memo?: string,
-        timeout?: number
-    ): Promise<RawTxResponse | RpcError> {
+    ): Promise<IProcessedRawTxPayload | RpcError> {
         try {
             if (this.txMsgError !== undefined) {
                 const rpcError = RpcError.fromError(this.txMsgError)
@@ -132,13 +135,43 @@ export class TransactionSender implements ITransactionSender {
             }
 
             const txSignature = txSignatureOrError as TxSignature
-            const addressHex = addressFromPublickey(txSignature.pubKey)
-            const encodedTxBytes = signer.marshalStdTx(txSignature)
+            const addressHex: Buffer = addressFromPublickey(txSignature.pubKey)
+            const encodedTxBytes: Buffer = signer.marshalStdTx(txSignature)
             // Clean message and error
             this.txMsg = undefined
             this.txMsgError = undefined
-            const response = await this.pocket.rpc()!.client.rawtx(addressHex, encodedTxBytes, timeout)
 
+            const processedRawTxPayload: IProcessedRawTxPayload = {
+                addressHex,
+                encodedTxBytes,
+            }
+            
+            return processedRawTxPayload
+        } catch (error) {
+            return RpcError.fromError(error)
+        }
+    }
+
+    /**
+     * Signs and submits a transaction to the network given the parameters for each Msg in the Msg list. Will empty the msg list after submission attempt
+     * @param {string} chainID - The chainID of the network to be sent to
+     * @param {string} fee - The amount to pay as a fee for executing this transaction
+     * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
+     * @param {string | undefined} memo - The memo field for this account
+     * @param {number | undefined} timeout - Request timeout
+     * @returns {Promise<RawTxResponse | RpcError>} - A Raw transaction Response object or Rpc error.
+     * @memberof TransactionSender
+     */
+    public async submit(
+        chainID: string,
+        fee: string,
+        feeDenom?: CoinDenom,
+        memo?: string,
+        timeout?: number
+    ): Promise<RawTxResponse | RpcError> {
+        try {
+            const processedRawTxPayload = await this.process(chainID, fee, feeDenom, memo) as IProcessedRawTxPayload;
+            const response = await this.pocket.rpc()!.client.rawtx(processedRawTxPayload.addressHex, processedRawTxPayload.encodedTxBytes, timeout)
             return response
         } catch (error) {
             return RpcError.fromError(error)
