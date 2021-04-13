@@ -52,14 +52,20 @@ export class HttpRpcProvider implements IRPCProvider {
                 return new RpcError(response.status.toString(), JSON.stringify(response.data))
             }
         } catch (error) {
-            if (error.response !== undefined && error.response.data !== undefined) {
-                const regex = /Code: (\d+)/g
-                const codeExtract = regex.exec(error.response.data.message)
-                let code = "0"
-                if (codeExtract) {
-                    code = codeExtract[1]
+            if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
+                const errorObj = error.response.data.error
+                // Error code
+                const code = errorObj.code || "0"
+                let message = error.response.data.error
+                // Error message
+                if (errorObj.message) {
+                    message = errorObj.message
                 }
-                return RpcError.fromRelayError(error, code, error.response.data)
+
+                // Does error contains session information and nodes?
+                const dispatch = error.response.data.dispatch !== undefined ? error.response.data.dispatch : undefined
+
+                return new RpcError(code.toString(), message, dispatch)
             }
             return RpcError.fromError(error)
         }

@@ -1,5 +1,5 @@
 import { IRPCProvider } from "./i-rpc-provider"
-import { RpcError } from "../errors"
+import { RpcError, RelayError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
 import { Pocket, PocketAAT, HTTPMethod } from "../../pocket"
 import { RelayResponse, ConsensusRelayResponse, ChallengeResponse } from "../models"
@@ -62,14 +62,20 @@ export class PocketRpcProvider implements IRPCProvider {
                 return this.handleReponse(relayResponse)
             }
         } catch (error) {
-            if (error.response !== undefined && error.response.data !== undefined) {
-                const regex = /Code: (\d+)/g
-                const codeExtract = regex.exec(error.response.data.message)
-                let code = "0"
-                if (codeExtract) {
-                    code = codeExtract[1]
+            if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
+                const errorObj = error.response.data.error
+                // Error code
+                const code = errorObj.code || "0"
+                let message = error.response.data.error
+                // Error message
+                if (errorObj.message) {
+                    message = errorObj.message
                 }
-                return RpcError.fromRelayError(error, code, JSON.stringify(error.response.data))
+
+                // Does error contains session information and nodes?
+                const dispatch = error.response.data.dispatch !== undefined ? error.response.data.dispatch : undefined
+
+                return new RpcError(code.toString(), message, dispatch)
             }
             return RpcError.fromError(error)
         }
@@ -77,11 +83,11 @@ export class PocketRpcProvider implements IRPCProvider {
     /**
      * @memberof PocketRpcProvider
      */
-    private handleReponse(relayResponse: any): string | RpcError{
+    private handleReponse(relayResponseOrError: any): string | RpcError{
         // Check the relayResponse object type
-        if (typeGuard(relayResponse, RelayResponse)) {
+        if (typeGuard(relayResponseOrError, RelayResponse)) {
             // return relayResponse.payload
-            let result = relayResponse.payload
+            let result = relayResponseOrError.payload
             try {
                 result = JSON.parse(result)
                 
@@ -96,7 +102,8 @@ export class PocketRpcProvider implements IRPCProvider {
                 return RpcError.fromError(error)
             }
         } else {
-            return relayResponse as RpcError
+            const relayError = relayResponseOrError as RelayError
+            return new RpcError(relayError.code, relayError.message)
         }
     }
 

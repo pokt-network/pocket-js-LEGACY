@@ -1,8 +1,8 @@
 import { Configuration } from "./config"
-import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session, MajorityResponse } from "./rpc/models"
+import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, Session, DispatchResponse } from "./rpc/models"
 import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate, typeGuard } from "./utils"
 import { SessionManager } from "./session/session-manager"
-import { Node, RPC, IRPCProvider, RpcError, HttpRpcProvider } from "./rpc"
+import { Node, RPC, IRPCProvider, RpcError, HttpRpcProvider, RelayError } from "./rpc"
 import { Keybase } from "./keybase/keybase"
 import { UnlockedAccount, Account } from "./keybase/models"
 import { PocketAAT } from "@pokt-network/aat-js"
@@ -111,14 +111,14 @@ export class Pocket {
     method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node
-  ): Promise<ConsensusRelayResponse | ChallengeResponse | Error> {
+  ): Promise<ConsensusRelayResponse | ChallengeResponse | RelayError> {
     const consensusNodes: ConsensusNode[] = []
     let firstResponse: RelayResponse | undefined
 
     try {
       // Checks if max consensus nodes count is 0, meaning it wasn't configured for local concensus.
       if (this.configuration.consensusNodeCount === 0) {
-        return new Error("Failed to send a relay with local consensus, configuration consensusNodeCount is 0")
+        return new RelayError("NA","Failed to send a relay with local consensus, configuration consensusNodeCount is 0")
       }
       // Perform the relays based on the max consensus nodes count
       for (let index = 0; index < this.configuration.consensusNodeCount; index++) {
@@ -136,7 +136,7 @@ export class Pocket {
       }
       // Check consensus nodes length
       if (consensusNodes.length === 0 || firstResponse === undefined) {
-        return new Error("Failed to send a relay with local consensus, no responses.")
+        return new RelayError("NA", "Failed to send a relay with local consensus, no responses.")
       }
       // Add the consensus node list to the consensus relay response
       const consensusRelayResponse = new ConsensusRelayResponse(
@@ -154,17 +154,17 @@ export class Pocket {
         // Create the challenge request
         const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!)
         // Send the challenge request
-        const challengeResponse = await this.rpc()!.query.requestChallenge(challengeRequest)
+        const challengeResponseOrError = await this.rpc()!.query.requestChallenge(challengeRequest)
         // Return a challenge response
-        if (typeGuard(challengeResponse, ChallengeResponse)) {
-          return challengeResponse
+        if (typeGuard(challengeResponseOrError, ChallengeResponse)) {
+          return challengeResponseOrError
         }
-        return new Error(challengeResponse.message)
+        return RelayError.fromRpcError(challengeResponseOrError)
       } else {
-        return new Error("Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
+        return new RelayError("NA", "Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
       }
     } catch (err) {
-      return err
+      return RelayError.fromError(err)
     }
   }
   /**
@@ -192,13 +192,13 @@ export class Pocket {
     path = "",
     node?: Node,
     consensusEnabled: boolean = false
-  ): Promise<RelayResponse | ConsensusNode | Error> {
+  ): Promise<RelayResponse | ConsensusNode | RelayError> {
     try {
       // Get the current session
       const currentSessionOrError = await this.sessionManager.getCurrentSession(pocketAAT, blockchain, configuration)
 
       if (typeGuard(currentSessionOrError, Error)) {
-        return currentSessionOrError
+        return RelayError.fromError(currentSessionOrError)
       }
 
       // Set the currentSession; may be refreshed below if the block height is stale
@@ -209,12 +209,12 @@ export class Pocket {
       // Check if consensus relay is enabled
       if (consensusEnabled) {
         if (this.configuration.consensusNodeCount > currentSession.sessionNodes.length) {
-          return new Error("Failed to send a consensus relay, number of max consensus nodes is higher thant the actual nodes in current session")
+          return new RelayError("NA", "Failed to send a consensus relay, number of max consensus nodes is higher thant the actual nodes in current session")
         }
         const serviceNodeOrError = currentSession.getUniqueSessionNode()
 
         if (typeGuard(serviceNodeOrError, Error)) {
-          return serviceNodeOrError
+          return RelayError.fromError(serviceNodeOrError)
         }
         serviceNode = serviceNodeOrError as Node
       }else {
@@ -223,13 +223,13 @@ export class Pocket {
           if (currentSession.isNodeInSession(node)) {
             serviceNode = node as Node
           } else {
-            return new Error("Provided Node is not part of the current session for this application, check your PocketAAT")
+            return new RelayError("NA", "Provided Node is not part of the current session for this application, check your PocketAAT")
           }
         } else {
           const serviceNodeOrError = currentSession.getSessionNode()
 
           if (typeGuard(serviceNodeOrError, Error)) {
-            return serviceNodeOrError
+            return RelayError.fromError(serviceNodeOrError)
           }
           serviceNode = serviceNodeOrError as Node
         }
@@ -237,9 +237,9 @@ export class Pocket {
 
       // Final Service Node check
       if (serviceNode === undefined) {
-        return new Error("Could not determine a Service Node to submit this relay")
+        return new RelayError("NA", "Could not determine a Service Node to submit this relay")
       }
-
+      
       // Assign session service node to the rpc instance
       const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL)
       const rpc = new RPC(serviceProvider)
@@ -252,11 +252,11 @@ export class Pocket {
       const isUnlocked = await this.keybase.isUnlocked(clientAddressHex)
 
       if (!isUnlocked) {
-        return new Error("Client account " + clientAddressHex + " for this AAT is not unlocked")
+        return new RelayError("NA", "Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
 
       // Produce signature payload
-      const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight))
+      const relayMeta = new RelayMeta(BigInt(99999999))
       const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
 
@@ -273,7 +273,7 @@ export class Pocket {
       const signatureOrError = await this.keybase.signWithUnlockedAccount(clientAddressHex, proofBytes)
 
       if (typeGuard(signatureOrError, Error)) {
-        return new Error("Error signing Relay proof: "+signatureOrError.message)
+        return new RelayError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
       const signature = signatureOrError as Buffer
@@ -307,8 +307,8 @@ export class Pocket {
         // Refresh the current session if we get this error code
         if (
           rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
-          rpcError.code === "75" ||
-          rpcError.code === "14" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
+          rpcError.code === "75" || // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
+          rpcError.code === "14" 
         ) {
           
           // Remove outdated session
@@ -319,25 +319,50 @@ export class Pocket {
             retryIndex < configuration.maxSessionRefreshRetries;
             retryIndex++
           ) {
-            // Get the current session
-            const newSessionOrError = await this.sessionManager.requestCurrentSession(
-              pocketAAT,
-              blockchain,
-              configuration
-            )
-            if (typeGuard(newSessionOrError, Error)) {
-              // If error or same session, don't even retry relay
-              continue
-            } else if (typeGuard(newSessionOrError, Session)) {
-              const newSession = newSessionOrError as Session
-              if (newSession.sessionHeader.sessionBlockHeight === currentSession.sessionHeader.sessionBlockHeight) {
-                // If we get the same session skip this attempt
+            // Update the current session if is available from the network error response
+            if (rpcError.data !== undefined) {
+              const dispatchResponse = DispatchResponse.fromJSON(JSON.stringify(rpcError.data))
+
+              const newSessionOrError = await this.sessionManager.updateCurrentSession(
+                dispatchResponse,
+                pocketAAT,
+                blockchain,
+                configuration
+              )
+
+              if (typeGuard(newSessionOrError, Error)) {
+                // If error or same session, don't even retry relay
                 continue
+              } else if (typeGuard(newSessionOrError, Session)) {
+                const newSession = newSessionOrError as Session
+                if (newSession.sessionHeader.sessionBlockHeight === currentSession.sessionHeader.sessionBlockHeight) {
+                  // If we get the same session skip this attempt
+                  continue
+                }
+                currentSession = newSession as Session
               }
-              currentSession = newSession as Session
+              sessionRefreshed = true
+              break
+            } else {
+              const newSessionOrError = await this.sessionManager.requestCurrentSession(
+                pocketAAT,
+                blockchain,
+                configuration
+              )
+              if (typeGuard(newSessionOrError, Error)) {
+                // If error or same session, don't even retry relay
+                continue
+              } else if (typeGuard(newSessionOrError, Session)) {
+                const newSession = newSessionOrError as Session
+                if (newSession.sessionHeader.sessionBlockHeight === currentSession.sessionHeader.sessionBlockHeight) {
+                  // If we get the same session skip this attempt
+                  continue
+                }
+                currentSession = newSession as Session
+              }
+              sessionRefreshed = true
+              break
             }
-            sessionRefreshed = true
-            break
           }
 
           if (sessionRefreshed) {
@@ -355,10 +380,10 @@ export class Pocket {
               consensusEnabled
             )
           } else {
-            return new Error(rpcError.message)
+            return new RelayError(rpcError.code, rpcError.message, serviceNode.publicKey)
           }
         } else {
-          return new Error(rpcError.message)
+          return new RelayError(rpcError.code, rpcError.message, serviceNode.publicKey)
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
         // Handle consensus
@@ -373,7 +398,7 @@ export class Pocket {
         return result
       }
     } catch (error) {
-      return error
+      return RelayError.fromError(error)
     }
   }
 
