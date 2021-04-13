@@ -15,9 +15,9 @@
   integrity sha512-np/lG3uARFybkoHokJUmf1QfEvRVCPbmQeUQpKow5cQ3xWrV9i3rUHodKDJPQfTVX61qKi+UdYk8kik84n7XOw==
 
 "@babel/highlight@^7.12.13":
-  version "7.13.8"
-  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.13.8.tgz#10b2dac78526424dfc1f47650d0e415dfd9dc481"
-  integrity sha512-4vrIhfJyfNf+lCtXC2ck1rKSzDwciqF7IWFhXXrSOUC2O5DrVp+w4c6ed4AllTxhTkUP5x2tYj41VaxdVMMRDw==
+  version "7.13.10"
+  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.13.10.tgz#a8b2a66148f5b27d666b15d81774347a731d52d1"
+  integrity sha512-5aPpe5XQPzflQrFwL1/QoeHkP2MsA4JCntcXHRhEsdsfPVkvPi2w7Qix4iV7t5S/oC9OodGrggd8aco1g3SZFg==
   dependencies:
     "@babel/helper-validator-identifier" "^7.12.11"
     chalk "^2.0.0"
@@ -44,7 +44,7 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@pokt-network/aat-js@0.1.1-rc", "@pokt-network/aat-js@^0.1.1-rc":
+"@pokt-network/aat-js@^0.1.1-rc":
   version "0.1.1-rc"
   resolved "https://registry.yarnpkg.com/@pokt-network/aat-js/-/aat-js-0.1.1-rc.tgz#db23cccb6e0127bb463c754b4c645ec4d300579d"
   integrity sha512-3ZH92G7SVm2KoaJfz8AQzjXvJwSeFiCa5zYJkNCgJDuaKVb59Nd/g+nwvlCTy2GI0KallRS3iTAWOaNU6OQAsg==
@@ -61,20 +61,20 @@
     "@tendermint/belt" "0.2.1"
     "@tendermint/types" "0.1.1"
 
-"@pokt-network/pocket-js-configuration@../configuration/", "@pokt-network/pocket-js-configuration@file:../configuration":
+"@pokt-network/pocket-js-configuration@../configuration/":
   version "0.0.1-rc"
 
-"@pokt-network/pocket-js-http-provider@../http-provider/", "@pokt-network/pocket-js-http-provider@file:../http-provider":
+"@pokt-network/pocket-js-http-provider@../http-provider/":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-http-provider-0.0.1-rc-f979665f-9bac-4f20-9e59-994f204dd9e4-1616413495959/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-http-provider-0.0.1-rc-4a1065ef-7255-4d7f-9ff2-2608065f7600-1618239297494/node_modules/@pokt-network/utils"
     axios "^0.21.1"
 
-"@pokt-network/pocket-js-keybase@file:../keybase":
+"@pokt-network/pocket-js-keybase@../keybase/":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-storage" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-631a00ea-8e7f-417d-8c0d-61458cba4aee-1616413495962/node_modules/@pokt-network/storage"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-631a00ea-8e7f-417d-8c0d-61458cba4aee-1616413495962/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-storage" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-db2a81a2-1d92-431e-83f4-dc7b71b068c1-1618239297499/node_modules/@pokt-network/storage"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-keybase-0.0.1-rc-db2a81a2-1d92-431e-83f4-dc7b71b068c1-1618239297499/node_modules/@pokt-network/utils"
     "@types/aes-js" "^3.1.0"
     "@types/libsodium-wrappers" "^0.7.7"
     "@types/pbkdf2" "^3.0.0"
@@ -84,87 +84,32 @@
     pbkdf2 "^3.0.17"
     scrypt-js "^3.0.1"
 
-"@pokt-network/pocket-js-main-interface@file:../main-interface":
-  version "0.0.1-rc"
-  dependencies:
-    "@pokt-network/aat-js" "0.1.1-rc"
-    "@pokt-network/pocket-js-configuration" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/configuration"
-    "@pokt-network/pocket-js-http-provider" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/http-provider"
-    "@pokt-network/pocket-js-keybase" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/keybase"
-    "@pokt-network/pocket-js-relay-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/relay-models"
-    "@pokt-network/pocket-js-rpc" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/rpc"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-session-manager" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/session-manager"
-    "@pokt-network/pocket-js-transactions" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/transactions"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-main-interface-0.0.1-rc-df7af22c-8b05-4eea-9341-ac28a4b85772-1616413497055/node_modules/@pokt-network/utils"
-
-"@pokt-network/pocket-js-relay-models@file:../relay-models":
+"@pokt-network/pocket-js-relay-models@../relay-models/", "@pokt-network/pocket-js-relay-models@file:../relay-models":
   version "0.0.1-rc"
   dependencies:
     "@pokt-network/aat-js" "^0.1.1-rc"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-relay-models-0.0.1-rc-2c5051c5-e3aa-4691-9b6e-d25c8ab4c57e-1616413497062/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-relay-models-0.0.1-rc-587c3d88-3878-44eb-9e47-6b5a042f388f-1618239297516/node_modules/@pokt-network/utils"
     js-sha3 "^0.8.0"
 
-"@pokt-network/pocket-js-routing-table@file:../routing-table":
+"@pokt-network/pocket-js-rpc-client@../rpc-client":
   version "0.0.1-rc"
   dependencies:
-    "@pokt-network/pocket-js-configuration" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-f8cb2fde-9782-48b6-952e-765744369013-1616413497080/node_modules/@pokt-network/configuration"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-f8cb2fde-9782-48b6-952e-765744369013-1616413497080/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-storage" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-f8cb2fde-9782-48b6-952e-765744369013-1616413497080/node_modules/@pokt-network/storage"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-routing-table-0.0.1-rc-f8cb2fde-9782-48b6-952e-765744369013-1616413497080/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-http-provider" "../http-provider/"
+    "@pokt-network/pocket-js-relay-models" "../relay-models/"
+    "@pokt-network/pocket-js-rpc-models" "../rpc-models/"
+    "@pokt-network/pocket-js-utils" "../utils/"
 
-"@pokt-network/pocket-js-rpc-models@file:../rpc-models":
+"@pokt-network/pocket-js-rpc-models@../rpc-models/":
   version "0.0.1-rc"
   dependencies:
     "@pokt-network/aat-js" "^0.1.1-rc"
-    "@pokt-network/pocket-js-relay-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-1cc40e1b-2992-4b00-b5ab-fbe362abae20-1616413497074/node_modules/@pokt-network/relay-models"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-1cc40e1b-2992-4b00-b5ab-fbe362abae20-1616413497074/node_modules/@pokt-network/utils"
-
-"@pokt-network/pocket-js-rpc@../rpc", "@pokt-network/pocket-js-rpc@file:../rpc":
-  version "0.0.1-rc"
-  dependencies:
-    "@pokt-network/pocket-js-http-provider" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-35017726-8f28-42ce-ba8e-46432d4e942f-1616413497061/node_modules/@pokt-network/http-provider"
-    "@pokt-network/pocket-js-relay-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-35017726-8f28-42ce-ba8e-46432d4e942f-1616413497061/node_modules/@pokt-network/relay-models"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-35017726-8f28-42ce-ba8e-46432d4e942f-1616413497061/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-0.0.1-rc-35017726-8f28-42ce-ba8e-46432d4e942f-1616413497061/node_modules/@pokt-network/utils"
-
-"@pokt-network/pocket-js-session-manager@file:../session-manager":
-  version "0.0.1-rc"
-  dependencies:
-    "@pokt-network/pocket-js-configuration" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-d68018d4-0382-4311-8248-769fa736a5c5-1616413497075/node_modules/@pokt-network/configuration"
-    "@pokt-network/pocket-js-http-provider" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-d68018d4-0382-4311-8248-769fa736a5c5-1616413497075/node_modules/@pokt-network/http-provider"
-    "@pokt-network/pocket-js-routing-table" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-d68018d4-0382-4311-8248-769fa736a5c5-1616413497075/node_modules/@pokt-network/routing-table"
-    "@pokt-network/pocket-js-rpc" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-d68018d4-0382-4311-8248-769fa736a5c5-1616413497075/node_modules/@pokt-network/rpc"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-d68018d4-0382-4311-8248-769fa736a5c5-1616413497075/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-storage" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-d68018d4-0382-4311-8248-769fa736a5c5-1616413497075/node_modules/@pokt-network/storage"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-session-manager-0.0.1-rc-d68018d4-0382-4311-8248-769fa736a5c5-1616413497075/node_modules/@pokt-network/utils"
+    "@pokt-network/pocket-js-relay-models" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-7b3ea4d4-4ce7-4428-b0ea-b32a7445080a-1618239297514/node_modules/@pokt-network/relay-models"
+    "@pokt-network/pocket-js-utils" "file:../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-rpc-models-0.0.1-rc-7b3ea4d4-4ce7-4428-b0ea-b32a7445080a-1618239297514/node_modules/@pokt-network/utils"
 
 "@pokt-network/pocket-js-storage@file:../storage":
   version "0.0.1-rc"
 
-"@pokt-network/pocket-js-test-utils@../test-utils/":
-  version "0.0.1-rc"
-  dependencies:
-    "@types/dotenv" "^8.2.0"
-    "@types/node" "^12.12.17"
-    dotenv "^8.2.0"
-
-"@pokt-network/pocket-js-transactions@file:.":
-  version "0.0.1-rc"
-  dependencies:
-    "@pokt-network/amino-js" "0.7.5-alpha.1"
-    "@pokt-network/pocket-js-configuration" "../configuration/"
-    "@pokt-network/pocket-js-http-provider" "../http-provider/"
-    "@pokt-network/pocket-js-keybase" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-b9e15945-ef4a-43b5-8316-7548f26bae8e-1616413497063/node_modules/@pokt-network/keybase"
-    "@pokt-network/pocket-js-main-interface" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-b9e15945-ef4a-43b5-8316-7548f26bae8e-1616413497063/node_modules/@pokt-network/main-interface"
-    "@pokt-network/pocket-js-rpc" "../rpc"
-    "@pokt-network/pocket-js-rpc-models" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-b9e15945-ef4a-43b5-8316-7548f26bae8e-1616413497063/node_modules/@pokt-network/rpc-models"
-    "@pokt-network/pocket-js-test-utils" "../test-utils/"
-    "@pokt-network/pocket-js-utils" "file:../../../../../../../Library/Caches/Yarn/v6/npm-@pokt-network-pocket-js-transactions-0.0.1-rc-b9e15945-ef4a-43b5-8316-7548f26bae8e-1616413497063/node_modules/@pokt-network/utils"
-    "@tendermint/belt" "^0.2.1"
-    ts-proto "^1.54.0"
-
-"@pokt-network/pocket-js-utils@file:../utils":
+"@pokt-network/pocket-js-utils@../utils/", "@pokt-network/pocket-js-utils@file:../utils":
   version "0.0.1-rc"
   dependencies:
     "@types/node" "^14.14.31"
@@ -253,9 +198,9 @@
   integrity sha512-SDSGgXT3LRCH6qMWk8OHT1vLSVNuHNvCpKCx2/TYtQMbMGGgxJC9fspwSkQjqzRagrWnCrxuLL3jMNXLXHHvSw==
 
 "@types/chai@^4.2.7":
-  version "4.2.15"
-  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.15.tgz#b7a6d263c2cecf44b6de9a051cf496249b154553"
-  integrity sha512-rYff6FI+ZTKAPkJUoyz7Udq3GaoDZnxYDEvdEdFZASiA7PoErltHezDishqQiSDWrGxvxmplH304jyzQmjp0AQ==
+  version "4.2.16"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.16.tgz#f09cc36e18d28274f942e7201147cce34d97e8c8"
+  integrity sha512-vI5iOAsez9+roLS3M3+Xx7w+WRuDtSmF8bQkrbcIJ2sC1PcDgVoA0WGpa+bIrJ+y8zqY2oi//fUctkxtIcXJCw==
 
 "@types/dotenv@^8.2.0":
   version "8.2.0"
@@ -275,24 +220,19 @@
   integrity sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==
 
 "@types/mocha@^8.2.1":
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-8.2.1.tgz#f3f3ae4590c5386fc7c543aae9b78d4cf30ffee9"
-  integrity sha512-NysN+bNqj6E0Hv4CTGWSlPzMW6vTKjDpOteycDkV4IWBsO+PU48JonrPzV9ODjiI2XrjmA05KInLgF5ivZ/YGQ==
+  version "8.2.2"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-8.2.2.tgz#91daa226eb8c2ff261e6a8cbf8c7304641e095e0"
+  integrity sha512-Lwh0lzzqT5Pqh6z61P3c3P5nm6fzQK/MMHl9UKeneAeInVflBSz1O2EkX6gM6xfJd7FBXBY5purtLx7fUiZ7Hw==
 
 "@types/node@*", "@types/node@^14.14.31", "@types/node@^14.14.32":
-  version "14.14.32"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.32.tgz#90c5c4a8d72bbbfe53033f122341343249183448"
-  integrity sha512-/Ctrftx/zp4m8JOujM5ZhwzlWLx22nbQJiVqz8/zE15gOeEW+uly3FSX4fGFpcfEvFzXcMCJwq9lGVWgyARXhg==
-
-"@types/node@^12.12.17":
-  version "12.20.4"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.20.4.tgz#73687043dd00fcb6962c60fbf499553a24d6bdf2"
-  integrity sha512-xRCgeE0Q4pT5UZ189TJ3SpYuX/QGl6QIAOAIeDSbAVAd2gX1NxSZup4jNVK7cxIeP8KDSbJgcckun495isP1jQ==
+  version "14.14.37"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
+  integrity sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
 
 "@types/node@^13.7.0":
-  version "13.13.45"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.45.tgz#e6676bcca092bae5751d015f074a234d5a82eb63"
-  integrity sha512-703YTEp8AwQeapI0PTXDOj+Bs/mtdV/k9VcTP7z/de+lx6XjFMKdB+JhKnK+6PZ5za7omgZ3V6qm/dNkMj/Zow==
+  version "13.13.48"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.48.tgz#46a3df718aed5217277f2395a682e055a487e341"
+  integrity sha512-z8wvSsgWQzkr4sVuMEEOvwMdOQjiRY2Y/ZW4fDfjfe3+TfQrZqFKOthBgk2RnVEmtOKrkwdZ7uTvsxTBLjKGDQ==
 
 "@types/object-hash@^1.3.0":
   version "1.3.4"
@@ -315,6 +255,13 @@
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@types/scrypt-js/-/scrypt-js-2.0.4.tgz#c75d17910357d79552a8aa102a8c907ebcd029d5"
   integrity sha512-FCgSes9EwZrZEv3VmEKGSWeDgJSm6DJdR/QrBnZ1Y6Xhi9EAKmZqr6ocpPtZT/ZbJwaa/rpLyLq4uIy1Imzrhw==
+  dependencies:
+    "@types/node" "*"
+
+"@types/varint@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@types/varint/-/varint-6.0.0.tgz#4ad73c23cbc9b7e44379a7729ace7ed9c8bc9854"
+  integrity sha512-2jBazyxGl4644tvu3VAez8UA/AtrcEetT9HOeAbqZ/vAcRVL/ZDFQjSS7rkWusU5cyONQVUz+nwwrNZdMva4ow==
   dependencies:
     "@types/node" "*"
 
@@ -358,9 +305,9 @@ ansi-styles@^4.0.0:
     color-convert "^2.0.1"
 
 anymatch@~3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-3.1.1.tgz#c55ecf02185e2469259399310c173ce31233b142"
-  integrity sha512-mM8522psRCqzV+6LhomX5wgp25YVibjh8Wj23I5RPkPppSVSjyKD2A2mBJmWGa+KN7f2D6LNh9jkBCeyLktzjg==
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-3.1.2.tgz#c0557c096af32f106198f4f4e2a383537e378716"
+  integrity sha512-P43ePfOAIupkguHUycrc4qJ9kz8ZiuOUijaETwX7THt0Y/GNK7v0aa8rY816xWjZ7rJdA5XdMcpVFTKMq+RvWg==
   dependencies:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
@@ -390,9 +337,9 @@ axios@^0.21.1:
     follow-redirects "^1.10.0"
 
 balanced-match@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
-  integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
+  integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
 binary-extensions@^2.0.0:
   version "2.2.0"
@@ -443,9 +390,9 @@ camelcase@^5.0.0:
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
 
 chai@^4.2.0:
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.3.tgz#f2b2ad9736999d07a7ff95cf1e7086c43a76f72d"
-  integrity sha512-MPSLOZwxxnA0DhLE84klnGPojWFK5KuhP7/j5dTsxpr2S3XlkqJP5WbyYl1gCTWvG2Z5N+HD4F472WsbEZL6Pw==
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.4.tgz#b55e655b31e1eac7099be4c08c21964fce2e6c49"
+  integrity sha512-yS5H68VYOCtN1cjfwumDSuzn/9c+yza4f3reKXlE5rUg7SFcCEy90gJvydNgOYtblyf4Zi6jIWRnXOgErta0KA==
   dependencies:
     assertion-error "^1.1.0"
     check-error "^1.0.2"
@@ -643,7 +590,7 @@ diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-dotenv@*, dotenv@^8.2.0:
+dotenv@*:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
@@ -822,7 +769,7 @@ growl@1.10.5:
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.5.tgz#f2735dc2283674fa67478b10181059355c369e5e"
   integrity sha512-qBr4OuELkhPenW6goKVXiv47US3clb3/IbuWF9KNKEijAy9oeHxU9IgzjvJhHkUzhaj7rOUD7+YGWqUjLp5oSA==
 
-has-bigints@^1.0.0:
+has-bigints@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.0.1.tgz#64fe6acb020673e3b78db035a5af69aa9d07b113"
   integrity sha512-LSBS2LjbNBTf6287JEbEzvJgftkF5qFkmCo9hDRpAzKhUOlJ+hx8dd4USs00SgsUNwc4617J9ki5YtEClM2ffA==
@@ -1316,9 +1263,9 @@ protobufjs@^6.8.8:
     long "^4.0.0"
 
 queue-microtask@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.2.tgz#abf64491e6ecf0f38a6502403d4cda04f372dfd3"
-  integrity sha512-dB15eXv3p2jDlbOiNLyMabYg1/sXvppd8DP2J3EOCQ0AkuSXCW2tP7mnVouVLJKgUMY6yP0kcQDVpLCN13h4Xg==
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
+  integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
 readable-stream@^3.6.0:
   version "3.6.0"
@@ -1543,10 +1490,10 @@ ts-proto-descriptors@^1.2.0:
   dependencies:
     protobufjs "^6.8.8"
 
-ts-proto@^1.54.0:
-  version "1.71.0"
-  resolved "https://registry.yarnpkg.com/ts-proto/-/ts-proto-1.71.0.tgz#ce0171543e70f85efa9505369942c8d8e8697d05"
-  integrity sha512-sqNonn0W5SuKqMEzD7LYzIdjyU2nRL0FVsLDm3RPTdK5zA8joiQxvxQhxKdavAUQd8QFZhLjDw1z0I3343PG9g==
+ts-proto@^1.76.0:
+  version "1.79.2"
+  resolved "https://registry.yarnpkg.com/ts-proto/-/ts-proto-1.79.2.tgz#114581d45c17522164364c5cd4bab0df41c1e116"
+  integrity sha512-3WZcJmbfb506myCvG79b4iFcSBpSI5y7vx+ProU/8QutVA3ubc3CyzSDrQ3W+bY5jfUdprO2s3HKvbg4kTxs9A==
   dependencies:
     "@types/object-hash" "^1.3.0"
     dataloader "^1.4.0"
@@ -1607,21 +1554,26 @@ typescript@^3.7.2:
   integrity sha512-kdMjTiekY+z/ubJCATUPlRDl39vXYiMV9iyeMuEuXZh2we6zz80uovNN2WlAxmmdE/Z/YQe+EbOEXB5RHEED3w==
 
 unbox-primitive@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.0.tgz#eeacbc4affa28e9b3d36b5eaeccc50b3251b1d3f"
-  integrity sha512-P/51NX+JXyxK/aigg1/ZgyccdAxm5K1+n8+tvqSntjOivPt19gvm1VC49RWYetsiub8WViUchdxl/KWHHB0kzA==
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.1.tgz#085e215625ec3162574dc8859abee78a59b14471"
+  integrity sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw==
   dependencies:
     function-bind "^1.1.1"
-    has-bigints "^1.0.0"
-    has-symbols "^1.0.0"
-    which-boxed-primitive "^1.0.1"
+    has-bigints "^1.0.1"
+    has-symbols "^1.0.2"
+    which-boxed-primitive "^1.0.2"
 
 util-deprecate@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
-which-boxed-primitive@^1.0.1:
+varint@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/varint/-/varint-6.0.0.tgz#9881eb0ce8feaea6512439d19ddf84bf551661d0"
+  integrity sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==
+
+which-boxed-primitive@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/which-boxed-primitive/-/which-boxed-primitive-1.0.2.tgz#13757bc89b209b049fe5d86430e21cf40a89a8e6"
   integrity sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==
@@ -1675,9 +1627,9 @@ wrappy@1:
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
 y18n@^4.0.0:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.1.tgz#8db2b83c31c5d75099bb890b23f3094891e247d4"
-  integrity sha512-wNcy4NvjMYL8gogWWYAO7ZFWFfHcbdbE57tZO8e4cbpj8tfUcwrwqSl3ad8HxpYWCdXcJUCeKKZS62Av1affwQ==
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.3.tgz#b5f259c82cd6e336921efd7bfd8bf560de9eeedf"
+  integrity sha512-JKhqTOwSrqNA1NY5lSztJ1GrBiUodLMmIZuLiDaMRJ+itFd+ABVE8XBjOvIWL+rSqNDC74LCSFmlb/U4UZ4hJQ==
 
 yargs-parser@13.1.2, yargs-parser@^13.1.2:
   version "13.1.2"

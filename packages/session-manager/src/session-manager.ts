@@ -2,7 +2,7 @@ import { SessionHeader, Session, DispatchResponse, Node, DispatchRequest } from 
 import { IKVStore } from "@pokt-network/pocket-js-storage"
 import { Configuration } from "@pokt-network/pocket-js-configuration"
 import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils"
-import { RPC } from "@pokt-network/pocket-js-rpc"
+import { ClientNamespace } from "@pokt-network/pocket-js-rpc-client"
 import { Queue } from "./queue"
 import { RoutingTable } from "@pokt-network/pocket-js-routing-table"
 import { HttpRpcProvider } from "@pokt-network/pocket-js-http-provider"
@@ -81,12 +81,12 @@ export class SessionManager {
       this.sessionMap.set(key, new Queue())
     }
 
-    const rpc = new RPC(new HttpRpcProvider(dispatcher))
+    const client = new ClientNamespace(new HttpRpcProvider(dispatcher))
     const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, BigInt(0))
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
 
     // Perform a dispatch request
-    const result = await rpc.client.dispatch(dispatchRequest, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
+    const result = await client.dispatch(dispatchRequest, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
 
     if (typeGuard(result, DispatchResponse)) {
       let session: Session

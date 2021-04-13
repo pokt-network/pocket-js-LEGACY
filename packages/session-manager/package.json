@@ -26,13 +26,12 @@
   "license": "MIT",
   "repository": {},
   "dependencies": {
-    "@pokt-network/pocket-js-configuration": "file:../configuration",
-    "@pokt-network/pocket-js-http-provider": "file:../http-provider",
-    "@pokt-network/pocket-js-routing-table": "file:../routing-table",
-    "@pokt-network/pocket-js-rpc": "file:../rpc",
-    "@pokt-network/pocket-js-rpc-models": "file:../rpc-models",
-    "@pokt-network/pocket-js-storage": "file:../storage",
-    "@pokt-network/pocket-js-utils": "file:../utils"
+    "@pokt-network/pocket-js-configuration": "../configuration/",
+    "@pokt-network/pocket-js-routing-table": "../routing-table",
+    "@pokt-network/pocket-js-rpc-client": "../rpc-client",
+    "@pokt-network/pocket-js-rpc-models": "../rpc-models/",
+    "@pokt-network/pocket-js-storage": "../storage/",
+    "@pokt-network/pocket-js-utils": "../utils/"
   },
   "devDependencies": {
     "create-ts-index": "^1.12.0",

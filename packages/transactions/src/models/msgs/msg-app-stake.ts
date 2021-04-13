@@ -1,6 +1,6 @@
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
-import { validatePublicKey } from "@pokt-network/pocket-js-utils"
+import { validatePublicKey } from '@pokt-network/pocket-js-utils'
 
 /**
  * Model representing a MsgAppStake to stake as an Application in the Pocket Network
@@ -43,10 +43,10 @@ export class MsgAppStake extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
-     * @returns {any} - Msg type key value.
+     * @returns {object} - Msg type key value.
      * @memberof MsgAppStake
      */
-    public toStdSignDocMsgObj(): any {
+    public toStdSignDocMsgObj(): object {
         return {
             type: this.AMINO_KEY,
             value: {

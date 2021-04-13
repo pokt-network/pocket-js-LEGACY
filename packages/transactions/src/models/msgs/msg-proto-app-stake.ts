@@ -2,13 +2,14 @@ import { MsgProtoStake } from '../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
-import { validatePublicKey } from "@pokt-network/pocket-js-utils"
+import { validatePublicKey } from '@pokt-network/pocket-js-utils'
 
 /**
  * Model representing a MsgAppStake to stake as an Application in the Pocket Network
  */
 export class MsgProtoAppStake extends TxMsg {
-    public readonly KEY: string = "github.com/pokt-network/pocket-core/x/apps/types.MsgProtoStake"
+    public readonly KEY: string = "/x.apps.MsgProtoStake"
+    public readonly AMINO_KEY: string = "apps/MsgAppStake"
     public readonly pubKey: Buffer
     public readonly chains: string[]
     public readonly amount: string
@@ -45,16 +46,21 @@ export class MsgProtoAppStake extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
-     * @returns {any} - Msg type key value.
+     * @returns {object} - Msg type key value.
      * @memberof MsgAppStake
      */
-    public toStdSignDocMsgObj(): any {
-        let data = {pubKey: Buffer.from(this.pubKey.toString("hex")), chains: this.chains, value: this.amount}
-
-        return Any.fromJSON({
-            "typeUrl": this.KEY,
-            "value": MsgProtoStake.encode(data).finish()
-        });
+    public toStdSignDocMsgObj(): object {
+        return {
+            type: this.AMINO_KEY,
+            value: {
+                chains: this.chains,
+                pubkey: {
+                    type: "crypto/ed25519_public_key",
+                    value: this.pubKey.toString("hex")
+                },
+                value: this.amount
+            }
+        }
     }
 
     /**
@@ -63,6 +69,11 @@ export class MsgProtoAppStake extends TxMsg {
      * @memberof MsgAppStake
      */
     public toStdTxMsgObj(): any {
-        return this.toStdSignDocMsgObj();
+        const data = { pubKey: this.pubKey, chains: this.chains, value: this.amount }
+
+        return Any.fromJSON({
+            "typeUrl": this.KEY,
+            "value": MsgProtoStake.encode(data).finish()
+        });
     }
 }

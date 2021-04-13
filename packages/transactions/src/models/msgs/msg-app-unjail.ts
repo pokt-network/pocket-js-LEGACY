@@ -1,5 +1,5 @@
 import { TxMsg } from "./tx-msg"
-import { typeGuard, validateAddressHex } from "@pokt-network/pocket-js-utils"
+import { typeGuard, validateAddressHex } from '@pokt-network/pocket-js-utils'
 
 /**
  * Model representing a MsgAppUnjail to unjail an Application in the Pocket Network
@@ -23,10 +23,10 @@ export class MsgAppUnjail extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
-     * @returns {any} - Msg type key value.
+     * @returns {object} - Msg type key value.
      * @memberof MsgAppUnjail
      */
-    public toStdSignDocMsgObj(): any {
+    public toStdSignDocMsgObj(): object {
         return {
             type: this.AMINO_KEY,
             value: {
