@@ -256,8 +256,8 @@ export class QueryNamespace {
      * @memberof QueryNamespace
      */
     public async getNodes(
-        stakingStatus: StakingStatus = StakingStatus.Staked,
-        jailedStatus: JailedStatus = JailedStatus.Unjailed,
+        stakingStatus: StakingStatus = StakingStatus.NA,
+        jailedStatus: JailedStatus = JailedStatus.NA,
         blockHeight: BigInt = BigInt(0),
         blockchain: string = "",
         page: number = 1,
@@ -273,8 +273,8 @@ export class QueryNamespace {
             const payload = JSON.stringify({
                 height: Number(blockHeight.toString()),
                 opts: {
-                    staking_status: stakingStatus,
-                    jailed_status: jailedStatus,
+                    staking_status: stakingStatus === "" ? null : stakingStatus,
+                    jailed_status: jailedStatus === "" ? null : jailedStatus,
                     blockchain: blockchain,
                     page: page,
                     per_page: perPage
@@ -524,7 +524,7 @@ export class QueryNamespace {
      * @memberof QueryNamespace
      */
     public async getApps(
-        stakingStatus: StakingStatus,
+        stakingStatus: StakingStatus = StakingStatus.NA,
         blockHeight: BigInt = BigInt(0),
         blockchain: string = "",
         page: number = 1,
@@ -540,7 +540,7 @@ export class QueryNamespace {
             const payload = JSON.stringify({
                 height: Number(blockHeight.toString()),
                 opts: {
-                    staking_status: stakingStatus,
+                    staking_status: stakingStatus === "" ? null : stakingStatus,
                     blockchain: blockchain,
                     page: page,
                     per_page: perPage

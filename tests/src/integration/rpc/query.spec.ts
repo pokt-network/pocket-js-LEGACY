@@ -93,10 +93,24 @@ describe("Pocket RPC Query Interface", async () => {
             expect(typeGuard(balanceResponse, QueryBalanceResponse)).to.be.true
         }).timeout(0)
 
-        it('should successfully retrieve a list of validator nodes', async () => {
+        it('should successfully retrieve a list of validator nodes without jailed status', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const nodesResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(1), "", 1, 10)
+            const nodesResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, undefined, BigInt(0), "", 1, 10)
+            expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve a list of validator nodes without staking status', async () => {
+            const pocket = getPocketDefaultInstance()
+
+            const nodesResponse = await pocket.rpc()!.query.getNodes(undefined, JailedStatus.Unjailed, BigInt(0), "", 1, 10)
+            expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve a list of validator nodes with staking and jailed status', async () => {
+            const pocket = getPocketDefaultInstance()
+
+            const nodesResponse = await pocket.rpc()!.query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(0), "", 1, 10)
             expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
@@ -112,6 +126,13 @@ describe("Pocket RPC Query Interface", async () => {
 
             const nodeParamsResponse = await pocket.rpc()!.query.getNodeParams(BigInt(0))
             expect(typeGuard(nodeParamsResponse, QueryNodeParamsResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve a list of apps without staking status', async () => {
+            const pocket = getPocketDefaultInstance()
+
+            const appsResponse = await pocket.rpc()!.query.getApps(undefined, BigInt(1), undefined, 1, 10)
+            expect(typeGuard(appsResponse, QueryAppsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a list of apps', async () => {
