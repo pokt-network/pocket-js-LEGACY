@@ -4,13 +4,13 @@
  */
 import * as dotenv from "dotenv"
 import { expect } from "chai"
-import { EnvironmentHelper, Network } from "../../../utils/env/helper"
+import { EnvironmentHelper } from "../../../utils/env/helper"
 import {
     Configuration, HttpRpcProvider, Pocket, typeGuard,
     QueryAccountResponse, QueryBlockResponse, QueryTXResponse,
     QueryHeightResponse, QueryBalanceResponse, StakingStatus,
     QueryNodesResponse, QueryNodeResponse, QueryNodeParamsResponse,
-    QueryNodeReceiptsResponse, NodeReceipt, QueryNodeReceiptResponse,
+    QueryNodeReceiptsResponse, QueryNodeReceiptResponse,
     QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse,
     QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse,
     RpcError,
@@ -30,8 +30,6 @@ import { QueryBlockTxsResponse } from "../../../../src/rpc/models/output/query-b
 // Constants
 // For Testing we are using dummy data, none of the following information is real.
 const addressHex = "175090018C3796FA05F4C0120EC61E2BBDA523F6"
-const ethBlockchain = "0022"
-const blockchains = [ethBlockchain]
 const nodeAddress = "19c0551853f19ce1b7a4a1ede775c6e3db431b0f"
 
 /** Specify the environment using using EnvironmentHelper.getLocalNet()
