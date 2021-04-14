@@ -69,28 +69,14 @@ export class SessionManager {
    * @memberof SessionManager
    */
   public async updateCurrentSession(
-    dispatchResponse: DispatchResponse,
+    session: Session,
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration
   ): Promise<Session | Error> {
-    let session: Session
-    try {
-      session = Session.fromJSON(
-        JSON.stringify(dispatchResponse.toJSON())
-      )
-    } catch (error) {
-      return error
-    }
+    const key = this.getSessionKey(pocketAAT, chain)
 
-    if (session !== undefined) {
-      const key = this.getSessionKey(pocketAAT, chain)
-
-      return this.saveSession(key, session, configuration)
-    } else {
-      // Remove node from dispatcher if it failed 3 times
-      return new Error("Error decoding session from Dispatch response")
-    }
+    return this.saveSession(key, session, configuration)
   }
   /**
    * Request a new session object. Returns a Promise with the Session object or an Error when something goes wrong.

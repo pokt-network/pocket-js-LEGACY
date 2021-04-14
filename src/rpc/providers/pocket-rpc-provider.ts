@@ -1,5 +1,5 @@
 import { IRPCProvider } from "./i-rpc-provider"
-import { RpcError, RelayError } from "../errors"
+import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
 import { Pocket, PocketAAT, HTTPMethod } from "../../pocket"
 import { RelayResponse, ConsensusRelayResponse, ChallengeResponse } from "../models"
@@ -74,9 +74,20 @@ export class PocketRpcProvider implements IRPCProvider {
 
                 // Does error contains session information and nodes?
                 const dispatch = error.response.data.dispatch !== undefined ? error.response.data.dispatch : undefined
-
+                
                 return new RpcError(code.toString(), message, dispatch)
+            } else if (error.response !== undefined && error.response.data !== undefined) {
+                const regex = /Code: (\d+)/g
+                const codeExtract = regex.exec(error.response.data.message)
+
+                let code = "0"
+                if (codeExtract) {
+                    code = codeExtract[1]
+                }
+                
+                return RpcError.fromRelayError(code, error.response.data)
             }
+
             return RpcError.fromError(error)
         }
     }
@@ -102,8 +113,8 @@ export class PocketRpcProvider implements IRPCProvider {
                 return RpcError.fromError(error)
             }
         } else {
-            const relayError = relayResponseOrError as RelayError
-            return new RpcError(relayError.code, relayError.message)
+            const rpcError = relayResponseOrError as RpcError
+            return rpcError
         }
     }
 
