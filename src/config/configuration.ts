@@ -14,7 +14,7 @@ export class Configuration {
   public readonly maxSessionRefreshRetries: number = 3
   public readonly validateRelayResponses: boolean = true
   public readonly rejectSelfSignedCertificates: boolean = true
-  public readonly useLegacyTxCodec: boolean = false
+  public readonly useLegacyTxCodec: boolean = true
 
   /**
    * Stores multiple properties used to interact with the Pocket Network.
@@ -29,7 +29,7 @@ export class Configuration {
    * @param {number} maxSessionRefreshRetries - (optional) Amount of times to perform a session refresh in case of getting error code 1124 (Invalid Session)
    * @param {boolean} validateRelayResponses - (optional) If True the relay responses are validated againt's the relay request information, False will not validate
    * @param {boolean} rejectSelfSignedCertificates - (optional) If True the HTTP RPC provider will force certificates to come from CAs, False will allow self signed
-   * @param {boolean} useLegacyTxCodec - (optional) If True the legacy tx codec will be used (AminoJS), false will use the new ProtoBuf encoding.
+   * @param {boolean} useLegacyTxCodec - (optional) If True the legacy tx codec will be used (AminoJS), false will use the new ProtoBuf encoding, default is true.
    * @memberof Configuration
    */
   constructor(
@@ -43,7 +43,7 @@ export class Configuration {
     maxSessionRefreshRetries: number = 3,
     validateRelayResponses: boolean = true,
     rejectSelfSignedCertificates: boolean = true,
-    useLegacyTxCodec: boolean = false
+    useLegacyTxCodec: boolean = true
   ) {
     this.maxDispatchers = maxDispatchers
     this.maxSessions = maxSessions

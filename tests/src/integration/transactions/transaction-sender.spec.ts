@@ -16,7 +16,6 @@ import * as dotenv from "dotenv"
 dotenv.config()
 const env = EnvironmentHelper.getLocalNet()
 const dispatcher = new URL(env.getPOKTRPC())
-const configuration = new Configuration(5, 2000, undefined, 100000)
 const privKey = "33a15ccfc7a5632f759dfdc273b20175bedf79b0eef560af5b26d9f16eb32a8b55d8172bd03ca3c9602c973e474806f4b77758048946acc967baebb72ec0b122"
 const chainID = "localnet"
 const msgFixtures = {
@@ -43,19 +42,12 @@ const msgFixtures = {
     }
 }
 
-function defaultConfiguration(): Configuration {
-    return configuration
-}
-
-function createPocketInstance(configuration?: Configuration, useLegacyTxsigner: boolean = true): Pocket {
-    if (configuration === undefined) {
-        const rpcProvider = new HttpRpcProvider(dispatcher)
-        return new Pocket([dispatcher], rpcProvider, defaultConfiguration())
-    } else {
-        const baseURL = dispatcher
-        const rpcProvider = new HttpRpcProvider(baseURL)
-        return new Pocket([dispatcher], rpcProvider, configuration)
-    }
+function createPocketInstance(useLegacyTxCodec: boolean = true): Pocket {
+    const configuration = new Configuration(5, 2000, undefined, 100000, undefined, undefined, undefined, undefined, undefined, undefined, useLegacyTxCodec)
+    
+    const baseURL = dispatcher
+    const rpcProvider = new HttpRpcProvider(baseURL)
+    return new Pocket([dispatcher], rpcProvider, configuration)
 }
 
 describe("Using ITransactionSender", function () {
@@ -182,7 +174,7 @@ describe("Using ITransactionSender", function () {
                 describe("Success scenarios", function () {
                     it("should succesfully submit a send message given the correct parameters using the new ProtoBuf tx signer", async () => {
                         // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                        const pocket = createPocketInstance(false)
 
                         // Create the transaction sender
                         let passphrase = "test"
@@ -261,7 +253,7 @@ describe("Using ITransactionSender", function () {
 
                     it("should succesfully submit an app stake message given the correct parameters using ProtoBuf tx signer", async () => {
                         // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                        const pocket = createPocketInstance(false)
 
                         // Create the account
                         const passphrase = "1234"
@@ -354,7 +346,7 @@ describe("Using ITransactionSender", function () {
 
                     it("should succesfully submit an app unstake message given the correct parameters using ProtoBuf tx signer", async () => {
                         // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                        const pocket = createPocketInstance(false)
 
                         // Create the account
                         const passphrase = "1234"
@@ -431,7 +423,7 @@ describe("Using ITransactionSender", function () {
 
                     it("should succesfully submit an node stake message given the correct parameters using ProtoBuf tx signer", async () => {
                         // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                        const pocket = createPocketInstance(false)
 
                         // Create the account
                         const passphrase = "1234"
@@ -540,7 +532,7 @@ describe("Using ITransactionSender", function () {
 
                     it("should succesfully submit an node unstake message given the correct parameters using ProtoBuf tx signer", async () => {
                         // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                        const pocket = createPocketInstance(false)
 
                         // Create the account
                         const passphrase = "1234"
@@ -617,7 +609,7 @@ describe("Using ITransactionSender", function () {
 
                     it("should succesfully submit an node unjail message given the correct parameters using ProtoBuf tx signer", async () => {
                         // We set the useLegacyTxsigner for the Pocket Configuration class
-                        const pocket = createPocketInstance(undefined, false)
+                        const pocket = createPocketInstance(false)
 
                         // Create the account
                         const passphrase = "1234"
