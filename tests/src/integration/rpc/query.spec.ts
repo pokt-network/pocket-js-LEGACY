@@ -18,7 +18,8 @@ import {
     QueryAccountTxsResponse,
     QueryNodeClaimsResponse,
     QueryNodeClaimResponse,
-    QueryAllParamsResponse
+    QueryAllParamsResponse,
+    QueryUpgradeResponse
 } from "../../../../src"
 import { ChallengeResponse } from "../../../../src/rpc/models/output/challenge-response"
 import { ChallengeRequest } from "../../../../src/rpc/models/input/challenge-request"
@@ -267,6 +268,13 @@ describe("Pocket RPC Query Interface", async () => {
 
             const allParamsResponse = await pocket.rpc()!.query.getAllParams(BigInt(10))
             expect(typeGuard(allParamsResponse, QueryAllParamsResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve the amino to protobuf upgrade information', async () => {
+            const pocket = getPocketDefaultInstance()
+
+            const upgradeResponse = await pocket.rpc()!.query.getUpgrade()
+            expect(typeGuard(upgradeResponse, QueryUpgradeResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a node claim list', async () => {
