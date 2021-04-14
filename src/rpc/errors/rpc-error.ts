@@ -1,3 +1,5 @@
+import { Session } from "./../models"
+
 /**
  * @class RpcError
  */
@@ -33,25 +35,35 @@
    */
   public static fromJSON(json: string): RpcError {
     const jsonObject = JSON.parse(json)
-    return new RpcError(jsonObject.code, jsonObject.message)
+
+    return new RpcError(
+      jsonObject.code, 
+      jsonObject.message,
+      undefined,
+      undefined
+    )
   }
 
   public readonly code: string
   public readonly message: string
-  public readonly data: object = {}
+  public readonly session?: Session
+  public readonly nodePubKey?: string
 
   /**
    * RPC Error.
    * @constructor
    * @param {string} code - Error code.
    * @param {string} message - Error message.
+   * @param {Session} session - Error message.
+   * @param {string} nodePubKey - Error message.
    * @memberof RpcError
    */
-  constructor(code: string, message: string, data: object = {}) {
+  constructor(code: string, message: string, session?: Session, nodePubKey?: string) {
     super(...arguments)
     this.code = code
     this.message = message
-    this.data = data
+    this.session = session
+    this.nodePubKey = nodePubKey
     Object.setPrototypeOf(this, RpcError.prototype)
   }
 
@@ -65,7 +77,8 @@
     return {
       code: this.code,
       message: this.message,
-      data: this.data
+      session: this.session !== undefined ? this.session.toJSON() : {},
+      node_public_key: this.nodePubKey !== undefined ? this.nodePubKey : ""
     }
   }
 }

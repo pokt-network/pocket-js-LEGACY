@@ -3,6 +3,7 @@ import axios from "axios"
 import { RpcError } from "../errors"
 import { typeGuard } from "../../utils/type-guard"
 import * as https from 'https'
+import { Session } from "../models"
 
 /**
  * @author Luis C. de León <luis@pokt.network>
@@ -52,6 +53,7 @@ export class HttpRpcProvider implements IRPCProvider {
                 return new RpcError(response.status.toString(), JSON.stringify(response.data))
             }
         } catch (error) {
+            
             if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
                 const errorObj = error.response.data.error
                 // Error code
@@ -62,11 +64,28 @@ export class HttpRpcProvider implements IRPCProvider {
                     message = errorObj.message
                 }
 
-                // Does error contains session information and nodes?
+                // Does error contains the dispatch information?
                 const dispatch = error.response.data.dispatch !== undefined ? error.response.data.dispatch : undefined
+                
+                // Generate a Session
+                let session
+                if (dispatch !== undefined) {
+                    session = Session.fromJSON(JSON.stringify(dispatch))
+                }
 
-                return new RpcError(code.toString(), message, dispatch)
+                return new RpcError(code.toString(), message, session)
+            } else if (error.response !== undefined && error.response.data !== undefined) {
+                const regex = /Code: (\d+)/g
+                const codeExtract = regex.exec(error.response.data.message)
+
+                let code = "0"
+                if (codeExtract) {
+                    code = codeExtract[1]
+                }
+                
+                return RpcError.fromRelayError(code, error.response.data)
             }
+
             return RpcError.fromError(error)
         }
     }
