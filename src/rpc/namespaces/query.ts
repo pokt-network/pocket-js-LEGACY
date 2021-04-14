@@ -74,7 +74,7 @@ export class QueryNamespace {
      */
     public async getBlockTxs(
         blockHeight: BigInt = BigInt(0),
-        prove: boolean,
+        prove: boolean = false,
         page: number = 1,
         perPage: number = 30,
         timeout: number = 60000, 

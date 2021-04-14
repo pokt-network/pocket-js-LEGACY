@@ -195,28 +195,28 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve an account transaction list with the proof object by setting the prove boolean to true', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const accountTxsResponse = await pocket.rpc()!.query.getAccountTxs("19c0551853f19ce1b7a4a1ede775c6e3db431b0f", false, true, 1, 10)
+            const accountTxsResponse = await pocket.rpc()!.query.getAccountTxs("da0d712e0ad5b37393c022c3333bed46c8667d0a", false, true, 1, 10)
             expect(typeGuard(accountTxsResponse, QueryAccountTxsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve an account transaction list that with empty proof object by setting the prove boolean to false', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const accountTxsResponse = await pocket.rpc()!.query.getAccountTxs("19c0551853f19ce1b7a4a1ede775c6e3db431b0f", false, false, 1, 10)
+            const accountTxsResponse = await pocket.rpc()!.query.getAccountTxs("da0d712e0ad5b37393c022c3333bed46c8667d0a", false, false, 1, 10)
             expect(typeGuard(accountTxsResponse, QueryAccountTxsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve an account received transaction list by setting the received property to true', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const accountTxsResponse = await pocket.rpc()!.query.getAccountTxs("19c0551853f19ce1b7a4a1ede775c6e3db431b0f", true, false, 1, 10)
+            const accountTxsResponse = await pocket.rpc()!.query.getAccountTxs("da0d712e0ad5b37393c022c3333bed46c8667d0a", true, false, 1, 10)
             expect(typeGuard(accountTxsResponse, QueryAccountTxsResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a block transaction list with the proof object by setting the prove boolean to true', async () => {
             const pocket = getPocketDefaultInstance()
 
-            const blockTxsResponse = await pocket.rpc()!.query.getBlockTxs(BigInt(9), true, 1, 10)
+            const blockTxsResponse = await pocket.rpc()!.query.getBlockTxs(BigInt(2), true, 1, 10)
             expect(typeGuard(blockTxsResponse, QueryBlockTxsResponse)).to.be.true
         }).timeout(0)
 
