@@ -69,7 +69,7 @@ export class HttpRpcProvider implements IRPCProvider {
                 
                 // Generate a Session
                 let session
-                if (dispatch !== undefined) {
+                if (dispatch !== undefined && dispatch !== null) {
                     session = Session.fromJSON(JSON.stringify(dispatch))
                 }
 
