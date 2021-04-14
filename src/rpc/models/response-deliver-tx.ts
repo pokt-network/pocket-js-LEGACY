@@ -43,13 +43,13 @@ export class ResponseDeliverTx {
   }
 
   public readonly code: number
-  public readonly data: string[]
-  public readonly log: string
-  public readonly info: string
-  public readonly gasWanted: BigInt
-  public readonly gasUsed: BigInt
-  public readonly events: Event[]
   public readonly codespace: string
+  public readonly data: string[]
+  public readonly events: Event[]
+  public readonly gasUsed: BigInt
+  public readonly gasWanted: BigInt
+  public readonly info: string
+  public readonly log: string  
 
   /**
    * Creates a ResponseDeliverTx.
