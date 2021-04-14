@@ -1,7 +1,9 @@
-## 0.6.10-RC
+## 0.6.11-RC
 - Query Nodes and Apps now support empty StakingStatus and JailedStatus.
-- SendRelay network error parsing is improved, RelayError type is now returned for SendRelay
-- RelayError also provides the nodePubKey of the used service node.
+- SendRelay network error parsing is improved.
+- RpcError now allows two new properties 'session' which is used when a sendRelay fails and the network provides
+  the dispatch session information, reducing the need to perform another request; and 'nodePubKey' which is populated
+  when a sendRelay fails for a easy way to track.
 - Added Msg and StdTx properties to the Transaction model.
 - Query BlockTxs and AccountTxs now uses the Transaction model.
 - TransactionSender>submit now uses the createTransaction.
