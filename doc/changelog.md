@@ -1,3 +1,13 @@
+## 0.6.10-RC
+- Query Nodes and Apps now support empty StakingStatus and JailedStatus.
+- SendRelay network error parsing is improved, RelayError type is now returned for SendRelay
+- RelayError also provides the nodePubKey of the used service node.
+- Added Msg and StdTx properties to the Transaction model.
+- Query BlockTxs and AccountTxs now uses the Transaction model.
+- TransactionSender>submit now uses the createTransaction.
+- Added new QueryUpgrade which returns the height and version for the network amino to protobuf upgrade.
+- useLegacyTxCodec default set to true.
+
 ## 0.6.9-RC
 - Improved sendRelay error handling.
   
