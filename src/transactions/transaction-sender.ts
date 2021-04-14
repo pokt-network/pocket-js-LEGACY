@@ -59,10 +59,11 @@ export class TransactionSender implements ITransactionSender {
             if (this.txMsg === undefined) {
                 return new RpcError("0", "No messages configured for this transaction")
             }
+
             const entropy = Number(BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()).toString()
-            const encoder = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
+            const signer = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
             let txSignatureOrError
-            const bytesToSign = encoder.marshalStdSignDoc()
+            const bytesToSign = signer.marshalStdSignDoc()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
                 txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
             } else if (this.txSigner !== undefined) {
@@ -77,7 +78,10 @@ export class TransactionSender implements ITransactionSender {
 
             const txSignature = txSignatureOrError as TxSignature
             const addressHex = addressFromPublickey(txSignature.pubKey)
-            const encodedTxBytes = encoder.marshalStdTx(txSignature)
+            const encodedTxBytes = signer.marshalStdTx(txSignature)
+            // Clean message and error
+            this.txMsg = undefined
+            this.txMsgError = undefined
 
             const txRequest = new RawTxRequest(addressHex.toString("hex"), encodedTxBytes.toString("hex"))
             return txRequest
@@ -104,40 +108,17 @@ export class TransactionSender implements ITransactionSender {
         timeout?: number
     ): Promise<RawTxResponse | RpcError> {
         try {
-            if (this.txMsgError !== undefined) {
-                const rpcError = RpcError.fromError(this.txMsgError)
-                this.txMsg = undefined
-                this.txMsgError = undefined
-                return rpcError
-            }
+            const rawTxRequestOrError = await this.createTransaction(chainID, fee, feeDenom, memo)
 
-            if (this.txMsg === undefined) {
-                return new RpcError("0", "No messages configured for this transaction")
+            if (!typeGuard(rawTxRequestOrError, RawTxRequest)) {
+                return rawTxRequestOrError
             }
+            const rawTxRequest = rawTxRequestOrError as RawTxRequest
 
-            const entropy = Number(BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()).toString()
-            const signer = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
-            let txSignatureOrError
-            const bytesToSign = signer.marshalStdSignDoc()
-            if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
-                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
-            } else if (this.txSigner !== undefined) {
-                txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
-            } else {
-                return new RpcError("0", "No account or TransactionSigner specified")
-            }
-
-            if (!typeGuard(txSignatureOrError, TxSignature)) {
-                return new RpcError("0", "Error generating signature for transaction")
-            }
-
-            const txSignature = txSignatureOrError as TxSignature
-            const addressHex = addressFromPublickey(txSignature.pubKey)
-            const encodedTxBytes = signer.marshalStdTx(txSignature)
             // Clean message and error
             this.txMsg = undefined
             this.txMsgError = undefined
-            const response = await this.pocket.rpc()!.client.rawtx(addressHex, encodedTxBytes, timeout)
+            const response = await this.pocket.rpc()!.client.rawtx(rawTxRequest.address, rawTxRequest.txHex, timeout)
 
             return response
         } catch (error) {
