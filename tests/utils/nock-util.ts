@@ -37,7 +37,7 @@ import {
     QueryAppParamsResponse,
     QueryPocketParamsResponse,
     QuerySupportedChainsResponse,
-    QuerySupplyResponse, RelayResponse, RelayPayload, DispatchResponse, RelayRequest, ResponseDeliverTx
+    QuerySupplyResponse, RelayResponse, RelayPayload, DispatchResponse, RelayRequest, ResponseDeliverTx, StdTxModel
 } from '../../src'
 import { SessionHeader } from '../../src/rpc/models/input/session-header'
 import { RelayProof } from '../../src/rpc/models/relay-proof'
@@ -202,7 +202,11 @@ export class NockUtil {
         const txProof = new TxProof(hash, "data", simpleProof)
         const event = new Event("type", [{"key": "key value","value": "test"}])
         const txResult = new ResponseDeliverTx(0, ["9292"], "logs", "info", BigInt(0), BigInt(0), [event], "")
-        const tx = new Transaction(hash, BigInt(3), BigInt(1), hash, txProof, txResult)
+        const stdTx = new StdTxModel(9080808008, { amount: "10000", denom: "upokt"}, "test memo", 
+        { address: "da0d712e0ad5b37393c022c3333bed46c8667d0a", upgrade: { height: 3, version: "0.6.0" } },
+        { pub_key: "5bdbfdad5ab2f7fdd0b815cc0fee2e263242bcdb8db19db23765c3cc67815e12", signature: "JwT2n2eWQVFkkhEePGXaex12eZICiMpMTf92+ARvNKOdan7kv89Vere2DzV3TIyC08A0ul806FIHHdgov90LBw" }
+        )
+        const tx = new Transaction(hash, BigInt(3), BigInt(1), txResult, hash, txProof, stdTx)
 
         const queryTXResponse = new QueryTXResponse(tx)
 
