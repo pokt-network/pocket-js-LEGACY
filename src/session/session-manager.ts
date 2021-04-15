@@ -131,7 +131,8 @@ export class SessionManager {
       }
     } else {
       // Remove the failed dispatcher from the routing table
-      this.routingTable.deleteDispatcher(dispatcher)
+      // TODO: Uncomment next line
+      // this.routingTable.deleteDispatcher(dispatcher)
       // Request the session again
       return await this.requestCurrentSession(pocketAAT, chain, configuration)
     }
