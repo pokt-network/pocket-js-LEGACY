@@ -392,7 +392,8 @@ export class Pocket {
         return new ConsensusNode(serviceNode, false, result)
       } else {
         // Add the used session node to the routing table dispatcher's list
-        this.sessionManager.addNewDispatcher(serviceNode)
+        // TODO: uncomment next line
+        // this.sessionManager.addNewDispatcher(serviceNode)
 
         return result
       }
