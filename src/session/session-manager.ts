@@ -78,6 +78,7 @@ export class SessionManager {
 
     return this.saveSession(key, session, configuration)
   }
+
   /**
    * Request a new session object. Returns a Promise with the Session object or an Error when something goes wrong.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -86,22 +87,17 @@ export class SessionManager {
    * @returns {Promise}
    * @memberof SessionManager
    */
-  public async requestCurrentSession(
+  public async requestNewSession(
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration
   ): Promise<Session | Error> {
+
     // Retrieve a dispatcher from the routing table
-    const dispatcher = this.routingTable.getDispatcher()
+    const dispatcher = this.routingTable.readRandomDispatcher()
 
     if (typeGuard(dispatcher, Error)) {
       return dispatcher
-    }
-
-    const key = this.getSessionKey(pocketAAT, chain)
-
-    if (!this.sessionMap.has(key)) {
-      this.sessionMap.set(key, new Queue())
     }
 
     const rpc = new RPC(new HttpRpcProvider(dispatcher))
@@ -129,12 +125,13 @@ export class SessionManager {
         // Remove node from dispatcher if it failed 3 times
         return new Error("Error decoding session from Dispatch response")
       }
-    } else {
+    } else if(this.routingTable.dispatchersCount > 0) {
       // Remove the failed dispatcher from the routing table
-      // TODO: Uncomment next line
-      // this.routingTable.deleteDispatcher(dispatcher)
+      this.routingTable.deleteDispatcher(dispatcher)
       // Request the session again
-      return await this.requestCurrentSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration)
+    } else {
+      return new Error("Unable to create a new session due to empty dispatcher's list.")
     }
   }
 
@@ -151,17 +148,19 @@ export class SessionManager {
     chain: string,
     configuration: Configuration
   ): Promise<Session | Error> {
-
+    
     const key = this.getSessionKey(pocketAAT, chain)
+    
     if (!this.sessionMap.has(key)) {
-      return await this.requestCurrentSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration)
     }
 
     const currentSession = (this.sessionMap.get(key) as Queue<Session>).front
+
     if (currentSession !== undefined) {
       return currentSession
     } else {
-      return await this.requestCurrentSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration)
     }
   }
 
