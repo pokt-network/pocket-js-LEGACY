@@ -304,7 +304,7 @@ export class Pocket {
       // Check session out of sync error
       if (typeGuard(result, RpcError)) {
         const rpcError = result as RpcError
-        // ask for dispatch
+        // Ask for dispatch
         // Refresh the current session if we get this error code
         if (
           rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
@@ -343,7 +343,7 @@ export class Pocket {
               sessionRefreshed = true
               break
             } else {
-              const newSessionOrError = await this.sessionManager.requestCurrentSession(
+              const newSessionOrError = await this.sessionManager.requestNewSession(
                 pocketAAT,
                 blockchain,
                 configuration
@@ -392,8 +392,7 @@ export class Pocket {
         return new ConsensusNode(serviceNode, false, result)
       } else {
         // Add the used session node to the routing table dispatcher's list
-        // TODO: uncomment next line
-        // this.sessionManager.addNewDispatcher(serviceNode)
+        this.sessionManager.addNewDispatcher(serviceNode)
 
         return result
       }
