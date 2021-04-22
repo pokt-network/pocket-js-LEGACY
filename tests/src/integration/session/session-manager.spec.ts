@@ -40,7 +40,7 @@ describe('Session Manager tests',() => {
         // Create AAT for imported account
         const aat = await PocketAAT.from("0.0.1", clientAccount.publicKey.toString("hex"), walletAppPublicKey, walletPrivateKey)
 
-        const session = await pocket.sessionManager.requestCurrentSession(aat, blockchain, configuration)
+        const session = await pocket.sessionManager.requestNewSession(aat, blockchain, configuration)
         expect(session).to.be.an.instanceof(Session)
     }).timeout(0)
 
@@ -140,7 +140,7 @@ describe('Session Manager tests',() => {
         const sessions: Session[] = []
 
         for (let index = 0; index < 5; index++) {
-            const session = await pocket.sessionManager.requestCurrentSession(aat, blockchain, configuration)
+            const session = await pocket.sessionManager.requestNewSession(aat, blockchain, configuration)
             sessions.push(session as Session)
         }
         
