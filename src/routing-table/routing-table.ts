@@ -90,19 +90,20 @@ export class RoutingTable {
    * @returns {Node} Node object.
    * @memberof Routing
    */
-  public readDispatcher(url: URL): Node {
+  public readDispatcher(url: URL): Node | Error {
     const dispatchers = this.store.get(this.dispatchersKey.toUpperCase()) as URL[]
     let requestedDispatcher
+    const urlStr = url.toString()
 
     dispatchers.forEach(function(storedURL: URL) {
-      if (storedURL.hash === url.hash) {
+      if (storedURL.toString() === urlStr) {
         requestedDispatcher = url
       }
     })
     if (typeGuard(requestedDispatcher, URL)) {
       return requestedDispatcher
     }else{
-      throw new Error("Dispatcher not found in routing table.")
+      return new Error("Dispatcher not found in routing table.")
     }
   }
 
@@ -111,7 +112,7 @@ export class RoutingTable {
    * @param {URL} url - URL of the dispatcher node to be added.
    * @memberof Routing
    */
-  public addDispatcher(url: URL) {
+  public addDispatcher(url: URL): boolean {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
     const urlStr = url.toString()
 
@@ -120,7 +121,7 @@ export class RoutingTable {
     
     // If the dispatcher exists then return
     if (dispatcher !== undefined) {
-      return
+      return false
     }
 
     // Add the new dispatcher to the array
@@ -132,6 +133,7 @@ export class RoutingTable {
     }
     // Update the store
     this.store.add(this.dispatchersKey, dispatchers)
+    return true
   }
 
   /**
