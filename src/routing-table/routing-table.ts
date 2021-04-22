@@ -32,7 +32,7 @@ export class RoutingTable {
         "Routing table must be initialized with at least one Dispatch node."
       )
     }
-
+    
     this.configuration = configuration
     this.store = store
     this.store.add(this.dispatchersKey, dispatchers)
@@ -57,10 +57,15 @@ export class RoutingTable {
    * @returns {URL[]} Random dispatcher urls.
    * @memberof Routing
    */
-  public readRandomDispatchers(count: number): URL[] {
+  public readRandomDispatchers(count: number): URL[] | Error {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
     // Shuffle array then return the slice
     const shuffled = dispatchers.sort(() => 0.5 - Math.random())
+
+    if (dispatchers.length <= 0) {
+      return new Error("Unable to readRandomDispatchers(), No dispatcher's available.")
+    }
+
     return shuffled.slice(0, count)
   }
 
@@ -69,23 +74,13 @@ export class RoutingTable {
    * @returns {URL} Random dispatcher URL.
    * @memberof Routing
    */
-  public readRandomDispatcher(): URL {
-    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
-    return dispatchers[Math.floor(Math.random() * dispatchers.length)]
-  }
-
-  /**
-   * Gets a dispatcher url for the Pocket network rpc calls
-   * @returns {URL | Error} Dispatcher url or error
-   * @memberof Routing
-   */
-  public getDispatcher(): URL | Error {
+  public readRandomDispatcher(): URL | Error {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
 
     if (dispatchers.length <= 0) {
-      return new Error("No dispatcher's available.")
+      return new Error("Unable to readRandomDispatcher(), No dispatcher's available.")
     }
-
+    
     return dispatchers[Math.floor(Math.random() * dispatchers.length)]
   }
 
@@ -98,6 +93,7 @@ export class RoutingTable {
   public readDispatcher(url: URL): Node {
     const dispatchers = this.store.get(this.dispatchersKey.toUpperCase()) as URL[]
     let requestedDispatcher
+
     dispatchers.forEach(function(storedURL: URL) {
       if (storedURL.hash === url.hash) {
         requestedDispatcher = url
@@ -116,16 +112,26 @@ export class RoutingTable {
    * @memberof Routing
    */
   public addDispatcher(url: URL) {
-    const disptachers = this.store.get(this.dispatchersKey) as URL[]
-    disptachers.push(url)
-    // If this pushes the count over the maxNodes, splice the first element off
-    if (disptachers.length > this.configuration.maxDispatchers && this.configuration.maxDispatchers > 0) {
-      disptachers.splice(0, 1)
+    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
+    const urlStr = url.toString()
+
+    // Checking if the dispatcher is already stored
+    const dispatcher = dispatchers.find(element => element.toString() === urlStr)
+    
+    // If the dispatcher exists then return
+    if (dispatcher !== undefined) {
+      return
     }
 
-    const shuffledDispatchers = disptachers.sort(() => Math.random() - 0.5)
+    // Add the new dispatcher to the array
+    dispatchers.push(url)
 
-    this.store.add(this.dispatchersKey, shuffledDispatchers)
+    // If this pushes the count over the maxNodes, splice the first element off
+    if (dispatchers.length > this.configuration.maxDispatchers && this.configuration.maxDispatchers > 0) {
+      dispatchers.splice(0,1)
+    }
+    // Update the store
+    this.store.add(this.dispatchersKey, dispatchers)
   }
 
   /**
@@ -141,10 +147,9 @@ export class RoutingTable {
     for (let i = 0; i < dispatchers.length; i++) {
       if (dispatchers[i].host === url.host) {
         dispatchers.splice(i, 1)
-        // Shuffle the dispatcher's list
-        const shuffledDispatchers = dispatchers.sort(() => Math.random() - 0.5)
+
         // Update the store
-        this.store.add(this.dispatchersKey, shuffledDispatchers)
+        this.store.add(this.dispatchersKey, dispatchers)
         return true
       }
     }
