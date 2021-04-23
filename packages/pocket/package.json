@@ -43,6 +43,8 @@
     "@pokt-network/pocket-js-relay-models": "../relay-models",
     "@pokt-network/pocket-js-rpc": "../rpc",
     "@pokt-network/pocket-js-rpc-models": "../rpc-models/",
+    "@pokt-network/pocket-js-session-manager": "../session-manager/",
+    "@pokt-network/pocket-js-storage": "../storage/",
     "@pokt-network/pocket-js-transactions": "../transactions",
     "@pokt-network/pocket-js-utils": "../utils/"
   }
