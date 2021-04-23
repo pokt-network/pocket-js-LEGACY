@@ -367,7 +367,7 @@ export class Pocket {
           if (sessionRefreshed) {
             // If a new session is succesfully obtained retry the relay
             // This won't cause an endless loop because the relay will only be retried only if the session was refreshed
-            const refreshedRelay = return await this.sendRelay(
+            const refreshedRelay = await this.sendRelay(
               data,
               blockchain,
               pocketAAT,
