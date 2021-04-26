@@ -94,7 +94,7 @@ export class SessionManager {
   ): Promise<Session | Error> {
 
     // Retrieve a dispatcher from the routing table
-    const dispatcher = this.routingTable.readRandomDispatcher()
+    const dispatcher = this.routingTable.getRandomDispatcher()
 
     if (typeGuard(dispatcher, Error)) {
       return dispatcher

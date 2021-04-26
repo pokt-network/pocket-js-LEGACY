@@ -52,12 +52,12 @@ export class RoutingTable {
   } 
 
   /**
-   * Reads an array of random dispatchers urls from the routing table
+   * Returns an array of random dispatchers urls from the routing table
    * @param {number} count - Desired number of dispatchers urls returned
    * @returns {URL[]} Random dispatcher urls.
    * @memberof Routing
    */
-  public readRandomDispatchers(count: number): URL[] | Error {
+  public getRandomDispatchers(count: number): URL[] | Error {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
     // Shuffle array then return the slice
     const shuffled = dispatchers.sort(() => 0.5 - Math.random())
@@ -70,11 +70,11 @@ export class RoutingTable {
   }
 
   /**
-   * Reads a random dispatcher node from the routing table
+   * Returns a random dispatcher node from the routing table
    * @returns {URL} Random dispatcher URL.
    * @memberof Routing
    */
-  public readRandomDispatcher(): URL | Error {
+  public getRandomDispatcher(): URL | Error {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
 
     if (dispatchers.length <= 0) {
@@ -85,12 +85,12 @@ export class RoutingTable {
   }
 
   /**
-   * Reads a specific node from the routing table based on public key
+   * Returns an specific node from the routing table based on public key
    * @param {URL} url - Node's service url.
    * @returns {Node} Node object.
    * @memberof Routing
    */
-  public readDispatcher(url: URL): Node | Error {
+  public getDispatcher(url: URL): Node | Error {
     const dispatchers = this.store.get(this.dispatchersKey.toUpperCase()) as URL[]
     let requestedDispatcher
     const urlStr = url.toString()
