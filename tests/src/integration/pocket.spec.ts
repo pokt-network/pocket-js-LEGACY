@@ -1,6 +1,6 @@
 /**
  * @author Pabel Nunez Landestoy <pabel@pokt.network>
- * @description Unit test for the Pocket Core
+ * @description Integration test for the Pocket Instance
  */
 // Constants
 import * as dotenv from "dotenv"
@@ -226,10 +226,16 @@ describe("Pocket Interface functionalities", async () => {
         })
         describe("Failure scenarios", () => {
 
+            it("should fail to instantiate a Configuration class due to maxDispatchers exceeding the limit amount", async () => {
+                expect(function () {
+                    new Configuration(1001, 1000, 4, 40000, false)
+                }).to.throw()
+            })
+
             it("should fail to instantiate a Configuration class due to consensusNodeCount NOT being an odd number", async () => {
                 expect(function () {
                     new Configuration(5, 1000, 4, 40000, false)
-                }).to.throw("Failed to instantiate a Configuration class object due to consensusNodeCount not being an odd number.")
+                }).to.throw()
             })
 
             it("should send and fail to validate a relay", async () => {

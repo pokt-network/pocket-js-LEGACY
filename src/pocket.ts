@@ -51,13 +51,9 @@ export class Pocket {
     store: IKVStore = new InMemoryKVStore()
   ) {
     this.configuration = configuration
-    try {
-      this.sessionManager = new SessionManager(dispatchers, configuration, store)
-      this.keybase = new Keybase(store)
-    } catch (error) {
-      throw error
-    }
-
+    this.sessionManager = new SessionManager(dispatchers, configuration, store)
+    this.keybase = new Keybase(store)
+    
     if (rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)
     }
