@@ -13,6 +13,9 @@ import { RequestHash } from "./rpc/models/input/request-hash"
 import { ChallengeRequest } from "./rpc/models/input/challenge-request"
 import { ChallengeResponse } from "./rpc/models/output/challenge-response"
 import { RelayMeta } from "./rpc/models/input/relay-meta"
+import { BaseProfiler } from "./utils/base-profiler"
+import { ProfileResult } from "./utils/models/profile-result"
+import { NoOpProfiler } from "./utils/no-op-profiler"
 
 /**
  *
@@ -35,6 +38,7 @@ export class Pocket {
   public readonly keybase: Keybase
   public readonly sessionManager: SessionManager
   private innerRpc?: RPC
+  private profiler: BaseProfiler
 
   /**
    * Creates an instance of Pocket.
@@ -48,12 +52,14 @@ export class Pocket {
     dispatchers: URL[],
     rpcProvider?: IRPCProvider,
     configuration: Configuration = new Configuration(),
-    store: IKVStore = new InMemoryKVStore()
+    store: IKVStore = new InMemoryKVStore(),
+    profiler: BaseProfiler = new NoOpProfiler()
   ) {
     this.configuration = configuration
     this.sessionManager = new SessionManager(dispatchers, configuration, store)
     this.keybase = new Keybase(store)
-    
+    this.profiler = profiler
+
     if (rpcProvider !== undefined) {
       this.innerRpc = new RPC(rpcProvider)
     }
@@ -187,12 +193,18 @@ export class Pocket {
     method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node,
-    consensusEnabled: boolean = false
+    consensusEnabled: boolean = false,
   ): Promise<RelayResponse | ConsensusNode | RpcError> {
     try {
+      const profileResults: ProfileResult[] = []
+      const functionName = "send_relay"
+
+      // Profiler
+      let profileResult = new ProfileResult("get_current_session")
       // Get the current session
       const currentSessionOrError = await this.sessionManager.getCurrentSession(pocketAAT, blockchain, configuration)
-
+      profileResult.save()
+      profileResults.push(profileResult)
       if (typeGuard(currentSessionOrError, Error)) {
         return RpcError.fromError(currentSessionOrError)
       }
@@ -207,8 +219,11 @@ export class Pocket {
         if (this.configuration.consensusNodeCount > currentSession.sessionNodes.length) {
           return new RpcError("NA", "Failed to send a consensus relay, number of max consensus nodes is higher thant the actual nodes in current session")
         }
+        // Profiler
+        profileResult = new ProfileResult("get_unique_session_node")
         const serviceNodeOrError = currentSession.getUniqueSessionNode()
-
+        profileResult.save()
+        profileResults.push(profileResult)
         if (typeGuard(serviceNodeOrError, Error)) {
           return RpcError.fromError(serviceNodeOrError)
         }
@@ -222,8 +237,11 @@ export class Pocket {
             return new RpcError("NA", "Provided Node is not part of the current session for this application, check your PocketAAT")
           }
         } else {
+          // Profiler
+          profileResult = new ProfileResult("get_session_node")
           const serviceNodeOrError = currentSession.getSessionNode()
-
+          profileResult.save()
+          profileResults.push(profileResult)
           if (typeGuard(serviceNodeOrError, Error)) {
             return RpcError.fromError(serviceNodeOrError)
           }
@@ -243,10 +261,17 @@ export class Pocket {
       // Create Relay Payload
       const relayPayload = new RelayPayload(data, method, path, headers || null)
 
+      // Profiler
+      profileResult = new ProfileResult("address_from_public_key")
       // Check if account is available for signing
       const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
+      profileResult.save()
+      profileResults.push(profileResult)
+      // Profiler
+      profileResult = new ProfileResult("keybase_is_unlocked")
       const isUnlocked = await this.keybase.isUnlocked(clientAddressHex)
-
+      profileResult.save()
+      profileResults.push(profileResult)
       if (!isUnlocked) {
         return new RpcError("NA", "Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
@@ -255,7 +280,8 @@ export class Pocket {
       const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight))
       const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
-
+      // Profiler
+      profileResult = new ProfileResult("relay_proof_bytes")
       const proofBytes = RelayProof.bytes(
         entropy,
         currentSession.sessionHeader.sessionBlockHeight,
@@ -264,11 +290,16 @@ export class Pocket {
         pocketAAT,
         requestHash
       )
-
+      profileResult.save()
+      profileResults.push(profileResult)
+      // Profiler
+      profileResult = new ProfileResult("sign_with_unlocked_account")
       // Sign
       const signatureOrError = await this.keybase.signWithUnlockedAccount(clientAddressHex, proofBytes)
-
+      profileResult.save()
+      profileResults.push(profileResult)
       if (typeGuard(signatureOrError, Error)) {
+        this.profiler.flushResults(functionName, profileResults)
         return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
@@ -289,6 +320,8 @@ export class Pocket {
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
 
+      // Profiler
+      profileResult = new ProfileResult("rpc_client_relay")
       // Send relay
       const result = await rpc.client.relay(
         relay,
@@ -296,7 +329,8 @@ export class Pocket {
         configuration.requestTimeOut,
         configuration.rejectSelfSignedCertificates
       )
-
+      profileResult.save()
+      profileResults.push(profileResult)
       // Check session out of sync error
       if (typeGuard(result, RpcError)) {
         const rpcError = result as RpcError
@@ -307,9 +341,12 @@ export class Pocket {
           rpcError.code === "75" || // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
           rpcError.code === "14" 
         ) {
-          
+          // Profiler
+          profileResult = new ProfileResult("destroy_session")
           // Remove outdated session
           this.sessionManager.destroySession(pocketAAT, blockchain)
+          profileResult.save()
+          profileResults.push(profileResult)
           let sessionRefreshed = false
           for (
             let retryIndex = 0;
@@ -318,13 +355,16 @@ export class Pocket {
           ) {
             // Update the current session if is available from the network error response
             if ( rpcError.session !== undefined) {
+              // Profiler
+              profileResult = new ProfileResult("update_current_session")
               const newSessionOrError = await this.sessionManager.updateCurrentSession(
                 rpcError.session,
                 pocketAAT,
                 blockchain,
                 configuration
               )
-
+              profileResult.save()
+              profileResults.push(profileResult)
               if (typeGuard(newSessionOrError, Error)) {
                 // If error or same session, don't even retry relay
                 continue
@@ -339,11 +379,14 @@ export class Pocket {
               sessionRefreshed = true
               break
             } else {
+              profileResult = new ProfileResult("request_new_session")
               const newSessionOrError = await this.sessionManager.requestNewSession(
                 pocketAAT,
                 blockchain,
                 configuration
               )
+              profileResult.save()
+              profileResults.push(profileResult)
               if (typeGuard(newSessionOrError, Error)) {
                 // If error or same session, don't even retry relay
                 continue
@@ -361,6 +404,8 @@ export class Pocket {
           }
 
           if (sessionRefreshed) {
+            // Profiler
+            profileResult = new ProfileResult("session_refreshed_send_relay")
             // If a new session is succesfully obtained retry the relay
             // This won't cause an endless loop because the relay will only be retried only if the session was refreshed
             const refreshedRelay = await this.sendRelay(
@@ -374,11 +419,16 @@ export class Pocket {
               node,
               consensusEnabled
             )
+            profileResult.save()
+            profileResults.push(profileResult)
+            this.profiler.flushResults(functionName, profileResults)
             return refreshedRelay
           } else {
+            this.profiler.flushResults(functionName, profileResults)
             return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
           }
         } else {
+          this.profiler.flushResults(functionName, profileResults)
           return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
@@ -388,9 +438,11 @@ export class Pocket {
         }
         return new ConsensusNode(serviceNode, false, result)
       } else {
+        // Profiler
+        profileResult = new ProfileResult("add_new_dispatcher")
         // Add the used session node to the routing table dispatcher's list
         this.sessionManager.addNewDispatcher(serviceNode)
-
+        profileResult.save()
         return result
       }
     } catch (error) {
