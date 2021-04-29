@@ -5,7 +5,7 @@
  */
  export class ProfileResult { 
     public readonly blockKey: string
-    public timeEllapsed: number
+    public timeElapsed: number
     private readonly startTime: number
   
     /**
@@ -17,7 +17,7 @@
       blockKey: string,
     ) {
       this.blockKey = blockKey
-      this.timeEllapsed = 0
+      this.timeElapsed = 0
 
       // Start the recording
       this.startTime = new Date().valueOf()
@@ -30,7 +30,7 @@
      * @memberof ProfileResult
      */
     public save() {
-        this.timeEllapsed = new Date().valueOf() - this.startTime
+        this.timeElapsed = new Date().valueOf() - this.startTime
     }
 
     /**
@@ -42,7 +42,7 @@
     public toJSON() {
         return {
             block_key: this.blockKey,
-            time_ellapsed: this.timeEllapsed
+            time_elapsed: this.timeElapsed
         }
     }
   }
