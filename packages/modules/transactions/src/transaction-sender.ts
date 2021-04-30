@@ -13,14 +13,14 @@ import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-
 import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
 import { TxEncoderFactory } from "./factory/tx-encoder-factory"
 import { Configuration } from "@pokt-network/pocket-js-configuration"
-import { ClientNamespace } from "@pokt-network/pocket-js-rpc-client"
+import { Client } from "@pokt-network/pocket-js-rpc-client"
 import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
     private configuration: Configuration
-    private client: ClientNamespace
+    private client: Client
     private txSigner?: TransactionSigner
     private txMsgError?: Error
 
@@ -32,7 +32,7 @@ export class TransactionSender implements ITransactionSender {
      * @param {TransactionSigner} txSigner - (Optional) Transaction signer.
      */
      public constructor(rpc: IRPCProvider, configuration?: Configuration, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
-        this.client = new ClientNamespace(rpc)
+        this.client = new Client(rpc)
         this.configuration = configuration ?? new Configuration()
         this.unlockedAccount = unlockedAccount
         this.txSigner = txSigner

@@ -1,6 +1,5 @@
 import { RpcError } from "@pokt-network/pocket-js-utils";
 import { IRPCProvider } from "@pokt-network/pocket-js-http-provider";
-import { RPC } from "@pokt-network/pocket-js-rpc";
 import { PocketAAT } from "@pokt-network/aat-js";
 import { Configuration } from "@pokt-network/pocket-js-configuration";
 import { RelayHeaders, RelayResponse } from "@pokt-network/pocket-js-relay-models";
@@ -8,17 +7,9 @@ import { ConsensusRelayResponse, ChallengeResponse, ConsensusNode } from "@pokt-
 import { Keybase } from "@pokt-network/pocket-js-keybase";
 import { SessionManager } from "@pokt-network/pocket-js-session-manager";
 import { ITransactionSender, TransactionSigner } from "@pokt-network/pocket-js-transactions";
-
-/**
- *
- * HTTPMethod enum with the possible Staking status values
- */
-export enum HTTPMethod {
-    POST = "POST",
-    GET = "GET",
-    DELETE = "DELETE",
-    NA = "",
-}
+import { Client } from "@pokt-network/pocket-js-rpc-client";
+import { Query } from "@pokt-network/pocket-js-query";
+import { HTTPMethod } from "@pokt-network/pocket-js-relayer";
 
 /**
  * Interface indicating all the main functionalities supported for PocketJS
@@ -27,7 +18,8 @@ export interface IPocket {
     readonly configuration: Configuration
     readonly keybase: Keybase
     readonly sessionManager: SessionManager
-    innerRpc?: RPC
+    client?: Client
+    query?: Query
 
     /**
      * Returns the Session Manager's routing table dispatcher's count
@@ -37,13 +29,21 @@ export interface IPocket {
     getDispatchersCount(): number;
 
     /**
-     * Creates a new instance of RPC if you set an IRPCProvider or return the previous existing instance
+     * Creates a new instance of the RPC Query if you set an IRPCProvider or return the previous existing instance
      * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
      * @returns {RPC} - A RPC object.
      * @memberof Pocket
      */
-    rpc(rpcProvider?: IRPCProvider): RPC | undefined;
+    Query(rpcProvider?: IRPCProvider): Query | undefined;
 
+    /**
+     * Creates a new instance of the CLient RPC if you set an IRPCProvider or return the previous existing instance
+     * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to send transactions and relays.
+     * @returns {RPC} - A RPC object.
+     * @memberof Pocket
+     */
+    Client(rpcProvider?: IRPCProvider): Client | undefined
+    
     /**
      *
      * Sends a Relay Request to multiple nodes for manual consensus

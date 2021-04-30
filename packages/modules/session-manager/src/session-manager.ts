@@ -2,7 +2,7 @@ import { SessionHeader, Session, DispatchResponse, Node, DispatchRequest } from 
 import { IKVStore } from "@pokt-network/pocket-js-storage"
 import { Configuration } from "@pokt-network/pocket-js-configuration"
 import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils"
-import { ClientNamespace } from "@pokt-network/pocket-js-rpc-client"
+import { Client } from "@pokt-network/pocket-js-rpc-client"
 import { Queue } from "./queue"
 import { RoutingTable } from "@pokt-network/pocket-js-routing-table"
 import { HttpRpcProvider } from "@pokt-network/pocket-js-http-provider"
@@ -81,7 +81,7 @@ export class SessionManager {
       this.sessionMap.set(key, new Queue())
     }
 
-    const client = new ClientNamespace(new HttpRpcProvider(dispatcher))
+    const client = new Client(new HttpRpcProvider(dispatcher))
     const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, BigInt(0))
     const dispatchRequest: DispatchRequest = new DispatchRequest(header)
 

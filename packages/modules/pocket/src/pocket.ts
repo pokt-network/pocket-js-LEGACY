@@ -1,5 +1,5 @@
 import { Configuration } from "@pokt-network/pocket-js-configuration"
-import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, RelayMeta, RequestHash} from "@pokt-network/pocket-js-relay-models"
+import { RelayPayload, RelayHeaders, RelayRequest, RelayProof, RelayResponse, RelayMeta, RequestHash } from "@pokt-network/pocket-js-relay-models"
 import { Session, MajorityResponse, ConsensusRelayResponse, ConsensusNode, ChallengeRequest, ChallengeResponse, Node } from "@pokt-network/pocket-js-rpc-models"
 import { addressFromPublickey, validatePrivateKey, publicKeyFromPrivate, typeGuard, RpcError } from "@pokt-network/pocket-js-utils"
 import { SessionManager } from "@pokt-network/pocket-js-session-manager"
@@ -8,8 +8,9 @@ import { UnlockedAccount, Account, Keybase } from "@pokt-network/pocket-js-keyba
 import { PocketAAT } from "@pokt-network/aat-js"
 import { IKVStore, InMemoryKVStore } from "@pokt-network/pocket-js-storage"
 import { TransactionSigner, ITransactionSender, TransactionSender } from "@pokt-network/pocket-js-transactions"
-import { RPC } from "@pokt-network/pocket-js-rpc"
-import { HTTPMethod } from "./i-pocket"
+import { HTTPMethod } from "@pokt-network/pocket-js-relayer"
+import { Client } from "@pokt-network/pocket-js-rpc-client"
+import { Query } from "@pokt-network/pocket-js-query"
 
 /**
  *
@@ -20,7 +21,8 @@ export class Pocket {
   public readonly configuration: Configuration
   public readonly keybase: Keybase
   public readonly sessionManager: SessionManager
-  private innerRpc?: RPC
+  private client?: Client
+  private query?: Query
 
   /**
    * Creates an instance of Pocket.
@@ -37,16 +39,14 @@ export class Pocket {
     store: IKVStore = new InMemoryKVStore()
   ) {
     this.configuration = configuration
-    try {
-      this.sessionManager = new SessionManager(dispatchers, configuration, store)
-      this.keybase = new Keybase(store)
-    } catch (error) {
-      throw error
-    }
+    this.sessionManager = new SessionManager(dispatchers, configuration, store)
+    this.keybase = new Keybase(store)
 
     if (rpcProvider !== undefined) {
-      this.innerRpc = new RPC(rpcProvider)
+      this.client = new Client(rpcProvider)
+      this.query = new Query(rpcProvider)
     }
+
   }
 
   /**
@@ -59,18 +59,34 @@ export class Pocket {
   }
 
   /**
-   * Creates a new instance of RPC if you set an IRPCProvider or return the previous existing instance
+   * Creates a new instance of the RPC Query if you set an IRPCProvider or return the previous existing instance
    * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
    * @returns {RPC} - A RPC object.
    * @memberof Pocket
    */
-  public rpc(rpcProvider?: IRPCProvider): RPC | undefined {
+  public Query(rpcProvider?: IRPCProvider): Query | undefined {
     if (rpcProvider !== undefined) {
-      this.innerRpc = new RPC(rpcProvider)
+      this.query = new Query(rpcProvider)
     }
 
-    if (this.innerRpc !== undefined) {
-      return this.innerRpc
+    if (this.query !== undefined) {
+      return this.query
+    }
+  }
+
+  /**
+   * Creates a new instance of the CLient RPC if you set an IRPCProvider or return the previous existing instance
+   * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to send transactions and relays.
+   * @returns {RPC} - A RPC object.
+   * @memberof Pocket
+   */
+  public Client(rpcProvider?: IRPCProvider): Client | undefined {
+    if (rpcProvider !== undefined) {
+      this.client = new Client(rpcProvider)
+    }
+
+    if (this.client !== undefined) {
+      return this.client
     }
   }
 
@@ -140,7 +156,7 @@ export class Pocket {
         // Create the challenge request
         const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!)
         // Send the challenge request
-        const challengeResponse = await this.rpc()!.query.requestChallenge(challengeRequest)
+        const challengeResponse = await this.query!.requestChallenge(challengeRequest)
         // Return a challenge response
         if (typeGuard(challengeResponse, ChallengeResponse)) {
           return challengeResponse
@@ -192,11 +208,11 @@ export class Pocket {
 
       // Determine the service node
       const serviceNodeOrError = this.resolveRelayNode(currentSession, consensusEnabled, configuration, node)
-      
+
       if (typeGuard(serviceNodeOrError, Error)) {
         return serviceNodeOrError
       }
-      
+
       const serviceNode = serviceNodeOrError as Node
 
       // Final Service Node check
@@ -206,7 +222,7 @@ export class Pocket {
 
       // Assign session service node to the rpc instance
       const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL)
-      const rpc = new RPC(serviceProvider)
+      const client = new Client(serviceProvider)
 
       // Create Relay Payload
       const relayPayload = new RelayPayload(data, method, path, headers || null)
@@ -237,7 +253,7 @@ export class Pocket {
       const signatureOrError = await this.keybase.signWithUnlockedAccount(clientAddressHex, proofBytes)
 
       if (typeGuard(signatureOrError, Error)) {
-        return new Error("Error signing Relay proof: "+signatureOrError.message)
+        return new Error("Error signing Relay proof: " + signatureOrError.message)
       }
 
       const signature = signatureOrError as Buffer
@@ -258,7 +274,7 @@ export class Pocket {
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof)
 
       // Send relay
-      const result = await rpc.client.relay(
+      const result = await client.relay(
         relay,
         configuration.validateRelayResponses,
         configuration.requestTimeOut,
@@ -304,7 +320,7 @@ export class Pocket {
       const serviceNodeOrError = session.getUniqueSessionNode()
 
       return serviceNodeOrError
-    }else {
+    } else {
       // Provide a random service node from the session
       if (node !== undefined) {
         if (session.isNodeInSession(node)) {
@@ -327,7 +343,7 @@ export class Pocket {
    * @returns {RelayResponse | ConsensusNode | Error} - A Relay Response, Consensus Node for Consensus Relay or an Error.
    * @memberof Pocket
    */
-   private async resolveSendRelayResult(result: RelayResponse | RpcError, relayData: any): Promise<RelayResponse | ConsensusNode | Error> {
+  private async resolveSendRelayResult(result: RelayResponse | RpcError, relayData: any): Promise<RelayResponse | ConsensusNode | Error> {
     // Check session out of sync error
     if (typeGuard(result, RpcError)) {
       const rpcError = result as RpcError
@@ -337,7 +353,7 @@ export class Pocket {
         rpcError.code === "75" ||
         rpcError.code === "14" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
       ) {
-        
+
         // Remove outdated session
         this.sessionManager.destroySession(relayData.pocketAAT, relayData.blockchain)
         let sessionRefreshed = false
@@ -415,7 +431,7 @@ export class Pocket {
       }
       const pubKey = publicKeyFromPrivate(privKeyBuffer)
       const unlockedAccount = new UnlockedAccount(new Account(pubKey, ''), privKeyBuffer)
-      return new TransactionSender(this.innerRpc?.rpcProvider!, this.configuration, unlockedAccount)
+      return new TransactionSender(this.client?.rpcProvider!, this.configuration, unlockedAccount)
     } catch (err) {
       return err
     }
@@ -436,7 +452,7 @@ export class Pocket {
     if (typeGuard(unlockedAccountOrError, Error)) {
       return unlockedAccountOrError as Error
     } else {
-      return new TransactionSender(this.innerRpc?.rpcProvider!, this.configuration, (unlockedAccountOrError as UnlockedAccount))
+      return new TransactionSender(this.client?.rpcProvider!, this.configuration, (unlockedAccountOrError as UnlockedAccount))
     }
   }
 
@@ -448,7 +464,7 @@ export class Pocket {
    */
   public withTxSigner(txSigner: TransactionSigner): ITransactionSender | Error {
     try {
-      return new TransactionSender(this.innerRpc?.rpcProvider!, this.configuration, undefined, txSigner)
+      return new TransactionSender(this.client?.rpcProvider!, this.configuration, undefined, txSigner)
     } catch (err) {
       return err
     }

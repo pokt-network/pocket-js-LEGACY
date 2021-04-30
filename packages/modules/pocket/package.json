@@ -37,16 +37,18 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
+    "@pokt-network/aat-js": "0.1.1-rc",
     "@pokt-network/pocket-js-configuration": "../../sub-modules/configuration/",
     "@pokt-network/pocket-js-http-provider": "../../sub-modules/http-provider/",
     "@pokt-network/pocket-js-keybase": "../keybase",
+    "@pokt-network/pocket-js-query": "../query",
     "@pokt-network/pocket-js-relay-models": "../../sub-modules/relay-models",
-    "@pokt-network/pocket-js-rpc": "../rpc",
+    "@pokt-network/pocket-js-relayer": "../relayer",
+    "@pokt-network/pocket-js-rpc-client": "../../sub-modules/rpc-client",
     "@pokt-network/pocket-js-rpc-models": "../../sub-modules/rpc-models/",
     "@pokt-network/pocket-js-session-manager": "../session-manager/",
     "@pokt-network/pocket-js-storage": "../../sub-modules/storage/",
     "@pokt-network/pocket-js-transactions": "../transactions",
-    "@pokt-network/pocket-js-utils": "../../sub-modules/utils/",
-    "@pokt-network/aat-js": "0.1.1-rc"
+    "@pokt-network/pocket-js-utils": "../../sub-modules/utils/"
   }
 }
