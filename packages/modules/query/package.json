@@ -1,7 +1,7 @@
 {
-  "name": "@pokt-network/pocket-js-rpc-query",
+  "name": "@pokt-network/pocket-js-query",
   "version": "0.0.1-rc",
-  "description": "Pocket Network RPC client",
+  "description": "Pocket Network RPC Query client",
   "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
