@@ -44,7 +44,7 @@
     "@pokt-network/pocket-js-configuration": "../../sub-modules/configuration/",
     "@pokt-network/pocket-js-http-provider": "../../sub-modules/http-provider/",
     "@pokt-network/pocket-js-keybase": "../keybase/",
-    "@pokt-network/pocket-js-rpc-client": "../rpc-client",
+    "@pokt-network/pocket-js-rpc-client": "../../sub-modules/rpc-client",
     "@pokt-network/pocket-js-rpc-models": "../../sub-modules/rpc-models/",
     "@pokt-network/pocket-js-utils": "../../sub-modules/utils/",
     "@tendermint/belt": "^0.2.1",
