@@ -194,6 +194,7 @@ export class Pocket {
     path = "",
     node?: Node,
     consensusEnabled: boolean = false,
+    requestID = "",
   ): Promise<RelayResponse | ConsensusNode | RpcError> {
     try {
       const profileResults: ProfileResult[] = []
@@ -299,7 +300,7 @@ export class Pocket {
       profileResult.save()
       profileResults.push(profileResult)
       if (typeGuard(signatureOrError, Error)) {
-        this.profiler.flushResults(functionName, profileResults)
+        this.profiler.flushResults(requestID, functionName, profileResults)
         return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
@@ -421,14 +422,14 @@ export class Pocket {
             )
             profileResult.save()
             profileResults.push(profileResult)
-            this.profiler.flushResults(functionName, profileResults)
+            this.profiler.flushResults(requestID, functionName, profileResults)
             return refreshedRelay
           } else {
-            this.profiler.flushResults(functionName, profileResults)
+            this.profiler.flushResults(requestID, functionName, profileResults)
             return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
           }
         } else {
-          this.profiler.flushResults(functionName, profileResults)
+          this.profiler.flushResults(requestID, functionName, profileResults)
           return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {

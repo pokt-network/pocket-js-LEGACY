@@ -7,7 +7,7 @@ import { BaseProfiler } from "./base-profiler";
  export class NoOpProfiler extends BaseProfiler {
      public data: {key: string, time_elapsed: number | undefined}[] = []
 
-     flushResults(functionName: string, results: ProfileResult[]): void {
+     flushResults(requestID: string, functionName: string, results: ProfileResult[]): void {
          // empty block
      }
 }
