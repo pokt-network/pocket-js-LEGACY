@@ -444,6 +444,7 @@ export class Pocket {
         // Add the used session node to the routing table dispatcher's list
         this.sessionManager.addNewDispatcher(serviceNode)
         profileResult.save()
+        this.profiler.flushResults(requestID, functionName, profileResults)
         return result
       }
     } catch (error) {
