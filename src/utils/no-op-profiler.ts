@@ -7,7 +7,7 @@ import { BaseProfiler } from "./base-profiler";
  export class NoOpProfiler extends BaseProfiler {
      public data: {key: string, time_elapsed: number | undefined}[] = []
 
-     async flushResults(requestID: string, functionName: string, results: ProfileResult[]): Promise<void> {
+     async flushResults(requestID: string, blockchain: string, functionName: string, results: ProfileResult[]): Promise<void> {
          // empty block
      }
 }
