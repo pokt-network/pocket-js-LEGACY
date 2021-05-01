@@ -300,7 +300,7 @@ export class Pocket {
       profileResult.save()
       profileResults.push(profileResult)
       if (typeGuard(signatureOrError, Error)) {
-        await this.profiler.flushResults(requestID, functionName, profileResults)
+        await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
         return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
@@ -418,18 +418,19 @@ export class Pocket {
               method,
               path,
               node,
-              consensusEnabled
+              consensusEnabled,
+              requestID
             )
             profileResult.save()
             profileResults.push(profileResult)
-            await this.profiler.flushResults(requestID, functionName, profileResults)
+            await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
             return refreshedRelay
           } else {
-            await this.profiler.flushResults(requestID, functionName, profileResults)
+            await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
             return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
           }
         } else {
-          await this.profiler.flushResults(requestID, functionName, profileResults)
+          await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
           return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
@@ -444,7 +445,7 @@ export class Pocket {
         // Add the used session node to the routing table dispatcher's list
         this.sessionManager.addNewDispatcher(serviceNode)
         profileResult.save()
-        await this.profiler.flushResults(requestID, functionName, profileResults)
+        await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
         return result
       }
     } catch (error) {
