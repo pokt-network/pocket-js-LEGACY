@@ -66,7 +66,7 @@ export class PocketRpcProvider implements IRPCProvider {
                 const errorObj = error.response.data.error
                 // Error code
                 const code = errorObj.code || "0"
-                let message = JSON.stringify(error.response.data.error)
+                let message = JSON.stringify(errorObj)
                 // Error message
                 if (errorObj.message) {
                     message = errorObj.message
