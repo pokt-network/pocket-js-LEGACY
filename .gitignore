@@ -1,6 +1,9 @@
 # Bak files
 *.bak
 
+# typedoc output
+**/main/
+
 # Webpack output
 dist
 
