@@ -17,11 +17,7 @@ export class RawTxResponse {
             let height: BigInt
             let hash: string
 
-            if (rawTxResObj.height !== undefined) {
-                height = BigInt(rawTxResObj.height)
-            } else {
-                return new Error("Invalid height: " + rawTxResObj.height)
-            }
+            height = BigInt(rawTxResObj.height ?? 0)
 
             if (rawTxResObj.txhash && typeGuard(rawTxResObj.txhash, "string")) {
                 hash = rawTxResObj.txhash as string
@@ -40,7 +36,8 @@ export class RawTxResponse {
             }
 
             return new RawTxResponse(
-                height, hash,
+                height, 
+                hash,
                 rawTxResObj.code ? BigInt(rawTxResObj.code) : undefined,
                 rawTxResObj.data ? rawTxResObj.data : undefined,
                 rawTxResObj.raw_log ? rawTxResObj.raw_log : undefined,

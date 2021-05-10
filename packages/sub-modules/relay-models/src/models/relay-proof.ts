@@ -1,6 +1,6 @@
 import { PocketAAT } from "@pokt-network/aat-js"
 import { Hex } from "@pokt-network/pocket-js-utils"
-import { sha3_256 } from "js-sha3"
+import { SHA3 } from "sha3"
 import { RequestHash } from "./input/request-hash"
 
 /**
@@ -78,9 +78,9 @@ export class RelayProof {
     }
     const proofJSONStr = JSON.stringify(proofJSON)
     // Hash proofJSONStr
-    const hash = sha3_256.create()
+    const hash = new SHA3(256)
     hash.update(proofJSONStr)
-    return Buffer.from(hash.hex(), "hex")
+    return hash.digest()
   }
   /**
    *
@@ -97,9 +97,9 @@ export class RelayProof {
       signature: ""
     }
     // Generate sha3 hash of the aat payload object
-    const hash = sha3_256.create()
+    const hash = new SHA3(256)
     hash.update(JSON.stringify(aatObj))
-    return hash.hex()
+    return hash.digest().toString()
   }
   /**
    *
@@ -110,9 +110,9 @@ export class RelayProof {
    */
   private static hashRequest(request: RequestHash): string {
     const requestObjStr = JSON.stringify(request.toJSON())
-    const hash = sha3_256.create()
+    const hash = new SHA3(256)
     hash.update(requestObjStr)
-    return hash.hex()
+    return hash.digest().toString()
   }
 
 
