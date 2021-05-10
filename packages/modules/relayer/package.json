@@ -5,12 +5,12 @@
   "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "generateDocs": "typedoc",
+    "browserify": "browserify browserify.js -p [ minifyify --no-map ] --standalone PocketJSRelayer > dist/web.js",
     "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
-    "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "prepare": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "prepackage": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "lint": "tslint -p tsconfig.json",
-    "prepublishOnly": "npm run build"
+    "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
+    "prepare": "npm run build && npm run browserify",
+    "lint": "tslint -p tsconfig.json"
   },
   "keywords": [
     "pocket-js",
@@ -35,7 +35,9 @@
     "@pokt-network/pocket-js-rpc-models": "file:../../sub-modules/rpc-models",
     "@pokt-network/pocket-js-session-manager": "file:../session-manager",
     "@pokt-network/pocket-js-storage": "file:../../sub-modules/storage",
-    "@pokt-network/pocket-js-utils": "file:../../sub-modules/utils"
+    "@pokt-network/pocket-js-utils": "file:../../sub-modules/utils",
+    "browserify": "^17.0.0",
+    "minifyify": "^7.3.5"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
@@ -43,12 +45,13 @@
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.17",
     "chai": "^4.2.0",
-    "create-ts-index": "^1.12.0",
+    "create-ts-index": "^1.13.6",
     "mocha": "^7.1.1",
     "nyc": "^15.0.0",
+    "ts-node": "^8.6.2",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
-    "ts-node": "^8.6.2",
+    "typedoc": "^0.20.36",
     "typescript": "^3.7.2"
   }
 }
