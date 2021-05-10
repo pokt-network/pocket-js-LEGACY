@@ -2,7 +2,7 @@
  * @author Luis C. de León <luis@pokt.network>
  * @description Utility functions for ed25519 keypairs
  */
-import { sha256 } from "js-sha256"
+import { SHA3 } from "sha3"
 import { Hex } from "./hex"
 import { typeGuard } from "./type-guard"
 
@@ -12,9 +12,9 @@ import { typeGuard } from "./type-guard"
  * @returns {Buffer} - Address buffer.
  */
 export function addressFromPublickey(publicKey: Buffer): Buffer {
-  const hash = sha256.create()
+  const hash = new SHA3(256)
   hash.update(publicKey)
-  return Buffer.from(hash.hex(), "hex").slice(0, 20)
+  return hash.digest().slice(0, 20)
 }
 
 /**
