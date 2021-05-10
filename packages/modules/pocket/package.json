@@ -5,11 +5,12 @@
   "main": "index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "prepare": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "prepackage": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "lint": "tslint -p tsconfig.json",
-    "prepublishOnly": "npm run build"
+    "generateDocs": "typedoc",
+    "browserify": "browserify browserify.js -p [ minifyify --no-map ] --standalone PocketJS > dist/web.js",
+    "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
+    "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
+    "prepare": "npm run build && npm run browserify",
+    "lint": "tslint -p tsconfig.json"
   },
   "keywords": [
     "pocket-js",
@@ -28,12 +29,14 @@
     "@types/dotenv": "^8.2.0",
     "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.32",
+    "browserify": "^17.0.0",
     "chai": "^4.2.0",
-    "create-ts-index": "^1.12.0",
+    "create-ts-index": "^1.13.6",
     "mocha": "^7.1.1",
     "ts-node": "^8.6.2",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
+    "typedoc": "^0.20.36",
     "typescript": "^3.7.2"
   },
   "dependencies": {
@@ -49,6 +52,8 @@
     "@pokt-network/pocket-js-session-manager": "../session-manager/",
     "@pokt-network/pocket-js-storage": "../../sub-modules/storage/",
     "@pokt-network/pocket-js-transactions": "../transactions",
-    "@pokt-network/pocket-js-utils": "../../sub-modules/utils/"
+    "@pokt-network/pocket-js-utils": "../../sub-modules/utils/",
+    "browserify": "^17.0.0",
+    "minifyify": "^7.3.5"
   }
 }
