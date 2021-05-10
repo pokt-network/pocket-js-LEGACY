@@ -1,0 +1,7 @@
+{
+    "entryPoints": ["src/index.ts"],
+    "out": "doc/main/",
+    "name": "",
+    "gitRevision": "revision",
+    "disableOutputCheck": true
+}
