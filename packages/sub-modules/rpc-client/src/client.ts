@@ -1,4 +1,4 @@
-import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
+import { HttpRpcProvider, IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 import { typeGuard, RpcError } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest, V1RPCRoutes, DispatchRequest, DispatchResponse, validateRelayResponse } from "@pokt-network/pocket-js-rpc-models"
 import { RelayRequest, RelayResponse } from "@pokt-network/pocket-js-relay-models"
@@ -10,10 +10,14 @@ export class Client implements IClient {
     public readonly rpcProvider: IRPCProvider
     /**
      * @description Client namespace class
-     * @param {IRPCProvider} rpcProvider - RPC Provider interface object.
+     * @param {IRPCProvider} rpcProvider - RPC Provider or the provider URL.
      */
-    public constructor(rpcProvider: IRPCProvider) {
-        this.rpcProvider = rpcProvider
+    public constructor(rpcProvider: IRPCProvider | URL) {
+        if (typeGuard(rpcProvider, URL)) {
+            this.rpcProvider = new HttpRpcProvider(rpcProvider)
+        } else {
+            this.rpcProvider = rpcProvider
+        }
     }
 
     /**
