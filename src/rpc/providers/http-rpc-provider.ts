@@ -50,44 +50,54 @@ export class HttpRpcProvider implements IRPCProvider {
 
                 return JSON.stringify(response.data)
             } else {
-                return new RpcError(response.status.toString(), JSON.stringify(response.data))
+                return this.handleResponseError(response)
             }
-        } catch (error) {
-            
-            if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
-                const errorObj = error.response.data.error
-                // Error code
-                const code = errorObj.code || "0"
-                let message = JSON.stringify(errorObj)
-                // Error message
-                if (errorObj.message) {
-                    message = errorObj.message
-                }
-
-                // Does error contains the dispatch information?
-                const dispatch = error.response.data.dispatch !== undefined ? error.response.data.dispatch : undefined
-                
-                // Generate a Session
-                let session
-                if (dispatch !== undefined && dispatch !== null) {
-                    session = Session.fromJSON(JSON.stringify(dispatch))
-                }
-
-                return new RpcError(code.toString(), message, session)
-            } else if (error.response !== undefined && error.response.data !== undefined) {
-                const regex = /Code: (\d+)/g
-                const codeExtract = regex.exec(error.response.data.message)
-
-                let code = "0"
-                if (codeExtract) {
-                    code = codeExtract[1]
-                }
-                
-                return RpcError.fromRelayError(code, error.response.data)
+        } catch (error) {  
+            if (error.response !== undefined && error.response.data !== undefined) {
+                return this.handleResponseError(error.response)
             }
 
             return RpcError.fromError(error)
         }
     }
 
+    /**
+     * Utility function to handle any response error.
+     * @param {any} response - Http request response object.
+     * @returns {RpcError} - RpcError object.
+     * @memberof HttpRpcProvider
+     */
+    handleResponseError(response: any): RpcError {
+        if (response.data.error !== undefined) {
+            const errorObj = response.data.error
+            // Error code
+            const code = errorObj.code || "0"
+            let message = JSON.stringify(errorObj)
+            // Error message
+            if (errorObj.message) {
+                message = errorObj.message
+            }
+
+            // Does error contains the dispatch information?
+            const dispatch = response.data.dispatch !== undefined ? response.data.dispatch : undefined
+            
+            // Generate a Session
+            let session
+            if (dispatch !== undefined && dispatch !== null) {
+                session = Session.fromJSON(JSON.stringify(dispatch))
+            }
+
+            return new RpcError(code.toString(), message, session)
+        } else {
+            const regex = /Code: (\d+)/g
+            const codeExtract = regex.exec(response.data.message)
+
+            let code = "0"
+            if (codeExtract) {
+                code = codeExtract[1]
+            }
+            
+            return RpcError.fromRelayError(code, response.data)
+        }
+    }
 }
