@@ -97,7 +97,7 @@ export class HttpRpcProvider implements IRPCProvider {
                 code = codeExtract[1]
             }
             
-            return RpcError.fromRelayError(code, response.data)
+            return RpcError.fromRelayError(code, JSON.stringify(response.data))
         }
     }
 }
