@@ -85,7 +85,7 @@ export class PocketRpcProvider implements IRPCProvider {
                     code = codeExtract[1]
                 }
                 
-                return RpcError.fromRelayError(code, error.response.data)
+                return RpcError.fromRelayError(code, JSON.stringify(error.response.data))
             }
 
             return RpcError.fromError(error)
