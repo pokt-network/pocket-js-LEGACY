@@ -4,7 +4,7 @@
 
 ## Guides
 
-* [Quickstart Guide](quickstart-guide.md)
+* [Quickstart Guide](quickstart.md)
 
 ## Releases
 
