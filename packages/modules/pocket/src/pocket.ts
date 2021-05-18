@@ -431,7 +431,7 @@ export class Pocket {
       }
       const pubKey = publicKeyFromPrivate(privKeyBuffer)
       const unlockedAccount = new UnlockedAccount(new Account(pubKey, ''), privKeyBuffer)
-      return new TransactionSender(this.client?.rpcProvider!, this.configuration, unlockedAccount)
+      return new TransactionSender(this.client?.rpcProvider!, unlockedAccount)
     } catch (err) {
       return err
     }
@@ -452,7 +452,7 @@ export class Pocket {
     if (typeGuard(unlockedAccountOrError, Error)) {
       return unlockedAccountOrError as Error
     } else {
-      return new TransactionSender(this.client?.rpcProvider!, this.configuration, (unlockedAccountOrError as UnlockedAccount))
+      return new TransactionSender(this.client?.rpcProvider!, (unlockedAccountOrError as UnlockedAccount))
     }
   }
 
@@ -464,7 +464,7 @@ export class Pocket {
    */
   public withTxSigner(txSigner: TransactionSigner): ITransactionSender | Error {
     try {
-      return new TransactionSender(this.client?.rpcProvider!, this.configuration, undefined, txSigner)
+      return new TransactionSender(this.client?.rpcProvider!, undefined, txSigner)
     } catch (err) {
       return err
     }
