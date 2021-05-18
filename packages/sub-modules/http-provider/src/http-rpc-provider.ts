@@ -1,6 +1,7 @@
 import { IRPCProvider } from "./i-rpc-provider"
 import axios from "axios"
 import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils"
+import { Session } from "@pokt-network/pocket-js-rpc-models"
 import * as https from 'https'
 
 /**
@@ -48,20 +49,55 @@ export class HttpRpcProvider implements IRPCProvider {
 
                 return JSON.stringify(response.data)
             } else {
-                return new RpcError(response.status.toString(), JSON.stringify(response.data))
+                return this.handleResponseError(response)
             }
-        } catch (error) {
+        } catch (error) {  
             if (error.response !== undefined && error.response.data !== undefined) {
-                const regex = /Code: (\d+)/g
-                const codeExtract = regex.exec(error.response.data.message)
-                let code = "0"
-                if (codeExtract) {
-                    code = codeExtract[1]
-                }
-                return RpcError.fromRelayError(error, code, error.response.data)
+                return this.handleResponseError(error.response)
             }
+
             return RpcError.fromError(error)
         }
     }
+    /**
+     * Utility function to handle any response error.
+     * @param {any} response - Http request response object.
+     * @returns {RpcError} - RpcError object.
+     * @memberof HttpRpcProvider
+     */
+     handleResponseError(response: any): RpcError {
+        if (response.data.error !== undefined) {
+            const errorObj = response.data.error
+            // Error code
+            const code = errorObj.code || "0"
+            let message = JSON.stringify(errorObj)
+            // Error message
+            if (errorObj.message) {
+                message = errorObj.message
+            }
 
+            // Does error contains the dispatch information?
+            const dispatch = response.data.dispatch !== undefined ? response.data.dispatch : undefined
+            
+            // Generate a Session
+            let session
+            if (dispatch !== undefined && dispatch !== null) {
+                session = Session.fromJSON(JSON.stringify(dispatch))
+                
+                return new RpcError(code.toString(), message, session?.toJSON())
+            }
+
+            return new RpcError(code.toString(), message)
+        } else {
+            const regex = /Code: (\d+)/g
+            const codeExtract = regex.exec(response.data.message)
+
+            let code = "0"
+            if (codeExtract) {
+                code = codeExtract[1]
+            }
+            
+            return RpcError.fromRelayError(code, JSON.stringify(response.data))
+        }
+    }
 }
