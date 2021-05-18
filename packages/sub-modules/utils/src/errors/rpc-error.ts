@@ -1,7 +1,7 @@
 /**
  * @class RpcError
  */
-export class RpcError extends Error {
+ export class RpcError extends Error {
 
   /**
    * Creates a RpcError from an Error object
@@ -15,14 +15,13 @@ export class RpcError extends Error {
 
   /**
    * Creates a RpcError from an Error object
-   * @param {Error} error - Error object.
    * @param {string} code - Error code
-   * @param {string} data - Relay error payload.
+   * @param {string} data - Relay error data.
    * @returns {RpcError} - RpcError object.
    * @memberof RpcError
    */
-  public static fromRelayError(error: Error, code: string, data: string): RpcError {
-    return new RpcError(code, error.message+": "+JSON.stringify(data))
+  public static fromRelayError(code: string, data: string): RpcError {
+    return new RpcError(code, data)
   }
 
   /**
@@ -34,23 +33,35 @@ export class RpcError extends Error {
    */
   public static fromJSON(json: string): RpcError {
     const jsonObject = JSON.parse(json)
-    return new RpcError(jsonObject.code, jsonObject.message)
+
+    return new RpcError(
+      jsonObject.code, 
+      jsonObject.message,
+      undefined,
+      undefined
+    )
   }
 
   public readonly code: string
   public readonly message: string
+  public readonly session?: any
+  public readonly nodePubKey?: string
 
   /**
    * RPC Error.
    * @constructor
    * @param {string} code - Error code.
    * @param {string} message - Error message.
+   * @param {any} session - Session json object.
+   * @param {string} nodePubKey - Error message.
    * @memberof RpcError
    */
-  constructor(code: string, message: string) {
+  constructor(code: string, message: string, session?: any, nodePubKey?: string) {
     super(...arguments)
     this.code = code
     this.message = message
+    this.session = session
+    this.nodePubKey = nodePubKey
     Object.setPrototypeOf(this, RpcError.prototype)
   }
 
@@ -63,7 +74,9 @@ export class RpcError extends Error {
   public toJSON() {
     return {
       code: this.code,
-      message: this.message
+      message: this.message,
+      session: this.session !== undefined ? this.session : {},
+      node_public_key: this.nodePubKey !== undefined ? this.nodePubKey : ""
     }
   }
 }
