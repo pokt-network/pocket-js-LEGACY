@@ -98,10 +98,7 @@ export class Client implements IClient {
                 }
                 return relayResponse
             } else {
-                return new RpcError(
-                    response.code,
-                    "Failed to send relay request with error: " + response.message
-                )
+                return response
             }
         } catch (err) {
             return new RpcError("0", err)
