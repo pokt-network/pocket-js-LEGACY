@@ -10,7 +10,7 @@ import {
   RelayProof,
   RelayRequest
 } from "@pokt-network/pocket-js-relay-models";
-import { ConsensusNode, Session, Node } from "@pokt-network/pocket-js-rpc-models";
+import { ConsensusNode, Session, Node, ConsensusRelayResponse, ChallengeResponse, ChallengeRequest, V1RPCRoutes } from "@pokt-network/pocket-js-rpc-models";
 import { HTTPMethod } from "./utils/http-method";
 import { SessionManager } from "@pokt-network/pocket-js-session-manager";
 import { Keybase } from "@pokt-network/pocket-js-keybase";
@@ -37,6 +37,9 @@ export class Relayer {
     configuration: Configuration = new Configuration(),
     store: IKVStore = new InMemoryKVStore()
   ) {
+    if (dispatchers.length <= 0) {
+      throw new Error("Failed to instantiate the Relayer due to no dispatcher provided.")
+    }
     this.configuration = configuration;
     this.sessionManager = new SessionManager(dispatchers, configuration, store);
     this.keybase = new Keybase(store);
@@ -103,8 +106,7 @@ export class Relayer {
       }
 
       // Assign session service node to the rpc instance
-      const serviceProvider = new HttpRpcProvider(serviceNode.serviceURL);
-      const client = new Client(serviceProvider);
+      const client = new Client(serviceNode.serviceURL);
 
       // Create Relay Payload
       const relayPayload = new RelayPayload(
@@ -115,9 +117,7 @@ export class Relayer {
       );
 
       // Check if account is available for signing
-      const clientAddressHex = addressFromPublickey(
-        Buffer.from(pocketAAT.clientPublicKey, "hex")
-      ).toString("hex");
+      const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
       const isUnlocked = await this.keybase.isUnlocked(clientAddressHex);
 
       if (!isUnlocked) {
@@ -179,7 +179,7 @@ export class Relayer {
         this.configuration.rejectSelfSignedCertificates
       );
 
-      // The following object holds the same information need to create a relay
+      // The following object holds the same information needed to create a relay
       // We pass it into the resolveSendRelayResult for the scenario in which the sendRelay is called again
       const relayData = {
         aat: pocketAAT,
@@ -190,7 +190,7 @@ export class Relayer {
         headers,
         method,
         path,
-        node,
+        serviceNode,
         consensusEnabled,
       };
 
@@ -199,6 +199,135 @@ export class Relayer {
       return error;
     }
   }
+
+  /**
+   *
+   * Sends a Relay Request to multiple nodes for manual consensus
+   * @param {string} data - string holding the json rpc call.
+   * @param {string} blockchain - Blockchain hash.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {Configuration} configuration - Pocket configuration object.
+   * @param {RelayHeaders} headers - (Optional) An object holding the HTTP Headers.
+   * @param {HTTPMethod} method - (Optional) HTTP method for REST API calls.
+   * @param {string} path - (Optional) REST API path.
+   * @param {Node} node - (Optional) Session node which will receive the Relay.
+   * @returns {ConsensusRelayResponse | ChallengeResponse | Error} - A Consensus Relay Response object, Challenge response or error.
+   * @memberof Pocket
+   */
+   public async sendConsensusRelay(
+    data: string,
+    blockchain: string,
+    pocketAAT: PocketAAT,
+    configuration: Configuration = this.configuration,
+    headers?: RelayHeaders,
+    method: HTTPMethod = HTTPMethod.NA,
+    path = "",
+    node?: Node
+  ): Promise<ConsensusRelayResponse | ChallengeResponse | Error> {
+    const consensusNodes: ConsensusNode[] = []
+    let firstResponse: RelayResponse | undefined
+
+    try {
+      // Checks if max consensus nodes count is 0, meaning it wasn't configured for local concensus.
+      if (this.configuration.consensusNodeCount === 0) {
+        return new RpcError("NA","Failed to send a relay with local consensus, configuration consensusNodeCount is 0")
+      }
+      // Perform the relays based on the max consensus nodes count
+      for (let index = 0; index < this.configuration.consensusNodeCount; index++) {
+        const consensusNodeResponse = await this.send(data, blockchain, pocketAAT, headers || undefined, method, path, node, true)
+        // Check if ConsensusNode type
+        if (typeGuard(consensusNodeResponse, ConsensusNode)) {
+          // Save the first response
+          if (index === 0) {
+            firstResponse = consensusNodeResponse.relayResponse
+          }
+          consensusNodes.push(consensusNodeResponse)
+        } else if (typeGuard(consensusNodeResponse, Error)) {
+          return consensusNodeResponse
+        }
+      }
+      // Check consensus nodes length
+      if (consensusNodes.length === 0 || firstResponse === undefined) {
+        return new Error("Failed to send a relay with local consensus, no responses.")
+      }
+      // Add the consensus node list to the consensus relay response
+      const consensusRelayResponse = new ConsensusRelayResponse(
+        firstResponse!.signature,
+        firstResponse!.payload,
+        consensusNodes
+      )
+
+      // Check if acceptDisputedResponses is true or false
+      if (consensusRelayResponse.consensusResult) {
+        return consensusRelayResponse
+      } else if (configuration.acceptDisputedResponses) {
+        return consensusRelayResponse
+      } else if (consensusRelayResponse.majorityResponse !== undefined && consensusRelayResponse.minorityResponse !== undefined) {
+        // Create the challenge request
+        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!)
+        
+        // Use one node from relay response to send the request challenge
+        const consensusNode = consensusRelayResponse.consensusNodes[Math.floor(Math.random() * consensusRelayResponse.consensusNodes.length)]
+        // Send the challenge request
+        const challengeResponseOrError = await this.requestChallenge(challengeRequest, consensusNode.node)
+        // Return a challenge response
+        if (typeGuard(challengeResponseOrError, ChallengeResponse)) {
+          return challengeResponseOrError
+        }
+        return new Error(challengeResponseOrError.message)
+      } else {
+        return new Error("Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
+      }
+    } catch (err) {
+      return err
+    }
+  }
+  
+  /**
+   *
+   * Retrieves a ChallengeResponse object.
+   * @param {ChallengeRequest} request - The ChallengeRequest
+   * @param {Node} node - Service node that will receive the challenge request
+   * @param {number} timeout - (Optional) Request timeout, default should be 60000.
+   * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
+   * @returns {Promise<ChallengeResponse | RpcError>} - A QueryBlockResponse object or Rpc error
+   * @memberof Relayer
+   */
+   public async requestChallenge(
+    request: ChallengeRequest,
+    node: Node,
+    timeout: number = 60000, 
+    rejectSelfSignedCertificates: boolean = true
+  ): Promise<ChallengeResponse | RpcError> {
+    try {
+        const payload = JSON.stringify(request.toJSON())
+        const provider = new HttpRpcProvider(node.serviceURL)
+
+        const response = await provider.send(
+            V1RPCRoutes.ClientChallenge.toString(),
+            payload,
+            timeout, 
+            rejectSelfSignedCertificates
+        )
+
+        // Check if response is an error
+        if (!typeGuard(response, RpcError)) {
+            const challengeResponse = ChallengeResponse.fromJSON(
+                response
+            )
+            return challengeResponse
+        } else {
+            return new RpcError(
+                response.code,
+                "Failed to retrieve the supply information: " + response.message
+            )
+        }
+    } catch (err) {
+        return new RpcError("0", err)
+    }
+}
+
+
   /**
    * Resolves the node logic for a sendRelay
    * @param {Session} session - Session object used for the relay.
@@ -255,7 +384,7 @@ export class Relayer {
       ) {
         // Remove outdated session
         this.sessionManager.destroySession(
-          relayData.pocketAAT,
+          relayData.aat,
           relayData.blockchain
         );
         let sessionRefreshed = false;
@@ -264,28 +393,55 @@ export class Relayer {
           retryIndex < relayData.configuration.maxSessionRefreshRetries;
           retryIndex++
         ) {
-          // Get the current session
-          const newSessionOrError = await this.sessionManager.requestCurrentSession(
-            relayData.pocketAAT,
-            relayData.blockchain,
-            relayData.configuration
-          );
-          if (typeGuard(newSessionOrError, Error)) {
-            // If error or same session, don't even retry relay
-            continue;
-          } else if (typeGuard(newSessionOrError, Session)) {
-            const newSession = newSessionOrError as Session;
-            if (
-              newSession.sessionHeader.sessionBlockHeight ===
-              relayData.currentSession.sessionHeader.sessionBlockHeight
-            ) {
-              // If we get the same session skip this attempt
+          // Update the current session if is available from the network error response
+          if (rpcError.session !== undefined) {
+            // Profiler
+            const session = Session.fromJSON(JSON.stringify({ session: rpcError.session}))
+            const newSessionOrError = await this.sessionManager.updateCurrentSession(
+              session,
+              relayData.aat,
+              relayData.blockchain,
+              relayData.configuration
+            );
+
+            if (typeGuard(newSessionOrError, Error)) {
+              // If error or same session, don't even retry relay
               continue;
+            } else if (typeGuard(newSessionOrError, Session)) {
+              const newSession = newSessionOrError as Session;
+              if (
+                newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight
+              ) {
+                // If we get the same session skip this attempt
+                continue;
+              }
+              relayData.currentSession = newSession;
             }
-            relayData.currentSession = newSession as Session;
+            sessionRefreshed = true;
+            break;
+          } else {
+            const newSessionOrError = await this.sessionManager.requestNewSession(
+              relayData.aat,
+              relayData.blockchain,
+              relayData.configuration
+            );
+
+            if (typeGuard(newSessionOrError, Error)) {
+              // If error or same session, don't even retry relay
+              continue;
+            } else if (typeGuard(newSessionOrError, Session)) {
+              const newSession = newSessionOrError as Session;
+              if (
+                newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight
+              ) {
+                // If we get the same session skip this attempt
+                continue;
+              }
+              relayData.currentSession = newSession as Session;
+            }
+            sessionRefreshed = true;
+            break;
           }
-          sessionRefreshed = true;
-          break;
         }
 
         if (sessionRefreshed) {
@@ -294,11 +450,11 @@ export class Relayer {
           return this.send(
             relayData.data,
             relayData.blockchain,
-            relayData.pocketAAT,
+            relayData.aat,
             relayData.headers,
             relayData.method,
             relayData.path,
-            relayData.node,
+            relayData.serviceNode,
             relayData.consensusEnabled
           );
         } else {
