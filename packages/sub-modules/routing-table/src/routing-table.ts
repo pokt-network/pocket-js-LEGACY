@@ -56,7 +56,7 @@ export class RoutingTable {
    * @returns {URL[]} Random dispatcher urls.
    * @memberof Routing
    */
-  public readRandomDispatchers(count: number): URL[] {
+  public getRandomDispatchers(count: number): URL[] {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
     // Shuffle array then return the slice
     const shuffled = dispatchers.sort(() => 0.5 - Math.random())
@@ -68,7 +68,7 @@ export class RoutingTable {
    * @returns {URL} Random dispatcher URL.
    * @memberof Routing
    */
-  public readRandomDispatcher(): URL {
+  public getRandomDispatcher(): URL {
     const dispatchers = this.store.get(this.dispatchersKey) as URL[]
     return dispatchers[Math.floor(Math.random() * dispatchers.length)]
   }
