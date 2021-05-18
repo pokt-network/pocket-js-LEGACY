@@ -25,6 +25,7 @@
   "author": "Pocket Network",
   "license": "MIT",
   "dependencies": {
+    "@pokt-network/pocket-js-rpc-models": "../rpc-models",
     "@pokt-network/pocket-js-utils": "../utils",
     "axios": "^0.21.1"
   },
