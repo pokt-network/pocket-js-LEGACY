@@ -4,9 +4,9 @@
 
 ## Guides
 
-* [Quickstart](quickstart.md)
+* [Quickstart](guides/quickstart.md)
 
 ## Releases
 
-* [Changelog](changelog.md)
+* [Changelog](releases/changelog.md)
 
