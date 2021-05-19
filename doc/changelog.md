@@ -1,3 +1,33 @@
+## 0.6.12-RC
+- Configuration: 
+  - Changed maxDispatchers default value to 50.
+  - Changed maxSessionRefreshRetries default value to 1.
+- Session Manager:
+  - Improved requestCurrentSession().
+  - Renamed requestCurrentSession() to requestNewSession().
+  - Added deleteDispatcher() to the requestNewSession() flow.
+  - Updated integration tests.
+- Routing Table;
+  - Added error scenario to the readRandomDispatchers().
+  - Renamed readRandomDispatchers() to getRandomDispatchers().
+  - Renamed readRandomDispatcher() to getRandomDispatcher().
+  - Renamed readDispatcher() to getDispatcher().
+  - Fixed a High CPU usage caused by the addDispatcher().
+  - Fixed a High CPU usage caused by the deleteDispatcher().
+  - readDispatcher() now returns Node | Error.
+  - Fixed readDispatcher() not returning a record in some scenarios.
+  - addDispatcher() now returns a boolean.
+  - deleteDispatcher() now returns a boolean.
+  - Updated unit tests.
+- Pocket:
+  - Fixed promise issue on the refresh session flow.
+  - Removed unnecessary try/catch from constructor.
+- Miscellaneous:
+  - Added typedoc for document generation, after installation the docs are going to be inside the doc/main folder.
+  - Added typedoc output to gitignore.
+  - Fixed Browserify script not running properly after install.
+  
+
 ## 0.6.11-RC
 - Query Nodes and Apps now support empty StakingStatus and JailedStatus.
 - SendRelay network error parsing is improved.
