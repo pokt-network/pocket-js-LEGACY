@@ -46,6 +46,7 @@ export class Pocket {
    * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
    * @param {Configuration} configuration - Configuration object.
    * @param {IKVStore} store - Save data using a Key/Value relationship. This object save information in memory.
+   * @param {BaseProfiler} profiler - BaseProfiler implementation for metrics, defaults to an empty NoOpProfiler.
    * @memberof Pocket
    */
   constructor(
@@ -300,7 +301,7 @@ export class Pocket {
       profileResult.save()
       profileResults.push(profileResult)
       if (typeGuard(signatureOrError, Error)) {
-        await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
+        await this.profiler.flushResults({ requestID, blockchain }, functionName, profileResults)
         return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
@@ -423,14 +424,14 @@ export class Pocket {
             )
             profileResult.save()
             profileResults.push(profileResult)
-            await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
+            await this.profiler.flushResults({ requestID, blockchain }, functionName, profileResults)
             return refreshedRelay
           } else {
-            await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
+            await this.profiler.flushResults({ requestID, blockchain }, functionName, profileResults)
             return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
           }
         } else {
-          await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
+          await this.profiler.flushResults({ requestID, blockchain }, functionName, profileResults)
           return new RpcError(rpcError.code, rpcError.message, undefined, serviceNode.publicKey)
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
@@ -445,7 +446,7 @@ export class Pocket {
         // Add the used session node to the routing table dispatcher's list
         this.sessionManager.addNewDispatcher(serviceNode)
         profileResult.save()
-        await this.profiler.flushResults(requestID, blockchain, functionName, profileResults)
+        await this.profiler.flushResults({ requestID, blockchain }, functionName, profileResults)
         return result
       }
     } catch (error) {
