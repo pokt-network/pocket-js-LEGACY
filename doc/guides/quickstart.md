@@ -124,7 +124,6 @@ let rawTxResponse = await transactionSender
 ## Unjail a node
 
 ```js
-// 3. Unjail a Node.
 const chainID = "testnet";
 const fee = "10000";
 
