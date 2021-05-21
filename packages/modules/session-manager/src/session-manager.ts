@@ -1,22 +1,28 @@
-import { SessionHeader, Session, DispatchResponse, Node, DispatchRequest } from "@pokt-network/pocket-js-rpc-models"
-import { IKVStore } from "@pokt-network/pocket-js-storage"
-import { Configuration } from "@pokt-network/pocket-js-configuration"
-import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils"
-import { Client } from "@pokt-network/pocket-js-rpc-client"
-import { Queue } from "./queue"
-import { RoutingTable } from "@pokt-network/pocket-js-routing-table"
-import { HttpRpcProvider } from "@pokt-network/pocket-js-http-provider"
-import { PocketAAT } from "@pokt-network/aat-js"
-import { sha3_256 } from "js-sha3"
+import {
+  SessionHeader,
+  Session,
+  DispatchResponse,
+  Node,
+  DispatchRequest,
+} from "@pokt-network/pocket-js-rpc-models";
+import { IKVStore } from "@pokt-network/pocket-js-storage";
+import { Configuration } from "@pokt-network/pocket-js-configuration";
+import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils";
+import { Client } from "@pokt-network/pocket-js-rpc-client";
+import { Queue } from "./queue";
+import { RoutingTable } from "@pokt-network/pocket-js-routing-table";
+import { HttpRpcProvider } from "@pokt-network/pocket-js-http-provider";
+import { PocketAAT } from "@pokt-network/aat-js";
+import { sha3_256 } from "js-sha3";
 
 /**
  * @class SessionManager
  */
 
 export class SessionManager {
-  private readonly sessionMap: Map<string, Queue<Session>>
-  private readonly routingTable: RoutingTable
-  private readonly sessionMapKey: string = "SESSIONS_KEY"
+  private readonly sessionMap: Map<string, Queue<Session>>;
+  private readonly routingTable: RoutingTable;
+  private readonly sessionMapKey: string = "SESSIONS_KEY";
 
   /**
    * Creates an instance of SessionManager.
@@ -25,15 +31,19 @@ export class SessionManager {
    * @param {IKVStore} store - KVStore implementation.
    * @memberof SessionManager
    */
-  constructor(dispatchers: URL[], configuration: Configuration , store: IKVStore) {
-    this.routingTable = new RoutingTable(dispatchers, configuration, store)
-    this.sessionMap = new Map()
+  constructor(
+    dispatchers: URL[],
+    configuration: Configuration,
+    store: IKVStore
+  ) {
+    this.routingTable = new RoutingTable(dispatchers, configuration, store);
+    this.sessionMap = new Map();
 
     if (this.routingTable.store.has(this.sessionMapKey)) {
-      this.sessionMap = this.routingTable.store.get(this.sessionMapKey)
+      this.sessionMap = this.routingTable.store.get(this.sessionMapKey);
     } else {
-      this.sessionMap = new Map()
-      this.routingTable.store.add(this.sessionMapKey, this.sessionMap)
+      this.sessionMap = new Map();
+      this.routingTable.store.add(this.sessionMapKey, this.sessionMap);
     }
   }
 
@@ -43,7 +53,7 @@ export class SessionManager {
    * @memberof SessionManager
    */
   public addNewDispatcher(dispatcher: Node) {
-    this.routingTable.addDispatcher(dispatcher.serviceURL)
+    this.routingTable.addDispatcher(dispatcher.serviceURL);
   }
 
   /**
@@ -52,65 +62,86 @@ export class SessionManager {
    * @memberof SessionManager
    */
   public getDispatchersCount() {
-    return this.routingTable.dispatchersCount
+    return this.routingTable.dispatchersCount;
   }
 
   /**
-   * Request a new session object. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
+   * Update the current session using an already requested dispatch response. Returns a Promise with the Session object or an Error when something goes wrong.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
    * @returns {Promise}
    * @memberof SessionManager
    */
-  public async requestCurrentSession(
+  public async updateCurrentSession(
+    session: Session,
+    pocketAAT: PocketAAT,
+    chain: string,
+    configuration: Configuration
+  ): Promise<Session | Error> {
+    const key = this.getSessionKey(pocketAAT, chain);
+
+    return this.saveSession(key, session, configuration);
+  }
+
+  /**
+   * Request a new session object. Returns a Promise with the Session object or an Error when something goes wrong.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {string} chain - Name of the Blockchain.
+   * @param {Configuration} configuration - Configuration object.
+   * @returns {Promise}
+   * @memberof SessionManager
+   */
+  public async requestNewSession(
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration
   ): Promise<Session | Error> {
     // Retrieve a dispatcher from the routing table
-    const dispatcher = this.routingTable.getDispatcher()
-
-    if (typeGuard(dispatcher, Error)) {
-      return dispatcher
-    }
-
-    const key = this.getSessionKey(pocketAAT, chain)
-
-    if (!this.sessionMap.has(key)) {
-      this.sessionMap.set(key, new Queue())
-    }
-
-    const client = new Client(new HttpRpcProvider(dispatcher))
-    const header = new SessionHeader(pocketAAT.applicationPublicKey, chain, BigInt(0))
-    const dispatchRequest: DispatchRequest = new DispatchRequest(header)
+    const dispatcher = this.routingTable.getRandomDispatcher();
+    // Create the Client using the dispatcher
+    const client = new Client(dispatcher);
+    // Create the session header
+    const header = new SessionHeader(
+      pocketAAT.applicationPublicKey,
+      chain,
+      BigInt(0)
+    );
+    // Create the Dispatch request
+    const dispatchRequest: DispatchRequest = new DispatchRequest(header);
 
     // Perform a dispatch request
-    const result = await client.dispatch(dispatchRequest, configuration.requestTimeOut, configuration.rejectSelfSignedCertificates)
+    const result = await client.dispatch(
+      dispatchRequest,
+      configuration.requestTimeOut,
+      configuration.rejectSelfSignedCertificates
+    );
 
     if (typeGuard(result, DispatchResponse)) {
-      let session: Session
+      let session: Session;
       try {
-        session = Session.fromJSON(
-          JSON.stringify(result.toJSON())
-        )
+        session = Session.fromJSON(JSON.stringify(result.toJSON()));
       } catch (error) {
-        return error
+        return error;
       }
 
       if (session !== undefined) {
-        const key = this.getSessionKey(pocketAAT, chain)
-        
-        return this.saveSession(key, session, configuration)
+        const key = this.getSessionKey(pocketAAT, chain);
+
+        return this.saveSession(key, session, configuration);
       } else {
         // Remove node from dispatcher if it failed 3 times
-        return new Error("Error decoding session from Dispatch response")
+        return new Error("Error decoding session from Dispatch response");
       }
-    } else {
+    } else if (this.routingTable.dispatchersCount > 0) {
       // Remove the failed dispatcher from the routing table
-      this.routingTable.deleteDispatcher(dispatcher)
+      this.routingTable.deleteDispatcher(dispatcher);
       // Request the session again
-      return await this.requestCurrentSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration);
+    } else {
+      return new Error(
+        "Unable to create a new session due to empty dispatcher's list."
+      );
     }
   }
 
@@ -127,17 +158,16 @@ export class SessionManager {
     chain: string,
     configuration: Configuration
   ): Promise<Session | Error> {
-
-    const key = this.getSessionKey(pocketAAT, chain)
+    const key = this.getSessionKey(pocketAAT, chain);
     if (!this.sessionMap.has(key)) {
-      return await this.requestCurrentSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration);
     }
 
-    const currentSession = (this.sessionMap.get(key) as Queue<Session>).front
+    const currentSession = (this.sessionMap.get(key) as Queue<Session>).front;
     if (currentSession !== undefined) {
-      return currentSession
+      return currentSession;
     } else {
-      return await this.requestCurrentSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration);
     }
   }
 
@@ -148,9 +178,9 @@ export class SessionManager {
    * @memberof SessionManager
    */
   public getSessionKey(pocketAAT: PocketAAT, chain: string): string {
-    const hash = sha3_256.create()
-    hash.update(JSON.stringify(pocketAAT).concat(chain))
-    return hash.toString()
+    const hash = sha3_256.create();
+    hash.update(JSON.stringify(pocketAAT).concat(chain));
+    return hash.toString();
   }
 
   /**
@@ -161,7 +191,7 @@ export class SessionManager {
    */
   public destroySession(pocketAAT: PocketAAT, chain: string) {
     const key = this.getSessionKey(pocketAAT, chain);
-    (this.sessionMap.get(key) as Queue<Session>).dequeue()
+    (this.sessionMap.get(key) as Queue<Session>).dequeue();
   }
 
   /**
@@ -176,17 +206,20 @@ export class SessionManager {
     configuration: Configuration
   ): Session | RpcError {
     if (!this.sessionMap.has(key)) {
-      this.sessionMap.set(key, new Queue())
+      this.sessionMap.set(key, new Queue());
     }
 
     // Check session queue length to pop the oldest element in the queue
-    const sessionQueue = this.sessionMap.get(key) as Queue<Session>
-    if (configuration.maxSessions !== 0 && sessionQueue.length === configuration.maxSessions) {
-      sessionQueue.dequeue()
+    const sessionQueue = this.sessionMap.get(key) as Queue<Session>;
+    if (
+      configuration.maxSessions !== 0 &&
+      sessionQueue.length === configuration.maxSessions
+    ) {
+      sessionQueue.dequeue();
     }
 
     // Append the new session to the queue
-    sessionQueue.enqueue(session)
-    return session
+    sessionQueue.enqueue(session);
+    return session;
   }
 }
