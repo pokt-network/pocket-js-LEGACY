@@ -109,7 +109,7 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "Node staking memo")
 ```
 
-## Unstake a n2ode
+## Unstake a node
 
 ```js
 const chainID = "testnet";
