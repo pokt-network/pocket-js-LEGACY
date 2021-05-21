@@ -4,8 +4,11 @@ import { Hex } from "@pokt-network/pocket-js-utils"
 
 // HashSum
 export interface HashSum {
-    hash: string,
-    sum: BigInt
+    merkleHash: string,
+    range: {
+        lower: BigInt,
+        upper: BigInt
+    }
 }
 /**
  *
@@ -25,7 +28,13 @@ export class MsgClaim {
             const jsonObject = JSON.parse(json)
             
             const header = SessionHeader.fromJSON(JSON.stringify(jsonObject.header))
-            const merkleRoot = { hash: jsonObject.merkle_root.hash, sum: BigInt(jsonObject.merkle_root.sum)} as HashSum
+            const merkleRoot = {
+                merkleHash: jsonObject.merkle_root.merkleHash,
+                range: {
+                    lower: BigInt(jsonObject.merkle_root.range.lower),
+                    upper: BigInt(jsonObject.merkle_root.range.upper)
+                }
+            } as HashSum
             const evidenceType = EvidenceType.getType(jsonObject.evidence_type)
 
             return new MsgClaim(
@@ -81,7 +90,13 @@ export class MsgClaim {
     public toJSON() {
         return {
             header: this.header.toJSON(),
-            merkle_root: this.merkleRoot,
+            merkle_root: {
+                merkleHash: this.merkleRoot.merkleHash,
+                range: {
+                    lower: this.merkleRoot.range.lower,
+                    upper: this.merkleRoot.range.upper
+                }
+            },
             total_proofs: Number(this.totalProofs.toString()),
             from_address: this.fromAddress,
             evidence_type: this.evidenceType,
@@ -97,8 +112,9 @@ export class MsgClaim {
     public isValid(): boolean {
         return (
             this.header.isValid() &&
-            this.merkleRoot.hash.length > 0 &&
-            Number(this.merkleRoot.sum.toString()) >= 0 &&
+            this.merkleRoot.merkleHash.length > 0 &&
+            Number(this.merkleRoot.range.lower.toString()) >= 0 &&
+            Number(this.merkleRoot.range.upper.toString()) >= 0 &&
             Hex.validateAddress(this.fromAddress) &&
             Number(this.expirationHeight.toString()) >= 0
         )

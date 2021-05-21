@@ -14,8 +14,12 @@ export class QueryTXResponse {
    * @memberof QueryTXResponse
    */
   public static fromJSON(json: string): QueryTXResponse {
-
-    return new QueryTXResponse(Transaction.fromJSON(json))
+    try {
+      const transaction = Transaction.fromJSON(json)
+      return new QueryTXResponse(transaction)
+    } catch (error) {
+      throw error
+    }
   }
 
   public readonly transaction: Transaction
