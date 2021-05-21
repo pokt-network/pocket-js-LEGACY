@@ -1,19 +1,19 @@
 # Quickstart
 
-## Pocket-JS 0.6.8-rc highlight
+# Pocket-JS 0.6.8-rc highlight
 
-In the latest version, we introduce the new ProtoBuf transaction codec. This functionality is activated on the `Configuration` class for Pocket by default. To use the legacy AminoJS transaction codec the `useLegacyTxCodec` flag should be set to `true`.
+In the latest version of this SDK, we introduce the new ProtoBuf transaction codec. This functionality is activated on the `Configuration` class for Pocket by default. To revert to the legacy AminoJS transaction code, make sure to set the `useLegacyTxCodec` flag to `true`.
 
 ```js
 const useLegacyTxCodec = true;
 const configuration = new Configuration(5, 2000, undefined, 100000, undefined, undefined, undefined, undefined, undefined, undefined, useLegacyTxCodec)
 ```
 
-## How to Instantiate a Pocket Instance
+# HOWTO: Instantiate a Pocket Instance
 
 For a basic configuration file, we simply need to set the following three properties: `maxDispatchers`, `maxSessions`, & `requestTimeOut`.
 
-**Note:** We are going to use the default ProtoBuf transaction codec for the following examples.
+**Note:** We are using the default ProtoBuf transaction codec for the following examples.
 
 ```js
 const maxDispatchers = 5;
@@ -27,7 +27,7 @@ const rpcProvider = new HttpRpcProvider(dispatchers[0]);
 const pocket = new Pocket(dispatchers, rpcProvider, configuration);
 ```
 
-## Prerequisites to send a transaction to the network
+## Prerequisites
 
 To send a transaction over the network, we need to first perform the following two initial steps:
 
@@ -44,14 +44,16 @@ const passphrase = "pocket123";
 let account = await pocket.keybase.importAccount(fromAccountPK, passphrase)
 account = account as Account
 
-// 2. Create a Transaction Sender.
+// 2. Create a Transaction sender.
 let transactionSender = await pocket.withImportedAccount(account.addressHex, passphrase)
 transactionSender = transactionSender as TransactionSender
 ```
 
-Afterwards, any of the transactions below can be performed
+### Transactions
 
-### Send a balance using Pocket
+Afterward importing the sender's account and creating a transaction sender object, any of the transactions below can be performed.
+
+### Send a balance
 
 ```js
 const toAddress = "f81896be1964df0537a81274b4d2c9604124449e";
@@ -130,4 +132,3 @@ let rawTxResponse = await transactionSender
     .nodeUnjail(account.addressHex)
     .submit(chainID, fee, CoinDenom.Upokt, "Node unjail memo")
 ```
-
