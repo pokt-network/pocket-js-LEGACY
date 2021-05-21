@@ -352,25 +352,4 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
         timeout: number, 
         rejectSelfSignedCertificates: boolean
     ): Promise<QueryAllParamsResponse | RpcError>
-
-    /**
-     *
-     * Retrieves a ChallengeResponse object.
-     * @param {ChallengeRequest} request - The ChallengeRequest
-     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
-     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
-     * @returns {Promise<ChallengeResponse | RpcError>} - A QueryBlockResponse object or Rpc error
-     * @memberof QueryNamespace
-     */
-    requestChallenge(
-        request: ChallengeRequest,
-        timeout: number, 
-        rejectSelfSignedCertificates: boolean
-    ): Promise<ChallengeResponse | RpcError>
-
-
-
-
-
-    
 }

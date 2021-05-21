@@ -3,7 +3,7 @@ import { typeGuard, Hex, RpcError } from "@pokt-network/pocket-js-utils"
 import { QueryBlockResponse, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, 
     QueryBalanceResponse, QueryNodeResponse, QueryNodeParamsResponse, NodeReceipt, QueryAppsResponse, 
     QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, 
-    QuerySupplyResponse, QueryAccountResponse, StakingStatus, ChallengeRequest, ChallengeResponse, 
+    QuerySupplyResponse, QueryAccountResponse, StakingStatus, 
     QueryAccountTxsResponse, JailedStatus, QueryNodesResponse, QueryAllParamsResponse, QueryBlockTxsResponse, 
     QueryNodeClaimResponse, QueryNodeClaimsResponse } from "@pokt-network/pocket-js-rpc-models"
 import { IQuery } from "./i-query"
@@ -109,7 +109,7 @@ export class Query implements IQuery {
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the block information: " + response.message
+                    "Failed to retrieve the block transaction list: " + response.message
                 )
             }
         } catch (err) {
@@ -153,11 +153,11 @@ export class Query implements IQuery {
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the block information: " + response.message
+                    "Failed to retrieve the transaction information: " + response.message
                 )
             }
         } catch (err) {
-            return new RpcError("0", err)
+            return RpcError.fromError(err)
         }
     }
     /**
@@ -801,7 +801,7 @@ export class Query implements IQuery {
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the supply information: " + response.message
+                    "Failed to retrieve the list of transactions for the account: " + response.message
                 )
             }
         } catch (err) {
@@ -833,7 +833,7 @@ export class Query implements IQuery {
     ): Promise<QueryNodeClaimResponse | RpcError> {
         try {
             // Create a node receipt object
-            const nodeReceipt = new NodeReceipt(address, blockchain, appPubKey, sessionBlockHeight, height,receiptType)
+            const nodeReceipt = new NodeReceipt(address, blockchain, appPubKey, sessionBlockHeight, height, receiptType)
 
             const payload = JSON.stringify(
                 nodeReceipt.toJSON()
@@ -855,7 +855,7 @@ export class Query implements IQuery {
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the supply information: " + response.message
+                    "Failed to retrieve the node claim information: " + response.message
                 )
             }
         } catch (err) {
@@ -912,7 +912,7 @@ export class Query implements IQuery {
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the supply information: " + response.message
+                    "Failed to retrieve the node claims list: " + response.message
                 )
             }
         } catch (err) {
@@ -960,47 +960,7 @@ export class Query implements IQuery {
             } else {
                 return new RpcError(
                     response.code,
-                    "Failed to retrieve the supply information: " + response.message
-                )
-            }
-        } catch (err) {
-            return new RpcError("0", err)
-        }
-    }
-    /**
-     *
-     * Retrieves a ChallengeResponse object.
-     * @param {ChallengeRequest} request - The ChallengeRequest
-     * @param {number} timeout - (Optional) Request timeout, default should be 60000.
-     * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
-     * @returns {Promise<ChallengeResponse | RpcError>} - A QueryBlockResponse object or Rpc error
-     * @memberof Query
-     */
-    public async requestChallenge(
-        request: ChallengeRequest,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
-    ): Promise<ChallengeResponse | RpcError> {
-        try {
-            const payload = JSON.stringify(request.toJSON())
-
-            const response = await this.rpcProvider.send(
-                V1RPCRoutes.ClientChallenge.toString(),
-                payload,
-                timeout, 
-                rejectSelfSignedCertificates
-            )
-
-            // Check if response is an error
-            if (!typeGuard(response, RpcError)) {
-                const challengeResponse = ChallengeResponse.fromJSON(
-                    response
-                )
-                return challengeResponse
-            } else {
-                return new RpcError(
-                    response.code,
-                    "Failed to retrieve the supply information: " + response.message
+                    "Failed to retrieve all the network params: " + response.message
                 )
             }
         } catch (err) {
