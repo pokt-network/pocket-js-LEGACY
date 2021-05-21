@@ -2,20 +2,20 @@
 
 ## Pocket-JS 0.6.8-rc highlight
 
-On the latest version we introduce the new ProtoBuf transaction codec, this functionality is activated on the `Configuration` class for Pocket by default, to use the legacy AminoJS transaction codec the `useLegacyTxCodec` flag should be set to `true`.
+In the latest version, we introduce the new ProtoBuf transaction codec. This functionality is activated on the `Configuration` class for Pocket by default. To use the legacy AminoJS transaction codec the `useLegacyTxCodec` flag should be set to `true`.
 
-```text
+```js
 const useLegacyTxCodec = true;
 const configuration = new Configuration(5, 2000, undefined, 100000, undefined, undefined, undefined, undefined, undefined, undefined, useLegacyTxCodec)
 ```
 
 ## How to Instantiate a Pocket Instance
 
-For a basic Configuration file we just nee to set the three properties \(maxDispatchers, maxSessions and requestTimeOut\)
+For a basic configuration file, we simply need to set the following three properties: `maxDispatchers`, `maxSessions`, & `requestTimeOut`.
 
 **Note:** We are going to use the default ProtoBuf transaction codec for the following examples.
 
-```text
+```js
 const maxDispatchers = 5;
 const maxSessions = 2000;
 const requestTimeOut = 100000;
@@ -27,16 +27,16 @@ const rpcProvider = new HttpRpcProvider(dispatchers[0]);
 const pocket = new Pocket(dispatchers, rpcProvider, configuration);
 ```
 
-## Prerequisites to send a transaction to the Network
+## Prerequisites to send a transaction to the network
 
-To send a transaction over the network we need to accomplish 2 pre-steps:
+To send a transaction over the network, we need to first perform the following two initial steps:
 
 1. Import the sender's account into the Pocket instance.
 2. Create a Transaction Sender.
 
 Example:
 
-```text
+```js
 const fromAccountPK = Buffer.from("88d48b0f4bbcfbd94ea3a19f7bf4d996b6e4cd249a50027a3b6f0d6c7f568d405f70ef6e7e851cc663e9fd2e5691430040dd34da212a4ff4f2146828c08a7386", "hex");
 const passphrase = "pocket123";
 
@@ -49,12 +49,11 @@ let transactionSender = await pocket.withImportedAccount(account.addressHex, pas
 transactionSender = transactionSender as TransactionSender
 ```
 
-## How to send balance using Pocket
+Afterwards, any of the transactions below can be performed
 
-To send a balance we add 1 step to the whole process and that's it.
+### Send a balance using Pocket
 
-```text
-// 3. Send Transaction.
+```js
 const toAddress = "f81896be1964df0537a81274b4d2c9604124449e";
 const chainID = "testnet";
 const fee = "10000";
@@ -69,10 +68,9 @@ rawTxResponse = rawTxResponse as rawTxResponse
 console.log(rawTxResponse.hash)
 ```
 
-## How to stake an App
+### Stake an app
 
-```text
-// 3. Stake App.
+```js
 const chainID = "testnet";
 const fee = "10000";
 const chains = ["0001", "0002"];
@@ -83,10 +81,9 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "App staking memo")
 ```
 
-## How to unstake an App
+### Unstake an app
 
-```text
-// 3. Unstake App.
+```js
 const chainID = "testnet";
 const fee = "10000";
 
@@ -95,9 +92,9 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "App unstaking memo")
 ```
 
-## How to stake a Node
+## Sake a node
 
-```text
+```js
 // 3. Stake a Node.
 const chainID = "testnet";
 const fee = "10000";
@@ -110,10 +107,9 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "Node staking memo")
 ```
 
-## How to unstake a Node
+## Unstake a n2ode
 
-```text
-// 3. Unstake a Node.
+```js
 const chainID = "testnet";
 const fee = "10000";
 const chains = ["0001", "0002"];
@@ -123,9 +119,9 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "Node unstaking memo")
 ```
 
-## How to unjail a Node
+## Unjail a node
 
-```text
+```js
 // 3. Unjail a Node.
 const chainID = "testnet";
 const fee = "10000";
