@@ -7,7 +7,7 @@ import { RelayResponse } from '@pokt-network/pocket-js-relay-models'
 import { PocketAAT } from "@pokt-network/aat-js"
 import 'mocha';
 import { Configuration } from '@pokt-network/pocket-js-configuration'
-import { ChallengeResponse, ConsensusRelayResponse, Session } from '@pokt-network/pocket-js-rpc-models'
+import { ChallengeRequest, ChallengeResponse, ConsensusRelayResponse, MajorityResponse, MinorityResponse, Session, StakingStatus } from '@pokt-network/pocket-js-rpc-models'
 import { SessionHeader, Node } from '@pokt-network/pocket-js-rpc-models'
 
 
@@ -219,6 +219,24 @@ describe("Relayer", function () {
             const relayResponse = await relayer.sendConsensusRelay(relayData, blockchain, aat)
             expect(typeGuard(relayResponse, ChallengeResponse)).to.be.true
         })
+
+        it('should successfully retrieve a challenge response', async () => {
+            const relayer = new Relayer([dispatcherUrl])
+            const relay1 = '{"request":{"payload":{"data":"{\\"jsonrpc\\":\\"2.0\\",\\"method\\":\\"eth_getBalance\\",\\"params\\":[\\"0x050ea4ab4183E41129B7D72A492DaBf52B27EdB5\\",\\"latest\\"],\\"id\\":67}","method":"","path":"","headers":null},"meta":{"block_height":26257},"proof":{"entropy":31039971842500692,"session_block_height":26257,"servicer_pub_key":"5b3210eabe59db069255f12c230c9dfdf4244a440a4c2f5b70a6aa0fe157eb81","blockchain":"0022","aat":{"app_pub_key":"2099e51e72ece8458b09680899a747e114343b66bec00f272d090da96aaeb436","client_pub_key":"e7e91202573bdd1927b00fce9b0b46fa7944b06e6fe1bc987abc86e4d0dd47d6","signature":"6172942ce26f3f11ead505b36dba7c56ca0cb08403b0214b337a3fc09fba74341b6600312e58825e48f2d20930966eeaa7a9c732f2d5bd17ca8e58279d63040c","version":"0.0.1"},"signature":"bda73d6df6828fa2ea0693026c3ac9cbd5e09cd399e94069d32b4f79dd038d12ffcda6b1385e7d2cda591fe45fcb81538efff6498fd64a1e213025ac0d1e0200","request_hash":"ea93845b8a84556751c64085f0f1fc2d870b80a7194298ac526a46df485c49f1"}},"response":{"response":"{\\"id\\":67,\\"jsonrpc\\":\\"2.0\\",\\"result\\":\\"0x1043561a8814822\\"}","signature":"952352cc3b1e915c4470612e7f25b3cf811b30e1a95ab79d0c593d6afcbf0a7d0f50a945345e97c263641dfb8b1ba66911debe0be6d0586268720c3f9b83530f"}}'
+            const relay2 = '{"request":{"payload":{"data":"{\\"jsonrpc\\":\\"2.0\\",\\"method\\":\\"eth_getBalance\\",\\"params\\":[\\"0x050ea4ab4183E41129B7D72A492DaBf52B27EdB5\\",\\"latest\\"],\\"id\\":67}","method":"","path":"","headers":null},"meta":{"block_height":26257},"proof":{"entropy":31039971842500692,"session_block_height":26257,"servicer_pub_key":"5b3210eabe59db069255f12c230c9dfdf4244a440a4c2f5b70a6aa0fe157eb81","blockchain":"0022","aat":{"app_pub_key":"2099e51e72ece8458b09680899a747e114343b66bec00f272d090da96aaeb436","client_pub_key":"e7e91202573bdd1927b00fce9b0b46fa7944b06e6fe1bc987abc86e4d0dd47d6","signature":"6172942ce26f3f11ead505b36dba7c56ca0cb08403b0214b337a3fc09fba74341b6600312e58825e48f2d20930966eeaa7a9c732f2d5bd17ca8e58279d63040c","version":"0.0.1"},"signature":"bda73d6df6828fa2ea0693026c3ac9cbd5e09cd399e94069d32b4f79dd038d12ffcda6b1385e7d2cda591fe45fcb81538efff6498fd64a1e213025ac0d1e0200","request_hash":"ea93845b8a84556751c64085f0f1fc2d870b80a7194298ac526a46df485c49f1"}},"response":{"response":"{\\"id\\":67,\\"jsonrpc\\":\\"2.0\\",\\"result\\":\\"0x1043561a8811100\\"}","signature":"952352cc3b1e915c4470612e7f25b3cf811b30e1a95ab79d0c593d6afcbf0a7d0f50a945345e97c263641dfb8b1ba66911debe0be6d0586268720c3f9b83530f"}}'
+            
+            const relayResponse1 = RelayResponse.fromJSON(relay1)
+            const relayResponse2 = RelayResponse.fromJSON(relay2)
+
+            const majorityResponse: MajorityResponse = new MajorityResponse([relayResponse1, relayResponse1])
+            const minorityResponse: MinorityResponse = new MinorityResponse(relayResponse2)
+            const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
+            const node = new Node("", "", false, StakingStatus.Staked, BigInt(0), dispatcherUrl.toString(), ["002","0022"])
+            // Nock
+            NockUtil.mockChallenge()
+            const challengeResponse = await relayer.requestChallenge(challengeRequest, node)
+            expect(typeGuard(challengeResponse, ChallengeResponse)).to.be.true
+        }).timeout(0)
     })
 
     describe("Fail scenarios", function () {

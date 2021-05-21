@@ -319,7 +319,7 @@ export class Relayer {
         } else {
             return new RpcError(
                 response.code,
-                "Failed to retrieve the supply information: " + response.message
+                "Failed to send the request challenge: " + response.message
             )
         }
     } catch (err) {
