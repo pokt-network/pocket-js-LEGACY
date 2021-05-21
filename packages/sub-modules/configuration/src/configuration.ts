@@ -139,7 +139,5 @@ public readonly rejectSelfSignedCertificates: boolean = LIMITER.reject_self_sign
     this.validateRelayResponses = validateRelayResponses
     this.rejectSelfSignedCertificates = rejectSelfSignedCertificates
   }
-  public setconsensusNodeCount(v: number){
-    this.consensusNodeCount = v
-  }
+  
 }
