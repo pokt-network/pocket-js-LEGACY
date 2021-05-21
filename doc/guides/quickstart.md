@@ -1,6 +1,4 @@
-# Quickstart
-
-# Pocket-JS 0.6.8-rc highlight
+# **Quickstart: Pocket-JS 0.6.8-rc highlight**
 
 In the latest version of this SDK, we introduce the new ProtoBuf transaction codec. This functionality is activated on the `Configuration` class for Pocket by default. To revert to the legacy AminoJS transaction code, make sure to set the `useLegacyTxCodec` flag to `true`.
 
@@ -9,7 +7,7 @@ const useLegacyTxCodec = true;
 const configuration = new Configuration(5, 2000, undefined, 100000, undefined, undefined, undefined, undefined, undefined, undefined, useLegacyTxCodec)
 ```
 
-# HOWTO: Instantiate a Pocket Instance
+# **HOWTO: Instantiate a Pocket Instance and Send Transactions**
 
 For a basic configuration file, we simply need to set the following three properties: `maxDispatchers`, `maxSessions`, & `requestTimeOut`.
 
@@ -27,7 +25,7 @@ const rpcProvider = new HttpRpcProvider(dispatchers[0]);
 const pocket = new Pocket(dispatchers, rpcProvider, configuration);
 ```
 
-## Prerequisites
+## **Prerequisites**
 
 To send a transaction over the network, we need to first perform the following two initial steps:
 
@@ -49,11 +47,11 @@ let transactionSender = await pocket.withImportedAccount(account.addressHex, pas
 transactionSender = transactionSender as TransactionSender
 ```
 
-### Transactions
+### **Performing Transactions**
 
 Afterward importing the sender's account and creating a transaction sender object, any of the transactions below can be performed.
 
-### Send a balance
+### **Send a balance**
 
 ```js
 const toAddress = "f81896be1964df0537a81274b4d2c9604124449e";
@@ -70,7 +68,7 @@ rawTxResponse = rawTxResponse as rawTxResponse
 console.log(rawTxResponse.hash)
 ```
 
-### Stake an app
+### **Stake an app**
 
 ```js
 const chainID = "testnet";
@@ -83,7 +81,7 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "App staking memo")
 ```
 
-### Unstake an app
+### **Unstake an app**
 
 ```js
 const chainID = "testnet";
@@ -94,7 +92,7 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "App unstaking memo")
 ```
 
-## Sake a node
+## **Stake a node**
 
 ```js
 // 3. Stake a Node.
@@ -109,7 +107,7 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "Node staking memo")
 ```
 
-## Unstake a node
+## **Unstake a node**
 
 ```js
 const chainID = "testnet";
@@ -121,7 +119,7 @@ let rawTxResponse = await transactionSender
     .submit(chainID, fee, CoinDenom.Upokt, "Node unstaking memo")
 ```
 
-## Unjail a node
+## **Unjail a node**
 
 ```js
 const chainID = "testnet";
