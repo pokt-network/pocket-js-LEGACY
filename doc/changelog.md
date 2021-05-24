@@ -26,7 +26,10 @@
   - Added typedoc for document generation, after installation the docs are going to be inside the doc/main folder.
   - Added typedoc output to gitignore.
   - Fixed Browserify script not running properly after install.
-  
+  - Added missing exclusion folder on the tsconfig.json.
+- Profiler:
+  - Added a new profiler system to retrieve metrics for any code block.
+  - Added profiler-guide.md to the doc folder.
 
 ## 0.6.11-RC
 - Query Nodes and Apps now support empty StakingStatus and JailedStatus.
