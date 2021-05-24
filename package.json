@@ -19,13 +19,11 @@
         "browserify": "browserify browserify.js -p [ minifyify --no-map ] --standalone PocketJS > dist/web.js",
         "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
         "test:integration": "nyc mocha --require ts-node/register \"tests/src/integration/**/*.ts\" --timeout 0 --exit",
-        "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-        "prepare": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc & npm run generateDocs && npm run browserify",
-        "prepackage": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
+        "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
+        "prepare": "npm run build && npm run browserify",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-        "update": "rm -r node_modules/ && rm package-lock.json && npm install",
         "lint": "tslint -p tsconfig.json",
-        "prepublishOnly": "npm run build && npm run browserify"
+        "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && npm install"
     },
     "repository": "https://github.com/pokt-network/pocket-js/tree/master/packages/core",
     "homepage": "https://github.com/pokt-network/pocket-js",
