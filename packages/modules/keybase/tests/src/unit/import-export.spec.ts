@@ -42,6 +42,19 @@ describe("Keybase Import/Export of account", () => {
             const privateKey = exportedPrivateKeyOrError as Buffer
             expect(privateKey.length).to.equal(64)
         }).timeout(0)
+
+        it("should import and unlock an account given it's private key and a passphrase for encryption", async () => {
+            const keybase = new Keybase(new InMemoryKVStore())
+            const passphrase = "test"
+            const importedAccountOrError = await keybase.importAndUnlockAccount(
+                Buffer.from(
+                    "11ec96f4ab9ba7e6fef32994a2b9ae81414704b3f21ee213155cf77ab1a75d0b373bf4dd9e1a7076bdbdb81fd681430cb242696a51d8230fbe3a966543239e6a",
+                    "hex"
+                ),
+                passphrase
+            )
+            expect(importedAccountOrError).to.not.be.a("error")
+        }).timeout(0)
     }).timeout(0)
 
     describe("Error scenarios", () => {
@@ -122,5 +135,31 @@ describe("Keybase Import/Export of account", () => {
             )
             expect(emptyPassphraseError).to.be.a("error")
         })
+
+        it("should fail to import and unlock an account given a bad private key", async () => {
+            const keybase = new Keybase(new InMemoryKVStore())
+            const passphrase = "test"
+            const importedAccountOrError = await keybase.importAndUnlockAccount(
+                Buffer.from(
+                    "11ec96f4ab9ba7e6fef32994a2b9ae81414704b3f21ee213155cf77ab1a75d0b373bf4dd9e1a7076bdbdb81fd681430cb242696a51d8230fbe3a966543239",
+                    "hex"
+                ),
+                passphrase
+            )
+            expect(importedAccountOrError).to.be.a("error")
+        }).timeout(0)
+
+        it("should fail to import and unlock an account given an empty passphrase", async () => {
+            const keybase = new Keybase(new InMemoryKVStore())
+            const passphrase = "test"
+            const importedAccountOrError = await keybase.importAndUnlockAccount(
+                Buffer.from(
+                    "11ec96f4ab9ba7e6fef32994a2b9ae81414704b3f21ee213155cf77ab1a75d0b373bf4dd9e1a7076bdbdb81fd681430cb242696a51d8230fbe3a966543239e6a",
+                    "hex"
+                ),
+                ""
+            )
+            expect(importedAccountOrError).to.be.a("error")
+        }).timeout(0)
     }).timeout(0)
 }).timeout(0)
