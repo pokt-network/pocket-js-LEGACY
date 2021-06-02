@@ -1,5 +1,4 @@
 export type Fee = { amount: string, denom: string }
-export type Msg = { address: string, upgrade: { height: number, version: string } }
 export type Signature = { pub_key: string, signature: string }
 
 /**
@@ -20,9 +19,7 @@ export type Signature = { pub_key: string, signature: string }
       const jsonObject = JSON.parse(json)
       
       const fee = { amount: jsonObject.fee[0].amount, denom: jsonObject.fee[0].denom }
-
-      const msgUpgrade = jsonObject.msg.upgrade
-      const msg = { address: jsonObject.msg.address, upgrade: { height: msgUpgrade.Height || msgUpgrade.height , version: msgUpgrade.Version || msgUpgrade.version } }
+      const msg = jsonObject.msg || {}
 
       const signature = { pub_key: jsonObject.signature.pub_key, signature: jsonObject.signature.signature }
 
@@ -41,7 +38,7 @@ export type Signature = { pub_key: string, signature: string }
   public readonly entropy: number
   public readonly fee: Fee
   public readonly memo: string
-  public readonly msg: Msg
+  public readonly msg: any
   public readonly signature: Signature
 
   /**
@@ -52,7 +49,7 @@ export type Signature = { pub_key: string, signature: string }
    * @param {Msg} msg - Msg.
    * @param {Signature} signature - signature.
    */
-  constructor(entropy: number, fee: Fee, memo: string, msg: Msg, signature: Signature) {
+  constructor(entropy: number, fee: Fee, memo: string, msg: any, signature: Signature) {
     this.entropy = entropy
     this.fee = fee
     this.memo = memo
