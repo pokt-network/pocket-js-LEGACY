@@ -359,6 +359,7 @@ export class Keybase implements IKeybase {
     }
 
     // Import/export of accounts
+
     /**
      * @description Imports an account by using it's private key into this keybase
      * @param {Buffer} privateKey The private key of the account to be imported into this keybase
@@ -402,6 +403,43 @@ export class Keybase implements IKeybase {
             } else {
                 return account
             }
+        } catch (err) {
+            return err
+        }
+    }
+
+    /**
+     * @description Imports and Unlocks an account by using it's private key
+     * @param {Buffer} privateKey The private key of the account to be imported into this keybase
+     * @param {string} passphrase The passphrase for the account to be imported into the keybase
+     * @returns {Promise<UnlockedAccount | Error>} Unlocked account or an Error
+     * @memberof Keybase
+     */
+     public async importAndUnlockAccount(
+        privateKey: Buffer,
+        passphrase: string
+    ): Promise<UnlockedAccount | Error> {
+        if (passphrase.length === 0) {
+            return new Error("Empty passphrase")
+        }
+
+        if (!validatePrivateKey(privateKey)) {
+            return new Error("Invalid private key")
+        }
+        try {
+            const importedAccountOrError = await this.importAccount(privateKey, passphrase)
+
+            if (typeGuard(importedAccountOrError, Error)) {
+                return importedAccountOrError
+            }
+
+            const unlockedAccountOrError = await this.getUnlockedAccount(importedAccountOrError.addressHex, passphrase)
+
+            if (typeGuard(unlockedAccountOrError, Error)) {
+                return unlockedAccountOrError
+            }
+
+            return unlockedAccountOrError
         } catch (err) {
             return err
         }
