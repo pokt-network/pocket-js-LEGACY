@@ -5,21 +5,17 @@ import { MsgProtoAppUnjail } from './models/msgs/msg-proto-app-unjail';
 import { MsgProtoAppUnstake } from './models/msgs/msg-proto-app-unstake';
 import { MsgProtoAppStake } from './models/msgs/msg-proto-app-stake';
 import { MsgProtoSend } from './models/msgs/msg-proto-send';
-import { TxMsg, CoinDenom, TxSignature, MsgSend, 
-    MsgAppStake, MsgAppUnstake, MsgAppUnjail, MsgNodeStake, 
-    MsgNodeUnstake, MsgNodeUnjailTx, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
+import { TxMsg, CoinDenom, TxSignature, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount, Keybase } from "@pokt-network/pocket-js-keybase"
 import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
 import { TxEncoderFactory } from "./factory/tx-encoder-factory"
-import { Configuration } from "@pokt-network/pocket-js-configuration"
 import { Client } from "@pokt-network/pocket-js-rpc-client"
 import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
 export class TransactionSender implements ITransactionSender {
     private txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
-    private configuration: Configuration
     private client: Client
     private txSigner?: TransactionSigner
     private txMsgError?: Error
@@ -27,13 +23,11 @@ export class TransactionSender implements ITransactionSender {
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
      * @param {IRPCProvider} rpc - RPC Provider.
-     * @param {Configuration} configuration - (Optional) Configuration object.
      * @param {UnlockedAccount} unlockedAccount - (Optional) Unlocked account.
      * @param {TransactionSigner} txSigner - (Optional) Transaction signer.
      */
-     public constructor(rpc: IRPCProvider, configuration?: Configuration, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
+     public constructor(rpc: IRPCProvider, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
         this.client = new Client(rpc)
-        this.configuration = configuration ?? new Configuration()
         this.unlockedAccount = unlockedAccount
         this.txSigner = txSigner
 
@@ -70,7 +64,7 @@ export class TransactionSender implements ITransactionSender {
                 return new RpcError("0", "No messages configured for this transaction")
             }
             const entropy = Number(BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()).toString()
-            const encoder = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.configuration.useLegacyTxCodec)
+            const encoder = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo)
             let txSignatureOrError
             const bytesToSign = encoder.marshalStdSignDoc()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
@@ -147,10 +141,7 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgSend(fromAddress, toAddress, amount)
-            else
-                this.txMsg = new MsgProtoSend(fromAddress, toAddress, amount)
+            this.txMsg = new MsgProtoSend(fromAddress, toAddress, amount)
         } catch (error) {
             this.txMsgError = error
         }
@@ -171,10 +162,7 @@ export class TransactionSender implements ITransactionSender {
         amount: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
-            else
-                this.txMsg = new MsgProtoAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
+            this.txMsg = new MsgProtoAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
         } catch (error) {
             this.txMsgError = error
         }
@@ -191,10 +179,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgAppUnstake(address)
-            else
-                this.txMsg = new MsgProtoAppUnstake(address)
+            this.txMsg = new MsgProtoAppUnstake(address)
         } catch (error) {
             this.txMsgError = error
         }
@@ -211,10 +196,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgAppUnjail(address)
-            else
-                this.txMsg = new MsgProtoAppUnjail(address)
+            this.txMsg = new MsgProtoAppUnjail(address)
         } catch (error) {
             this.txMsgError = error
         }
@@ -238,10 +220,7 @@ export class TransactionSender implements ITransactionSender {
         serviceURL: URL
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
-            else
-                this.txMsg = new MsgProtoNodeStakeTx(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
+            this.txMsg = new MsgProtoNodeStakeTx(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
         } catch (error) {
             this.txMsgError = error
         }
@@ -258,10 +237,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgNodeUnstake(address)
-            else
-                this.txMsg = new MsgProtoNodeUnstake(address)
+            this.txMsg = new MsgProtoNodeUnstake(address)
         } catch (error) {
             this.txMsgError = error
         }
@@ -279,10 +255,7 @@ export class TransactionSender implements ITransactionSender {
         address: string
     ): ITransactionSender {
         try {
-            if (this.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgNodeUnjailTx(address)
-            else
-                this.txMsg = new MsgProtoNodeUnjail(address)
+            this.txMsg = new MsgProtoNodeUnjail(address)
         } catch (error) {
             this.txMsgError = error
         }
