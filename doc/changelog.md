@@ -1,3 +1,11 @@
+## 0.6.13-RC
+- RPC:
+  - ResponseDeliverTx was causing the getAccountTxs and getBlockTxs queries to fail: 
+    - Removed gasWanted and gasUsed properties.
+    - Added recipient, signer and messageType properties.
+  - StdTx model:
+    - Updated the Msg property to accept Any object since the response schema is not static.
+  
 ## 0.6.12-RC
 - Configuration: 
   - Changed maxDispatchers default value to 50.
