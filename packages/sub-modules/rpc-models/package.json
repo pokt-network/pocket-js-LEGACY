@@ -10,7 +10,7 @@
     "prepare": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc & npm run generateDocs",
     "prepackage": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
     "lint": "tslint -p tsconfig.json",
-    "prepublishOnly": "npm run build"
+    "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "keywords": [
     "pocket-js",
