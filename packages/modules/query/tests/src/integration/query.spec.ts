@@ -74,8 +74,32 @@ describe("Pocket RPC Query Interface", async () => {
         it('should successfully retrieve a list of validator nodes', async () => {
             const query = getDefaultRpcInstance()
             // Nock
-            NockUtil.mockGetNodes()
+            NockUtil.mockGetNodesWithJailedAndStakingStatus()
             const nodesResponse = await query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(1), "", 1, 10)
+            expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve a list of validator nodes with staking status', async () => {
+            const query = getDefaultRpcInstance()
+            // Nock
+            NockUtil.mockGetNodesWithStakingStatus()
+            const nodesResponse = await query.getNodes(StakingStatus.Staked, undefined, BigInt(0), "", 1, 10)
+            expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve a list of validator nodes with jail status', async () => {
+            const query = getDefaultRpcInstance()
+            // Nock
+            NockUtil.mockGetNodesWithJailedStatus()
+            const nodesResponse = await query.getNodes(undefined, JailedStatus.Unjailed, BigInt(0), "", 1, 10)
+            expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve a list of validator nodes with staking and jailed status', async () => {
+            const query = getDefaultRpcInstance()
+            // Nock
+            NockUtil.mockGetNodesWithJailedAndStakingStatus()
+            const nodesResponse = await query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(0), "", 1, 10)
             expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
@@ -96,6 +120,14 @@ describe("Pocket RPC Query Interface", async () => {
         }).timeout(0)
 
         it('should successfully retrieve a list of apps', async () => {
+            const query = getDefaultRpcInstance()
+            // Nock
+            NockUtil.mockGetApps()
+            const appsResponse = await query.getApps(StakingStatus.Staked, BigInt(1), undefined, 1, 10)
+            expect(typeGuard(appsResponse, QueryAppsResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve a list of apps without staking status', async () => {
             const query = getDefaultRpcInstance()
             // Nock
             NockUtil.mockGetApps()

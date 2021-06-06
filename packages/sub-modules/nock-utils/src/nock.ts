@@ -128,8 +128,32 @@ export class NockUtil {
         return this.nockRoute(V1RPCRoutes.QueryBalance.toString(), code, response.data)
     }
 
-    public static mockGetNodes(code: number = 200): nock.Scope {
-        const nodes = '{"result":[{"address":"0005d92a374bd782f62f7b00101052d2eab448f1","public_key":"c111b599ea8ba88eeef24ced9233da8b2ac49c14c2293dbc637eef47916d8a73","jailed":false,"status":2,"tokens":"15374000000","service_url":"https:\/\/wecandothis.io:443","chains":["0001","0021"],"unstaking_time":"0001-01-01T00:00:00Z"},{"address":"0005d92a374bd782f627b700101052d2eab448f1","public_key":"c111b599ea8ba88eeef24cedcedcedda8b2ac49c14c2293dbc637eef47916d8a73","jailed":false,"status":2,"tokens":"15004309815","service_url":"https:\/\/serveorserve.io:443","chains":["0001","0021"],"unstaking_time":"0001-01-01T00:00:00Z"}],"total_pages":1425,"page":1}'
+    public static mockGetNodesWithJailedAndStakingStatus(code: number = 200): nock.Scope {
+        const nodes = '{"result":[{"address":"0005d93c984bd782f62f7b09977d52d2eab448f1","public_key":"7f97a599ea8ba88eeef24ced9233da8b2ac49c14c2293dbc637eef47916f1d91","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/mp-pokt-437.n.blockspaces.io:443","tokens":"15374000000","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"000a52a2b942166942bfdc3f15f4a0ca7f976c3d","public_key":"ebc4e8de39f453dbbe55b21ca1456259972ff4e4c82f2c7f5a3420ed3adb1902","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/dc35fa02-4d05-4f55-bd90-d67c55a76e44.nodes.ba2s.skillz.io:443","tokens":"15004309815","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"002183c282e48a8c43ef6dc9b7b59d4c6f6d53e9","public_key":"c65c854bb53781296d7fae6f8962ce9d77859ddc05b2680827b93c9dfecef212","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/db-pokt-02.n.blockspaces.io:443","tokens":"15369984630","unstaking_time":"0001-01-01T00:00:00Z"}],"total_pages":1425,"page":1}'
+        
+        const data: any = this.createData(code, nodes)
+        const response = this.getResponseObject(data, code)
+        return this.nockRoute(V1RPCRoutes.QueryNodes.toString(), code, response.data)
+    }
+
+    public static mockGetNodesWithJailedStatus(code: number = 200): nock.Scope {
+        const nodes = '{"result":[{"address":"0005d93c984bd782f62f7b09977d52d2eab448f1","public_key":"7f97a599ea8ba88eeef24ced9233da8b2ac49c14c2293dbc637eef47916f1d91","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/mp-pokt-437.n.blockspaces.io:443","tokens":"15374000000","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"000a52a2b942166942bfdc3f15f4a0ca7f976c3d","public_key":"ebc4e8de39f453dbbe55b21ca1456259972ff4e4c82f2c7f5a3420ed3adb1902","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/dc35fa02-4d05-4f55-bd90-d67c55a76e44.nodes.ba2s.skillz.io:443","tokens":"15004309815","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"002183c282e48a8c43ef6dc9b7b59d4c6f6d53e9","public_key":"c65c854bb53781296d7fae6f8962ce9d77859ddc05b2680827b93c9dfecef212","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/db-pokt-02.n.blockspaces.io:443","tokens":"15369984630","unstaking_time":"0001-01-01T00:00:00Z"}],"total_pages":1443,"page":1}'
+        
+        const data: any = this.createData(code, nodes)
+        const response = this.getResponseObject(data, code)
+        return this.nockRoute(V1RPCRoutes.QueryNodes.toString(), code, response.data)
+    }
+
+    public static mockGetNodesWithStakingStatus(code: number = 200): nock.Scope {
+        const nodes = '{"result":[{"address":"0005d93c984bd782f62f7b09977d52d2eab448f1","public_key":"7f97a599ea8ba88eeef24ced9233da8b2ac49c14c2293dbc637eef47916f1d91","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/mp-pokt-437.n.blockspaces.io:443","tokens":"15374000000","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"000a52a2b942166942bfdc3f15f4a0ca7f976c3d","public_key":"ebc4e8de39f453dbbe55b21ca1456259972ff4e4c82f2c7f5a3420ed3adb1902","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/dc35fa02-4d05-4f55-bd90-d67c55a76e44.nodes.ba2s.skillz.io:443","tokens":"15004309815","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"002183c282e48a8c43ef6dc9b7b59d4c6f6d53e9","public_key":"c65c854bb53781296d7fae6f8962ce9d77859ddc05b2680827b93c9dfecef212","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/db-pokt-02.n.blockspaces.io:443","tokens":"15369984630","unstaking_time":"0001-01-01T00:00:00Z"}],"total_pages":1528,"page":1}'
+        
+        const data: any = this.createData(code, nodes)
+        const response = this.getResponseObject(data, code)
+        return this.nockRoute(V1RPCRoutes.QueryNodes.toString(), code, response.data)
+    }
+
+    public static mockGetNodesWithoutJailedAndStakingStatus(code: number = 200): nock.Scope {
+        const nodes = '{"result":[{"address":"0005d93c984bd782f62f7b09977d52d2eab448f1","public_key":"7f97a599ea8ba88eeef24ced9233da8b2ac49c14c2293dbc637eef47916f1d91","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/mp-pokt-437.n.blockspaces.io:443","tokens":"15374000000","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"000a52a2b942166942bfdc3f15f4a0ca7f976c3d","public_key":"ebc4e8de39f453dbbe55b21ca1456259972ff4e4c82f2c7f5a3420ed3adb1902","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/dc35fa02-4d05-4f55-bd90-d67c55a76e44.nodes.ba2s.skillz.io:443","tokens":"15004309815","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"002183c282e48a8c43ef6dc9b7b59d4c6f6d53e9","public_key":"c65c854bb53781296d7fae6f8962ce9d77859ddc05b2680827b93c9dfecef212","jailed":false,"status":2,"chains":["0001","0021"],"service_url":"https:\/\/db-pokt-02.n.blockspaces.io:443","tokens":"15369984630","unstaking_time":"0001-01-01T00:00:00Z"}],"total_pages":1547,"page":1}'
         
         const data: any = this.createData(code, nodes)
         const response = this.getResponseObject(data, code)
@@ -154,6 +178,14 @@ export class NockUtil {
 
     public static mockGetApps(code: number = 200): nock.Scope {
         const apps = '{"result":[{"address":"82726b59a0ad7099f77dc2220c0ed2a0df314777","public_key":"caa065039d766d950f4950c4199491315eff0129b252ff9cd0002c6de716d622","jailed":false,"chains":["0022"],"max_relays":"41666","status":2,"staked_tokens":"24950100000","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"65426b59a0ad7099f77dc2220c0ed2a0df314444","public_key":"daa065039d766d950f4950c4199491315eff0129b252ff9cd0002c6de716c622","jailed":false,"chains":["0001","0021","0022","0023","0024","0025","0026","0027"],"max_relays":"41750","status":2,"staked_tokens":"25000000000","unstaking_time":"0001-01-01T00:00:00Z"}],"total_pages":16,"page":1}'
+        const data: any = this.createData(code, apps)
+
+        const response = this.getResponseObject(data, code)
+        return this.nockRoute(V1RPCRoutes.QueryApps.toString(), code, response.data)
+    }
+
+    public static mockGetAppsWithoutStakingStatus(code: number = 200): nock.Scope {
+        const apps = '{"result":[{"address":"05744b59a0ad7099f77dcf050c0ed2a0df3142b9","public_key":"cee065039d788d950f4950c4199491315eff0129b252ff9cd0113c7de716d752","jailed":false,"chains":["0022"],"max_relays":"41666","status":2,"staked_tokens":"24950100000","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"0b145bf8511db15f221a6a4b2aa58b0dc0e49c36","public_key":"e7b5b619b1240eb414983ec485d32e30418dbf18c7cd7c662c8ac150f7651c6b","jailed":false,"chains":["0001","0021","0022","0023","0024","0025","0026","0027"],"max_relays":"41750","status":2,"staked_tokens":"25000000000","unstaking_time":"0001-01-01T00:00:00Z"},{"address":"141da7e491fde2096ac4df26ae32bb5ca2cc0236","public_key":"98e4bb647e482d55e9d1f45d0ad23e741b9484e604f040810ea9330137d3d030","jailed":false,"chains":["0001","0002","0003","0011","0021","0022","0023","0024","0025","0026","0027"],"max_relays":"41750","status":2,"staked_tokens":"25000000000","unstaking_time":"0001-01-01T00:00:00Z"}],"total_pages":17,"page":1}'
         const data: any = this.createData(code, apps)
 
         const response = this.getResponseObject(data, code)
