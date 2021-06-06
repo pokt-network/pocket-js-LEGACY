@@ -68,7 +68,7 @@ export class Relayer {
     path = "",
     node?: Node,
     consensusEnabled: boolean = false
-  ): Promise<RelayResponse | ConsensusNode | Error> {
+  ): Promise<RelayResponse | ConsensusNode | RpcError> {
     try {
       // Get the current session
       const currentSessionOrError = await this.sessionManager.getCurrentSession(
@@ -78,7 +78,7 @@ export class Relayer {
       );
 
       if (typeGuard(currentSessionOrError, Error)) {
-        return currentSessionOrError;
+        return RpcError.fromError(currentSessionOrError);
       }
 
       // Set the currentSession; may be refreshed below if the block height is stale
@@ -93,16 +93,14 @@ export class Relayer {
       );
 
       if (typeGuard(serviceNodeOrError, Error)) {
-        return serviceNodeOrError;
+        return RpcError.fromError(serviceNodeOrError);
       }
 
       const serviceNode = serviceNodeOrError as Node;
 
       // Final Service Node check
       if (serviceNode === undefined) {
-        return new Error(
-          "Could not determine a Service Node to send this relay"
-        );
+        return new RpcError("NA", "Could not determine a Service Node to submit this relay")
       }
 
       // Assign session service node to the rpc instance
@@ -121,9 +119,7 @@ export class Relayer {
       const isUnlocked = await this.keybase.isUnlocked(clientAddressHex);
 
       if (!isUnlocked) {
-        return new Error(
-          "Client account " + clientAddressHex + " for this AAT is not unlocked"
-        );
+        return new RpcError("NA", "Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
 
       // Produce signature payload
@@ -132,7 +128,7 @@ export class Relayer {
       );
       const requestHash = new RequestHash(relayPayload, relayMeta);
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999));
-
+      
       const proofBytes = RelayProof.bytes(
         entropy,
         currentSession.sessionHeader.sessionBlockHeight,
@@ -149,9 +145,7 @@ export class Relayer {
       );
 
       if (typeGuard(signatureOrError, Error)) {
-        return new Error(
-          "Error signing Relay proof: " + signatureOrError.message
-        );
+        return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
       const signature = signatureOrError as Buffer;
@@ -223,7 +217,7 @@ export class Relayer {
     method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node
-  ): Promise<ConsensusRelayResponse | ChallengeResponse | Error> {
+  ): Promise<ConsensusRelayResponse | ChallengeResponse | RpcError> {
     const consensusNodes: ConsensusNode[] = []
     let firstResponse: RelayResponse | undefined
 
@@ -243,12 +237,12 @@ export class Relayer {
           }
           consensusNodes.push(consensusNodeResponse)
         } else if (typeGuard(consensusNodeResponse, Error)) {
-          return consensusNodeResponse
+          return RpcError.fromError(consensusNodeResponse)
         }
       }
       // Check consensus nodes length
       if (consensusNodes.length === 0 || firstResponse === undefined) {
-        return new Error("Failed to send a relay with local consensus, no responses.")
+        return new RpcError("NA", "Failed to send a relay with local consensus, no responses.")
       }
       // Add the consensus node list to the consensus relay response
       const consensusRelayResponse = new ConsensusRelayResponse(
@@ -271,15 +265,12 @@ export class Relayer {
         // Send the challenge request
         const challengeResponseOrError = await this.requestChallenge(challengeRequest, consensusNode.node)
         // Return a challenge response
-        if (typeGuard(challengeResponseOrError, ChallengeResponse)) {
-          return challengeResponseOrError
-        }
-        return new Error(challengeResponseOrError.message)
+        return challengeResponseOrError;
       } else {
-        return new Error("Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
+        return new RpcError("NA", "Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
       }
     } catch (err) {
-      return err
+      return RpcError.fromError(err);
     }
   }
   
@@ -366,13 +357,13 @@ export class Relayer {
    * Resolves the node logic for a sendRelay
    * @param {RelayResponse | RpcError} result - Session object used for the relay.
    * @param {any} relayData - Relay data that holds the information used to send the relay.
-   * @returns {RelayResponse | ConsensusNode | Error} - A Relay Response, Consensus Node for Consensus Relay or an Error.
+   * @returns {RelayResponse | ConsensusNode | RpcError} - A Relay Response, Consensus Node for Consensus Relay or an RpcError.
    * @memberof Pocket
    */
   private async resolveSendRelayResult(
     result: RelayResponse | RpcError,
     relayData: any
-  ): Promise<RelayResponse | ConsensusNode | Error> {
+  ): Promise<RelayResponse | ConsensusNode | RpcError> {
     // Check session out of sync error
     if (typeGuard(result, RpcError)) {
       const rpcError = result as RpcError;
@@ -394,53 +385,47 @@ export class Relayer {
           retryIndex++
         ) {
           // Update the current session if is available from the network error response
-          if (rpcError.session !== undefined) {
+          if ( rpcError.session !== undefined) {
             // Profiler
-            const session = Session.fromJSON(JSON.stringify({ session: rpcError.session}))
             const newSessionOrError = await this.sessionManager.updateCurrentSession(
-              session,
+              rpcError.session,
               relayData.aat,
               relayData.blockchain,
               relayData.configuration
-            );
-
+            )
             if (typeGuard(newSessionOrError, Error)) {
               // If error or same session, don't even retry relay
-              continue;
+              continue
             } else if (typeGuard(newSessionOrError, Session)) {
-              const newSession = newSessionOrError as Session;
-              if (
-                newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight
-              ) {
+              const newSession = newSessionOrError as Session
+              if (newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
-                continue;
+                continue
               }
-              relayData.currentSession = newSession;
+              relayData.currentSession = newSession as Session
             }
-            sessionRefreshed = true;
-            break;
+            sessionRefreshed = true
+            break
           } else {
             const newSessionOrError = await this.sessionManager.requestNewSession(
               relayData.aat,
               relayData.blockchain,
               relayData.configuration
-            );
+            )
 
             if (typeGuard(newSessionOrError, Error)) {
               // If error or same session, don't even retry relay
-              continue;
+              continue
             } else if (typeGuard(newSessionOrError, Session)) {
-              const newSession = newSessionOrError as Session;
-              if (
-                newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight
-              ) {
+              const newSession = newSessionOrError as Session
+              if (newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
-                continue;
+                continue
               }
-              relayData.currentSession = newSession as Session;
+              relayData.currentSession = newSession as Session
             }
-            sessionRefreshed = true;
-            break;
+            sessionRefreshed = true
+            break
           }
         }
 
@@ -458,10 +443,10 @@ export class Relayer {
             relayData.consensusEnabled
           );
         } else {
-          return new Error(rpcError.message);
+          return new RpcError(rpcError.code, rpcError.message, undefined, relayData.serviceNode.publicKey);
         }
       } else {
-        return new Error(rpcError.message);
+        return new RpcError(rpcError.code, rpcError.message, undefined, relayData.serviceNode.publicKey);
       }
     } else if (relayData.consensusEnabled && typeGuard(result, RelayResponse)) {
       // Handle consensus
