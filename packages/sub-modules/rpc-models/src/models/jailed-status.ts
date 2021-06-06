@@ -2,7 +2,8 @@
  *
  * JailedStatus enum with the possible Jailed status values
  */
-export enum JailedStatus {
+ export enum JailedStatus {
+    NA = "",
     Jailed = 1,
     Unjailed = 2
 }
@@ -25,7 +26,7 @@ export namespace JailedStatus {
             case 2:
                 return JailedStatus.Unjailed
             default:
-                return JailedStatus.Unjailed
+                return JailedStatus.NA
         }
     }
 }

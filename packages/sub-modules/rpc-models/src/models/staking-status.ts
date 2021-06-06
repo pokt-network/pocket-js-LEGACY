@@ -2,7 +2,8 @@
  *
  * StakingStatus enum with the possible Staking status values
  */
-export enum StakingStatus {
+ export enum StakingStatus {
+    NA = "",
     Unstaked = 0,
     Unstaking = 1,
     Staked = 2
@@ -28,7 +29,7 @@ export namespace StakingStatus {
             case 2:
                 return StakingStatus.Staked
             default:
-                return StakingStatus.Unstaked
+                return StakingStatus.NA
         }
     }
 }
