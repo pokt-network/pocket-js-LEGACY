@@ -10,7 +10,8 @@
     "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
     "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
     "prepare": "npm run build && npm run browserify",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tsconfig.json",
+    "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "keywords": [
     "pocket-js",
