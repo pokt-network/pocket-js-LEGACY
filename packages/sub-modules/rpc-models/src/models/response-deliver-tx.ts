@@ -32,8 +32,9 @@ export class ResponseDeliverTx {
         data,
         jsonObject.log,
         jsonObject.info,
-        BigInt(jsonObject.gasWanted),
-        BigInt(jsonObject.gasUsed),
+        jsonObject.recipient,
+        jsonObject.signer,
+        jsonObject.message_type,
         events,
         jsonObject.codespace
       )
@@ -43,13 +44,14 @@ export class ResponseDeliverTx {
   }
 
   public readonly code: number
-  public readonly data: string[]
-  public readonly log: string
-  public readonly info: string
-  public readonly gasWanted: BigInt
-  public readonly gasUsed: BigInt
-  public readonly events: Event[]
   public readonly codespace: string
+  public readonly data: string[]
+  public readonly events: Event[]
+  public readonly recipient: string
+  public readonly signer: string
+  public readonly messageType: string
+  public readonly info: string
+  public readonly log: string  
 
   /**
    * Creates a ResponseDeliverTx.
@@ -58,8 +60,9 @@ export class ResponseDeliverTx {
    * @param {string[]} data - 
    * @param {string} log - 
    * @param {string} info - 
-   * @param {BigInt} gasWanted - 
-   * @param {BigInt} gasUsed - 
+   * @param {string} recipient - 
+   * @param {string} signer - 
+   * @param {string} messageType - 
    * @param {Event[]} events - 
    * @param {string} codespace - 
    */
@@ -68,8 +71,9 @@ export class ResponseDeliverTx {
     data: string[],
     log: string,
     info: string,
-    gasWanted: BigInt,
-    gasUsed: BigInt,
+    recipient: string,
+    signer: string,
+    messageType: string,
     events: Event[],
     codespace: string
   ) {
@@ -77,8 +81,9 @@ export class ResponseDeliverTx {
     this.data = data
     this.log = log
     this.info = info
-    this.gasWanted = gasWanted
-    this.gasUsed = gasUsed
+    this.recipient = recipient
+    this.signer = signer
+    this.messageType = messageType
     this.events = events
     this.codespace = codespace
 
@@ -103,11 +108,13 @@ export class ResponseDeliverTx {
 
     return {
       code: this.code,
+      codespace: this.codespace,
       data: this.data,
       log: this.log,
       info: this.info,
-      gasWanted: Number(this.gasWanted.toString()),
-      gasUsed: Number(this.gasUsed.toString()),
+      recipient: this.recipient,
+      signer: this.signer,
+      messageType: this.messageType,
       events: events
     }
   }
@@ -118,8 +125,6 @@ export class ResponseDeliverTx {
    * @memberof ResponseDeliverTx
    */
   public isValid() {
-    return this.code >= 0 &&
-      Number(this.gasWanted.toString()) >= 0 &&
-      Number(this.gasUsed.toString()) >= 0
+    return true
   }
 }

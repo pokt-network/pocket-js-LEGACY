@@ -28,6 +28,7 @@ export enum V1RPCRoutes {
   QueryNodeClaim = Versions.V1 + "/query/nodeclaim",
   QueryNodeClaims = Versions.V1 + "/query/nodeclaims",
   QueryAllParams = Versions.V1 + "/query/allparams",
+  QueryUpgrade = Versions.V1 + "/query/upgrade",
   ClientRawTx = Versions.V1 + "/client/rawtx",
   ClientDispatch = Versions.V1 + "/client/dispatch",
   ClientRelay = Versions.V1 + "/client/relay",
