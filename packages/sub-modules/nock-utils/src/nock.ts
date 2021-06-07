@@ -301,6 +301,13 @@ export class NockUtil {
         return this.nockRoute(V1RPCRoutes.QueryNodeClaim.toString(), code, response.data)
     }
 
+    public static mockGetUpgrade(code: number = 200): nock.Scope {
+        const upgrade = '{\"Height\":0,\"Version\":\"0\"}'
+        const data: any = this.createData(code, upgrade)
+
+        const response = this.getResponseObject(data, code)
+        return this.nockRoute(V1RPCRoutes.QueryUpgrade.toString(), code, response.data)
+    }
 
     public static mockRelayResponse(code: number = 200): nock.Scope {
         const randomNumber = Math.floor(Math.random() * 100000)

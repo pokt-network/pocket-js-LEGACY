@@ -11,7 +11,7 @@ import {
     QueryAppsResponse, QueryAppResponse, QueryAppParamsResponse,
     QueryPocketParamsResponse, QuerySupportedChainsResponse, QuerySupplyResponse,
     JailedStatus, QueryAccountTxsResponse, QueryNodeClaimsResponse, QueryNodeClaimResponse, QueryAllParamsResponse,
-    QueryBlockTxsResponse
+    QueryBlockTxsResponse, QueryUpgradeResponse
 } from "@pokt-network/pocket-js-rpc-models"
 import { HttpRpcProvider } from "@pokt-network/pocket-js-http-provider"
 import { Query } from "../../../src/query"
@@ -221,6 +221,14 @@ describe("Pocket RPC Query Interface", async () => {
             NockUtil.mockGetAllParams()
             const allParamsResponse = await query.getAllParams(BigInt(10))
             expect(typeGuard(allParamsResponse, QueryAllParamsResponse)).to.be.true
+        }).timeout(0)
+
+        it('should successfully retrieve the amino to protobuf upgrade information', async () => {
+            const query = getDefaultRpcInstance()
+            // Nock
+            NockUtil.mockGetUpgrade()
+            const upgradeResponse = await query.getUpgrade()
+            expect(typeGuard(upgradeResponse, QueryUpgradeResponse)).to.be.true
         }).timeout(0)
 
         it('should successfully retrieve a node claims list', async () => {
