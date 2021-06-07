@@ -1,4 +1,4 @@
-import { ResultTx } from "../result-tx"
+import { Transaction } from "../transaction"
 
 /**
  *
@@ -16,17 +16,17 @@ export class QueryAccountTxsResponse {
   public static fromJSON(json: string): QueryAccountTxsResponse {
     try {
       const rawObjValue = JSON.parse(json)
-      const resultTxs: ResultTx[] = []
+      const transactions: Transaction[] = []
 
       if (rawObjValue.txs) {
         rawObjValue.txs.forEach((tx: any) => {
-          const resultTx = ResultTx.fromJSON(JSON.stringify(tx))
-          resultTxs.push(resultTx)
+          const transaction = Transaction.fromJSON(JSON.stringify(tx))
+          transactions.push(transaction)
         })
       }
 
       return new QueryAccountTxsResponse(
-        resultTxs,
+        transactions,
         rawObjValue.total_count
       )
     } catch (error) {
@@ -34,20 +34,20 @@ export class QueryAccountTxsResponse {
     }
   }
 
-  public readonly resultTx: ResultTx[]
+  public readonly transactions: Transaction[]
   public readonly totalCount: number
 
   /**
    * Query Account transaction list Response.
    * @constructor
-   * @param {ResultTx[]} resultTx - List of transactions.
+   * @param {Transaction[]} transactions - List of transactions.
    * @param {number} totalCount - Transaction count
    */
   constructor(
-    resultTx: ResultTx[],
+    transactions: Transaction[],
     totalCount: number
   ) {
-    this.resultTx = resultTx
+    this.transactions = transactions
     this.totalCount = totalCount
 
     if (!this.isValid()) {
@@ -61,14 +61,14 @@ export class QueryAccountTxsResponse {
    * @memberof QueryAccountTxsResponse
    */
   public toJSON() {
-    const resultTxs: object[] = []
+    const transactions: object[] = []
 
-    this.resultTx.forEach(resultTx => {
-      resultTxs.push(resultTx.toJSON())
+    this.transactions.forEach(tx => {
+      transactions.push(tx.toJSON())
     })
     
     return {
-      txs: resultTxs,
+      txs: transactions,
       total_count: this.totalCount
     }
   }
@@ -79,7 +79,6 @@ export class QueryAccountTxsResponse {
    * @memberof QueryAccountTxsResponse
    */
   public isValid(): boolean {
-    return this.resultTx !== undefined &&
-      this.totalCount !== undefined
+    return true
   }
 }

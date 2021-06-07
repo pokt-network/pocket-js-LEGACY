@@ -1,4 +1,4 @@
-import { ResultTx } from "../result-tx"
+import { Transaction } from "../transaction"
 
 /**
  *
@@ -16,17 +16,17 @@ export class QueryBlockTxsResponse {
   public static fromJSON(json: string): QueryBlockTxsResponse {
     try {
       const rawObjValue = JSON.parse(json)
-      const resultTxs: ResultTx[] = []
+      const transactions: Transaction[] = []
 
       if (rawObjValue.txs) {
         rawObjValue.txs.forEach((tx: any) => {
-          const resultTx = ResultTx.fromJSON(JSON.stringify(tx))
-          resultTxs.push(resultTx)
+          const resultTx = Transaction.fromJSON(JSON.stringify(tx))
+          transactions.push(resultTx)
         })
       }
 
       return new QueryBlockTxsResponse(
-        resultTxs,
+        transactions,
         rawObjValue.total_count
       )
     } catch (error) {
@@ -34,20 +34,20 @@ export class QueryBlockTxsResponse {
     }
   }
 
-  public readonly resultTx: ResultTx[]
+  public readonly transactions: Transaction[]
   public readonly totalCount: number
 
   /**
    * Query block transactions Response.
    * @constructor
-   * @param {ResultTx[]} resultTx - List of transactions.
+   * @param {Transaction[]} transactions - List of transactions.
    * @param {number} totalCount - Transaction count
    */
   constructor(
-    resultTx: ResultTx[],
+    transactions: Transaction[],
     totalCount: number
   ) {
-    this.resultTx = resultTx
+    this.transactions = transactions
     this.totalCount = totalCount
 
     if (!this.isValid()) {
@@ -61,15 +61,15 @@ export class QueryBlockTxsResponse {
    * @memberof QueryBlockTxsResponse
    */
   public toJSON() {
-    const resultTxs: {}[] = []
+    const transactions: {}[] = []
 
-    this.resultTx.forEach(resultTx => {
-      const resultTxObj = resultTx.toJSON()
-      resultTxs.push(resultTxObj)
+    this.transactions.forEach(tx => {
+      const transactionsObj = tx.toJSON()
+      transactions.push(transactionsObj)
     })
 
     return {
-      txs: resultTxs,
+      txs: transactions,
       total_count: this.totalCount
     }
   }
@@ -80,7 +80,6 @@ export class QueryBlockTxsResponse {
    * @memberof QueryBlockTxsResponse
    */
   public isValid(): boolean {
-    return this.resultTx !== undefined &&
-      this.totalCount !== undefined
+    return true
   }
 }
