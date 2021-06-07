@@ -5,7 +5,7 @@ import { QueryBlockResponse, V1RPCRoutes, QueryTXResponse, QueryHeightResponse,
     QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse, QuerySupportedChainsResponse, 
     QuerySupplyResponse, QueryAccountResponse, StakingStatus, 
     QueryAccountTxsResponse, JailedStatus, QueryNodesResponse, QueryAllParamsResponse, QueryBlockTxsResponse, 
-    QueryNodeClaimResponse, QueryNodeClaimsResponse } from "@pokt-network/pocket-js-rpc-models"
+    QueryNodeClaimResponse, QueryNodeClaimsResponse, QueryUpgradeResponse } from "@pokt-network/pocket-js-rpc-models"
 import { IQuery } from "./i-query"
 
 export class Query implements IQuery {
@@ -75,7 +75,7 @@ export class Query implements IQuery {
      */
     public async getBlockTxs(
         blockHeight: BigInt = BigInt(0),
-        prove: boolean,
+        prove: boolean = false,
         page: number = 1,
         perPage: number = 30,
         timeout: number = 60000, 
@@ -764,7 +764,7 @@ export class Query implements IQuery {
     public async getAccountTxs(
         address: string,
         received: boolean,
-        prove: boolean,
+        prove: boolean = false,
         page: number = 1,
         perPage: number = 30,
         timeout: number = 60000, 
@@ -961,6 +961,45 @@ export class Query implements IQuery {
                 return new RpcError(
                     response.code,
                     "Failed to retrieve all the network params: " + response.message
+                )
+            }
+        } catch (err) {
+            return new RpcError("0", err)
+        }
+    }
+
+    /**
+     * Returns the network transaction codec upgrade height from amino to protobuf 
+     * @param {nuber} height - Block height.
+     * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
+     * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
+     * @memberof QueryNamespace
+     */
+     public async getUpgrade(
+        timeout: number = 60000, 
+        rejectSelfSignedCertificates: boolean = true
+    ): Promise<QueryUpgradeResponse | RpcError> {
+        try {
+
+            const payload = "{}"
+
+            const response = await this.rpcProvider.send(
+                V1RPCRoutes.QueryUpgrade.toString(),
+                payload,
+                timeout, 
+                rejectSelfSignedCertificates
+            )
+
+            // Check if response is an error
+            if (!typeGuard(response, RpcError)) {
+                const queryUpgradeResponse = QueryUpgradeResponse.fromJSON(
+                    response
+                )
+                return queryUpgradeResponse
+            } else {
+                return new RpcError(
+                    response.code,
+                    "Failed to retrieve the supply information: " + response.message
                 )
             }
         } catch (err) {
