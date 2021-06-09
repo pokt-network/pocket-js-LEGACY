@@ -83,11 +83,9 @@ export class HttpRpcProvider implements IRPCProvider {
             let session
             if (dispatch !== undefined && dispatch !== null) {
                 session = Session.fromJSON(JSON.stringify(dispatch))
-                
-                return new RpcError(code.toString(), message, session?.toJSON())
             }
 
-            return new RpcError(code.toString(), message)
+            return new RpcError(code.toString(), message, session)
         } else {
             const regex = /Code: (\d+)/g
             const codeExtract = regex.exec(response.data.message)
