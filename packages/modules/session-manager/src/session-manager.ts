@@ -5,13 +5,12 @@ import {
   Node,
   DispatchRequest,
 } from "@pokt-network/pocket-js-rpc-models";
-import { IKVStore } from "@pokt-network/pocket-js-storage";
+import { IKVStore, InMemoryKVStore } from "@pokt-network/pocket-js-storage";
 import { Configuration } from "@pokt-network/pocket-js-configuration";
 import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils";
 import { Client } from "@pokt-network/pocket-js-rpc-client";
 import { Queue } from "./queue";
 import { RoutingTable } from "@pokt-network/pocket-js-routing-table";
-import { HttpRpcProvider } from "@pokt-network/pocket-js-http-provider";
 import { PocketAAT } from "@pokt-network/aat-js";
 import { sha3_256 } from "js-sha3";
 
@@ -28,15 +27,27 @@ export class SessionManager {
    * Creates an instance of SessionManager.
    * @param {URL[]} dispatchers - Dispatcher's list.
    * @param {Configuration} configuration - Pocket Configuration.
-   * @param {IKVStore} store - KVStore implementation.
+   * @param {IKVStore} store - (Optional) KVStore implementation.
    * @memberof SessionManager
    */
   constructor(
     dispatchers: URL[],
     configuration: Configuration,
-    store: IKVStore
+    store?: IKVStore
   ) {
-    this.routingTable = new RoutingTable(dispatchers, configuration, store);
+    const inMemoryKVStore = store || new InMemoryKVStore();
+
+    if (dispatchers.length === 0) {
+      throw new Error(
+        "Failed to instantiate the Session Manager due to empty dispatcher's list."
+      );
+    }
+
+    this.routingTable = new RoutingTable(
+      dispatchers,
+      configuration,
+      inMemoryKVStore
+    );
     this.sessionMap = new Map();
 
     if (this.routingTable.store.has(this.sessionMapKey)) {
@@ -52,8 +63,25 @@ export class SessionManager {
    * @param {Node} dispatcher - New dispatcher.
    * @memberof SessionManager
    */
-  public addNewDispatcher(dispatcher: Node) {
-    this.routingTable.addDispatcher(dispatcher.serviceURL);
+  public addNewDispatcher(dispatcher: Node | URL): boolean {
+    if (typeGuard(dispatcher, Node)) {
+      return this.routingTable.addDispatcher(dispatcher.serviceURL);
+    } else {
+      return this.routingTable.addDispatcher(dispatcher);
+    }
+  }
+
+  /**
+   * Removes a dispatcher from the routing table dispatcher's list
+   * @param {Node} dispatcher - Dispatcher to be removed.
+   * @memberof SessionManager
+   */
+  public deleteDispatcher(dispatcher: Node | URL): boolean {
+    if (typeGuard(dispatcher, Node)) {
+      return this.routingTable.deleteDispatcher(dispatcher.serviceURL);
+    } else {
+      return this.routingTable.deleteDispatcher(dispatcher);
+    }
   }
 
   /**
@@ -63,25 +91,6 @@ export class SessionManager {
    */
   public getDispatchersCount() {
     return this.routingTable.dispatchersCount;
-  }
-
-  /**
-   * Update the current session using an already requested dispatch response. Returns a Promise with the Session object or an Error when something goes wrong.
-   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
-   * @param {string} chain - Name of the Blockchain.
-   * @param {Configuration} configuration - Configuration object.
-   * @returns {Promise}
-   * @memberof SessionManager
-   */
-  public async updateCurrentSession(
-    session: Session,
-    pocketAAT: PocketAAT,
-    chain: string,
-    configuration: Configuration
-  ): Promise<Session | Error> {
-    const key = this.getSessionKey(pocketAAT, chain);
-
-    return this.saveSession(key, session, configuration);
   }
 
   /**
@@ -99,8 +108,14 @@ export class SessionManager {
   ): Promise<Session | Error> {
     // Retrieve a dispatcher from the routing table
     const dispatcher = this.routingTable.getRandomDispatcher();
+
+    if (typeGuard(dispatcher, Error)) {
+      return dispatcher
+    }
+
     // Create the Client using the dispatcher
     const client = new Client(dispatcher);
+
     // Create the session header
     const header = new SessionHeader(
       pocketAAT.applicationPublicKey,
@@ -130,8 +145,7 @@ export class SessionManager {
 
         return this.saveSession(key, session, configuration);
       } else {
-        // Remove node from dispatcher if it failed 3 times
-        return new Error("Error decoding session from Dispatch response");
+        return new Error("Error decoding session from Dispatch response.");
       }
     } else if (this.routingTable.dispatchersCount > 0) {
       // Remove the failed dispatcher from the routing table
@@ -140,7 +154,7 @@ export class SessionManager {
       return await this.requestNewSession(pocketAAT, chain, configuration);
     } else {
       return new Error(
-        "Unable to create a new session due to empty dispatcher's list."
+        "Unable to retrieve a new session using the provided dispatcher(s); the list was clear due to non of the dispatchers being able to provide a session."
       );
     }
   }
@@ -172,6 +186,25 @@ export class SessionManager {
   }
 
   /**
+   * Update the current session using an already requested dispatch response. Returns a Promise with the Session object or an Error when something goes wrong.
+   * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
+   * @param {string} chain - Name of the Blockchain.
+   * @param {Configuration} configuration - Configuration object.
+   * @returns {Promise}
+   * @memberof SessionManager
+   */
+  public async updateCurrentSession(
+    session: Session,
+    pocketAAT: PocketAAT,
+    chain: string,
+    configuration: Configuration
+  ): Promise<Session | Error> {
+    const key = this.getSessionKey(pocketAAT, chain);
+
+    return this.saveSession(key, session, configuration);
+  }
+
+  /**
    * Creates an unique key using the PocketAAT object and the chain.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Blockchain hash.
@@ -191,7 +224,7 @@ export class SessionManager {
    */
   public destroySession(pocketAAT: PocketAAT, chain: string) {
     const key = this.getSessionKey(pocketAAT, chain);
-    (this.sessionMap.get(key) as Queue<Session>).dequeue();
+    (this.sessionMap.get(key) as Queue<Session>).dequeue(); 
   }
 
   /**
