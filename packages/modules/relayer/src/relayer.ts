@@ -432,7 +432,7 @@ export class Relayer {
         if (sessionRefreshed) {
           // If a new session is succesfully obtained retry the relay
           // This won't cause an endless loop because the relay will only be retried only if the session was refreshed
-          return this.send(
+          const refreshedRelay = await this.send(
             relayData.data,
             relayData.blockchain,
             relayData.aat,
@@ -442,6 +442,8 @@ export class Relayer {
             relayData.serviceNode,
             relayData.consensusEnabled
           );
+
+          return refreshedRelay;
         } else {
           return new RpcError(rpcError.code, rpcError.message, undefined, relayData.serviceNode.publicKey);
         }
