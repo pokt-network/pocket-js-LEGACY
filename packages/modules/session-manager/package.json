@@ -38,6 +38,9 @@
     "js-sha3": "^0.8.0"
   },
   "devDependencies": {
+    "@pokt-network/pocket-js-keybase": "../../modules/keybase/",
+    "@pokt-network/pocket-js-nock-utils": "../../sub-modules/nock-utils/",
+    "@pokt-network/aat-js": "0.1.1-rc",
     "@types/chai": "^4.2.7",
     "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.32",
