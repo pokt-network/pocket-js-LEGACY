@@ -84,9 +84,9 @@ export class Client implements IClient {
 
             // Check if response is an error
             if (!typeGuard(response, RpcError)) {
-                const jsonObj = JSON.parse(response)
-
-            const relayResponse = RelayResponse.fromJSON(JSON.stringify({request: request, response: jsonObj}))
+                const relayResponse = RelayResponse.fromJSON(
+                    JSON.stringify({request: request, response: JSON.parse(response)})
+                )
                 // Check if the relay response
                 if (validateResponse) {
                     if (validateRelayResponse(relayResponse) !== undefined){
@@ -97,12 +97,11 @@ export class Client implements IClient {
                     }
                 }
                 return relayResponse
-                
             } else {
                 return response
             }
         } catch (err) {
-            return new RpcError("0", err)
+            return new RpcError("NA", err)
         }
     }
     /**

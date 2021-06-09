@@ -58,7 +58,7 @@ export class RoutingTable {
   }
 
   /**
-   * Reads an array of random dispatchers urls from the routing table
+   * Returns an array of random dispatchers urls from the routing table
    * @param {number} count - Desired number of dispatchers urls returned
    * @returns {URL[] | Error} Random dispatcher urls or Error.
    * @memberof Routing
@@ -70,7 +70,7 @@ export class RoutingTable {
 
     if (dispatchers.length <= 0) {
       return new Error(
-        "Unable to readRandomDispatchers(), No dispatcher's available."
+        "Unable to getRandomDispatchers(), No dispatcher's available."
       );
     }
 
@@ -78,7 +78,7 @@ export class RoutingTable {
   }
 
   /**
-   * Reads a random dispatcher node from the routing table
+   * Returns a random dispatcher node from the routing table
    * @returns {URL | Error} Random dispatcher URL or Error.
    * @memberof Routing
    */
