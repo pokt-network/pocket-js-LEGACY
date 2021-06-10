@@ -1,3 +1,4 @@
+export * from './base-profiler'
 export * from './errors'
 export * from './hex'
 export * from './key-pair'

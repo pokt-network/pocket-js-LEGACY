@@ -1,5 +1,5 @@
 // Object holding the max, min and default values
-const LIMITER = {
+export const LIMITER = {
   max_dispatchers: {
     default: 50,
     min: 1,

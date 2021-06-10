@@ -2,7 +2,7 @@
 *.bak
 
 # typedoc output
-**/main/
+**/doc/main/
 
 # Webpack output
 dist
