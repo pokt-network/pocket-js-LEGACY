@@ -1,4 +1,4 @@
-import { typeGuard, addressFromPublickey, RpcError } from "@pokt-network/pocket-js-utils";
+import { typeGuard, addressFromPublickey, RpcError, BaseProfiler, ProfileResult, NoOpProfiler } from "@pokt-network/pocket-js-utils";
 import { Configuration } from "@pokt-network/pocket-js-configuration";
 import { PocketAAT } from "@pokt-network/aat-js";
 import {
@@ -26,16 +26,21 @@ export class Relayer {
   public readonly configuration: Configuration;
   public readonly keybase: Keybase;
   public readonly sessionManager: SessionManager;
+  private profiler: BaseProfiler
 
   /**
    * @description Constructor for the Relayer class
-   * @param {Configuration} configuration - Configuration object for the relayer.
+   * @param {URL[]} dispatchers - List of dispatchers.
+   * @param {Configuration?} configuration - Configuration object for the relayer.
+   * @param {IKVStore?} store - In memory KVStore instance.
+   * @param {BaseProfiler} profiler - Performance profiler.
    * @memberof Relayer
    */
   constructor(
     dispatchers: URL[],
     configuration: Configuration = new Configuration(),
-    store: IKVStore = new InMemoryKVStore()
+    store: IKVStore = new InMemoryKVStore(),
+    profiler: BaseProfiler = new NoOpProfiler()
   ) {
     if (dispatchers.length <= 0) {
       throw new Error("Failed to instantiate the Relayer due to no dispatcher provided.")
@@ -43,6 +48,7 @@ export class Relayer {
     this.configuration = configuration;
     this.sessionManager = new SessionManager(dispatchers, configuration, store);
     this.keybase = new Keybase(store);
+    this.profiler = profiler;
   }
 
   /**
@@ -67,23 +73,32 @@ export class Relayer {
     method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node,
-    consensusEnabled: boolean = false
+    consensusEnabled: boolean = false,
+    requestID = ""
   ): Promise<RelayResponse | ConsensusNode | RpcError> {
     try {
+      const profileResults: ProfileResult[] = []
+      const functionName = "send_relay"
+
+      // Profiler
+      let profileResult = new ProfileResult("get_current_session")
       // Get the current session
       const currentSessionOrError = await this.sessionManager.getCurrentSession(
         pocketAAT,
         blockchain,
         this.configuration
       );
-
+      // Profiler
+      profileResult.save()
+      profileResults.push(profileResult)
       if (typeGuard(currentSessionOrError, Error)) {
         return RpcError.fromError(currentSessionOrError);
       }
 
       // Set the currentSession; may be refreshed below if the block height is stale
       let currentSession = currentSessionOrError as Session;
-
+      // Profiler
+      profileResult = new ProfileResult("resolve_relay_node")
       // Determine the service node
       const serviceNodeOrError = this.resolveRelayNode(
         currentSession,
@@ -91,7 +106,9 @@ export class Relayer {
         this.configuration,
         node
       );
-
+      // Profiler
+      profileResult.save()
+      profileResults.push(profileResult)
       if (typeGuard(serviceNodeOrError, Error)) {
         return RpcError.fromError(serviceNodeOrError);
       }
@@ -113,11 +130,18 @@ export class Relayer {
         path,
         headers || null
       );
-
+      // Profiler
+      profileResult = new ProfileResult("address_from_public_key")
       // Check if account is available for signing
       const clientAddressHex = addressFromPublickey(Buffer.from(pocketAAT.clientPublicKey, 'hex')).toString("hex")
+      // Profiler
+      profileResult.save()
+      profileResults.push(profileResult)
+      // Profiler
+      profileResult = new ProfileResult("keybase_is_unlocked")
       const isUnlocked = await this.keybase.isUnlocked(clientAddressHex);
-
+      profileResult.save()
+      profileResults.push(profileResult)
       if (!isUnlocked) {
         return new RpcError("NA", "Client account " + clientAddressHex + " for this AAT is not unlocked")
       }
@@ -128,7 +152,8 @@ export class Relayer {
       );
       const requestHash = new RequestHash(relayPayload, relayMeta);
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999));
-      
+      // Profiler
+      profileResult = new ProfileResult("relay_proof_bytes")
       const proofBytes = RelayProof.bytes(
         entropy,
         currentSession.sessionHeader.sessionBlockHeight,
@@ -137,14 +162,21 @@ export class Relayer {
         pocketAAT,
         requestHash
       );
-
+      // Profiler
+      profileResult.save()
+      profileResults.push(profileResult)
+      // Profiler
+      profileResult = new ProfileResult("sign_with_unlocked_account")
       // Sign the proof bytes with an unlocked account
       const signatureOrError = await this.keybase.signWithUnlockedAccount(
         clientAddressHex,
         proofBytes
       );
-
+      // Profiler
+      profileResult.save()
+      profileResults.push(profileResult)
       if (typeGuard(signatureOrError, Error)) {
+        await this.profiler.flushResults({ requestID, blockchain }, functionName, profileResults)
         return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
@@ -164,7 +196,8 @@ export class Relayer {
 
       // Relay to be sent
       const relay = new RelayRequest(relayPayload, relayMeta, relayProof);
-
+      // Profiler
+      profileResult = new ProfileResult("client_relay")
       // Send relay
       const result = await client.relay(
         relay,
@@ -172,7 +205,9 @@ export class Relayer {
         this.configuration.requestTimeOut,
         this.configuration.rejectSelfSignedCertificates
       );
-
+      // Profiler
+      profileResult.save()
+      profileResults.push(profileResult)
       // The following object holds the same information needed to create a relay
       // We pass it into the resolveSendRelayResult for the scenario in which the sendRelay is called again
       const relayData = {
@@ -188,7 +223,7 @@ export class Relayer {
         consensusEnabled,
       };
 
-      return await this.resolveSendRelayResult(result, relayData);
+      return await this.resolveSendRelayResult(result, relayData, profileResults, { requestID, blockchain});
     } catch (error) {
       return error;
     }
@@ -362,8 +397,12 @@ export class Relayer {
    */
   private async resolveSendRelayResult(
     result: RelayResponse | RpcError,
-    relayData: any
+    relayData: any,
+    profileResults: ProfileResult[],
+    profileData: any
   ): Promise<RelayResponse | ConsensusNode | RpcError> {
+    // Profiler
+    const functionName = "send_relay"
     // Check session out of sync error
     if (typeGuard(result, RpcError)) {
       const rpcError = result as RpcError;
@@ -373,11 +412,16 @@ export class Relayer {
         rpcError.code === "75" ||
         rpcError.code === "14" // OutOfSyncRequestError = errors.New("the request block height is out of sync with the current block height")
       ) {
+        // Profiler
+        let profileResult = new ProfileResult("destroy_session")
         // Remove outdated session
         this.sessionManager.destroySession(
           relayData.aat,
           relayData.blockchain
         );
+        // Profiler
+        profileResult.save()
+        profileResults.push(profileResult)
         let sessionRefreshed = false;
         for (
           let retryIndex = 0;
@@ -387,12 +431,17 @@ export class Relayer {
           // Update the current session if is available from the network error response
           if ( rpcError.session !== undefined) {
             // Profiler
+            profileResult = new ProfileResult("update_current_session")
+            // Update current session with the one provided by the network
             const newSessionOrError = await this.sessionManager.updateCurrentSession(
               rpcError.session,
               relayData.aat,
               relayData.blockchain,
               relayData.configuration
             )
+            // Profiler
+            profileResult.save()
+            profileResults.push(profileResult)
             if (typeGuard(newSessionOrError, Error)) {
               // If error or same session, don't even retry relay
               continue
@@ -407,12 +456,16 @@ export class Relayer {
             sessionRefreshed = true
             break
           } else {
+            // Profiler
+            profileResult = new ProfileResult("request_new_session")
             const newSessionOrError = await this.sessionManager.requestNewSession(
               relayData.aat,
               relayData.blockchain,
               relayData.configuration
             )
-
+            // Profiler
+            profileResult.save()
+            profileResults.push(profileResult)
             if (typeGuard(newSessionOrError, Error)) {
               // If error or same session, don't even retry relay
               continue
@@ -430,6 +483,8 @@ export class Relayer {
         }
 
         if (sessionRefreshed) {
+          // Profiler
+          profileResult = new ProfileResult("session_refreshed_send_relay") 
           // If a new session is succesfully obtained retry the relay
           // This won't cause an endless loop because the relay will only be retried only if the session was refreshed
           const refreshedRelay = await this.send(
@@ -442,12 +497,28 @@ export class Relayer {
             relayData.serviceNode,
             relayData.consensusEnabled
           );
-
+          // Profiler
+          profileResult.save()
+          profileResults.push(profileResult)
+          await this.profiler.flushResults({ 
+            requestID: profileData.requestID, 
+            blockchain: profileData.blockchain 
+          }, functionName, profileResults)
           return refreshedRelay;
         } else {
+          // Profiler
+          await this.profiler.flushResults({ 
+            requestID: profileData.requestID, 
+            blockchain: profileData.blockchain 
+          }, functionName, profileResults)
           return new RpcError(rpcError.code, rpcError.message, undefined, relayData.serviceNode.publicKey);
         }
       } else {
+        // Profiler
+        await this.profiler.flushResults({ 
+          requestID: profileData.requestID, 
+          blockchain: profileData.blockchain 
+        }, functionName, profileResults)
         return new RpcError(rpcError.code, rpcError.message, undefined, relayData.serviceNode.publicKey);
       }
     } else if (relayData.consensusEnabled && typeGuard(result, RelayResponse)) {
@@ -461,9 +532,17 @@ export class Relayer {
       }
       return new ConsensusNode(relayData.serviceNode, false, result);
     } else {
+      // Profiler
+      let profileResult = new ProfileResult("add_dispatcher") 
       // Add the used session node to the routing table dispatcher's list
       this.sessionManager.addNewDispatcher(relayData.serviceNode);
-
+      // Profiler
+      profileResult.save()
+      profileResults.push(profileResult)
+      await this.profiler.flushResults({ 
+        requestID: profileData.requestID, 
+        blockchain: profileData.blockchain 
+      }, functionName, profileResults)
       return result;
     }
   }
