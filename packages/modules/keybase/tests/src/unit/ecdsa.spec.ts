@@ -172,14 +172,14 @@ describe("Keybase Digital signature operations", () => {
                 account = account as Account
 
                 // Unlock account
-                const errorOrUndefined = await keybase.unlockAccount(
+                const errorOrUndefined = keybase.unlockAccount(
                     account.addressHex,
                     passphrase,
                     0
                 )
                 expect(errorOrUndefined).to.be.a('undefined')
                 // Check wheter or not is unlocked
-                const isUnlocked = await keybase.isUnlocked(account.addressHex)
+                const isUnlocked = keybase.isUnlocked(account.addressHex)
                 expect(isUnlocked).to.equal(true)
             }).timeout(0)
 
@@ -192,7 +192,7 @@ describe("Keybase Digital signature operations", () => {
                 account = account as Account
 
                 // Unlock account
-                const errorOrUndefined = await keybase.unlockAccount(
+                const errorOrUndefined = keybase.unlockAccount(
                     account.addressHex,
                     passphrase,
                     0
@@ -200,13 +200,13 @@ describe("Keybase Digital signature operations", () => {
                 expect(errorOrUndefined).to.be.a('undefined')
 
                 // Re-lock account
-                const errorOrUndefinedLock = await keybase.lockAccount(
+                const errorOrUndefinedLock = keybase.lockAccount(
                     account.addressHex
                 )
                 expect(errorOrUndefinedLock).to.be.a('undefined')
 
                 // Check wheter or not is unlocked
-                const isUnlocked = await keybase.isUnlocked(account.addressHex)
+                const isUnlocked = keybase.isUnlocked(account.addressHex)
                 expect(isUnlocked).to.equal(false)
             }).timeout(0)
 
@@ -219,13 +219,13 @@ describe("Keybase Digital signature operations", () => {
                 account = account as Account
 
                 // Unlock account
-                const errorOrUndefined = await keybase.unlockAccount(
+                const errorOrUndefined = keybase.unlockAccount(
                     account.addressHex,
                     passphrase,
                     0
                 )
                 expect(errorOrUndefined).to.be.a('undefined')
-                expect(await keybase.isUnlocked(account.addressHex))
+                expect(keybase.isUnlocked(account.addressHex))
 
                 // Produce signature with unlocked account
                 // Sign arbitrary payload
@@ -248,7 +248,7 @@ describe("Keybase Digital signature operations", () => {
                 account = account as Account
                 // Unlock account
                 const waitPeriod = 1
-                const errorOrUndefined = await keybase.unlockAccount(
+                const errorOrUndefined = keybase.unlockAccount(
                     account.addressHex,
                     passphrase,
                     waitPeriod
@@ -258,7 +258,7 @@ describe("Keybase Digital signature operations", () => {
                 // Wait for the waitPeriod and then check in the keybase if the account is unlocked
                 setTimeout(async function (addressHex: string) {
                     // Check wheter or not is unlocked
-                    const isUnlocked = await keybase.isUnlocked(addressHex)
+                    const isUnlocked = keybase.isUnlocked(addressHex)
                     expect(isUnlocked).to.equal(false)
                 }, waitPeriod + 1, account.addressHex)
             }).timeout(0)
@@ -276,27 +276,27 @@ describe("Keybase Digital signature operations", () => {
                 // Unlock account with wrong passphrase
                 const wrongPassphrase = "wrong"
                 expect(wrongPassphrase).to.not.equal(passphrase)
-                let errorOrUndefined = await keybase.unlockAccount(
+                let errorOrUndefined = keybase.unlockAccount(
                     account.addressHex,
                     wrongPassphrase,
                     0
                 )
                 expect(typeGuard(errorOrUndefined, Error)).to.be.true
                 // Check wheter or not is unlocked
-                let isUnlocked = await keybase.isUnlocked(account.addressHex)
+                let isUnlocked = keybase.isUnlocked(account.addressHex)
                 expect(isUnlocked).to.equal(false)
 
                 // Unlock account with empty passphrase
                 const emptyPassphrase = ""
                 expect(emptyPassphrase).to.not.equal(passphrase)
-                errorOrUndefined = await keybase.unlockAccount(
+                errorOrUndefined = keybase.unlockAccount(
                     account.addressHex,
                     emptyPassphrase,
                     0
                 )
                 expect(typeGuard(errorOrUndefined, Error)).to.be.true
                 // Check wheter or not is unlocked
-                isUnlocked = await keybase.isUnlocked(account.addressHex)
+                isUnlocked = keybase.isUnlocked(account.addressHex)
                 expect(isUnlocked).to.equal(false)
             }).timeout(0)
 
@@ -310,7 +310,7 @@ describe("Keybase Digital signature operations", () => {
                 account = account as Account
 
                 // Lock account
-                const errorOrUndefinedLock = await keybase.lockAccount(
+                const errorOrUndefinedLock = keybase.lockAccount(
                     account.addressHex
                 )
 

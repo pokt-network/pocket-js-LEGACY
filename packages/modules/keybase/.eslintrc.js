@@ -87,6 +87,10 @@ module.exports = {
         ],
         "@typescript-eslint/type-annotation-spacing": "off",
         "@typescript-eslint/unified-signatures": "error",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
         "arrow-parens": [
             "off",
             "always"
@@ -151,7 +155,6 @@ module.exports = {
         "no-undef-init": "error",
         "no-underscore-dangle": "error",
         "no-unsafe-finally": "error",
-        "no-unsafe-return": "off",
         "no-unused-expressions": "off",
         "no-unused-labels": "error",
         "no-use-before-define": "off",

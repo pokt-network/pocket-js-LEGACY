@@ -10,7 +10,7 @@ describe("Keybase Import/Export of account", () => {
         it("should import a account given it's private key and a passphrase for encryption", async () => {
             const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
-            const importedAccountOrError = await keybase.importAccount(
+            const importedAccountOrError = keybase.importAccount(
                 Buffer.from(
                     "11ec96f4ab9ba7e6fef32994a2b9ae81414704b3f21ee213155cf77ab1a75d0b373bf4dd9e1a7076bdbdb81fd681430cb242696a51d8230fbe3a966543239e6a",
                     "hex"
@@ -23,7 +23,7 @@ describe("Keybase Import/Export of account", () => {
         it("should export a private key given the address and passphrase", async () => {
             const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
-            const importedAccountOrError = await keybase.importAccount(
+            const importedAccountOrError = keybase.importAccount(
                 Buffer.from(
                     "11ec96f4ab9ba7e6fef32994a2b9ae81414704b3f21ee213155cf77ab1a75d0b373bf4dd9e1a7076bdbdb81fd681430cb242696a51d8230fbe3a966543239e6a",
                     "hex"
@@ -34,7 +34,7 @@ describe("Keybase Import/Export of account", () => {
             const account = importedAccountOrError as Account
 
             // Export the private key
-            const exportedPrivateKeyOrError = await keybase.exportAccount(
+            const exportedPrivateKeyOrError = keybase.exportAccount(
                 account.addressHex,
                 passphrase
             )
@@ -62,14 +62,14 @@ describe("Keybase Import/Export of account", () => {
             // Empty private key
             const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
-            const importedAccountOrError = await keybase.importAccount(
+            const importedAccountOrError = keybase.importAccount(
                 Buffer.from("", "hex"),
                 passphrase
             )
             expect(importedAccountOrError).to.be.a("error")
 
             // Invalid private key
-            const importedAccountOrInvalidError = await keybase.importAccount(
+            const importedAccountOrInvalidError = keybase.importAccount(
                 Buffer.from("fba", "hex"),
                 passphrase
             )
@@ -81,7 +81,7 @@ describe("Keybase Import/Export of account", () => {
             const keybase = new Keybase(new InMemoryKVStore())
             const emptyPassphrase = ""
             expect(emptyPassphrase.length).to.equal(0)
-            const importedAccountOrError = await keybase.importAccount(
+            const importedAccountOrError = keybase.importAccount(
                 Buffer.from(
                     "11ec96f4ab9ba7e6fef32994a2b9ae81414704b3f21ee213155cf77ab1a75d0b373bf4dd9e1a7076bdbdb81fd681430cb242696a51d8230fbe3a966543239e6a",
                     "hex"
@@ -97,7 +97,7 @@ describe("Keybase Import/Export of account", () => {
             const passphrase = "test"
 
             // Export the non existent private key
-            const exportedPrivateKeyOrError = await keybase.exportAccount(
+            const exportedPrivateKeyOrError = keybase.exportAccount(
                 addressHex,
                 passphrase
             )
@@ -107,7 +107,7 @@ describe("Keybase Import/Export of account", () => {
         it("should fail to export with wrong/empty passphrase", async () => {
             const keybase = new Keybase(new InMemoryKVStore())
             const passphrase = "test"
-            const importedAccountOrError = await keybase.importAccount(
+            const importedAccountOrError = keybase.importAccount(
                 Buffer.from(
                     "11ec96f4ab9ba7e6fef32994a2b9ae81414704b3f21ee213155cf77ab1a75d0b373bf4dd9e1a7076bdbdb81fd681430cb242696a51d8230fbe3a966543239e6a",
                     "hex"
@@ -120,7 +120,7 @@ describe("Keybase Import/Export of account", () => {
             // Export the private key with a wrong passphrase
             const wrongPassphrase = "wrong"
             expect(wrongPassphrase).to.not.equal(passphrase)
-            const wrongPassphraseError = await keybase.exportAccount(
+            const wrongPassphraseError = keybase.exportAccount(
                 account.addressHex,
                 wrongPassphrase
             )
@@ -129,7 +129,7 @@ describe("Keybase Import/Export of account", () => {
             // Export the private key with a wrong passphrase
             const emptyPassphrase = ""
             expect(emptyPassphrase).to.not.equal(passphrase)
-            const emptyPassphraseError = await keybase.exportAccount(
+            const emptyPassphraseError = keybase.exportAccount(
                 account.addressHex,
                 emptyPassphrase
             )
