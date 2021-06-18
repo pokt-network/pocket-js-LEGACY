@@ -24,6 +24,7 @@ import scrypt from "scrypt-js"
 export class Keybase implements IKeybase {
     /**
      * Utility function to sign an arbitrary payload with a valid ed25519 private key
+     *
      * @param {Buffer} privateKey - The private key to sign with
      * @param {Buffer} payload - Arbitrary payload to sign
      * @returns {Buffer | Error} The signature or an Error
@@ -38,14 +39,15 @@ export class Keybase implements IKeybase {
             await Sodium.ready
             return Buffer.from(Sodium.crypto_sign_detached(payload, privateKey))
         } catch (err) {
-            return err
+            return err as Error
         }
     }
-
+    /* eslint-disable */
     private ACCOUNT_STORE_PREFIX = "account_"
     private ACCOUNT_INDEX_KEY = "account_index"
     private store: IKVStore
     private unlockedAccounts: Record<string, UnlockedAccount>
+    /* eslint-enable */
 
     /**
      * @description Constructor for the Keybase class
@@ -72,19 +74,20 @@ export class Keybase implements IKeybase {
             // Create the keypair
             await Sodium.ready
             const keypair = Sodium.crypto_sign_keypair()
-            return await this.importAccount(Buffer.from(keypair.privateKey), passphrase)
+            return this.importAccount(Buffer.from(keypair.privateKey), passphrase)
         } catch (err) {
-            return err
+            return err as Error
         }
     }
 
     /**
      * @description Lists all the accounts stored in this keybase
-     * @returns {Promise<Account | Error>} The the new account or an Error
+     * @returns {Account | Error} The the new account or an Error
      * @memberof Keybase
      */
-    public async listAccounts(): Promise<Account[] | Error> {
+    public listAccounts(): Account[] | Error {
         const result = new Array<Account>()
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         let accountIndex = this.store.get(this.ACCOUNT_INDEX_KEY)
         if (typeGuard(accountIndex, Array)) {
             accountIndex = accountIndex as string[]
@@ -94,11 +97,12 @@ export class Keybase implements IKeybase {
             return new Error("Error fetching account index")
         }
         for (const index in accountIndex) {
-            const accountOrError = await this.getAccount(accountIndex[index])
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            const accountOrError = this.getAccount(accountIndex[index])
             if (typeGuard(accountOrError, Account)) {
-                result.push(accountOrError as Account)
+                result.push(accountOrError )
             } else {
-                return accountOrError as Error
+                return accountOrError 
             }
         }
         return result
@@ -107,21 +111,22 @@ export class Keybase implements IKeybase {
     /**
      * @description Retrieves a single account from this keybase
      * @param {string} addressHex - The address of the account to retrieve in hex string format
-     * @returns {Promise<Account | Error>} - The the new account or an Error
+     * @returns {Account | Error} - The the new account or an Error
      * @memberof Keybase
      */
-    public async getAccount(addressHex: string): Promise<Account | Error> {
+    public getAccount(addressHex: string): Account | Error {
         return this.getAccountFromStore(addressHex)
     }
 
     /**
      * Generates a one time use UnlockedAccount from a persisted Account
+     *
      * @param {string} addressHex - The address hex for the account
      * @param {string} passphrase - The passphrase for the account
-     * @returns {Promise<UnlockedAccount | Error>} The UnlockedAccount object or an Error
+     * @returns {UnlockedAccount | Error} The UnlockedAccount object or an Error
      * @memberof Keybase
      */
-    public async getUnlockedAccount(addressHex: string, passphrase: string): Promise<UnlockedAccount | Error> {
+    public getUnlockedAccount(addressHex: string, passphrase: string): UnlockedAccount | Error {
         return this.unlockAccountFromPersistence(addressHex, passphrase)
     }
 
@@ -129,28 +134,28 @@ export class Keybase implements IKeybase {
      * @description Deletes an account stored in the keybase
      * @param {string} addressHex - The address of the account to delete in hex string format
      * @param {string} passphrase - The passphrase for the account in this keybase
-     * @returns {Promise<Error | undefined>} undefined if the account was deleted or an Error
+     * @returns {Error | undefined} undefined if the account was deleted or an Error
      * @memberof Keybase
      */
-    public async deleteAccount(
+    public deleteAccount(
         addressHex: string,
         passphrase: string
-    ): Promise<Error | undefined> {
+    ): Error | undefined {
         const validationError = validateAddressHex(addressHex)
         if (validationError) {
             return validationError
         }
 
         let error
-        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        const unlockedAccountOrError = this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, UnlockedAccount)) {
-            const unlockedAccount = unlockedAccountOrError as UnlockedAccount
+            const unlockedAccount = unlockedAccountOrError 
             return this.removeAccountRecord(unlockedAccount)
         } else if (typeGuard(unlockedAccountOrError, Error)) {
-            error = unlockedAccountOrError as Error
+            error = unlockedAccountOrError 
         } else {
             error = new Error("Unknown error decrypting Account")
         }
@@ -162,14 +167,14 @@ export class Keybase implements IKeybase {
      * @param {string} addressHex The address of the account to update in hex string format
      * @param {string} passphrase The passphrase of the account
      * @param {string} newPassphrase The new passphrase that the account will be updated to
-     * @returns {Promise<Error | undefined>} undefined if the account passphrase was updated or an Error
+     * @returns {Error | undefined} undefined if the account passphrase was updated or an Error
      * @memberof Keybase
      */
-    public async updateAccountPassphrase(
+    public updateAccountPassphrase(
         addressHex: string,
         passphrase: string,
         newPassphrase: string
-    ): Promise<Error | undefined> {
+    ): Error | undefined {
         // Validate the address
         const validationError = validateAddressHex(addressHex)
         if (validationError) {
@@ -177,30 +182,30 @@ export class Keybase implements IKeybase {
         }
 
         let error
-        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        const unlockedAccountOrError = this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, UnlockedAccount)) {
-            const unlockedAccount = unlockedAccountOrError as UnlockedAccount
+            const unlockedAccount = unlockedAccountOrError 
 
             // Remove the account record with the existing passphrase
-            const errorOrUndefined = await this.removeAccountRecord(
+            const errorOrUndefined = this.removeAccountRecord(
                 unlockedAccount
             )
             if (typeGuard(errorOrUndefined, Error)) {
-                error = errorOrUndefined as Error
+                error = errorOrUndefined 
             } else {
                 const importedAccountOrError = this.importAccount(
                     unlockedAccount.privateKey,
                     newPassphrase
                 )
                 if (typeGuard(importedAccountOrError, Error)) {
-                    error = importedAccountOrError as Error
+                    error = importedAccountOrError
                 }
             }
         } else if (typeGuard(unlockedAccountOrError, Error)) {
-            error = unlockedAccountOrError as Error
+            error = unlockedAccountOrError 
         } else {
             error = new Error("Unknown error decrypting Account")
         }
@@ -220,19 +225,19 @@ export class Keybase implements IKeybase {
         passphrase: string,
         payload: Buffer
     ): Promise<Buffer | Error> {
-        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
+        const unlockedAccountOrError = this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return unlockedAccountOrError as Error
+            return unlockedAccountOrError 
         }
-        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
+        const unlockedAccount = unlockedAccountOrError 
         try {
             await Sodium.ready
             return Buffer.from(Sodium.crypto_sign_detached(payload, unlockedAccount.privateKey))
         } catch (err) {
-            return err
+            return err as Error
         }
     }
 
@@ -253,7 +258,7 @@ export class Keybase implements IKeybase {
             return validationError
         }
 
-        const isUnlocked = await this.isUnlocked(addressHex)
+        const isUnlocked = this.isUnlocked(addressHex)
         if (!isUnlocked) {
             return new Error("Account is not unlocked")
         }
@@ -262,7 +267,7 @@ export class Keybase implements IKeybase {
             await Sodium.ready
             return Buffer.from(Sodium.crypto_sign_detached(payload, unlockedAccount.privateKey))
         } catch (err) {
-            return err
+            return err as Error
         }
     }
 
@@ -292,22 +297,22 @@ export class Keybase implements IKeybase {
      * @param {string} addressHex The address of the account that will be unlocked in hex string format
      * @param {string} passphrase The passphrase of the account to unlock
      * @param {number} unlockPeriod The amount of time (in ms) the account is going to be unlocked, defaults to 10 minutes. Use 0 to keep it unlocked indefinetely
-     * @returns {Promise<Error | undefined>} Undefined if account got unlocked or an Error
+     * @returns {Error | undefined} Undefined if account got unlocked or an Error
      * @memberof Keybase
      */
-    public async unlockAccount(
+    public unlockAccount(
         addressHex: string,
         passphrase: string,
         unlockPeriod = 600000
-    ): Promise<Error | undefined> {
-        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
+    ): Error | undefined {
+        const unlockedAccountOrError = this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
 
         // Return errors if any
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return unlockedAccountOrError as Error
+            return unlockedAccountOrError 
         }
 
         if (unlockPeriod > 0) {
@@ -322,7 +327,7 @@ export class Keybase implements IKeybase {
         }
 
         // Cast to unlocked account
-        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
+        const unlockedAccount = unlockedAccountOrError 
         this.unlockedAccounts[unlockedAccount.addressHex] = unlockedAccount
         return undefined
     }
@@ -330,17 +335,17 @@ export class Keybase implements IKeybase {
     /**
      * @description Locks an unlocked account back so signing payloads with it will require a passphrase
      * @param {string} addressHex The address of the account that will be locked in hex string format
-     * @returns {Promise<Error | undefined>} Undefined if account got locked or an Error
+     * @returns {Error | undefined} Undefined if account got locked or an Error
      * @memberof Keybase
      */
-    public async lockAccount(addressHex: string): Promise<Error | undefined> {
+    public lockAccount(addressHex: string): Error | undefined {
         // Validate the address
         const validationError = validateAddressHex(addressHex)
         if (validationError) {
             return validationError
         }
 
-        const isUnlocked = await this.isUnlocked(addressHex)
+        const isUnlocked = this.isUnlocked(addressHex)
         if (!isUnlocked) {
             return new Error("Account is not unlocked")
         }
@@ -351,10 +356,10 @@ export class Keybase implements IKeybase {
     /**
      * @description Returns whether or not the specified account is unlocked
      * @param {string} addressHex The address of the account that will be verified in hex string format
-     * @returns {Promise<boolean>} True or false if the account is unlocked
+     * @returns {boolean} True or false if the account is unlocked
      * @memberof Keybase
      */
-    public async isUnlocked(addressHex: string): Promise<boolean> {
+    public isUnlocked(addressHex: string): boolean {
         return this.unlockedAccounts[addressHex] ? true : false
     }
 
@@ -364,13 +369,13 @@ export class Keybase implements IKeybase {
      * @description Imports an account by using it's private key into this keybase
      * @param {Buffer} privateKey The private key of the account to be imported into this keybase
      * @param {string} passphrase The passphrase of the account to be imported into the keybase
-     * @returns {Promise<Account | Error>} Imported account or an Error
+     * @returns {Account | Error} Imported account or an Error
      * @memberof Keybase
      */
-    public async importAccount(
+    public importAccount(
         privateKey: Buffer,
         passphrase: string
-    ): Promise<Account | Error> {
+    ): Account | Error {
         if (passphrase.length === 0) {
             return new Error("Empty passphrase")
         }
@@ -397,9 +402,9 @@ export class Keybase implements IKeybase {
                 )
             )
             const account = new Account(publicKey, encryptedPKHex)
-            const errorOrUndefined = await this.persistAccount(account)
+            const errorOrUndefined = this.persistAccount(account)
             if (typeGuard(errorOrUndefined, Error)) {
-                return errorOrUndefined as Error
+                return errorOrUndefined 
             } else {
                 return account
             }
@@ -449,21 +454,21 @@ export class Keybase implements IKeybase {
      * @description Exports an account's private key stored in this keybase
      * @param {string} addressHex The address of the account that will be exported in hex string format
      * @param {string} passphrase The passphrase for the account that will be exported
-     * @returns {Promise<Buffer | Error>} Exported account buffer or an Error
+     * @returns {Buffer | Error} Exported account buffer or an Error
      * @memberof Keybase
      */
-    public async exportAccount(
+    public exportAccount(
         addressHex: string,
         passphrase: string
-    ): Promise<Buffer | Error> {
-        const unlockedAccountOrError = await this.unlockAccountFromPersistence(
+    ): Buffer | Error {
+        const unlockedAccountOrError = this.unlockAccountFromPersistence(
             addressHex,
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return unlockedAccountOrError as Error
+            return unlockedAccountOrError 
         }
-        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
+        const unlockedAccount = unlockedAccountOrError 
         return unlockedAccount.privateKey
     }
     /**
@@ -472,24 +477,24 @@ export class Keybase implements IKeybase {
      * @param {string} password - Desired password for the PPK.
      * @param {string} hint - (Optional) Private key hint.
      * @param {string} passphrase - Passphrase to unlock the account in the keybase.
-     * @returns {Promise<string | Error>} 
+     * @returns {string | Error} 
      * @memberof Keybase
      */
-    public async exportPPKfromAccount(
+    public exportPPKfromAccount(
         addressHex: string,
         password: string,
-        hint: string = "",
+        hint = "",
         passphrase: string
-    ): Promise<string | Error> {
+    ): string | Error {
         // Verify mandatory parameters
         if (password.length <= 0 || passphrase.length <= 0) {
             return new Error("Wrong password or passphrase format, please try again with valid information.")
         }
         // Unlock the account
-        const unlockedAccountOrError = await this.getUnlockedAccount(addressHex, passphrase)
+        const unlockedAccountOrError = this.getUnlockedAccount(addressHex, passphrase)
         if (!typeGuard(unlockedAccountOrError, Error)) {
             // Get the PPK
-            const ppkStrOrError = await this.exportPPK(unlockedAccountOrError.privateKey.toString("hex"), password, hint)
+            const ppkStrOrError = this.exportPPK(unlockedAccountOrError.privateKey.toString("hex"), password, hint)
             // Return the ppk or error
             return ppkStrOrError
         }else {
@@ -501,14 +506,14 @@ export class Keybase implements IKeybase {
      * @param {string} privateKey - Account raw private key.
      * @param {string} password - Desired password for the PPK.
      * @param {string} hint - (Optional) Private key hint.
-     * @returns {Promise<string | Error>} 
+     * @returns {string | Error} 
      * @memberof Keybase
      */
-    public async exportPPK(
+    public exportPPK(
         privateKey: string,
         password: string,
-        hint: string = ""
-    ): Promise<string | Error> {
+        hint = ""
+    ): string | Error {
         // Check parameters
         if (privateKey.length <= 0 || password.length <= 0) {
             return new Error("Invalid export PPK properties, please try again with valid information.")
@@ -516,7 +521,7 @@ export class Keybase implements IKeybase {
         // Constants
         const scryptHashLength = 32
         const scryptOptions = {
-            N: 32768,
+            n: 32768,
             r: 8,
             p: 1,
             maxmem: 4294967290
@@ -525,14 +530,14 @@ export class Keybase implements IKeybase {
         const algorithm = "aes-256-gcm"
         try {
             // Generate the salt using the secParam
-            const salt = await cryptoLib.randomBytes(16)
-            const scryptHash = await scrypt.syncScrypt(Buffer.from(password, "utf8"), salt, scryptOptions.N, scryptOptions.r, scryptOptions.p, scryptHashLength)
+            const salt = cryptoLib.randomBytes(16)
+            const scryptHash = scrypt.syncScrypt(Buffer.from(password, "utf8"), salt, scryptOptions.n, scryptOptions.r, scryptOptions.p, scryptHashLength)
             // Create the nonce from the first 12 bytes of the sha256 Scrypt hash
             const scryptHashBuffer = Buffer.from(scryptHash)
             const iv = Buffer.allocUnsafe(secParam)
             scryptHashBuffer.copy(iv, 0, 0, secParam)
             // Generate ciphertext by using the privateKey, nonce and sha256 Scrypt hash
-            const cipher = await cryptoLib.createCipheriv(algorithm, scryptHashBuffer, iv)
+            const cipher = cryptoLib.createCipheriv(algorithm, scryptHashBuffer, iv)
             let cipherText = cipher.update(privateKey, "utf8", "hex")
             cipherText += cipher.final("hex")
             // Concatenate the ciphertext final + auth tag
@@ -557,17 +562,17 @@ export class Keybase implements IKeybase {
      * @param {string} hint - (Optional) ppk hint
      * @param {string} cipherText - Generated ciphertext.
      * @param {string} passphrase - Passphrase to store in the keybase.
-     * @returns {Promise<Account | Error>} 
+     * @returns {Account | Error} 
      * @memberof Keybase
      */
-    public async importPPK(
+    public importPPK(
         password: string,
         salt: string,
-        secParam: number = 12,
-        hint: string = "",
+        secParam = 12,
+        hint = "",
         cipherText: string,
         passphrase: string
-    ): Promise<Account | Error> {
+    ): Account | Error {
         const kdf = "scrypt"
         // Check the parameters
         if (password.length === 0 ||
@@ -586,7 +591,7 @@ export class Keybase implements IKeybase {
             // Validate the jsonStr
             if (!this.validatePPKJSON(jsonStr)) return new Error("Failed to validate the ppk information, please try again with valid information.")
             // Create ppk
-            const ppkOrError = await this.importPPKFromJSON(password, jsonStr, passphrase)
+            const ppkOrError = this.importPPKFromJSON(password, jsonStr, passphrase)
             // Return PPK or Error
             return ppkOrError
         }
@@ -596,14 +601,14 @@ export class Keybase implements IKeybase {
      * @param {string} password - Desired password for the PPK.
      * @param {string} jsonStr - Armored JSON with the PPK information.
      * @param {string} passphrase - Desired passphrase to store the account in the keybase.
-     * @returns {Promise<Account | Error>} 
+     * @returns {Account | Error} 
      * @memberof Keybase
      */
-    public async importPPKFromJSON(
+    public importPPKFromJSON(
         password: string,
         jsonStr: string,
         passphrase: string
-    ): Promise<Account | Error> {
+    ): Account | Error {
         if (password.length === 0 || 
             !this.validatePPKJSON(jsonStr) || 
             passphrase.length === 0) {
@@ -617,7 +622,7 @@ export class Keybase implements IKeybase {
             const tagLength = 16
             const algorithm = "aes-256-gcm"
             const scryptOptions = {
-                N: 32768,
+                n: 32768,
                 r: 8,
                 p: 1,
                 maxmem: 4294967290
@@ -625,7 +630,7 @@ export class Keybase implements IKeybase {
             // Retrieve the salt
             const decryptSalt = Buffer.from(jsonObject.salt, "hex")
             // Scrypt hash
-            const scryptHash = await scrypt.syncScrypt(Buffer.from(password, "utf8"), decryptSalt, scryptOptions.N, scryptOptions.r, scryptOptions.p, scryptHashLength)
+            const scryptHash = scrypt.syncScrypt(Buffer.from(password, "utf8"), decryptSalt, scryptOptions.n, scryptOptions.r, scryptOptions.p, scryptHashLength)
             // Create a buffer from the ciphertext
             const inputBuffer = Buffer.from(jsonObject.ciphertext, 'base64')
 
@@ -643,7 +648,7 @@ export class Keybase implements IKeybase {
             result += decipher.final("utf8")
 
             // Return the imported account or error
-            return await this.importAccount(Buffer.from(result, "hex"), passphrase)
+            return this.importAccount(Buffer.from(result, "hex"), passphrase)
         } catch (error) {
             return error
         }
@@ -652,15 +657,16 @@ export class Keybase implements IKeybase {
     // Private interface
     /**
      * Returns an `UnlockedAccount` object corresponding to the `Account` object stored in this keybase
+     *
      * @param {string} addressHex The address of the account that will be used to create an `UnlockedAccount` in hex string format
      * @param {string} passphrase The passphrase for the account that will be used
-     * @returns {Promise<UnlockedAccount | Error>} Unlocked account or an Error
+     * @returns {UnlockedAccount | Error} Unlocked account or an Error
      * @memberof Keybase
      */
-    private async unlockAccountFromPersistence(
+    private unlockAccountFromPersistence(
         addressHex: string,
         passphrase: string
-    ): Promise<UnlockedAccount | Error> {
+    ): UnlockedAccount | Error {
         // Validate the address
         const validationError = validateAddressHex(addressHex)
         if (validationError) {
@@ -668,9 +674,9 @@ export class Keybase implements IKeybase {
         }
 
         let error
-        const accountOrError = await this.getAccount(addressHex)
+        const accountOrError = this.getAccount(addressHex)
         if (typeGuard(accountOrError, Account)) {
-            const account = accountOrError as Account
+            const account = accountOrError 
             try {
                 // Generate decryption key
                 const key = pbkdf2.pbkdf2Sync(
@@ -718,7 +724,7 @@ export class Keybase implements IKeybase {
                 return err
             }
         } else if (typeGuard(accountOrError, Error)) {
-            error = accountOrError as Error
+            error = accountOrError 
         } else {
             error = new Error("Unknown error getting account")
         }
@@ -728,11 +734,12 @@ export class Keybase implements IKeybase {
     // Internal persistence interface
     /**
      * Persists an account in the storage of this keybase
+     *
      * @param {Account} account
-     * @returns {Promise<Buffer | Error>} Signature buffer or an Error
+     * @returns {Buffer | Error} Signature buffer or an Error
      * @memberof Keybase
      */
-    private async persistAccount(account: Account): Promise<Error | undefined> {
+    private persistAccount(account: Account): Error | undefined {
         // Create the store key
         const accountKey = this.generateAccountStoreKey(account)
 
@@ -761,13 +768,14 @@ export class Keybase implements IKeybase {
 
     /**
      * Removes an account from the storage of this keybase
+     *
      * @param {Account} account
-     * @returns {Promise<Error | undefined>} Undefined if the account was removed or an Error
+     * @returns {Error | undefined} Undefined if the account was removed or an Error
      * @memberof Keybase
      */
-    private async removeAccountRecord(
+    private removeAccountRecord(
         account: Account
-    ): Promise<Error | undefined> {
+    ): Error | undefined {
         // Create the store key
         const accountKey = this.generateAccountStoreKey(account)
 
@@ -793,13 +801,14 @@ export class Keybase implements IKeybase {
 
     /**
      * Gets a properly parsed Account object from the store
+     *
      * @param {string} addressHex The address of the account in hex format
-     * @returns {Promise<Account | Error>} Account from store or an Error
+     * @returns {Account | Error} Account from store or an Error
      * @memberof Keybase
      */
-    private async getAccountFromStore(
+    private getAccountFromStore(
         addressHex: string
-    ): Promise<Account | Error> {
+    ): Account | Error {
         let result: Account | Error
 
         // Validate the address
@@ -817,7 +826,7 @@ export class Keybase implements IKeybase {
         if (account === undefined) {
             result = new Error("Account not found")
         } else if (typeGuard(account, Account)) {
-            result = account as Account
+            result = account 
         } else {
             result = new Error("Error fetching account from store")
         }
@@ -827,6 +836,7 @@ export class Keybase implements IKeybase {
 
     /**
      * Generates a key to be used in the IKVStore for this keybase instance
+     *
      * @param {Account} account The account for which the key wants to be generated for
      * @returns {string} Account store key value
      * @memberof Keybase
@@ -838,6 +848,7 @@ export class Keybase implements IKeybase {
     /**
      * Generates a key to be used in the IKVStore for this keybase instance from the address of
      * the account in hex format
+     *
      * @param {string} addressHex The account for which the key wants to be generated for
      * @returns {string} Generated Account store key.
      * @memberof Keybase
@@ -848,6 +859,7 @@ export class Keybase implements IKeybase {
 
     /**
      * Validates the PPK json string properties
+     *
      * @param {string} jsonStr - JSON String holding the ppk information.
      * @returns {boolean} True or false.
      * @memberof Keybase

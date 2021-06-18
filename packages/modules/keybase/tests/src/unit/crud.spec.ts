@@ -20,7 +20,7 @@ describe("Keybase Crud operations", () => {
             const account2 = await keybase.createAccount("test")
             expect(account2).to.not.to.be.a("error")
 
-            const allAccountsOrError = await keybase.listAccounts()
+            const allAccountsOrError = keybase.listAccounts()
             const allAccounts = allAccountsOrError as Account[]
             expect(allAccounts).to.be.a("array")
             expect(allAccounts.length).to.equal(2)
@@ -33,7 +33,7 @@ describe("Keybase Crud operations", () => {
             const account = await keybase.createAccount("test")
             expect(account).to.not.to.be.a("error")
             const castedAccount: Account = account as Account
-            const retrievedAccount = await keybase.getAccount(
+            const retrievedAccount = keybase.getAccount(
                 castedAccount.addressHex
             )
             expect(account).to.equals(retrievedAccount)
@@ -48,14 +48,14 @@ describe("Keybase Crud operations", () => {
 
             // Delete the account
             account = account as Account
-            const error = await keybase.deleteAccount(
+            const error = keybase.deleteAccount(
                 account.addressHex,
                 passphrase
             )
             expect(error).to.be.a('undefined')
 
             // Check internal account list to make sure account was deleted succesfully
-            const allAccountsOrError = await keybase.listAccounts()
+            const allAccountsOrError = keybase.listAccounts()
             const allAccounts = allAccountsOrError as Account[]
             expect(allAccounts.length).to.equal(0)
         }).timeout(0)
@@ -69,7 +69,7 @@ describe("Keybase Crud operations", () => {
 
             account = account as Account
             const newPassphrase = "test2"
-            const error = await keybase.updateAccountPassphrase(
+            const error = keybase.updateAccountPassphrase(
                 account.addressHex,
                 passphrase,
                 newPassphrase
@@ -78,7 +78,7 @@ describe("Keybase Crud operations", () => {
 
             // Now we try to update the account again to make sure it worked
             const confirmPassphrase = "test3"
-            const confirmErr = await keybase.updateAccountPassphrase(
+            const confirmErr = keybase.updateAccountPassphrase(
                 account.addressHex,
                 newPassphrase,
                 confirmPassphrase
@@ -100,11 +100,11 @@ describe("Keybase Crud operations", () => {
             it("should error on getting an account", async () => {
                 // Emtpy
                 const keybase = new Keybase(new InMemoryKVStore())
-                const emptyAddressError = await keybase.getAccount("")
+                const emptyAddressError = keybase.getAccount("")
                 expect(emptyAddressError).to.be.a("error")
 
                 // Not found
-                const notFoundError = await keybase.getAccount(
+                const notFoundError = keybase.getAccount(
                     "499c5b0651e10aafc7ff29cdf1a1763d6886a59b8052c3f257c7bdaabe0fc16b"
                 )
                 expect(notFoundError).to.be.a("error")
@@ -113,11 +113,11 @@ describe("Keybase Crud operations", () => {
             it("should error on deleting an account", async () => {
                 // Emtpy
                 const keybase = new Keybase(new InMemoryKVStore())
-                const emptyAddressError = await keybase.deleteAccount("", "empty")
+                const emptyAddressError = keybase.deleteAccount("", "empty")
                 expect(emptyAddressError).to.be.a("error")
 
                 // Not found
-                const notFoundError = await keybase.deleteAccount(
+                const notFoundError = keybase.deleteAccount(
                     "499c5b0651e10aafc7ff29cdf1a1763d6886a59b8052c3f257c7bdaabe0fc16b",
                     "notfound"
                 )
@@ -127,7 +127,7 @@ describe("Keybase Crud operations", () => {
             it("should error on updating an account", async () => {
                 // Emtpy
                 const keybase = new Keybase(new InMemoryKVStore())
-                const emptyAddressError = await keybase.updateAccountPassphrase(
+                const emptyAddressError = keybase.updateAccountPassphrase(
                     "",
                     "empty",
                     "empty1"
@@ -135,7 +135,7 @@ describe("Keybase Crud operations", () => {
                 expect(emptyAddressError).to.be.a("error")
 
                 // Not found
-                const notFoundError = await keybase.updateAccountPassphrase(
+                const notFoundError = keybase.updateAccountPassphrase(
                     "499c5b0651e10aafc7ff29cdf1a1763d6886a59b8052c3f257c7bdaabe0fc16b",
                     "notfound",
                     "notfound1"
@@ -155,7 +155,7 @@ describe("Keybase Crud operations", () => {
             account = account as Account
             const wrongPassphrase = "wrongpassphrase"
             expect(passphrase).to.not.equal(wrongPassphrase)
-            const error = await keybase.updateAccountPassphrase(
+            const error = keybase.updateAccountPassphrase(
                 account.addressHex,
                 wrongPassphrase,
                 "anything"
@@ -174,7 +174,7 @@ describe("Keybase Crud operations", () => {
             account = account as Account
             const wrongPassphrase = "wrongpassphrase"
             expect(passphrase).to.not.equal(wrongPassphrase)
-            const error = await keybase.deleteAccount(
+            const error = keybase.deleteAccount(
                 account.addressHex,
                 wrongPassphrase
             )
