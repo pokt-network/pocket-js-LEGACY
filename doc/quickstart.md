@@ -46,11 +46,11 @@ let transactionSender = await pocket.withImportedAccount(account.addressHex, pas
 transactionSender = transactionSender as TransactionSender
 ```
 
-### How to send balance using Pocket
-To send a balance we add 1 step to the whole process and that's it.
+### How to send a transaction using Pocket
+To send a transaction we add 1 step to the whole process and that's it.
 
 ```
-// 3. Send Transaction.
+// 3. Send a transaction.
 const toAddress = "f81896be1964df0537a81274b4d2c9604124449e";
 const chainID = "testnet";
 const fee = "10000";
