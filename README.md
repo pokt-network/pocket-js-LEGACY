@@ -187,7 +187,7 @@ unlockAccount(accountPrivateKey, accountPublicKey, accountPassphrase).then(pocke
 ### Query the Pocket blockchain without using an account:
 ```javascript
 const accountAddress = "36b783a1189f605969f438dfaece2a4b38c65752"
-const balance = await pocketInstance.rpc.query.getBalance(accountAddress)
+const balance = await pocketInstance.rpc().query.getBalance(accountAddress)
 console.log("Account Balance: " + balance)
 ```
 
