@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Hex } from "@pokt-network/pocket-js-utils"
 import { StakingStatus } from "./staking-status"
 
@@ -34,10 +35,11 @@ export class Node {
   public readonly serviceURL: URL
   public readonly chains: string[]
   public readonly unstakingCompletionTimestamp: string | undefined
-  public alreadyInConsensus: boolean = false
+  public alreadyInConsensus = false
 
   /**
    * Creates a Node.
+   *
    * @constructor
    * @param {string} address - Node address hex.
    * @param {string} publicKey - Node public key hex.
@@ -56,7 +58,7 @@ export class Node {
     stakedTokens: BigInt,
     serviceURL: string,
     chains: string[] = [],
-    unstakingCompletionTimestamp: string = ""
+    unstakingCompletionTimestamp = ""
   ) {
     this.address = address
     this.publicKey = publicKey
@@ -74,10 +76,11 @@ export class Node {
   /**
    *
    * Creates a JSON object with the Node properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof Node
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       address: this.address,
       chains: this.chains,
@@ -92,10 +95,11 @@ export class Node {
   /**
    *
    * Verify if all properties are valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Node
    */
-  public isValid() {
+  public isValid(): boolean {
     let validAddress = true
     let validPubKey = true
     let validServiceUrl = true

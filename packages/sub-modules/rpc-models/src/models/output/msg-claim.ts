@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { SessionHeader } from "../input"
 import { EvidenceType } from "../evidence-type"
 import { Hex } from "@pokt-network/pocket-js-utils"
@@ -19,6 +20,7 @@ export class MsgClaim {
     /**
      *
      * Creates a RelayMeta object using a JSON string
+     *
      * @param {string} json - JSON string.
      * @returns {MsgClaim} - MsgClaim object.
      * @memberof MsgClaim
@@ -59,6 +61,7 @@ export class MsgClaim {
 
     /**
      * Challenge Response.
+     *
      * @constructor
      * @param {string} response - response json.
      */
@@ -84,10 +87,11 @@ export class MsgClaim {
     /**
      *
      * Creates a JSON object with the MsgClaim properties
-     * @returns {JSON} - JSON Object.
+     *
+     * @returns {any} - JSON Object.
      * @memberof MsgClaim
      */
-    public toJSON() {
+    public toJSON(): any {
         return {
             header: this.header.toJSON(),
             merkle_root: {
@@ -106,6 +110,7 @@ export class MsgClaim {
     /**
      *
      * Check if the MsgClaim object is valid
+     *
      * @returns {boolean} - True or false.
      * @memberof MsgClaim
      */

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Hex } from "@pokt-network/pocket-js-utils"
 import { StakingStatus } from "./staking-status"
 /**
@@ -9,6 +10,7 @@ export class Application {
   /**
    *
    * Creates a Application object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {Application} - Application object.
    * @memberof Application
@@ -44,6 +46,7 @@ export class Application {
 
   /**
    * Creates a Application.
+   *
    * @constructor
    * @param {string} address - The hex address of the application
    * @param {string} publicKey - The hex consensus public key of the application.
@@ -62,7 +65,7 @@ export class Application {
     chains: string[] = [],
     stakedTokens: BigInt,
     maxRelays: BigInt,
-    unstakingCompletionTime: string = ""
+    unstakingCompletionTime = ""
   ) {
     this.address = address
     this.publicKey = publicKey
@@ -80,10 +83,11 @@ export class Application {
   /**
    *
    * Creates a JSON object with the Application properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof Application
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       address: this.address,
       chains: this.chains,
@@ -98,10 +102,11 @@ export class Application {
   /**
    *
    * Verify if all properties are valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Application
    */
-  public isValid() {
+  public isValid(): boolean {
     let validAddress = true
     let validPubKey = true
     

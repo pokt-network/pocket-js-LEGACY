@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Node } from "./node"
 import { RelayResponse } from "@pokt-network/pocket-js-relay-models"
 
@@ -10,6 +11,7 @@ export class ConsensusNode {
   /**
    *
    * Creates a ConsensusNode object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {ConsensusNode} - ConsensusNode object.
    * @memberof ConsensusNode
@@ -34,6 +36,7 @@ export class ConsensusNode {
 
   /**
    * Consensus node.
+   *
    * @constructor
    * @param {Node} node - Signature.
    * @param {boolean} status - True if the response is accepted or false if not.
@@ -52,10 +55,11 @@ export class ConsensusNode {
   /**
    *
    * Creates a JSON object with the ConsensusNode properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof ConsensusNode
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       node: this.node.toJSON(),
       status: this.status,
@@ -65,6 +69,7 @@ export class ConsensusNode {
   /**
    *
    * Check if the ConsensusNode object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof ConsensusNode
    */

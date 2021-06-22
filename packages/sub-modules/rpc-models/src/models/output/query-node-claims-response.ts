@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { MsgClaim } from "./msg-claim"
 
 /**
@@ -9,6 +10,7 @@ export class QueryNodeClaimsResponse {
   /**
    *
    * Creates a QueryNodeClaimsResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryNodeClaimsResponse} - QueryNodeClaimsResponse object.
    * @memberof QueryNodeClaimsResponse
@@ -41,6 +43,7 @@ export class QueryNodeClaimsResponse {
 
   /**
    * Query Node Claims Response.
+   *
    * @constructor
    * @param {MsgClaim[]} msgClaims - Stored receipt object.
    */
@@ -60,10 +63,11 @@ export class QueryNodeClaimsResponse {
   /**
    *
    * Creates a JSON object with the QueryNodeClaimsResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryNodeClaimsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     const msgClaimsList: object[] = []
 
     this.msgClaims.forEach(msgClaim => {
@@ -79,6 +83,7 @@ export class QueryNodeClaimsResponse {
   /**
    *
    * Check if the QueryNodeClaimsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryNodeClaimsResponse
    */

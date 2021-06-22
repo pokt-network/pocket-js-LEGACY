@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  * @class ChallengeRequest
  */
@@ -11,6 +12,7 @@ export class ChallengeRequest {
     /**
      *
      * Creates a ChallengeRequest object using a JSON string
+     *
      * @param {String} json - JSON string.
      * @returns {ChallengeRequest} - ChallengeRequest object.
      * @memberof ChallengeRequest
@@ -33,6 +35,7 @@ export class ChallengeRequest {
 
     /**
      * Challenge Request.
+     *
      * @constructor
      * @param {MajorityResponse} majorityResponse - MajorityResponse object.
      * @param {MinorityResponse} minorityResponse - MinorityResponse object.
@@ -52,10 +55,11 @@ export class ChallengeRequest {
     /**
      *
      * Creates a JSON object with the ChallengeRequest properties
-     * @returns {JSON} - JSON Object.
+     *
+     * @returns {any} - JSON Object.
      * @memberof ChallengeRequest
      */
-    public toJSON() {
+    public toJSON(): any {
         return {
             majority_responses: this.majorityResponse.toJSON(),
             minority_response: this.minorityResponse.toJSON()
@@ -65,6 +69,7 @@ export class ChallengeRequest {
     /**
      *
      * Check if the ChallengeRequest object is valid
+     *
      * @returns {boolean} - True or false.
      * @memberof ChallengeRequest
      */

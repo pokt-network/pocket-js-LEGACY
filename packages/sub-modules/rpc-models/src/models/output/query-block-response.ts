@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BlockMeta } from "../block-meta"
 import { Block } from "../block"
 
@@ -10,6 +11,7 @@ export class QueryBlockResponse {
   /**
    *
    * Creates a QueryBlockResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryBlockResponse} - QueryBlockResponse object.
    * @memberof QueryBlockResponse
@@ -37,6 +39,7 @@ export class QueryBlockResponse {
 
   /**
    * Query Block Response.
+   *
    * @constructor
    * @param {Block} block - Block object.
    */
@@ -51,10 +54,11 @@ export class QueryBlockResponse {
   /**
    *
    * Creates a JSON object with the QueryBlockResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryBlockResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       "block": this.block.toJSON(),
       "block_meta": this.blockMeta.toJSON()
@@ -63,6 +67,7 @@ export class QueryBlockResponse {
   /**
    *
    * Check if the QueryBlockResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryBlockResponse
    */

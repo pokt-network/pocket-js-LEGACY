@@ -8,6 +8,7 @@ export class ChallengeResponse {
     /**
      *
      * Creates a RelayMeta object using a JSON string
+     *
      * @param {string} json - JSON string.
      * @returns {ChallengeResponse} - ChallengeResponse object.
      * @memberof ChallengeResponse
@@ -28,6 +29,7 @@ export class ChallengeResponse {
 
     /**
      * Challenge Response.
+     *
      * @constructor
      * @param {string} response - response json.
      */
@@ -43,10 +45,11 @@ export class ChallengeResponse {
     /**
      *
      * Creates a JSON object with the ChallengeResponse properties
-     * @returns {JSON} - JSON Object.
+     *
+     * @returns {any} - JSON Object.
      * @memberof ChallengeResponse
      */
-    public toJSON() {
+    public toJSON(): any {
         return {
             response: this.response
         }
@@ -54,6 +57,7 @@ export class ChallengeResponse {
     /**
      *
      * Check if the ChallengeResponse object is valid
+     *
      * @returns {boolean} - True or false.
      * @memberof ChallengeResponse
      */

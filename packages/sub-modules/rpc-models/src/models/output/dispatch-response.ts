@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Node } from "../"
 import { SessionHeader } from "../input"
 
@@ -10,6 +11,7 @@ export class DispatchResponse {
   /**
    *
    * Creates a DispatchResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {DispatchResponse} - DispatchResponse object.
    * @memberof DispatchResponse
@@ -47,6 +49,7 @@ export class DispatchResponse {
 
   /**
    * Dispatch Response.
+   *
    * @constructor
    * @param {BigInt} blockHeight - blockheight the dispatch response was received
    * @param {SessionHeader} header -
@@ -66,10 +69,11 @@ export class DispatchResponse {
   /**
    *
    * Creates a JSON object with the DispatchResponse properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof DispatchResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       block_height: Number(this.blockHeight.toString()),
       session: {
@@ -82,6 +86,7 @@ export class DispatchResponse {
   /**
    *
    * Check if the DispatchResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof DispatchResponse
    */

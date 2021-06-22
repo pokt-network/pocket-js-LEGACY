@@ -7,6 +7,7 @@ export class QueryHeightResponse {
   /**
    *
    * Creates a QueryHeightResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryHeightResponse} - QueryHeightResponse object.
    * @memberof QueryHeightResponse
@@ -25,6 +26,7 @@ export class QueryHeightResponse {
 
   /**
    * Query Height Response.
+   *
    * @constructor
    * @param {Bigint} height - Current network block height.
    */
@@ -38,15 +40,17 @@ export class QueryHeightResponse {
   /**
    *
    * Creates a JSON object with the QueryHeightResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryHeightResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return { height: Number(this.height.toString()) }
   }
   /**
    *
    * Check if the QueryHeightResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryHeightResponse
    */

@@ -10,6 +10,7 @@ export class BlockID {
   /**
    *
    * Creates a BlockID object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {BlockID} - BlockID object.
    * @memberof BlockID
@@ -30,6 +31,7 @@ export class BlockID {
 
   /**
    * BlockID.
+   *
    * @constructor
    * @param {string} hash - BlockID hash.
    * @param {PartSetHeader} parts - PartSetHeader object.
@@ -45,10 +47,11 @@ export class BlockID {
   /**
    *
    * Creates a JSON object with the BlockID properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof BlockID
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       hash: this.hash,
       parts: this.parts.toJSON()
@@ -57,6 +60,7 @@ export class BlockID {
   /**
    *
    * Check if the BlockID object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof BlockID
    */

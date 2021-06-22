@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BlockID } from "./block-id"
 
 /**
@@ -9,6 +10,7 @@ export class BlockHeader {
   /**
    *
    * Creates a BlockHeader object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {BlockHeader} - BlockHeader object.
    * @memberof BlockHeader
@@ -57,6 +59,7 @@ export class BlockHeader {
 
   /**
    * BlockHeader.
+   *
    * @constructor
    * @param {string} chainID - Blockchain ID.
    * @param {BigInt} height - Block Height.
@@ -114,10 +117,11 @@ export class BlockHeader {
   /**
    *
    * Creates a JSON object with the BlockHeader properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof BlockHeader
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       app_hash: this.appHash,
       chain_id: this.chainID,
@@ -139,6 +143,7 @@ export class BlockHeader {
   /**
    *
    * Check if the BlockHeader object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof BlockHeader
    */

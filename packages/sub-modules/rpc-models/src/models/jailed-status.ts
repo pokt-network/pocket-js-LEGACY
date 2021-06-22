@@ -2,10 +2,10 @@
  *
  * JailedStatus enum with the possible Jailed status values
  */
- export enum JailedStatus {
-    NA = "",
-    Jailed = 1,
-    Unjailed = 2
+export enum JailedStatus {
+    na = "",
+    jailed = 1,
+    unjailed = 2
 }
 /**
  *
@@ -15,6 +15,7 @@ export namespace JailedStatus {
     /**
      *
      * Returns the JailedStatus by passing an string
+     *
      * @param {string} status - Staking status string.
      * @returns {JailedStatus} - JailedStatus object.
      * @memberof JailedStatus
@@ -22,11 +23,11 @@ export namespace JailedStatus {
     export function getStatus(status: number): JailedStatus {
         switch (status) {
             case 1:
-                return JailedStatus.Jailed
+                return JailedStatus.jailed
             case 2:
-                return JailedStatus.Unjailed
+                return JailedStatus.unjailed
             default:
-                return JailedStatus.NA
+                return JailedStatus.na
         }
     }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BlockID } from "./block-id"
 import { BlockHeader } from "./block-header"
 
@@ -10,6 +11,7 @@ export class BlockMeta {
   /**
    *
    * Creates a BlockMeta object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {BlockMeta} - BlockMeta object.
    * @memberof BlockMeta
@@ -28,6 +30,7 @@ export class BlockMeta {
 
   /**
    * BlockMeta.
+   *
    * @constructor
    * @param {BlockID} blockID - BlockMeta block_id.
    * @param {BlockHeader} header - Block header.
@@ -43,10 +46,11 @@ export class BlockMeta {
   /**
    *
    * Creates a JSON object with the BlockMeta properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof BlockMeta
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       block_id: this.blockID.toJSON(),
       header: this.header.toJSON()
@@ -55,6 +59,7 @@ export class BlockMeta {
   /**
    *
    * Check if the BlockMeta object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof BlockMeta
    */

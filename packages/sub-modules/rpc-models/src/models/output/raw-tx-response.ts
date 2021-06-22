@@ -7,6 +7,7 @@ import { typeGuard } from "@pokt-network/pocket-js-utils"
 export class RawTxResponse {
     /**
      * Construct this model from it's JSON representation
+     *
      * @param jsonStr {string}
      * @returns {RawTxResponse | Error}
      */
@@ -22,7 +23,7 @@ export class RawTxResponse {
             if (rawTxResObj.txhash && typeGuard(rawTxResObj.txhash, "string")) {
                 hash = rawTxResObj.txhash as string
             } else {
-                return new Error("Invalid tx hash: " + rawTxResObj.txhash)
+                return new Error(`Invalid tx hash: ${rawTxResObj.txhash as string}`)
             }
             // Parse the logs if they are available
             if (rawTxResObj.logs && typeGuard(rawTxResObj.logs, Array)) {
@@ -30,7 +31,7 @@ export class RawTxResponse {
                 for (let i = 0; i < logObjs.length; i++) {
                     const txLogOrError = TxLog.fromJSONObj(logObjs[i])
                     if (typeGuard(txLogOrError, TxLog)) {
-                        logs.push(txLogOrError as TxLog)
+                        logs.push(txLogOrError )
                     }
                 }
             }
@@ -67,6 +68,7 @@ export class RawTxResponse {
 
     /**
      * Constructor for this class
+     *
      * @param {BigInt} height - The height for this Transaction
      * @param {string} hash - The transaction hash in hex format
      * @param {BigInt} code - The code for this tx

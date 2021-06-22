@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Transaction } from "../transaction"
 
 /**
@@ -9,6 +10,7 @@ export class QueryBlockTxsResponse {
   /**
    *
    * Creates a QueryBlockTxsResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryBlockTxsResponse} - QueryBlockTxsResponse object.
    * @memberof QueryBlockTxsResponse
@@ -39,6 +41,7 @@ export class QueryBlockTxsResponse {
 
   /**
    * Query block transactions Response.
+   *
    * @constructor
    * @param {Transaction[]} transactions - List of transactions.
    * @param {number} totalCount - Transaction count
@@ -57,10 +60,11 @@ export class QueryBlockTxsResponse {
   /**
    *
    * Creates a JSON object with the QueryBlockTxsResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryBlockTxsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     const transactions: {}[] = []
 
     this.transactions.forEach(tx => {
@@ -76,6 +80,7 @@ export class QueryBlockTxsResponse {
   /**
    *
    * Check if the QueryBlockTxsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryBlockTxsResponse
    */

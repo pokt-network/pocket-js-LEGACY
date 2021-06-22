@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  *
  *
@@ -7,6 +8,7 @@ export class NodeParams {
   /**
    *
    * Creates a NodeParams object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {NodeParams} - NodeParams object.
    * @memberof NodeParams
@@ -51,6 +53,7 @@ export class NodeParams {
 
   /**
    * NodeParams.
+   *
    * @constructor
    * @param {BigInt} daoAllocation - Award percentage of the mint for the DAO.
    * @param {BigInt} maxValidators - Maximum number of validators in the network at any given block.
@@ -102,10 +105,11 @@ export class NodeParams {
   /**
    *
    * Creates a JSON object with the NodeParams properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof NodeParams
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       dao_allocation: Number(this.daoAllocation.toString()),
       max_validators: Number(this.maxValidators.toString()),
@@ -125,6 +129,7 @@ export class NodeParams {
   /**
    *
    * Check if the NodeParams object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof NodeParams
    */

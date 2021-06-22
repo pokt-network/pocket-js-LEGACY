@@ -9,6 +9,7 @@ export class PartSetHeader {
   /**
    *
    * Creates a PartSetHeader object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {PartSetHeader} - PartSetHeader object.
    * @memberof PartSetHeader
@@ -28,6 +29,7 @@ export class PartSetHeader {
 
   /**
    * PartSetHeader.
+   *
    * @constructor
    * @param {BigInt} total - Total count.
    * @param {string} hash - Part hash.
@@ -43,10 +45,11 @@ export class PartSetHeader {
   /**
    *
    * Creates a JSON object with the PartSetHeader properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof PartSetHeader
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       hash: this.hash,
       total: Number(this.total.toString())
@@ -55,6 +58,7 @@ export class PartSetHeader {
   /**
    *
    * Check if the PartSetHeader object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof PartSetHeader
    */

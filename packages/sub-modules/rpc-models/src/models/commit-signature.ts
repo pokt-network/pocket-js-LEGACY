@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BlockID } from "./block-id"
 import { Hex } from "@pokt-network/pocket-js-utils"
 
@@ -15,6 +16,7 @@ export class CommitSignature {
   /**
    *
    * Creates a CommitSignature object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {CommitSignature} - CommitSignature object.
    * @memberof CommitSignature
@@ -49,6 +51,7 @@ export class CommitSignature {
 
   /**
    * CommitSignature.
+   *
    * @constructor
    * @param {string} type - CommitSignature type. 
    * @param {BigInt} height - Block height. 
@@ -85,10 +88,11 @@ export class CommitSignature {
   /**
    *
    * Creates a JSON object with the CommitSignature properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof CommitSignature
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       block_id: this.blockID.toJSON(),
       height: Number(this.height.toString()),
@@ -103,6 +107,7 @@ export class CommitSignature {
   /**
    *
    * Check if the CommitSignature object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof CommitSignature
    */

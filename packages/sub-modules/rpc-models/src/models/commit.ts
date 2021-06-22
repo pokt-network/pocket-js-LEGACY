@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BlockID } from "./block-id"
 import { CommitSignature } from "./commit-signature"
 
@@ -10,6 +11,7 @@ export class Commit {
   /**
    *
    * Creates a Commit object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {Commit} - Commit object.
    * @memberof Commit
@@ -48,6 +50,7 @@ export class Commit {
 
   /**
    * Commit.
+   *
    * @constructor
    * @param {BlockID} blockID - Commit blockID.
    * @param {CommitSignature} precommits - Commits signature.
@@ -63,10 +66,11 @@ export class Commit {
   /**
    *
    * Creates a JSON object with the Commit properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof Commit
    */
-  public toJSON() {
+  public toJSON(): any {
     const signatureList: object[] = []
 
     if (this.precommits.length > 0) {
@@ -83,6 +87,7 @@ export class Commit {
   /**
    *
    * Check if the Commit object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Commit
    */

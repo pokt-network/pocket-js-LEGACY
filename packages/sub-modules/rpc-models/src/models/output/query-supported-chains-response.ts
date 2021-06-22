@@ -7,6 +7,7 @@ export class QuerySupportedChainsResponse {
   /**
    *
    * Creates a QuerySupportedChainsResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QuerySupportedChainsResponse} - QuerySupportedChainsResponse object.
    * @memberof QuerySupportedChainsResponse
@@ -30,6 +31,7 @@ export class QuerySupportedChainsResponse {
 
   /**
    * QuerySupportedChainsResponse
+   *
    * @constructor
    * @param {string[]} supportedChains - Supported chains string array.
    */
@@ -43,10 +45,11 @@ export class QuerySupportedChainsResponse {
   /**
    *
    * Creates a JSON object with the QuerySupportedChainsResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QuerySupportedChainsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     const chainsJSON: string[] = []
     this.supportedChains.forEach(chain => {
       chainsJSON.push(chain)
@@ -56,6 +59,7 @@ export class QuerySupportedChainsResponse {
   /**
    *
    * Check if the QuerySupportedChainsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QuerySupportedChainsResponse
    */

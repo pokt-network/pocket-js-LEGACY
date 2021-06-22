@@ -9,6 +9,7 @@ export class ResponseDeliverTx {
   /**
    *
    * Creates a ResponseDeliverTx object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {ResponseDeliverTx} - ResponseDeliverTx object.
    * @memberof ResponseDeliverTx
@@ -55,6 +56,7 @@ export class ResponseDeliverTx {
 
   /**
    * Creates a ResponseDeliverTx.
+   *
    * @constructor
    * @param {number} code - 
    * @param {string[]} data - 
@@ -94,10 +96,11 @@ export class ResponseDeliverTx {
   /**
    *
    * Creates a JSON object with the ResponseDeliverTx properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof ResponseDeliverTx
    */
-  public toJSON() {
+  public toJSON(): any {
     const events: object[] = []
 
     if (this.events.length > 0) {
@@ -121,10 +124,11 @@ export class ResponseDeliverTx {
   /**
    *
    * Verify if all properties are valid
+   *
    * @returns {boolean} - True or false.
    * @memberof ResponseDeliverTx
    */
-  public isValid() {
+  public isValid(): boolean {
     return true
   }
 }

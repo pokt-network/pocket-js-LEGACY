@@ -10,6 +10,7 @@ export class MinorityResponse {
     /**
      *
      * Creates a MinorityResponse object using a JSON string
+     *
      * @param {String} json - JSON string.
      * @returns {MinorityResponse} - MinorityResponse object.
      * @memberof MinorityResponse
@@ -30,6 +31,7 @@ export class MinorityResponse {
 
     /**
      * Minority Response.
+     *
      * @constructor
      * @param {Relay} relay - Array of relays.
      */
@@ -46,15 +48,17 @@ export class MinorityResponse {
     /**
      *
      * Creates a JSON object with the MinorityResponse properties
-     * @returns {JSON} - JSON Object.
+     *
+     * @returns {any} - JSON Object.
      * @memberof MinorityResponse
      */
-    public toJSON() {
+    public toJSON(): any {
         return this.relay.toJSON()
     }
     /**
      *
      * Check if the MinorityResponse object is valid
+     *
      * @returns {boolean} - True or false.
      * @memberof MinorityResponse
      */

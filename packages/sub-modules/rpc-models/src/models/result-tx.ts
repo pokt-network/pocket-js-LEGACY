@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { TxProof } from "./tx-proof"
 import { ResponseDeliverTx } from "./response-deliver-tx"
 /**
@@ -9,6 +10,7 @@ export class ResultTx {
   /**
    *
    * Creates a ResultTx object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {ResultTx} - ResultTx object.
    * @memberof ResultTx
@@ -41,6 +43,7 @@ export class ResultTx {
 
   /**
    * Creates a ResultTx.
+   *
    * @constructor
    * @param {string} hash - 
    * @param {BigInt} height - 
@@ -71,10 +74,11 @@ export class ResultTx {
   /**
    *
    * Creates a JSON object with the ResultTx properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof ResultTx
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       hash: this.hash,
       height: Number(this.height.toString()),
@@ -87,10 +91,11 @@ export class ResultTx {
   /**
    *
    * Verify if all properties are valid
+   *
    * @returns {boolean} - True or false.
    * @memberof ResultTx
    */
-  public isValid() {
+  public isValid(): boolean {
     return this.hash.length > 0 &&
       Number(this.height.toString()) >= 0 &&
       this.index >= 0 &&

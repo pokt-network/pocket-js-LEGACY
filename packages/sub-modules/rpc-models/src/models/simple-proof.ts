@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Hex } from "@pokt-network/pocket-js-utils"
 /**
  *
@@ -8,6 +9,7 @@ export class SimpleProof {
   /**
    *
    * Creates a SimpleProof object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {SimpleProof} - SimpleProof object.
    * @memberof SimpleProof
@@ -30,6 +32,7 @@ export class SimpleProof {
 
   /**
    * SimpleProof.
+   *
    * @constructor
    * @param {BigInt} total - Total number of items.
    * @param {BigInt} index - Index of item to prove.
@@ -49,10 +52,11 @@ export class SimpleProof {
   /**
    *
    * Creates a JSON object with the SimpleProof properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof SimpleProof
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       aunts: this.aunts,
       index: Number(this.index.toString()),
@@ -63,6 +67,7 @@ export class SimpleProof {
   /**
    *
    * Check if the SimpleProof object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof SimpleProof
    */

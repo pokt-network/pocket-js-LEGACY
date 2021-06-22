@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { SessionHeader } from "./input/session-header"
 import { Hex } from "@pokt-network/pocket-js-utils"
 
@@ -10,6 +11,7 @@ export class StoredReceipt {
   /**
    *
    * Creates a StoredReceipt object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {StoredReceipt} - StoredReceipt object.
    * @memberof StoredReceipt
@@ -37,6 +39,7 @@ export class StoredReceipt {
 
   /**
    * StoredReceipt.
+   *
    * @constructor
    * @param {SessionHeader} sessionHeader - Session Header.
    * @param {string} address - Servicer address.
@@ -57,10 +60,11 @@ export class StoredReceipt {
   /**
    *
    * Creates a JSON object with the StoredReceipt properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof StoredReceipt
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       servicer_address: this.address,
       session_header: this.sessionHeader.toJSON(),
@@ -71,6 +75,7 @@ export class StoredReceipt {
   /**
    *
    * Check if the StoredReceipt object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof StoredReceipt
    */

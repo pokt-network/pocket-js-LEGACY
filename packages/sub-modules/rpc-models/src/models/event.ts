@@ -13,6 +13,7 @@ export class Event {
   /**
    *
    * Creates a Event object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {Event} - Event object.
    * @memberof Event
@@ -44,6 +45,7 @@ export class Event {
 
   /**
    * Creates a Event.
+   *
    * @constructor
    * @param {string} type - 
    * @param {IKVPair} attributes - 
@@ -62,10 +64,11 @@ export class Event {
   /**
    *
    * Creates a JSON object with the Event properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof Event
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       type: this.type,
       attributes: this.attributes,
@@ -74,10 +77,11 @@ export class Event {
   /**
    *
    * Verify if all properties are valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Event
    */
-  public isValid() {
+  public isValid(): boolean {
     return this.type.length > 0 &&
       this.attributes !== undefined
   }

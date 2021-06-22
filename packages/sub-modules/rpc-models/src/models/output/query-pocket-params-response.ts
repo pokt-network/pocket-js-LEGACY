@@ -9,6 +9,7 @@ export class QueryPocketParamsResponse {
   /**
    *
    * Creates a QueryPocketParamsResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryPocketParamsResponse} - QueryPocketParamsResponse object.
    * @memberof QueryPocketParamsResponse
@@ -25,6 +26,7 @@ export class QueryPocketParamsResponse {
 
   /**
    * QueryPocketParamsResponse
+   *
    * @constructor
    * @param {PocketParams} applicationParams - Application params.
    */
@@ -38,15 +40,17 @@ export class QueryPocketParamsResponse {
   /**
    *
    * Creates a JSON object with the QueryPocketParamsResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryPocketParamsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return this.pocketParams.toJSON()
   }
   /**
    *
    * Check if the QueryPocketParamsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryPocketParamsResponse
    */
