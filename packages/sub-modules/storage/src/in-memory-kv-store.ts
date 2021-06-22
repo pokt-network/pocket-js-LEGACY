@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { IKVStore } from "./kv-store"
 
 
@@ -18,7 +19,7 @@ export class InMemoryKVStore implements IKVStore {
    * @param {any} value - value to be associated with the specified key
    * @memberof InMemoryKVStore
    */
-  public add(key: string, value: any) {
+  public add(key: string, value: any): void {
     this.localStorage.set(key, value)
   }
 
@@ -72,7 +73,7 @@ export class InMemoryKVStore implements IKVStore {
   /**
    * @description Removes all of the mappings from this object.
    */
-  public clear() {
+  public clear(): void {
     this.localStorage.clear()
   }
 }
