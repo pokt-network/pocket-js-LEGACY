@@ -15,6 +15,7 @@ export class RoutingTable {
   public readonly store: IKVStore;
   /**
    * Creates an instance of routing.
+   * 
    * @param {URL[]} dispatchers - Array holding the initial dispatcher url(s).
    * @param {Configuration} configuration - Configuration object.
    * @param {IKVStore} store - KeyBase store object.
@@ -45,6 +46,7 @@ export class RoutingTable {
   }
   /**
    * Returns the stored dispatchers urls count
+   * 
    * @returns {number} Dispatcher nodes count.
    * @memberof Routing
    */
@@ -58,7 +60,8 @@ export class RoutingTable {
   }
 
   /**
-   * Returns an array of random dispatchers urls from the routing table
+   * Reads an array of random dispatchers urls from the routing table
+   * 
    * @param {number} count - Desired number of dispatchers urls returned
    * @returns {URL[] | Error} Random dispatcher urls or Error.
    * @memberof Routing
@@ -79,6 +82,7 @@ export class RoutingTable {
 
   /**
    * Returns a random dispatcher node from the routing table
+   * 
    * @returns {URL | Error} Random dispatcher URL or Error.
    * @memberof Routing
    */
@@ -96,6 +100,7 @@ export class RoutingTable {
 
   /**
    * Returns an specific node from the routing table based on public key
+   * 
    * @param {URL} url - Node's service url.
    * @returns {Node} Node object.
    * @memberof Routing
@@ -121,6 +126,7 @@ export class RoutingTable {
 
   /**
    * Add a dispatcher url to the routing table
+   * 
    * @param {URL} url - URL of the dispatcher node to be added.
    * @returns {boolean} - Returns true if the dispatcher was added or false if it failed.
    * @memberof Routing
@@ -136,7 +142,7 @@ export class RoutingTable {
     if (dispatcher !== undefined) {
       return false
     }
-
+    
     // Add the new dispatcher to the array
     dispatchers.push(url)
 
@@ -151,6 +157,7 @@ export class RoutingTable {
 
   /**
    * Deletes a dispatcher url from the routing table
+   * 
    * @param {URL} url - url object to be deleted
    * @returns {boolean} True or false if the node was deleted.
    * @memberof Routing
