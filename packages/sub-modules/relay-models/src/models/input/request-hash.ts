@@ -10,6 +10,7 @@ export class RequestHash {
     /**
      *
      * Creates a RequestHash object using a JSON string
+     *
      * @param {string} json - JSON string.
      * @returns {RequestHash} - RequestHash object.
      * @memberof RequestHash
@@ -32,6 +33,7 @@ export class RequestHash {
 
     /**
      * Request Hash.
+     *
      * @constructor
      * @param {RelayPayload} payload - RelayPayload object.
      * @param {RelayMeta} meta - RelayMeta object.
@@ -50,10 +52,11 @@ export class RequestHash {
     /**
      *
      * Creates a JSON object with the RequestHash properties
-     * @returns {JSON} - JSON Object.
+     *
+     * @returns {any} - JSON Object.
      * @memberof RelayMeta
      */
-    public toJSON() {
+    public toJSON(): any {
         return {
             payload: this.payload.toJSON(),
             meta: this.meta.toJSON()
@@ -62,6 +65,7 @@ export class RequestHash {
     /**
      *
      * Check if the RequestHash object is valid
+     *
      * @returns {boolean} - True or false.
      * @memberof RequestHash
      */

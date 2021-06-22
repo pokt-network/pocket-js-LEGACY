@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { PocketAAT } from "@pokt-network/aat-js"
 import { Hex } from "@pokt-network/pocket-js-utils"
 import { sha3_256 } from "js-sha3"
@@ -12,6 +13,7 @@ export class RelayProof {
   /**
    *
    * Creates a Proof object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {RelayProof} - Proof object.
    * @memberof Proof
@@ -43,13 +45,15 @@ export class RelayProof {
         throw new Error("Failed to retrieve PocketAAT, property is undefined")
       }
     } catch (error) {
-      throw new Error("Failed to retrieve PocketAAT for Proof with error: " + error)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      throw new Error(`Failed to retrieve PocketAAT for Relay Proof with error: ${(error)}`)
     }
   }
 
   /**
    *
    * Creates a Proof object using a JSON string
+   *
    * @param {BigInt} entropy - Entropy big int value.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
    * @param {string} servicerPubKey - Servicer Public Key.
@@ -87,6 +91,7 @@ export class RelayProof {
   /**
    *
    * Creates a hash using the PocketAAT object
+   *
    * @param {PocketAAT} aat - PocketAAT token.
    * @returns {string} - PocketAAT Hash string.
    * @memberof RelayProof
@@ -106,6 +111,7 @@ export class RelayProof {
   /**
    *
    * Creates a hash using the RequestHash object
+   *
    * @param {RequestHash} request - RequestHash object.
    * @returns {string} - RequestHash string.
    * @memberof RelayProof
@@ -128,6 +134,7 @@ export class RelayProof {
 
   /**
    * Proof.
+   *
    * @constructor
    * @param {BigInt} entropy - Index entropy value.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
@@ -162,10 +169,11 @@ export class RelayProof {
   /**
    *
    * Creates a JSON object with the Proof properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof Proof
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       entropy: Number(this.entropy.toString()),
       session_block_height: Number(this.sessionBlockHeight.toString()),
@@ -184,6 +192,7 @@ export class RelayProof {
   /**
    *
    * Check if the Proof object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Proof
    */

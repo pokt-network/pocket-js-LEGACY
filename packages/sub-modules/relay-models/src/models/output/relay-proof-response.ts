@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { PocketAAT } from "@pokt-network/aat-js"
 import { Hex } from "@pokt-network/pocket-js-utils"
 
@@ -10,6 +11,7 @@ export class RelayProofResponse {
   /**
    *
    * Creates a Proof object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {RelayProofResponse} - Proof object.
    * @memberof Proof
@@ -41,7 +43,7 @@ export class RelayProofResponse {
         throw new Error("Failed to retrieve PocketAAT, property is undefined")
       }
     } catch (error) {
-      throw new Error("Failed to retrieve PocketAAT for Proof with error: " + error)
+      throw new Error(`Failed to retrieve PocketAAT for Proof with error: ${(error as Error).message}`)
     }
   }
 
@@ -56,6 +58,7 @@ export class RelayProofResponse {
 
   /**
    * Proof.
+   *
    * @constructor
    * @param {BigInt} entropy - Index entropy value.
    * @param {BigInt} sessionBlockHeight - Session Block Height.
@@ -90,10 +93,11 @@ export class RelayProofResponse {
   /**
    *
    * Creates a JSON object with the Proof properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof Proof
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       entropy: Number(this.entropy.toString()),
       session_block_height: Number(this.sessionBlockHeight.toString()),
@@ -112,6 +116,7 @@ export class RelayProofResponse {
   /**
    *
    * Check if the Proof object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Proof
    */
