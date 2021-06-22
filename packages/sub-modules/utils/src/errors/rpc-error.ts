@@ -5,6 +5,7 @@
 
   /**
    * Creates a RpcError from an Error object
+   *
    * @param {Error} error - Error object.
    * @returns {RpcError} - RpcError object.
    * @memberof RpcError
@@ -15,6 +16,7 @@
 
   /**
    * Creates a RpcError from an Error object
+   *
    * @param {string} code - Error code
    * @param {string} data - Relay error data.
    * @returns {RpcError} - RpcError object.
@@ -27,6 +29,7 @@
   /**
    *
    * Creates a RpcError object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {RpcError} - RpcError object.
    * @memberof RpcError
@@ -49,6 +52,7 @@
 
   /**
    * RPC Error.
+   *
    * @constructor
    * @param {string} code - Error code.
    * @param {string} message - Error message.
@@ -57,7 +61,7 @@
    * @memberof RpcError
    */
   constructor(code: string, message: string, session?: any, nodePubKey?: string) {
-    super(...arguments)
+    super()
     this.code = code
     this.message = message
     this.session = session
@@ -68,10 +72,11 @@
   /**
    *
    * Creates a JSON object with the RpcError properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof RpcError
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       code: this.code,
       message: this.message,

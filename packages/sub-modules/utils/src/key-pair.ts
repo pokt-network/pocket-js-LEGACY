@@ -19,6 +19,7 @@ export function addressFromPublickey(publicKey: Buffer): Buffer {
 
 /**
  * Extracts the public key from a 64-byte long ed25519 private key
+ *
  * @param {Buffer} privateKey - Private key buffer.
  * @returns {Buffer} - Public Key buffer.
  */
@@ -28,6 +29,7 @@ export function publicKeyFromPrivate(privateKey: Buffer): Buffer {
 
 /**
  * Validates an ed25519 private key structure
+ *
  * @param {Buffer} privateKey - Private key buffer.
  * @returns {boolean} - True or false if the private key is valid.
  */
@@ -37,6 +39,7 @@ export function validatePrivateKey(privateKey: Buffer): boolean {
 
 /**
  * Validates the address for a hex string encoded representing an ed25519 keypair
+ *
  * @param {string} addressHex - Address hex.
  * @returns {Error | undefined} - Address buffer.
  */
@@ -52,6 +55,7 @@ export function validateAddressHex(addressHex: string): Error | undefined {
 
 /**
  * Validates an ed25519 public key structure
+ *
  * @param {Buffer | string} pubKey - Public key buffer or string.
  * @returns {boolean} - True or false if the public key is valid.
  */
