@@ -8,6 +8,7 @@ export class RelayMeta {
     /**
      *
      * Creates a RelayMeta object using a JSON string
+     *
      * @param {string} json - JSON string.
      * @returns {RelayMeta} - RelayMeta object.
      * @memberof RelayMeta
@@ -28,6 +29,7 @@ export class RelayMeta {
 
     /**
      * Relay Meta.
+     *
      * @constructor
      * @param {number} blockHeight - Block Height.
      */
@@ -43,17 +45,20 @@ export class RelayMeta {
     /**
      *
      * Creates a JSON object with the RelayMeta properties
-     * @returns {JSON} - JSON Object.
+     *
+     * @returns {any} - JSON Object.
      * @memberof RelayMeta
      */
-    public toJSON() {
+    public toJSON(): any {
         return {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             block_height: Number(this.blockHeight.toString())
         }
     }
     /**
      *
      * Check if the RelayMeta object is valid
+     *
      * @returns {boolean} - True or false.
      * @memberof RelayMeta
      */

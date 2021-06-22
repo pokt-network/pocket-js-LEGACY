@@ -10,6 +10,7 @@ export class RelayPayload {
   /**
    *
    * Creates a RelayPayload object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {RelayPayload} - RelayPayload object.
    * @memberof RelayPayload
@@ -36,6 +37,7 @@ export class RelayPayload {
 
   /**
    * Relay Payload.
+   *
    * @constructor
    * @param {string} data - The actual data string for the external chain.
    * @param {string} method - The http CRUD method.
@@ -56,10 +58,11 @@ export class RelayPayload {
   /**
    *
    * Creates a JSON object with the RelayPayload properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof RelayPayload
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       data: this.data,
       method: this.method,
@@ -70,6 +73,7 @@ export class RelayPayload {
   /**
    *
    * Check if the RelayPayload object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof RelayPayload
    */

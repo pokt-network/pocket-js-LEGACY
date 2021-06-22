@@ -10,6 +10,7 @@ export class RelayResponse {
   /**
    *
    * Creates a RelayResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {RelayResponse} - RelayResponse object.
    * @memberof RelayResponse
@@ -37,6 +38,7 @@ export class RelayResponse {
   public readonly relayRequest: RelayRequest
   /**
    * Relay Response.
+   *
    * @constructor
    * @param {string} signature - Signature.
    * @param {string} payload - Payload string.
@@ -54,10 +56,11 @@ export class RelayResponse {
   /**
    *
    * Creates a JSON object with the RelayResponse properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof RelayResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       response: {
         payload: this.payload,
@@ -70,6 +73,7 @@ export class RelayResponse {
   /**
    *
    * Check if the RelayResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof RelayResponse
    */
