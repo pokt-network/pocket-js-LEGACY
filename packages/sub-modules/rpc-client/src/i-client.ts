@@ -11,6 +11,7 @@ import { RelayRequest, RelayResponse, } from "@pokt-network/pocket-js-relay-mode
 
     /**
      * Method to call the v1/client/rawtx endpoint of a given node
+     *
      * @param {Buffer | string} fromAddress - The address of the sender
      * @param {Buffer | string} tx - The amino encoded transaction bytes
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -28,6 +29,7 @@ import { RelayRequest, RelayResponse, } from "@pokt-network/pocket-js-relay-mode
     /**
      *
      * Sends a relay
+     *
      * @param {RelayRequest} request - Payload object containing the needed parameters.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -43,6 +45,7 @@ import { RelayRequest, RelayResponse, } from "@pokt-network/pocket-js-relay-mode
 
     /**
      * Sends a dispatch request
+     *
      * @param {DispatchRequest} request - Request object containing the needed parameters.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.

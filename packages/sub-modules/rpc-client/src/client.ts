@@ -22,6 +22,7 @@ export class Client implements IClient {
 
     /**
      * Method to call the v1/client/rawtx endpoint of a given node
+     *
      * @param {Buffer | string} fromAddress - The address of the sender
      * @param {Buffer | string} tx - The amino encoded transaction bytes
      * @param {number} timeout - Request timeout.
@@ -32,8 +33,8 @@ export class Client implements IClient {
     public async rawtx(
         fromAddress: Buffer | string,
         tx: Buffer | string,
-        timeout: number = 60000,
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000,
+        rejectSelfSignedCertificates = true
     ): Promise<RawTxResponse | RpcError> {
         try {
             const request = new RawTxRequest(fromAddress.toString('hex'), tx.toString('hex'))
@@ -42,7 +43,7 @@ export class Client implements IClient {
 
             // Check if response is an error
             if (typeGuard(response, RpcError)) {
-                return response as RpcError
+                return response 
             } else {
                 const rawTxResponse = RawTxResponse.fromJSON(response)
 
@@ -57,7 +58,7 @@ export class Client implements IClient {
                     return rawTxResponse
                 }
 
-                return RpcError.fromError(rawTxResponse as Error)
+                return RpcError.fromError(rawTxResponse )
             }
         } catch (err) {
             return RpcError.fromError(err)
@@ -66,6 +67,7 @@ export class Client implements IClient {
     /**
      *
      * Sends a relay
+     *
      * @param {RelayRequest} request - Payload object containing the needed parameters.
      * @param {number} timeout - Request timeout.
      * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
@@ -75,8 +77,8 @@ export class Client implements IClient {
     public async relay(
         request: RelayRequest,
         validateResponse: boolean,
-        timeout: number = 60000,
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000,
+        rejectSelfSignedCertificates = true
     ): Promise<RelayResponse | RpcError> {
         try {
             const payload = JSON.stringify(request.toJSON())
@@ -106,6 +108,7 @@ export class Client implements IClient {
     }
     /**
      * Sends a dispatch request
+     *
      * @param {DispatchRequest} request - Request object containing the needed parameters.
      * @param {number} timeout - Request timeout.
      * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
@@ -114,8 +117,8 @@ export class Client implements IClient {
      */
     public async dispatch(
         request: DispatchRequest,
-        timeout: number = 60000,
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000,
+        rejectSelfSignedCertificates = true
     ): Promise<DispatchResponse | RpcError> {
         try {
             const response = await this.rpcProvider.send(
