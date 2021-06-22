@@ -9,6 +9,7 @@
 export class Hex {
   /**
    * Validates wheter or not str is a valid hex string
+   *
    * @param {string} str string to validate
    * @returns {boolean} - True or false if the string is hex.
    */
@@ -20,6 +21,7 @@ export class Hex {
   /**
    *
    * Encodes an string into an array of bytes. After that using bitwise operations we transform each byte into an hexadecimal value.
+   *
    * @param {string} str - string value to be encoded.
    * @returns {string} - Encoded value.
    */
@@ -30,7 +32,8 @@ export class Hex {
 
   /**
    *
-   *  Decodes hex into an redable string. This function expects that hex contains only hexadecimal characters and that hex has even length.
+   * Decodes hex into an redable string. This function expects that hex contains only hexadecimal characters and that hex has even length.
+   *
    * @param {string} hex - Encoded value to be decoded.
    * @returns {string} - Encoded value.
    */
@@ -43,7 +46,8 @@ export class Hex {
   }
   /**
    *
-   *  Validates if a provided network identifier is a valid hex and byte length 32
+   * Validates if a provided network identifier is a valid hex and byte length 32
+   *
    * @param {string} str - Network identifier.
    * @returns {boolean} - True or false.
    */
@@ -56,7 +60,8 @@ export class Hex {
 
   /**
    *
-   *  Validates if a provided address is a valid hex and byte length 20
+   * Validates if a provided address is a valid hex and byte length 20
+   *
    * @param {string} str - Address to be verified.
    * @returns {boolean} - True or false.
    */
@@ -69,7 +74,8 @@ export class Hex {
 
   /**
    *
-   *  Validates if a provided public key is a valid hex and byte length 32
+   * Validates if a provided public key is a valid hex and byte length 32
+   *
    * @param {string} str - Address to be verified.
    * @returns {boolean} - True or false.
    */
@@ -83,6 +89,7 @@ export class Hex {
   /**
    * referenced from https://stackoverflow.com/a/10121740
    * Checks the lenght of a provided string
+   *
    * @param {string} str - Provided string.
    * @returns {number} - The string lenght in bytes.
    * @memberof Hex
@@ -113,9 +120,11 @@ export class Hex {
     "e",
     "f"
   ]
+
   /**
    *
-   *  Encodes a decoded value.
+   * Encodes a decoded value.
+   *
    * @param {string} str - Decoded value to be encoded.
    * @returns {string[]} - Encoded value.
    */
@@ -135,7 +144,8 @@ export class Hex {
   }
   /**
    *
-   *  Converts an string to a byte array
+   * Converts an string to a byte array
+   *
    * @param {string} str - string value.
    * @returns {number[]} - Byte array.
    */
