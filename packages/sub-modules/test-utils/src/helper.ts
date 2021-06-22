@@ -4,17 +4,17 @@ import { LocalNet, TestNet, MainNet, NockNet, Environment } from "."
  * Enum indicating all the environment networks
  */
 export enum Network {
-    LocalNet = "localNet",
-    TestNet = "testNet",
-    MainNet = "mainNet",
-    NockNet = "nockNet"
+    localNet = "localNet",
+    testNet = "testNet",
+    mainNet = "mainNet",
+    nockNet = "nockNet"
 }
 
 /**
  * Class that will return the environment based on the Network provided
  */
 export class EnvironmentHelper {
-    public static get(network: Network = Network.LocalNet): Environment {
+    public static get(network: Network = Network.localNet): Environment {
         const test = network
         switch (test) {
             case "localNet":
