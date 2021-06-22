@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { validateAddressHex, validatePublicKey, typeGuard } from "@pokt-network/pocket-js-utils"
 
 /**
@@ -9,6 +10,7 @@ export class QueryAccountResponse {
   /**
    *
    * Creates a QueryAccountResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryAccountResponse} - QueryAccountResponse object.
    * @memberof QueryAccountResponse
@@ -41,6 +43,7 @@ export class QueryAccountResponse {
 
   /**
    * Query Account Response.
+   *
    * @constructor
    * @param {object} account - Current account object.
    */
@@ -60,24 +63,26 @@ export class QueryAccountResponse {
   /**
    *
    * Creates a JSON object with the QueryAccountResponse properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof QueryAccountResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
-      "address": this.address,
-      "coins": [
+      address: this.address,
+      coins: [
         {
-          "amount": this.balance,
-          "denom": "upokt"
+          amount: this.balance,
+          denom: "upokt"
         }
       ],
-      "public_key": this.publicKey
+      public_key: this.publicKey
     }
   }
   /**
    *
    * Check if the QueryAccountResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryAccountResponse
    */

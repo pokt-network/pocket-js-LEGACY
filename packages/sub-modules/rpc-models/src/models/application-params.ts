@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  *
  *
@@ -7,6 +8,7 @@ export class ApplicationParams {
   /**
    *
    * Creates a ApplicationParams object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {ApplicationParams} - ApplicationParams object.
    * @memberof ApplicationParams
@@ -37,6 +39,7 @@ export class ApplicationParams {
 
   /**
    * Application Params.
+   *
    * @constructor
    * @param {string} unstakingTime - Unstaking timestamp.
    * @param {BigInt} maxApplications - Max applications count.
@@ -67,10 +70,11 @@ export class ApplicationParams {
   /**
    *
    * Creates a JSON object with the ApplicationParams properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof ApplicationParams
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       app_stake_minimum: Number(this.appStakeMin.toString()),
       base_relays_per_pokt: Number(this.baseRelaysPerPokt.toString()),
@@ -83,6 +87,7 @@ export class ApplicationParams {
   /**
    *
    * Check if the ApplicationParams object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof ApplicationParams
    */

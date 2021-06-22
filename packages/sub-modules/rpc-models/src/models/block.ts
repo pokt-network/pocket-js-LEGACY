@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BlockHeader } from "./block-header"
 import { Commit } from "./commit"
 
@@ -10,6 +11,7 @@ export class Block {
   /**
    *
    * Creates a Block object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {Block} - Block object.
    * @memberof Block
@@ -32,6 +34,7 @@ export class Block {
 
   /**
    * Block
+   *
    * @constructor
    * @param {BlockHeader} header - Block header.
    * @param {string} data - Data hash.
@@ -56,10 +59,11 @@ export class Block {
   /**
    *
    * Creates a JSON object with the Block properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof Block
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       data: this.data,
       evidence: this.evidence,
@@ -70,6 +74,7 @@ export class Block {
   /**
    *
    * Check if the Block object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Block
    */

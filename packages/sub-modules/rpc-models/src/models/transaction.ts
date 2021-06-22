@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Hex } from "@pokt-network/pocket-js-utils"
 import { TxProof } from "./tx-proof"
 import { ResponseDeliverTx } from "./response-deliver-tx"
@@ -12,6 +13,7 @@ export class Transaction {
   /**
    *
    * Creates a Transaction object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {Transaction} - Transaction object.
    * @memberof Transaction
@@ -45,6 +47,7 @@ export class Transaction {
 
   /**
    * Transaction.
+   *
    * @constructor
    * @param {string} hash - Transaction hash.
    * @param {BigInt} height - Session Block Height.
@@ -78,10 +81,11 @@ export class Transaction {
   /**
    *
    * Creates a JSON object with the Transaction properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof Transaction
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       hash: this.hash,
       height: Number(this.height.toString()),
@@ -95,6 +99,7 @@ export class Transaction {
   /**
    *
    * Check if the Transaction object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Transaction
    */

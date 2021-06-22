@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Application } from "../application"
 /**
  *
@@ -8,6 +9,7 @@ export class QueryAppsResponse {
   /**
    *
    * Creates a QueryAppsResponse object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {QueryAppsResponse} - QueryAppsResponse object.
    * @memberof QueryAppsResponse
@@ -35,6 +37,7 @@ export class QueryAppsResponse {
 
   /**
    * QueryAppsResponse.
+   *
    * @constructor
    * @param {Application[]} applications - Amount staked by the node.
    * @param {number} page - Current page.
@@ -48,10 +51,11 @@ export class QueryAppsResponse {
   /**
    *
    * Creates a JSON object with the QueryAppsResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryAppsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     const appListJSON: object[] = []
     this.applications.forEach(app => {
       appListJSON.push(app.toJSON())
@@ -66,6 +70,7 @@ export class QueryAppsResponse {
   /**
    *
    * Check if the QueryAppsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryAppsResponse
    */

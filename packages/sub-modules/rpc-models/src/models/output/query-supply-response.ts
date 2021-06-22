@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  *
  *
@@ -7,6 +8,7 @@ export class QuerySupplyResponse {
   /**
    *
    * Creates a QuerySupplyResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QuerySupplyResponse} - QuerySupplyResponse object.
    * @memberof QuerySupplyResponse
@@ -37,6 +39,7 @@ export class QuerySupplyResponse {
 
   /**
    * QuerySupplyResponse.
+   *
    * @constructor
    * @param {BigInt} nodeStaked - Amount staked by the node.
    * @param {BigInt} appStaked - Amount staked by the app.
@@ -63,10 +66,11 @@ export class QuerySupplyResponse {
   /**
    *
    * Creates a JSON object with the QuerySupplyResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QuerySupplyResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       app_staked: Number(this.appStaked.toString()),
       dao: Number(this.dao.toString()),

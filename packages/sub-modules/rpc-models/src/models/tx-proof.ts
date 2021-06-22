@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { SimpleProof } from "./simple-proof"
 
 /**
@@ -9,6 +10,7 @@ export class TxProof {
   /**
    *
    * Creates a TxProof object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {TxProof} - TxProof object.
    * @memberof TxProof
@@ -33,6 +35,7 @@ export class TxProof {
 
   /**
    * TxProof.
+   *
    * @constructor
    * @param {string} rootHash - Root hash.
    * @param {string | null} data - Hash holding the current tx proof data.
@@ -50,10 +53,11 @@ export class TxProof {
   /**
    *
    * Creates a JSON object with the TxProof properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof TxProof
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       data: this.data,
       proof: this.proof.toJSON(),
@@ -63,6 +67,7 @@ export class TxProof {
   /**
    *
    * Check if the TxProof object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof TxProof
    */

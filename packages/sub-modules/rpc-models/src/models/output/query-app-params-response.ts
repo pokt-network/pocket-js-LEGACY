@@ -9,6 +9,7 @@ export class QueryAppParamsResponse {
   /**
    *
    * Creates a QueryAppParamsResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryAppParamsResponse} - QueryAppParamsResponse object.
    * @memberof QueryAppParamsResponse
@@ -25,6 +26,7 @@ export class QueryAppParamsResponse {
 
   /**
    * QueryAppParamsResponse
+   *
    * @constructor
    * @param {ApplicationParams} applicationParams - Application params.
    */
@@ -38,15 +40,17 @@ export class QueryAppParamsResponse {
   /**
    *
    * Creates a JSON object with the QueryAppParamsResponse properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof QueryAppParamsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return this.applicationParams.toJSON()
   }
   /**
    *
    * Check if the QueryAppParamsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryAppParamsResponse
    */

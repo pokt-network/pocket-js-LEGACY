@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Hex } from "@pokt-network/pocket-js-utils"
 
 /**
@@ -9,6 +10,7 @@ export class NodeReceipt {
   /**
    *
    * Creates a NodeReceipt object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {NodeReceipt} - NodeReceipt object.
    * @memberof NodeReceipt
@@ -39,6 +41,7 @@ export class NodeReceipt {
 
   /**
    * Node Receipt.
+   *
    * @constructor
    * @param {string} address - Node address.
    * @param {string} blockchain - Blockchain hash.
@@ -69,10 +72,11 @@ export class NodeReceipt {
   /**
    *
    * Creates a JSON object with the NodeReceipt properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof NodeReceipt
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       address: this.address,
       app_pubkey: this.appPubKey,
@@ -85,6 +89,7 @@ export class NodeReceipt {
   /**
    *
    * Check if the NodeReceipt object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof NodeReceipt
    */

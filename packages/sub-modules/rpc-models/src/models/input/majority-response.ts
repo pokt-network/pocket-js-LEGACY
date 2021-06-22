@@ -9,6 +9,7 @@ export class MajorityResponse {
     /**
      *
      * Creates a MajorityResponse object using a JSON string
+     *
      * @param {String} json - JSON string.
      * @returns {MajorityResponse} - MajorityResponse object.
      * @memberof MajorityResponse
@@ -39,6 +40,7 @@ export class MajorityResponse {
 
     /**
      * Majority Response.
+     *
      * @constructor
      * @param {RelayResponse[]} relays - Array of relay response.
      */
@@ -55,15 +57,17 @@ export class MajorityResponse {
     /**
      *
      * Creates a JSON object with the MajorityResponse properties
-     * @returns {JSON} - JSON Object.
+     *
+     * @returns {any} - JSON Object.
      * @memberof MajorityResponse
      */
-    public toJSON() {
+    public toJSON(): any {
         return this.relays
     }
     /**
      *
      * Check if the MajorityResponse object is valid
+     *
      * @returns {boolean} - True or false.
      * @memberof MajorityResponse
      */

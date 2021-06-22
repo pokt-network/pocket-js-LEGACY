@@ -9,6 +9,7 @@ export class QueryNodeClaimResponse {
   /**
    *
    * Creates a QueryNodeClaimResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryNodeClaimResponse} - QueryNodeClaimResponse object.
    * @memberof QueryNodeClaimResponse
@@ -30,6 +31,7 @@ export class QueryNodeClaimResponse {
 
   /**
    * Query Node Claim Response.
+   *
    * @constructor
    * @param {MsgClaim} msgClaim - Message claim object.
    */
@@ -45,15 +47,17 @@ export class QueryNodeClaimResponse {
   /**
    *
    * Creates a JSON object with the QueryNodeClaimResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryNodeClaimResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return this.msgClaim.toJSON()
   }
   /**
    *
    * Check if the QueryNodeClaimResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryNodeClaimResponse
    */

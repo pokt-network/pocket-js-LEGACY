@@ -11,6 +11,7 @@ export class ConsensusRelayResponse {
   /**
    *
    * Creates a ConsensusRelayResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {ConsensusRelayResponse} - ConsensusRelayResponse object.
    * @memberof ConsensusRelayResponse
@@ -32,12 +33,13 @@ export class ConsensusRelayResponse {
   public readonly signature: string
   public readonly payload: string
   public readonly consensusNodes: ConsensusNode[] = []
-  public consensusResult: boolean = false
+  public consensusResult = false
   public majorityResponse?: MajorityResponse
   public minorityResponse?: MinorityResponse
 
   /**
    * Consensus Relay Response.
+   *
    * @constructor
    * @param {string} signature - Signature.
    * @param {string} payload - payload string.
@@ -90,10 +92,11 @@ export class ConsensusRelayResponse {
   /**
    *
    * Creates a JSON object with the ConsensusRelayResponse properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof ConsensusRelayResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       payload: this.payload,
       signature: this.signature
@@ -102,6 +105,7 @@ export class ConsensusRelayResponse {
   /**
    *
    * Check if the ConsensusRelayResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof ConsensusRelayResponse
    */
@@ -115,6 +119,7 @@ export class ConsensusRelayResponse {
   /**
    *
    * Returns whether the local consensus result is positive or negative
+   *
    * @memberof ConsensusRelayResponse
    */
   private setLocalConsensusResults() {

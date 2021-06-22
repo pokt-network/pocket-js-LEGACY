@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { typeGuard } from "@pokt-network/pocket-js-utils"
 
 /**
@@ -6,6 +7,7 @@ import { typeGuard } from "@pokt-network/pocket-js-utils"
 export class TxLog {
     /**
      * Construct this object from it's JSON representation
+     *
      * @param txLogObj {any}
      * @returns {TxLog | Error}
      * @memberof TxLog
@@ -42,6 +44,7 @@ export class TxLog {
 
     /**
      * Constructor for this class
+     *
      * @param msgIndex {BigInt} index for this log in the logs list
      * @param success {boolean} whether or not this message was processed succesfully
      * @param log {string} The content of the log message

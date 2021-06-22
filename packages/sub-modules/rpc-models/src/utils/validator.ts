@@ -5,6 +5,7 @@ import {ChallengeRequest, MajorityResponse} from "../models"
 
 /**
  * Validates a ChallengeRequest
+ *
  * @param {ChallengeRequest} request - The ChallengeRequest to be evaluated.
  * @returns {Error | undefined}.
  */
@@ -23,6 +24,7 @@ export function validateChallengeRequest(request: ChallengeRequest): Error | und
 
 /**
  * Validates a MajorityResponse
+ *
  * @param {MajorityResponse} response - The MajorityResponse to be evaluated.
  * @returns {Error | undefined}.
  */
@@ -36,6 +38,7 @@ export function validateMajorityResponse(response: MajorityResponse): Error | un
 
 /**
  * Validates a Relay response
+ *
  * @param {RelayResponse} relay - The Relay response to be evaluated.
  * @returns {Error | undefined}.
  */
@@ -56,6 +59,7 @@ export function validateRelayResponse(relay: RelayResponse): Error | undefined {
 
 /**
  * Validates a RelayProof
+ *
  * @param {RelayProof} proof - The RelayProof to be evaluated.
  * @returns {Error | undefined}.
  */
@@ -64,11 +68,11 @@ export function validateRelayProof(proof: RelayProof): Error | undefined  {
         case proof.blockchain.length === 0:
             return new Error("Invalid chain. The chain cannot be empty")
         case Number(proof.entropy.toString()) === undefined:
-            return new Error("Invalid entropy. The entropy needs to be a number: " + proof.entropy)
+            return new Error(`Invalid entropy. The entropy needs to be a number: ${proof.entropy.toString()}`)
         case !Hex.isHex(proof.signature):
-            return new Error("Invalid string is not hex: " + proof.signature)
+            return new Error(`Invalid string is not hex: ${proof.signature}`)
         case !Hex.isHex(proof.servicerPubKey):
-            return new Error("Invalid string is not hex: " + proof.servicerPubKey)
+            return new Error(`Invalid string is not hex: ${proof.servicerPubKey}`)
         case Number(proof.sessionBlockHeight) === 0:
             return new Error("The Block Height needs to be bigger than 0")
         case !proof.token.isValid():

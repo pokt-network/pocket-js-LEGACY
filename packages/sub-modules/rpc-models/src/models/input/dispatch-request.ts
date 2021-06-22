@@ -9,6 +9,7 @@ export class DispatchRequest {
   /**
    *
    * Creates a DispatchRequest object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {DispatchRequest} - DispatchRequest object.
    * @memberof DispatchRequest
@@ -22,6 +23,7 @@ export class DispatchRequest {
 
   /**
    * Dispatch Request.
+   *
    * @constructor
    * @param {SessionHeader} sessionHeader - Session header object.
    */
@@ -35,15 +37,17 @@ export class DispatchRequest {
   /**
    *
    * Creates a JSON object with the DispatchRequest properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof DispatchRequest
    */
-  public toJSON() {
+  public toJSON(): any {
     return this.sessionHeader.toJSON()
   }
   /**
    *
    * Check if the DispatchRequest object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof DispatchRequest
    */

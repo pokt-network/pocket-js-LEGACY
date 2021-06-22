@@ -9,6 +9,7 @@ export class QueryNodeParamsResponse {
   /**
    *
    * Creates a QueryNodeParamsResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryNodeParamsResponse} - QueryNodeParamsResponse object.
    * @memberof QueryNodeParamsResponse
@@ -25,6 +26,7 @@ export class QueryNodeParamsResponse {
 
   /**
    * QueryNodeParamsResponse
+   *
    * @constructor
    * @param {NodeParams} nodeParams - Node params.
    */
@@ -38,15 +40,17 @@ export class QueryNodeParamsResponse {
   /**
    *
    * Creates a JSON object with the QueryNodeParamsResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryNodeParamsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return this.nodeParams.toJSON()
   }
   /**
    *
    * Check if the QueryNodeParamsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryNodeParamsResponse
    */

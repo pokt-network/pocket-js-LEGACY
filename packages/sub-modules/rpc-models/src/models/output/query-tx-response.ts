@@ -9,6 +9,7 @@ export class QueryTXResponse {
   /**
    *
    * Creates a QueryTXResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryTXResponse} - QueryTXResponse object.
    * @memberof QueryTXResponse
@@ -26,6 +27,7 @@ export class QueryTXResponse {
 
   /**
    * Query Transaction Response.
+   *
    * @constructor
    * @param {Transaction} transaction - Transaction object.
    */
@@ -39,15 +41,17 @@ export class QueryTXResponse {
   /**
    *
    * Creates a JSON object with the QueryTXResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryTXResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return this.transaction.toJSON()
   }
   /**
    *
    * Check if the QueryTXResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryTXResponse
    */

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Node } from "../node"
 
 /**
@@ -9,6 +10,7 @@ export class QueryNodesResponse {
   /**
    *
    * Creates a QueryNodesResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryNodesResponse} - QueryNodesResponse object.
    * @memberof QueryNodesResponse
@@ -36,6 +38,7 @@ export class QueryNodesResponse {
 
   /**
    * Relay Response.
+   *
    * @constructor
    * @param {Node[]} nodes - Node object array.
    * @param {number} page - Current page.
@@ -53,10 +56,11 @@ export class QueryNodesResponse {
   /**
    *
    * Creates a JSON object with the QueryNodesResponse properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof QueryNodesResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     const nodeListJSON: object[] = []
 
     this.nodes.forEach(node => {
@@ -72,6 +76,7 @@ export class QueryNodesResponse {
   /**
    *
    * Check if the QueryNodesResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryNodesResponse
    */

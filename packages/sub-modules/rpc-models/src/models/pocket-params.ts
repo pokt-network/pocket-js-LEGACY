@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  *
  *
@@ -7,6 +8,7 @@ export class PocketParams {
   /**
    *
    * Creates a PocketParams object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {PocketParams} - PocketParams object.
    * @memberof PocketParams
@@ -33,6 +35,7 @@ export class PocketParams {
 
   /**
    * PocketParams.
+   *
    * @constructor
    * @param {BigInt} sessionNodeCount - Session node count.
    * @param {BigInt} proofWaitingPeriod - Proof waiting period.
@@ -57,10 +60,11 @@ export class PocketParams {
   /**
    *
    * Creates a JSON object with the PocketParams properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof PocketParams
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       claim_expiration: Number(this.claimExpiration.toString()),
       proof_waiting_period: Number(this.proofWaitingPeriod.toString()),
@@ -71,6 +75,7 @@ export class PocketParams {
   /**
    *
    * Check if the PocketParams object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof PocketParams
    */

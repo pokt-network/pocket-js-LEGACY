@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  *
  *
@@ -7,6 +8,7 @@ export class SessionHeader {
   /**
    *
    * Creates a SessionHeader object using a JSON string
+   *
    * @param {string} json - JSON string.
    * @returns {SessionHeader} - SessionHeader object.
    * @memberof SessionHeader
@@ -31,6 +33,7 @@ export class SessionHeader {
 
   /**
    * Request for Session.
+   *
    * @constructor
    * @param {string} applicationPubKey - Application Key associated with a client.
    * @param {string} chain - Chain.
@@ -52,10 +55,11 @@ export class SessionHeader {
   /**
    *
    * Creates a JSON object with the SessionHeader properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof SessionHeader
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       app_public_key: this.applicationPubKey,
       chain: this.chain,
@@ -65,6 +69,7 @@ export class SessionHeader {
   /**
    *
    * Check if the SessionHeader is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Session
    */

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 // Interface
 export interface IAllParams { 
   paramKey: string, 
@@ -12,6 +13,7 @@ export class QueryAllParamsResponse {
   /**
    *
    * Creates a QueryAllParamsResponse object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {QueryAllParamsResponse} - QueryAllParamsResponse object.
    * @memberof QueryAllParamsResponse
@@ -81,6 +83,7 @@ export class QueryAllParamsResponse {
 
   /**
    * Query all parameters Response.
+   *
    * @constructor
    * @param {IAllParams[]} appParams - Application parameter list.
    * @param {IAllParams[]} authParams - Auth parameter list.
@@ -108,10 +111,11 @@ export class QueryAllParamsResponse {
   /**
    *
    * Creates a JSON object with the QueryAllParamsResponse properties
-   * @returns {JSON} - JSON Object.
+   *
+   * @returns {any} - JSON Object.
    * @memberof QueryAllParamsResponse
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       app_params: this.appParams,
       auth_params: this.authParams,
@@ -123,6 +127,7 @@ export class QueryAllParamsResponse {
   /**
    *
    * Check if the QueryAllParamsResponse object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof QueryAllParamsResponse
    */

@@ -10,6 +10,7 @@ export class Session {
   /**
    *
    * Creates a Session object using a JSON string
+   *
    * @param {String} json - JSON string.
    * @returns {Session} - Session object.
    * @memberof Session
@@ -30,10 +31,11 @@ export class Session {
   public readonly sessionHeader: SessionHeader
   public readonly sessionKey: string
   public readonly sessionNodes: Node[]
-  public relayCount: number = 0
+  public relayCount = 0
 
   /**
    * Request for Session.
+   *
    * @constructor
    * @param {SessionHeader} sessionHeader - Session Header object.
    * @param {string} sessionKey - Session Key.
@@ -48,13 +50,10 @@ export class Session {
     this.sessionKey = sessionKey
     this.sessionNodes = sessionNodes
   }
-  
-  public relayPlus(v: number) {
-    this.relayCount = this.relayCount + v
-  }
 
   /**
    * Returns whether or not a node is part of this session
+   *
    * @param {Node} node - Node object to verify if exists in the current session.
    * @returns {boolean} whether or not the node is part of this session
    * @memberof Session
@@ -70,6 +69,7 @@ export class Session {
   }
   /**
    * Returns a random session node that haven't been part of the current consensus
+   *
    * @memberof Session
    */
   public getUniqueSessionNode(): Node | Error { 
@@ -91,6 +91,7 @@ export class Session {
   } 
   /**
    * Returns a random session node
+   *
    * @memberof Session
    */
   public getSessionNode(): Node | Error { 
@@ -104,10 +105,11 @@ export class Session {
   /**
    *
    * Creates a JSON object with the Session properties
+   *
    * @returns {JSON} - JSON Object.
    * @memberof Session
    */
-  public toJSON() {
+  public toJSON(): any {
     return {
       header: this.sessionHeader.toJSON(),
       key: this.sessionKey,
@@ -117,6 +119,7 @@ export class Session {
   /**
    *
    * Check if the Session object is valid
+   *
    * @returns {boolean} - True or false.
    * @memberof Session
    */
