@@ -5,7 +5,7 @@
 export class Queue<T> {
   private intHead?: QueueItem<T> = undefined
   private intTail?: QueueItem<T> = undefined
-  private iintLength: number = 0
+  private iintLength = 0
 
   constructor(...values: T[]) {
     if (values.length > 0) {
@@ -17,6 +17,7 @@ export class Queue<T> {
   /**
    *
    * Creates a Application object using a JSON string
+   * 
    * @param {String} json - JSON string.
    * @returns {Application} - Application object.
    * @memberof Queue
@@ -30,7 +31,7 @@ export class Queue<T> {
     }
   }
 
-  public [Symbol.iterator]() {
+  public [Symbol.iterator](): IterableIterator<T> {
     return this.iterator()
   }
 
@@ -49,7 +50,7 @@ export class Queue<T> {
   public insert(
     val: T,
     previousItem: T,
-    checkDuplicates: boolean = false
+    checkDuplicates = false
   ): boolean {
     if (checkDuplicates && this.isDuplicate(val)) {
       return false
@@ -85,7 +86,7 @@ export class Queue<T> {
     }
   }
 
-  public append(val: T, checkDuplicates: boolean = false): boolean {
+  public append(val: T, checkDuplicates = false): boolean {
     if (checkDuplicates && this.isDuplicate(val)) {
       return false
     }
@@ -104,7 +105,7 @@ export class Queue<T> {
     return true
   }
 
-  public prepend(val: T, checkDuplicates: boolean = false): boolean {
+  public prepend(val: T, checkDuplicates = false): boolean {
     if (checkDuplicates && this.isDuplicate(val)) {
       return false
     }
@@ -235,11 +236,11 @@ export class Queue<T> {
     return [...this]
   }
 
-  get front() {
+  get front(): T | undefined {
     return this.head
   }
 
-  public enqueue(val: T) {
+  public enqueue(val: T): void {
     this.append(val)
   }
 
