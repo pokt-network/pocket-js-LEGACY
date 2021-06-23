@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { IRPCProvider } from "./i-rpc-provider"
 import axios from "axios"
 import { RpcError, typeGuard } from "@pokt-network/pocket-js-utils"
@@ -12,6 +14,7 @@ export class HttpRpcProvider implements IRPCProvider {
     public readonly baseURL: URL
     /**
      * Utility function to send requests.
+     *
      * @param {URL} baseURL - Base URL.
      */
     public constructor(baseURL: URL) {
@@ -19,6 +22,7 @@ export class HttpRpcProvider implements IRPCProvider {
     }
     /**
      * Utility function to send a request.
+     *
      * @param {string} path - Request path
      * @param {string} payload - Request payload to send.
      * @param {number} timeout - Request timeout.
@@ -26,7 +30,7 @@ export class HttpRpcProvider implements IRPCProvider {
      * @returns {string | RpcError} Response string or RpcError
      * @memberof HttpRpcProvider
      */
-    public async send(path: string, payload: string, timeout: number = 10000, rejectSelfSignedCertificates: boolean = true): Promise<string | RpcError> {
+    public async send(path: string, payload: string, timeout = 10000, rejectSelfSignedCertificates = true): Promise<string | RpcError> {
         try {
             const axiosInstance = axios.create({
                 httpsAgent: new https.Agent({  
@@ -61,6 +65,7 @@ export class HttpRpcProvider implements IRPCProvider {
     }
     /**
      * Utility function to handle any response error.
+     *
      * @param {any} response - Http request response object.
      * @returns {RpcError} - RpcError object.
      * @memberof HttpRpcProvider
