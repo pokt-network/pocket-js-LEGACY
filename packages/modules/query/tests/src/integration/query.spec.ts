@@ -123,7 +123,7 @@ describe("Pocket RPC Query Interface", async () => {
             const query = getDefaultRpcInstance()
             // Nock
             NockUtil.mockGetApps()
-            const appsResponse = await query.getApps(StakingStatus.Staked, BigInt(1), undefined, 1, 10)
+            const appsResponse = await query.getApps(StakingStatus.staked, BigInt(1), undefined, 1, 10)
             expect(typeGuard(appsResponse, QueryAppsResponse)).to.be.true
         }).timeout(0)
 
@@ -320,7 +320,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should returns an error trying to get a list of nodes due to the block height less than 0.', async () => {
             const query = getDefaultRpcInstance()
 
-            const nodeResponse = await query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(-1), undefined, 1, 10)
+            const nodeResponse = await query.getNodes(StakingStatus.staked, JailedStatus.unjailed, BigInt(-1), undefined, 1, 10)
             expect(typeGuard(nodeResponse, RpcError)).to.be.true
         }).timeout(0)
 
@@ -355,7 +355,7 @@ describe("Pocket RPC Query Interface", async () => {
         it('should returns an error trying to get a list of apps due to the block height being less than 0.', async () => {
             const query = getDefaultRpcInstance()
 
-            const appsResponse = await query.getApps(StakingStatus.Staked, BigInt(-1))
+            const appsResponse = await query.getApps(StakingStatus.staked, BigInt(-1))
             expect(typeGuard(appsResponse, RpcError)).to.be.true
         }).timeout(0)
 

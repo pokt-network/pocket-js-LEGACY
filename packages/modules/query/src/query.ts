@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 import { typeGuard, Hex, RpcError } from "@pokt-network/pocket-js-utils"
 import { QueryBlockResponse, V1RPCRoutes, QueryTXResponse, QueryHeightResponse, 
@@ -22,6 +23,7 @@ export class Query implements IQuery {
     /**
      *
      * Query a Block information
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -30,8 +32,8 @@ export class Query implements IQuery {
      */
     public async getBlock(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryBlockResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -64,6 +66,7 @@ export class Query implements IQuery {
     /**
      *
      * Query a Block transaction list
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {boolean} prove - True or false to include the tx proof.
      * @param {number} page - Page number, default 1.
@@ -75,11 +78,11 @@ export class Query implements IQuery {
      */
     public async getBlockTxs(
         blockHeight: BigInt = BigInt(0),
-        prove: boolean = false,
-        page: number = 1,
-        perPage: number = 30,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        prove: boolean,
+        page = 1,
+        perPage = 30,
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryBlockTxsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -119,6 +122,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves a transaction information
+     *
      * @param {string} txHash - Transaction hash.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -127,8 +131,8 @@ export class Query implements IQuery {
      */
     public async getTX(
         txHash: string,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryTXResponse | RpcError> {
         try {
             if (!Hex.isHex(txHash) && Hex.byteLength(txHash) !== 20) {
@@ -163,14 +167,15 @@ export class Query implements IQuery {
     /**
      *
      * Get the current network block height
+     *
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
      * @returns {Promise<QueryHeightResponse | RpcError>} - A QueryBlockResponse object or Rpc error
      * @memberof Query
      */
     public async getHeight(
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryHeightResponse | RpcError> {
         try {
             const response = await this.rpcProvider.send(
@@ -199,6 +204,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves an account balance
+     *
      * @param {string} address - Account's address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -209,8 +215,8 @@ export class Query implements IQuery {
     public async getBalance(
         address: string,
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryBalanceResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -249,6 +255,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves a list of validator nodes
+     *
      * @param {StakingStatus} stakingStatus - Staking status.
      * @param {JailedStatus} jailedStatus - Jailed status.
      * @param {BigInt} blockHeight - Block's number.
@@ -261,14 +268,14 @@ export class Query implements IQuery {
      * @memberof Query
      */
     public async getNodes(
-        stakingStatus: StakingStatus = StakingStatus.NA,
-        jailedStatus: JailedStatus = JailedStatus.NA,
-        blockHeight: BigInt = BigInt(0),
-        blockchain: string = "",
-        page: number = 1,
-        perPage: number = 30,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        stakingStatus: StakingStatus = StakingStatus.na,
+        jailedStatus: JailedStatus = JailedStatus.na,
+        blockHeight = BigInt(0),
+        blockchain = "",
+        page = 1,
+        perPage = 30,
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryNodesResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -312,6 +319,7 @@ export class Query implements IQuery {
     /**
      *
      * Query a Node information
+     *
      * @param {string} address - Node address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -322,8 +330,8 @@ export class Query implements IQuery {
     public async getNode(
         address: string,
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryNodeResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -365,6 +373,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves the node params
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -373,8 +382,8 @@ export class Query implements IQuery {
      */
     public async getNodeParams(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryNodeParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -410,6 +419,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves a list of apps
+     *
      * @param {StakingStatus} stakingStatus - Staking status.
      * @param {BigInt} blockHeight - Block's number.
      * @param {string} blockchain - (optional) Blockchain identifier.
@@ -423,11 +433,11 @@ export class Query implements IQuery {
     public async getApps(
         stakingStatus: StakingStatus = StakingStatus.NA,
         blockHeight: BigInt = BigInt(0),
-        blockchain: string = "",
-        page: number = 1,
-        perPage: number = 30,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        blockchain = "",
+        page = 1,
+        perPage = 30,
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryAppsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -470,6 +480,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves an app information
+     *
      * @param {string} address - Address of the app.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -480,8 +491,8 @@ export class Query implements IQuery {
     public async getApp(
         address: string,
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryAppResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -523,6 +534,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves app params.
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -531,8 +543,8 @@ export class Query implements IQuery {
      */
     public async getAppParams(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryAppParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -567,6 +579,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves the pocket params.
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -575,8 +588,8 @@ export class Query implements IQuery {
      */
     public async getPocketParams(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryPocketParamsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -612,6 +625,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves supported chains
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -620,8 +634,8 @@ export class Query implements IQuery {
      */
     public async getSupportedChains(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QuerySupportedChainsResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -658,6 +672,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves current supply information
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -666,8 +681,8 @@ export class Query implements IQuery {
      */
     public async getSupply(
         blockHeight: BigInt = BigInt(0),
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QuerySupplyResponse | RpcError> {
         try {
             if (Number(blockHeight.toString()) < 0) {
@@ -707,6 +722,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves current Account information
+     *
      * @param {string} address - Account's address.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -715,8 +731,8 @@ export class Query implements IQuery {
      */
     public async getAccount(
         address: string,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryAccountResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -751,6 +767,7 @@ export class Query implements IQuery {
     /**
      *
      * Retrieves an account transaction list
+     *
      * @param {string} address - Account's address.
      * @param {boolean} received - Filters for received or sent txs.
      * @param {boolean} prove - True or false to include the tx proof.
@@ -764,11 +781,11 @@ export class Query implements IQuery {
     public async getAccountTxs(
         address: string,
         received: boolean,
-        prove: boolean = false,
-        page: number = 1,
-        perPage: number = 30,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        prove: boolean,
+        page = 1,
+        perPage = 30,
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryAccountTxsResponse | RpcError> {
         try {
             if (!Hex.isHex(address) && Hex.byteLength(address) !== 20) {
@@ -810,6 +827,7 @@ export class Query implements IQuery {
     }
     /**
      * Returns the list of all pending claims submitted by node address at height,  height = 0 is used as latest
+     *
      * @param {string} address - Node's address.
      * @param {BigInt} appPubKey - Application public key.
      * @param {nuber} blockchain - Blockchain hash.
@@ -828,8 +846,8 @@ export class Query implements IQuery {
         height: BigInt,
         sessionBlockHeight: BigInt,
         receiptType: string,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryNodeClaimResponse | RpcError> {
         try {
             // Create a node receipt object
@@ -864,6 +882,7 @@ export class Query implements IQuery {
     }
     /**
      * Returns the node pending claim for specific session
+     *
      * @param {string} address - Node's address.
      * @param {BigInt} height - Block height.
      * @param {nuber} page - (Optional) Page number, default 1.
@@ -876,10 +895,10 @@ export class Query implements IQuery {
     public async getNodeClaims(
         address: string,
         height: BigInt,
-        page: number = 1,
-        perPage: number = 30,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        page = 1,
+        perPage = 30,
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryNodeClaimsResponse | RpcError> {
         try {
 
@@ -921,6 +940,7 @@ export class Query implements IQuery {
     }
     /**
      * Returns the node parameters at the specified height,  height = 0 is used as latest
+     *
      * @param {nuber} height - Block height.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -929,8 +949,8 @@ export class Query implements IQuery {
      */
     public async getAllParams(
         height: BigInt,
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryAllParamsResponse | RpcError> {
         try {
             
