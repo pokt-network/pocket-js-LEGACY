@@ -6,11 +6,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "generateDocs": "typedoc",
-    "build": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "prepare": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc & npm run generateDocs",
-    "prepackage": "rm -rf dist & mkdir dist & cti create ./src & npm run lint & tsc",
-    "lint": "tslint -p tsconfig.json",
-    "prepublishOnly": "npm run build"
+    "browserify": "browserify browserify.js -p [ minifyify --no-map ] --standalone PocketJSKeybase > dist/web.js",
+    "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
+    "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
+    "prepare": "npm run build",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src --fix",
+    "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "keywords": [
     "pocket-js",
@@ -25,6 +26,8 @@
   "author": "Pocket Network",
   "license": "MIT",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
     "@types/chai": "^4.2.7",
     "@types/dotenv": "^8.2.0",
     "@types/mocha": "^8.2.1",
@@ -33,8 +36,12 @@
     "create-ts-index": "^1.13.6",
     "mocha": "^7.1.1",
     "ts-node": "^8.6.2",
-    "tslint": "^6.1.0",
-    "tslint-config-prettier": "^1.18.0",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsdoc": "^35.3.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-react": "^7.24.0",
     "typedoc": "^0.20.36",
     "typescript": "^3.7.2"
   }
