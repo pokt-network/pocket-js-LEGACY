@@ -53,6 +53,7 @@ export class Relayer {
 
   /**
    * Sends a Relay Request
+   * 
    * @param {string} data - string holding the json rpc call.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -73,7 +74,7 @@ export class Relayer {
     method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node,
-    consensusEnabled: boolean = false,
+    consensusEnabled = false,
     requestID = ""
   ): Promise<RelayResponse | ConsensusNode | RpcError> {
     try {
@@ -96,9 +97,10 @@ export class Relayer {
       }
 
       // Set the currentSession; may be refreshed below if the block height is stale
-      let currentSession = currentSessionOrError as Session;
+      let currentSession = currentSessionOrError;
       // Profiler
       profileResult = new ProfileResult("resolve_relay_node")
+
       // Determine the service node
       const serviceNodeOrError = this.resolveRelayNode(
         currentSession,
@@ -113,7 +115,7 @@ export class Relayer {
         return RpcError.fromError(serviceNodeOrError);
       }
 
-      const serviceNode = serviceNodeOrError as Node;
+      const serviceNode = serviceNodeOrError;
 
       // Final Service Node check
       if (serviceNode === undefined) {
@@ -148,7 +150,7 @@ export class Relayer {
 
       // Produce signature payload
       const relayMeta = new RelayMeta(
-        BigInt(currentSession.sessionHeader.sessionBlockHeight)
+        currentSession.sessionHeader.sessionBlockHeight
       );
       const requestHash = new RequestHash(relayPayload, relayMeta);
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999));
@@ -180,7 +182,7 @@ export class Relayer {
         return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
       }
 
-      const signature = signatureOrError as Buffer;
+      const signature = signatureOrError;
       const signatureHex = signature.toString("hex");
 
       // Produce RelayProof
@@ -232,6 +234,7 @@ export class Relayer {
   /**
    *
    * Sends a Relay Request to multiple nodes for manual consensus
+   * 
    * @param {string} data - string holding the json rpc call.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -281,8 +284,8 @@ export class Relayer {
       }
       // Add the consensus node list to the consensus relay response
       const consensusRelayResponse = new ConsensusRelayResponse(
-        firstResponse!.signature,
-        firstResponse!.payload,
+        firstResponse.signature,
+        firstResponse.payload,
         consensusNodes
       )
 
@@ -293,7 +296,7 @@ export class Relayer {
         return consensusRelayResponse
       } else if (consensusRelayResponse.majorityResponse !== undefined && consensusRelayResponse.minorityResponse !== undefined) {
         // Create the challenge request
-        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse!, consensusRelayResponse.minorityResponse!)
+        const challengeRequest = new ChallengeRequest(consensusRelayResponse.majorityResponse, consensusRelayResponse.minorityResponse)
         
         // Use one node from relay response to send the request challenge
         const consensusNode = consensusRelayResponse.consensusNodes[Math.floor(Math.random() * consensusRelayResponse.consensusNodes.length)]
@@ -312,6 +315,7 @@ export class Relayer {
   /**
    *
    * Retrieves a ChallengeResponse object.
+   * 
    * @param {ChallengeRequest} request - The ChallengeRequest
    * @param {Node} node - Service node that will receive the challenge request
    * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -322,8 +326,8 @@ export class Relayer {
    public async requestChallenge(
     request: ChallengeRequest,
     node: Node,
-    timeout: number = 60000, 
-    rejectSelfSignedCertificates: boolean = true
+    timeout = 60000, 
+    rejectSelfSignedCertificates = true
   ): Promise<ChallengeResponse | RpcError> {
     try {
         const payload = JSON.stringify(request.toJSON())
@@ -356,6 +360,7 @@ export class Relayer {
 
   /**
    * Resolves the node logic for a sendRelay
+   * 
    * @param {Session} session - Session object used for the relay.
    * @param {boolean} consensusEnabled - True or false if the relay will be sent to multiple nodes for consensus.
    * @param {Configuration} configuration - Provided configuration object.
@@ -376,7 +381,7 @@ export class Relayer {
       // Provide a random service node from the session
       if (node !== undefined) {
         if (session.isNodeInSession(node)) {
-          return node as Node
+          return node
         } else {
           return new Error("Provided Node is not part of the current session for this application, check your PocketAAT")
         }
@@ -390,6 +395,7 @@ export class Relayer {
 
   /**
    * Resolves the node logic for a sendRelay
+   * 
    * @param {RelayResponse | RpcError} result - Session object used for the relay.
    * @param {any} relayData - Relay data that holds the information used to send the relay.
    * @returns {RelayResponse | ConsensusNode | RpcError} - A Relay Response, Consensus Node for Consensus Relay or an RpcError.
@@ -405,7 +411,7 @@ export class Relayer {
     const functionName = "send_relay"
     // Check session out of sync error
     if (typeGuard(result, RpcError)) {
-      const rpcError = result as RpcError;
+      const rpcError = result;
       // Refresh the current session if we get this error code
       if (
         rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
@@ -433,8 +439,9 @@ export class Relayer {
             // Profiler
             profileResult = new ProfileResult("update_current_session")
             // Update current session with the one provided by the network
-            const newSessionOrError = await this.sessionManager.updateCurrentSession(
-              rpcError.session,
+            const session = Session.fromJSON(JSON.stringify({ session: rpcError.session}))
+            const newSessionOrError = this.sessionManager.updateCurrentSession(
+              session,
               relayData.aat,
               relayData.blockchain,
               relayData.configuration
@@ -446,12 +453,12 @@ export class Relayer {
               // If error or same session, don't even retry relay
               continue
             } else if (typeGuard(newSessionOrError, Session)) {
-              const newSession = newSessionOrError as Session
+              const newSession = newSessionOrError
               if (newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
                 continue
               }
-              relayData.currentSession = newSession as Session
+              relayData.currentSession = newSession
             }
             sessionRefreshed = true
             break
@@ -470,12 +477,14 @@ export class Relayer {
               // If error or same session, don't even retry relay
               continue
             } else if (typeGuard(newSessionOrError, Session)) {
-              const newSession = newSessionOrError as Session
-              if (newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight) {
+              const newSession = newSessionOrError;
+              if (
+                newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight
+              ) {
                 // If we get the same session skip this attempt
                 continue
               }
-              relayData.currentSession = newSession as Session
+              relayData.currentSession = newSession;
             }
             sessionRefreshed = true
             break

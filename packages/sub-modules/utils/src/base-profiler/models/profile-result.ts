@@ -10,6 +10,7 @@
   
     /**
      * Profile result.
+     *
      * @constructor
      * @param {string} blockKey - Code Block key name.
      */
@@ -26,6 +27,7 @@
     /**
      *
      * Saves the current recording
+     *
      * @returns {JSON} - JSON Object.
      * @memberof ProfileResult
      */
@@ -36,6 +38,7 @@
     /**
      *
      * Returns an object with the recording results
+     *
      * @returns {JSON} - JSON Object.
      * @memberof ProfileResult
      */

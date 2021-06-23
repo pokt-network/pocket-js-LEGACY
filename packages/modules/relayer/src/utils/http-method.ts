@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  *
  * HTTPMethod enum with the possible Staking status values

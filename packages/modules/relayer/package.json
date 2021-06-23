@@ -10,7 +10,7 @@
     "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
     "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
     "prepare": "npm run build && npm run browserify",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src",
     "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "keywords": [
@@ -43,6 +43,8 @@
     "minifyify": "^7.3.5"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/chai": "^4.2.7",
     "@types/mocha": "^5.2.7",
@@ -52,8 +54,12 @@
     "mocha": "^7.1.1",
     "nyc": "^15.0.0",
     "ts-node": "^8.6.2",
-    "tslint": "^6.1.0",
-    "tslint-config-prettier": "^1.18.0",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsdoc": "^35.3.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-react": "^7.24.0",
     "typedoc": "^0.20.36",
     "typescript": "^3.7.2"
   }

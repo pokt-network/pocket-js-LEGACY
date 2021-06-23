@@ -8,6 +8,7 @@ import { ProfileResult } from "./models/profile-result";
 
     /**
      * Handles the profiler results
+     *
      * @param { any } data - Object that can hold any extra information for metrics.
      * @param { string } functionName - Main function name.
      * @param { ProfileResult[] } results - Profile results array
