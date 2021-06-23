@@ -6,7 +6,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "generateDocs": "typedoc",
-    "browserify": "browserify browserify.js -p [ minifyify --no-map ] --standalone PocketJSKeybase > dist/web.js",
     "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
     "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
     "prepare": "npm run build",

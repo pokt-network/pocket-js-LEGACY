@@ -25,6 +25,7 @@ export class SessionManager {
 
   /**
    * Creates an instance of SessionManager.
+   * 
    * @param {URL[]} dispatchers - Dispatcher's list.
    * @param {Configuration} configuration - Pocket Configuration.
    * @param {IKVStore} store - (Optional) KVStore implementation.
@@ -60,6 +61,7 @@ export class SessionManager {
 
   /**
    * Adds a new node to the routing table dispatcher's list
+   * 
    * @param {Node} dispatcher - New dispatcher.
    * @memberof SessionManager
    */
@@ -73,6 +75,7 @@ export class SessionManager {
 
   /**
    * Removes a dispatcher from the routing table dispatcher's list
+   * 
    * @param {Node} dispatcher - Dispatcher to be removed.
    * @memberof SessionManager
    */
@@ -86,15 +89,17 @@ export class SessionManager {
 
   /**
    * Returns the routing table dispatcher's count
+   * 
    * @returns {Number} - Dispatcher's count.
    * @memberof SessionManager
    */
-  public getDispatchersCount() {
+  public getDispatchersCount(): number {
     return this.routingTable.dispatchersCount;
   }
 
   /**
    * Request a new session object. Returns a Promise with the Session object or an Error when something goes wrong.
+   * 
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
@@ -161,6 +166,7 @@ export class SessionManager {
 
   /**
    * Returns the current session for an specific Blockchain. Request a new session object if there's no an active Session for the specified blockchain. Returns a Promise with the Session object or a RpcErrorResponse when something goes wrong.
+   * 
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
@@ -187,18 +193,19 @@ export class SessionManager {
 
   /**
    * Update the current session using an already requested dispatch response. Returns a Promise with the Session object or an Error when something goes wrong.
+   * 
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
-   * @returns {Promise}
+   * @returns {Session | Error} - Session object or error.
    * @memberof SessionManager
    */
-  public async updateCurrentSession(
+  public updateCurrentSession(
     session: Session,
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration
-  ): Promise<Session | Error> {
+  ): Session | Error {
     const key = this.getSessionKey(pocketAAT, chain);
 
     return this.saveSession(key, session, configuration);
@@ -206,6 +213,7 @@ export class SessionManager {
 
   /**
    * Creates an unique key using the PocketAAT object and the chain.
+   * 
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Blockchain hash.
    * @memberof SessionManager
@@ -218,17 +226,19 @@ export class SessionManager {
 
   /**
    * Removes the first Session in the queue for the specified blockchain.
+   * 
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Blockchain hash.
    * @memberof SessionManager
    */
-  public destroySession(pocketAAT: PocketAAT, chain: string) {
+  public destroySession(pocketAAT: PocketAAT, chain: string): void {
     const key = this.getSessionKey(pocketAAT, chain);
     (this.sessionMap.get(key) as Queue<Session>).dequeue(); 
   }
 
   /**
    * Saves the given session to the session queue
+   * 
    * @param {string} key - The key under which to save the session
    * @param {Session} session - The session to save
    * @param {Configuration} configuration - The configuration to use
