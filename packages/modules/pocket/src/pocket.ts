@@ -25,6 +25,7 @@ export class Pocket {
 
   /**
    * Creates an instance of Pocket.
+   *
    * @param {URL} dispatchers - Array holding the initial dispatcher url(s).
    * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
    * @param {Configuration} configuration - Configuration object.
@@ -55,6 +56,7 @@ export class Pocket {
 
   /**
    * Returns the Session Manager's routing table dispatcher's count
+   *
    * @returns {Number} - Dispatcher's count.
    * @memberof Pocket
    */
@@ -64,6 +66,7 @@ export class Pocket {
 
   /**
    * Creates a new instance of the RPC Query if you set an IRPCProvider or return the previous existing instance
+   *
    * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
    * @returns {RPC} - A RPC object.
    * @memberof Pocket
@@ -80,6 +83,7 @@ export class Pocket {
 
   /**
    * Creates a new instance of the Relayer if you provide a list of dispatchers or returns the previous existing instance
+   * 
    * @param {URL[]} dispatchers - List of dispatchers.
    * @returns {Relayer | undefined} - The Relayer instance or undefined.
    * @memberof Pocket
@@ -97,6 +101,7 @@ export class Pocket {
   /**
    *
    * Sends a Relay Request to multiple nodes for manual consensus
+   *
    * @param {string} data - string holding the json rpc call.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -133,6 +138,7 @@ export class Pocket {
   /**
    *
    * Sends a Relay Request
+   *
    * @param {string} data - string holding the json rpc call.
    * @param {string} blockchain - Blockchain hash.
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -170,13 +176,14 @@ export class Pocket {
 
   /**
    * Creates an ITransactionSender given a private key
+   *
    * @param {Buffer | string} privateKey 
    * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
    * @memberof Pocket
    */
   public withPrivateKey(privateKey: Buffer | string): ITransactionSender | Error {
     try {
-      const privKeyBuffer = typeGuard(privateKey, Buffer) ? privateKey as Buffer : Buffer.from(privateKey as string, 'hex')
+      const privKeyBuffer = typeGuard(privateKey, Buffer) ? privateKey  : Buffer.from(privateKey , 'hex')
       if (!validatePrivateKey(privKeyBuffer)) {
         throw new Error("Invalid private key")
       }
@@ -192,6 +199,7 @@ export class Pocket {
 
   /**
    * Creates an ITransactionSender given an already imported account into this instanc keybase
+   *
    * @param {Buffer | string} address - address of the account
    * @param {string} passphrase - passphrase for the account
    * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
@@ -199,18 +207,19 @@ export class Pocket {
    */
   public async withImportedAccount(address: Buffer | string, passphrase: string): Promise<ITransactionSender | Error> {
     const unlockedAccountOrError = await this.keybase.getUnlockedAccount(
-      typeGuard(address, "string") ? address as string : (address as Buffer).toString("hex"),
+      typeGuard(address, "string") ? address  : (address ).toString("hex"),
       passphrase)
 
     if (typeGuard(unlockedAccountOrError, Error)) {
-      return unlockedAccountOrError as Error
+      return unlockedAccountOrError 
     } else {
-      return new TransactionSender(this.query?.rpcProvider!, (unlockedAccountOrError as UnlockedAccount))
+      return new TransactionSender(this.query?.rpcProvider!, unlockedAccountOrError)
     }
   }
 
   /**
    * Creates an ITransactionSender given a {TransactionSigner} function
+   *
    * @param {TransactionSigner} txSigner - Function which will sign the transaction bytes
    * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
    * @memberof Pocket

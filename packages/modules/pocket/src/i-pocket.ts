@@ -23,6 +23,7 @@ export interface IPocket {
 
     /**
      * Returns the Session Manager's routing table dispatcher's count
+     *
      * @returns {Number} - Dispatcher's count.
      * @memberof Pocket
      */
@@ -30,6 +31,7 @@ export interface IPocket {
 
     /**
      * Creates a new instance of the RPC Query if you set an IRPCProvider or return the previous existing instance
+     *
      * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to the Pocket Core RPC interface.
      * @returns {RPC} - A RPC object.
      * @memberof Pocket
@@ -38,6 +40,7 @@ export interface IPocket {
 
     /**
      * Creates a new instance of the CLient RPC if you set an IRPCProvider or return the previous existing instance
+     *
      * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to send transactions and relays.
      * @returns {RPC} - A RPC object.
      * @memberof Pocket
@@ -47,6 +50,7 @@ export interface IPocket {
     /**
      *
      * Sends a Relay Request to multiple nodes for manual consensus
+     *
      * @param {string} data - string holding the json rpc call.
      * @param {string} blockchain - Blockchain hash.
      * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -72,6 +76,7 @@ export interface IPocket {
     /**
      *
      * Sends a Relay Request
+     *
      * @param {string} data - string holding the json rpc call.
      * @param {string} blockchain - Blockchain hash.
      * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
@@ -99,6 +104,7 @@ export interface IPocket {
 
     /**
      * Creates an ITransactionSender given a private key
+     *
      * @param {Buffer | string} privateKey 
      * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
      * @memberof Pocket
@@ -107,6 +113,7 @@ export interface IPocket {
 
     /**
      * Creates an ITransactionSender given an already imported account into this instanc keybase
+     *
      * @param {Buffer | string} address - address of the account
      * @param {string} passphrase - passphrase for the account
      * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
@@ -116,6 +123,7 @@ export interface IPocket {
     
     /**
      * Creates an ITransactionSender given a {TransactionSigner} function
+     *
      * @param {TransactionSigner} txSigner - Function which will sign the transaction bytes
      * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
      * @memberof Pocket
