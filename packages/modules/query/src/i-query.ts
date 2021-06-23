@@ -4,7 +4,7 @@ import { QueryBlockResponse, QueryBlockTxsResponse, QueryTXResponse,
     QueryAppResponse, QueryAppParamsResponse, QueryPocketParamsResponse,
     QuerySupportedChainsResponse, QuerySupplyResponse, QueryAccountResponse,
     QueryAccountTxsResponse, QueryNodeClaimResponse, QueryNodeClaimsResponse, 
-    QueryAllParamsResponse, ChallengeRequest, ChallengeResponse} from "@pokt-network/pocket-js-rpc-models"
+    QueryAllParamsResponse } from "@pokt-network/pocket-js-rpc-models"
 import { RpcError } from "@pokt-network/pocket-js-utils"
 import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
@@ -17,6 +17,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Query a Block information
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -32,6 +33,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Query a Block transaction list
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {boolean} prove - True or false to include the tx proof.
      * @param {number} page - (Optional) Page number, default should be 1.
@@ -53,6 +55,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves a transaction information
+     *
      * @param {string} txHash - Transaction hash.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -68,6 +71,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Get the current network block height
+     *
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
      * @returns {Promise<QueryHeightResponse | RpcError>} - A QueryBlockResponse object or Rpc error
@@ -81,6 +85,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves an account balance
+     *
      * @param {string} address - Account's address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -99,6 +104,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves a list of validator nodes
+     *
      * @param {StakingStatus} stakingStatus - Staking status.
      * @param {JailedStatus} jailedStatus - Jailed status.
      * @param {BigInt} blockHeight - Block's number.
@@ -124,6 +130,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Query a Node information
+     *
      * @param {string} address - Node address.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -141,6 +148,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves the node params
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -157,6 +165,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves a list of apps
+     *
      * @param {StakingStatus} stakingStatus - Staking status.
      * @param {BigInt} blockHeight - Block's number.
      * @param {string} blockchain - (optional) Blockchain identifier.
@@ -180,6 +189,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves an app information
+     *
      * @param {string} address - Address of the app.
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
@@ -198,6 +208,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves app params.
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -213,6 +224,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves the pocket params.
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -228,6 +240,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves supported chains
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -243,6 +256,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves current supply information
+     *
      * @param {BigInt} blockHeight - Block's number.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -258,6 +272,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves current Account information
+     *
      * @param {string} address - Account's address.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
@@ -273,6 +288,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
     /**
      *
      * Retrieves an account transaction list
+     *
      * @param {string} address - Account's address.
      * @param {boolean} received - Filters for received or sent txs.
      * @param {boolean} prove - True or false to include the tx proof.
@@ -296,6 +312,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
     /**
      * Returns the list of all pending claims submitted by node address at height,  height = 0 is used as latest
+     *
      * @param {string} address - Node's address.
      * @param {BigInt} appPubKey - Application public key.
      * @param {nuber} blockchain - Blockchain hash.
@@ -320,6 +337,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
     /**
      * Returns the node pending claim for specific session
+     *
      * @param {string} address - Node's address.
      * @param {BigInt} height - Block height.
      * @param {nuber} page - (Optional) Page number, default 1.
@@ -341,6 +359,7 @@ import { IRPCProvider } from "@pokt-network/pocket-js-http-provider"
 
     /**
      * Returns the node parameters at the specified height,  height = 0 is used as latest
+     *
      * @param {nuber} height - Block height.
      * @param {number} timeout - (Optional) Request timeout, default should be 60000.
      * @param {boolean} rejectSelfSignedCertificates - (Optional) Force certificates to come from CAs, default should be true.
