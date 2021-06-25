@@ -420,10 +420,10 @@ export class Keybase implements IKeybase {
      * @returns {Promise<UnlockedAccount | Error>} Unlocked account or an Error
      * @memberof Keybase
      */
-     public async importAndUnlockAccount(
+     public importAndUnlockAccount(
         privateKey: Buffer,
         passphrase: string
-    ): Promise<UnlockedAccount | Error> {
+    ): UnlockedAccount | Error {
         if (passphrase.length === 0) {
             return new Error("Empty passphrase")
         }
@@ -432,13 +432,13 @@ export class Keybase implements IKeybase {
             return new Error("Invalid private key")
         }
         try {
-            const importedAccountOrError = await this.importAccount(privateKey, passphrase)
+            const importedAccountOrError = this.importAccount(privateKey, passphrase)
 
             if (typeGuard(importedAccountOrError, Error)) {
                 return importedAccountOrError
             }
 
-            const unlockedAccountOrError = await this.getUnlockedAccount(importedAccountOrError.addressHex, passphrase)
+            const unlockedAccountOrError = this.getUnlockedAccount(importedAccountOrError.addressHex, passphrase)
 
             if (typeGuard(unlockedAccountOrError, Error)) {
                 return unlockedAccountOrError
