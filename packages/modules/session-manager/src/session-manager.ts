@@ -133,7 +133,7 @@ export class SessionManager {
     // Perform a dispatch request
     const result = await client.dispatch(
       dispatchRequest,
-      configuration.requestTimeOut,
+      configuration.requestTimeout,
       configuration.rejectSelfSignedCertificates
     );
 
