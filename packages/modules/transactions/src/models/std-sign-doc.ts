@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { IAminoEncodable } from "./amino-encodable"
 import { TxMsg } from "./msgs/tx-msg"
 import { CoinDenom } from "./coin-denom"
@@ -17,6 +18,7 @@ export class StdSignDoc implements IAminoEncodable{
 
     /**
      * Constructor for the StdSignDoc class
+     *
      * @throws {Error} Throws an error if the fee is not a number
      * @param {string} entropy - Random int64.
      * @param {string} chainId - The chainId of the network to be sent to
@@ -43,6 +45,7 @@ export class StdSignDoc implements IAminoEncodable{
     }
     /**
      * Marshals using Amino
+     *
      * @returns {Buffer} - Buffer representation of the class properties
      * @memberof StdSignDoc
      */

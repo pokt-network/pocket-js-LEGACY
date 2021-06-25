@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { MsgBeginUnstake } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
@@ -13,6 +14,7 @@ export class MsgProtoAppUnstake extends TxMsg {
 
     /**
      * The address hex of the Application to unstake for
+     *
      * @param {string} appAddress - Application address 
      */
     public constructor(appAddress: string) {
@@ -21,11 +23,12 @@ export class MsgProtoAppUnstake extends TxMsg {
 
         const errorOrUndefined = validateAddressHex(this.appAddress)
         if (typeGuard(errorOrUndefined, Error)) {
-            throw errorOrUndefined as Error
+            throw errorOrUndefined 
         }
     }
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgAppUnstake
      */
@@ -40,6 +43,7 @@ export class MsgProtoAppUnstake extends TxMsg {
 
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgAppUnstake
      */

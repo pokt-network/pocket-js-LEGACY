@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validatePublicKey } from '@pokt-network/pocket-js-utils'
@@ -13,6 +14,7 @@ export class MsgAppStake extends TxMsg {
 
     /**
      * Constructor for this class
+     *
      * @param {Buffer} pubKey - Public key buffer
      * @param {string[]} chains - Network identifier list to be requested by this app
      * @param {string} amount - The amount to stake, must be greater than 0
@@ -33,16 +35,20 @@ export class MsgAppStake extends TxMsg {
             throw new Error("Invalid public key")
         }
     }
+    
     /**
      * Returns the msg type key
+     *
      * @returns {string} - Msg type key value.
      * @memberof MsgAppStake
      */
     public getMsgTypeKey(): string {
         return this.AMINO_KEY
     }
+
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgAppStake
      */
@@ -62,6 +68,7 @@ export class MsgAppStake extends TxMsg {
 
     /**
      * Converts an Msg Object for StdTx encoding
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgAppStake
      */

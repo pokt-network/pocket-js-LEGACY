@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { TxSignature } from '../models/tx-signature'
 import { CoinDenom } from '../models/coin-denom'
 import { BaseTxEncoder } from './base-tx-encoder'
-import { ProtoStdSignature, ProtoStdTx } from '../models/proto/generated/tx-signer'
+import { Coin, ProtoStdSignature, ProtoStdTx } from '../models/proto/generated/tx-signer'
 import * as varint from "varint"
 
 export class ProtoTxEncoder extends BaseTxEncoder {
 
-    public getFeeObj() {
+    public getFeeObj(): Coin[] {
         return [{
             amount: this.fee,
             denom: this.feeDenom !== undefined ? CoinDenom[this.feeDenom].toLowerCase() : 'upokt'

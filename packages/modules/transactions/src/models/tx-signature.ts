@@ -1,4 +1,3 @@
-import { bytesToBase64 } from "@tendermint/belt"
 
 /**
  * Represents a given signature for a Transaction

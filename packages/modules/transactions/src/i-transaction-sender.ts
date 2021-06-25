@@ -8,6 +8,7 @@ import { RpcError } from "@pokt-network/pocket-js-utils"
 export interface ITransactionSender {
     /**
      * Signs and submits a transaction to the network given the parameters and called upon Msgs. Will empty the msg list after succesful submission
+     *
      * @param {string} chainID - The chainID of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount
@@ -27,6 +28,7 @@ export interface ITransactionSender {
     /**
      * Signs and creates a transaction object that can be submitted to the network given the parameters and called upon Msgs. 
      * Will empty the msg list after succesful creation
+     *
      * @param {string} chainID - The chainID of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount
@@ -43,6 +45,7 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgSend TxMsg for this transaction
+     *
      * @param {string} fromAddress - Origin address
      * @param {string} toAddress - Destination address
      * @param {string} amount - The amount to send in uPOKT. Needs to be a valid number greater than 0
@@ -57,6 +60,7 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgAppStake TxMsg for this transaction
+     *
      * @param {string} appPubKey - Application Public Key
      * @param {string[]} chains - Network identifier list to be requested by this app
      * @param {string} amount - the amount to stake, must be greater than 0
@@ -71,6 +75,7 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgBeginAppUnstake TxMsg for this transaction
+     *
      * @param {string} address - Address of the Application to unstake for
      * @returns {ITransactionSender} - Transaction signer
      * @memberof ITransactionSender
@@ -81,6 +86,7 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgAppUnjail TxMsg for this transaction
+     *
      * @param {string} address - Address of the Application to unjail
      * @returns {ITransactionSender} - Transaction signer
      * @memberof ITransactionSender
@@ -91,6 +97,7 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgAppStake TxMsg for this transaction
+     *
      * @param nodePubKey {string}
      * @param {string[]} chains - Network identifier list to be serviced by this node
      * @param {string} amount - The amount to stake, must be greater than 0
@@ -107,6 +114,7 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgBeginUnstake TxMsg for this transaction
+     *
      * @param {string} address - Address of the Node to unstake for
      * @returns {ITransactionSender} - Transaction signer
      * @memberof ITransactionSender
@@ -117,6 +125,7 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgUnjail TxMsg for this transaction
+     *
      * @param {string} address - Address of the Node to unjail
      * @returns {ITransactionSender} - Transaction signer
      * @memberof ITransactionSender

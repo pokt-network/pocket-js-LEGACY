@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { MsgSend } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
@@ -14,6 +15,7 @@ export class MsgProtoSend extends TxMsg {
 
     /**
      * Constructor this message
+     *
      * @param {string} fromAddress - Origin address
      * @param {string} toAddress - Destination address
      * @param {string} amount - Amount to be sent, needs to be a valid number greater than 0
@@ -33,6 +35,7 @@ export class MsgProtoSend extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgSend
      */
@@ -49,6 +52,7 @@ export class MsgProtoSend extends TxMsg {
 
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgSend
      */

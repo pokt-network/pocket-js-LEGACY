@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { MsgBeginNodeUnstake } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
@@ -20,11 +21,12 @@ export class MsgProtoNodeUnstake extends TxMsg {
 
         const errorOrUndefined = validateAddressHex(this.nodeAddress)
         if (typeGuard(errorOrUndefined, Error)) {
-            throw errorOrUndefined as Error
+            throw errorOrUndefined 
         }
     }
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgNodeUnstake
      */
@@ -39,6 +41,7 @@ export class MsgProtoNodeUnstake extends TxMsg {
 
     /**
      * Converts an Msg Object to StdTx
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgNodeUnstake
      */
