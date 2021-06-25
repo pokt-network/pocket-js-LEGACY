@@ -7,7 +7,7 @@
   "scripts": {
     "generateDocs": "typedoc",
     "browserify": "browserify browserify.js -p [ minifyify --no-map ] --standalone PocketJSRelayer > dist/web.js",
-    "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
+    "test:integration": "nyc mocha --require ts-node/register \"tests/src/integration/**/*.ts\" --timeout 0 --exit",
     "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
     "prepare": "npm run build && npm run browserify",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src",

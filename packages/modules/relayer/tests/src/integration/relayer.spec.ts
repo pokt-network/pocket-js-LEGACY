@@ -231,7 +231,7 @@ describe("Relayer", function () {
             const majorityResponse: MajorityResponse = new MajorityResponse([relayResponse1, relayResponse1])
             const minorityResponse: MinorityResponse = new MinorityResponse(relayResponse2)
             const challengeRequest: ChallengeRequest = new ChallengeRequest(majorityResponse, minorityResponse)
-            const node = new Node("", "", false, StakingStatus.Staked, BigInt(0), dispatcherUrl.toString(), ["002","0022"])
+            const node = new Node("", "", false, StakingStatus.staked, BigInt(0), dispatcherUrl.toString(), ["002","0022"])
             // Nock
             NockUtil.mockChallenge()
             const challengeResponse = await relayer.requestChallenge(challengeRequest, node)

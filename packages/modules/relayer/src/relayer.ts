@@ -141,7 +141,7 @@ export class Relayer {
       profileResults.push(profileResult)
       // Profiler
       profileResult = new ProfileResult("keybase_is_unlocked")
-      const isUnlocked = await this.keybase.isUnlocked(clientAddressHex);
+      const isUnlocked = this.keybase.isUnlocked(clientAddressHex);
       profileResult.save()
       profileResults.push(profileResult)
       if (!isUnlocked) {
@@ -204,7 +204,7 @@ export class Relayer {
       const result = await client.relay(
         relay,
         this.configuration.validateRelayResponses,
-        this.configuration.requestTimeOut,
+        this.configuration.requestTimeout,
         this.configuration.rejectSelfSignedCertificates
       );
       // Profiler
