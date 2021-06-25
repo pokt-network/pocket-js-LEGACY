@@ -7,6 +7,7 @@
   "scripts": {
     "generateDocs": "typedoc",
     "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
+    "test:integration": "nyc mocha --require ts-node/register \"tests/src/integration/**/*.ts\" --timeout 0 --exit",
     "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
     "prepare": "npm run build",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src",
@@ -38,6 +39,7 @@
     "js-sha3": "^0.8.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
     "@pokt-network/pocket-js-keybase": "../../modules/keybase/",
@@ -49,6 +51,7 @@
     "chai": "^4.2.0",
     "create-ts-index": "^1.13.6",
     "mocha": "^7.1.1",
+    "nyc": "^15.0.0",
     "ts-node": "^8.6.2",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
