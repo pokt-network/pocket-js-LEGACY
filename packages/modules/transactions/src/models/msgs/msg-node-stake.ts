@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validateServiceURL, validatePublicKey } from '@pokt-network/pocket-js-utils'
@@ -47,6 +48,7 @@ export class MsgNodeStake extends TxMsg {
 
     /**
      * Returns the parsed serviceURL
+     *
      * @returns {string} - Parsed serviceURL
      * @memberof MsgNodeStake
      */
@@ -56,6 +58,7 @@ export class MsgNodeStake extends TxMsg {
 
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgNodeStake
      */
@@ -76,6 +79,7 @@ export class MsgNodeStake extends TxMsg {
 
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgNodeStake
      */

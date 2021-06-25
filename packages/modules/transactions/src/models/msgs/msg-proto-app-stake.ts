@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { MsgProtoStake } from '../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
-import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validatePublicKey } from '@pokt-network/pocket-js-utils'
 
@@ -16,6 +16,7 @@ export class MsgProtoAppStake extends TxMsg {
 
     /**
      * Constructor for this class
+     *
      * @param {Buffer} pubKey - Public key buffer
      * @param {string[]} chains - Network identifier list to be requested by this app
      * @param {string} amount - The amount to stake, must be greater than 0
@@ -38,6 +39,7 @@ export class MsgProtoAppStake extends TxMsg {
     }
     /**
      * Returns the msg type key
+     *
      * @returns {string} - Msg type key value.
      * @memberof MsgAppStake
      */
@@ -46,6 +48,7 @@ export class MsgProtoAppStake extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgAppStake
      */
@@ -65,6 +68,7 @@ export class MsgProtoAppStake extends TxMsg {
 
     /**
      * Converts an Msg Object for StdTx encoding
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgAppStake
      */

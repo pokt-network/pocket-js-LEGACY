@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { TxMsg } from "./tx-msg"
 
 /**
@@ -11,6 +12,7 @@ export class MsgSend extends TxMsg {
 
     /**
      * Constructor this message
+     *
      * @param {string} fromAddress - Origin address
      * @param {string} toAddress - Destination address
      * @param {string} amount - Amount to be sent, needs to be a valid number greater than 0
@@ -30,6 +32,7 @@ export class MsgSend extends TxMsg {
     }
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgSend
      */
@@ -46,6 +49,7 @@ export class MsgSend extends TxMsg {
 
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgSend
      */

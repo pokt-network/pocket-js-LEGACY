@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { TxMsg } from "./tx-msg"
 import { typeGuard, validateAddressHex } from '@pokt-network/pocket-js-utils'
 
@@ -10,6 +11,7 @@ export class MsgAppUnstake extends TxMsg {
 
     /**
      * The address hex of the Application to unstake for
+     *
      * @param {string} appAddress - Application address 
      */
     public constructor(appAddress: string) {
@@ -18,11 +20,12 @@ export class MsgAppUnstake extends TxMsg {
 
         const errorOrUndefined = validateAddressHex(this.appAddress)
         if (typeGuard(errorOrUndefined, Error)) {
-            throw errorOrUndefined as Error
+            throw errorOrUndefined 
         }
     }
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgAppUnstake
      */
@@ -37,6 +40,7 @@ export class MsgAppUnstake extends TxMsg {
 
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgAppUnstake
      */

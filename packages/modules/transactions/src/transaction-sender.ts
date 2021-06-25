@@ -5,7 +5,7 @@ import { MsgProtoAppUnjail } from './models/msgs/msg-proto-app-unjail';
 import { MsgProtoAppUnstake } from './models/msgs/msg-proto-app-unstake';
 import { MsgProtoAppStake } from './models/msgs/msg-proto-app-stake';
 import { MsgProtoSend } from './models/msgs/msg-proto-send';
-import { TxMsg, CoinDenom, TxSignature, TransactionSignature, ITransactionSender, TransactionSigner} from "./index"
+import { TxMsg, CoinDenom, TxSignature, ITransactionSender, TransactionSigner} from "./index"
 import { UnlockedAccount, Keybase } from "@pokt-network/pocket-js-keybase"
 import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
@@ -22,6 +22,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
+     *
      * @param {IRPCProvider} rpc - RPC Provider.
      * @param {UnlockedAccount} unlockedAccount - (Optional) Unlocked account.
      * @param {TransactionSigner} txSigner - (Optional) Transaction signer.
@@ -39,6 +40,7 @@ export class TransactionSender implements ITransactionSender {
     /**
      * Signs and creates a transaction object that can be submitted to the network given the parameters and called upon Msgs.
      * Will empty the msg list after succesful creation
+     *
      * @param {string} chainID - The chainID of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
@@ -68,9 +70,9 @@ export class TransactionSender implements ITransactionSender {
             let txSignatureOrError
             const bytesToSign = encoder.marshalStdSignDoc()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
-                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
+                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount )
             } else if (this.txSigner !== undefined) {
-                txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
+                txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner )
             } else {
                 return new RpcError("0", "No account or TransactionSigner specified")
             }
@@ -79,7 +81,7 @@ export class TransactionSender implements ITransactionSender {
                 return new RpcError("0", "Error generating signature for transaction")
             }
 
-            const txSignature = txSignatureOrError as TxSignature
+            const txSignature = txSignatureOrError 
             const addressHex = addressFromPublickey(txSignature.pubKey)
             const encodedTxBytes = encoder.marshalStdTx(txSignature)
 
@@ -92,6 +94,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Signs and submits a transaction to the network given the parameters for each Msg in the Msg list. Will empty the msg list after submission attempt
+     *
      * @param {string} chainID - The chainID of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
@@ -114,7 +117,7 @@ export class TransactionSender implements ITransactionSender {
             if (!typeGuard(rawTxRequestOrError, RawTxRequest)) {
                 return rawTxRequestOrError
             }
-            const rawTxRequest = rawTxRequestOrError as RawTxRequest
+            const rawTxRequest = rawTxRequestOrError 
 
             // Clean message and error
             this.txMsg = undefined
@@ -129,6 +132,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgSend TxMsg for this transaction
+     *
      * @param {string} fromAddress - Origin address
      * @param {string} toAddress - Destination address
      * @param {string} amount - Amount to be sent, needs to be a valid number greater than 0
@@ -150,6 +154,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgAppStake TxMsg for this transaction
+     *
      * @param {string} appPubKey - Application Public Key
      * @param {string[]} chains - Network identifier list to be requested by this app
      * @param {string} amount - the amount to stake, must be greater than 0
@@ -171,6 +176,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgBeginAppUnstake TxMsg for this transaction
+     *
      * @param {string} address - Address of the Application to unstake for
      * @returns {ITransactionSender} - A transaction sender.
      * @memberof TransactionSender
@@ -188,6 +194,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgAppUnjail TxMsg for this transaction
+     *
      * @param {string} address - Address of the Application to unjail
      * @returns {ITransactionSender} - A transaction sender.
      * @memberof TransactionSender
@@ -206,6 +213,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgAppStake TxMsg for this transaction
+     *
      * @param {string} nodePubKey - Node Public key
      * @param {string[]} chains - Network identifier list to be serviced by this node
      * @param {string} amount - the amount to stake, must be greater than 0
@@ -229,6 +237,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgBeginUnstake TxMsg for this transaction
+     *
      * @param {string} address - Address of the Node to unstake for
      * @returns {ITransactionSender} - A transaction sender.
      * @memberof TransactionSender
@@ -247,6 +256,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgUnjail TxMsg for this transaction
+     *
      * @param {string} address - Address of the Node to unjail
      * @returns {ITransactionSender} - A transaction sender.
      * @memberof TransactionSender
@@ -264,6 +274,7 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Signs using the unlockedAccount attribute of this class
+     *
      * @param {Buffer} bytesToSign - Bytes to be signed
      * @param {UnlockedAccount} unlockedAccount - Unlocked account for signing
      * @returns {TxSignature | Error} - A transaction signature or error.
@@ -272,13 +283,14 @@ export class TransactionSender implements ITransactionSender {
     private async signWithUnlockedAccount(bytesToSign: Buffer, unlockedAccount: UnlockedAccount): Promise<TxSignature | Error> {
         const signatureOrError = await Keybase.signWith(unlockedAccount.privateKey, bytesToSign)
         if (typeGuard(signatureOrError, Error)) {
-            return signatureOrError as Error
+            return signatureOrError 
         }
-        return new TxSignature(unlockedAccount.publicKey, signatureOrError as Buffer)
+        return new TxSignature(unlockedAccount.publicKey, signatureOrError )
     }
 
     /**
      * Signs using the txSigner attribute of this class
+     *
      * @param {Buffer} bytesToSign - Bytes to sign
      * @param {TransactionSigner} txSigner - Transaction signer
      * @returns {TxSignature | Error} - A transaction signature or error.
@@ -287,9 +299,9 @@ export class TransactionSender implements ITransactionSender {
     private signWithTrasactionSigner(bytesToSign: Buffer, txSigner: TransactionSigner): TxSignature | Error {
         const transactionSignatureOrError = txSigner(bytesToSign)
         if (typeGuard(transactionSignatureOrError, Error)) {
-            return transactionSignatureOrError as Error
+            return transactionSignatureOrError 
         }
-        const txSignature = transactionSignatureOrError as TransactionSignature
+        const txSignature = transactionSignatureOrError 
         return new TxSignature(txSignature.publicKey, txSignature.signature)
     }
 }

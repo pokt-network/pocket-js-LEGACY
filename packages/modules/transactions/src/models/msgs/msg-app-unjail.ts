@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { TxMsg } from "./tx-msg"
 import { typeGuard, validateAddressHex } from '@pokt-network/pocket-js-utils'
 
@@ -18,11 +19,12 @@ export class MsgAppUnjail extends TxMsg {
 
         const errorOrUndefined = validateAddressHex(this.address)
         if (typeGuard(errorOrUndefined, Error)) {
-            throw errorOrUndefined as Error
+            throw errorOrUndefined 
         }
     }
     /**
      * Converts an Msg Object to StdSignDoc
+     *
      * @returns {object} - Msg type key value.
      * @memberof MsgAppUnjail
      */
@@ -37,6 +39,7 @@ export class MsgAppUnjail extends TxMsg {
 
     /**
      * Converts an Msg Object to StdTx
+     *
      * @returns {any} - Msg type key value.
      * @memberof MsgAppUnjail
      */

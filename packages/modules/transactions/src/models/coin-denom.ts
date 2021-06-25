@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  * An enum to represent all the valid Coin Denominations in Pocket Network
  */
