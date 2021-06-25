@@ -57,10 +57,10 @@ export class Pocket {
   /**
    * Returns the Session Manager's routing table dispatcher's count
    *
-   * @returns {Number} - Dispatcher's count.
+   * @returns {number} - Dispatcher's count.
    * @memberof Pocket
    */
-  public getDispatchersCount() {
+  public getDispatchersCount(): number {
     return this.sessionManager.getDispatchersCount()
   }
 
@@ -71,7 +71,7 @@ export class Pocket {
    * @returns {RPC} - A RPC object.
    * @memberof Pocket
    */
-  public Query(rpcProvider?: IRPCProvider): Query | undefined {
+  public setQuery(rpcProvider?: IRPCProvider): Query | undefined {
     if (rpcProvider !== undefined) {
       this.query = new Query(rpcProvider)
     }
@@ -88,7 +88,7 @@ export class Pocket {
    * @returns {Relayer | undefined} - The Relayer instance or undefined.
    * @memberof Pocket
    */
-  public Relayer(dispatchers?: URL[]): Relayer | undefined {
+  public setRelayer(dispatchers?: URL[]): Relayer | undefined {
     if (dispatchers !== undefined && dispatchers.length > 0) {
       this.relayer = new Relayer(dispatchers)
     }
@@ -159,7 +159,7 @@ export class Pocket {
     method: HTTPMethod = HTTPMethod.NA,
     path = "",
     node?: Node,
-    consensusEnabled: boolean = false
+    consensusEnabled = false
   ): Promise<RelayResponse | ConsensusNode | RpcError> {
     try {
       if (this.relayer === undefined) {
@@ -191,7 +191,8 @@ export class Pocket {
       const unlockedAccount = new UnlockedAccount(new Account(pubKey, ''), privKeyBuffer)
 
       // Select a random dispatcher for the provider
-      return new TransactionSender(this.query?.rpcProvider!, unlockedAccount)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return new TransactionSender(this.query!.rpcProvider, unlockedAccount)
     } catch (err) {
       return err
     }
@@ -202,18 +203,19 @@ export class Pocket {
    *
    * @param {Buffer | string} address - address of the account
    * @param {string} passphrase - passphrase for the account
-   * @returns {ITransactionSender} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
+   * @returns {ITransactionSender | Error} - Interface with all the possible MsgTypes in a Pocket Network transaction and a function to submit the transaction to the network.
    * @memberof Pocket
    */
-  public async withImportedAccount(address: Buffer | string, passphrase: string): Promise<ITransactionSender | Error> {
-    const unlockedAccountOrError = await this.keybase.getUnlockedAccount(
+  public withImportedAccount(address: Buffer | string, passphrase: string): ITransactionSender | Error {
+    const unlockedAccountOrError = this.keybase.getUnlockedAccount(
       typeGuard(address, "string") ? address  : (address ).toString("hex"),
       passphrase)
 
     if (typeGuard(unlockedAccountOrError, Error)) {
       return unlockedAccountOrError 
     } else {
-      return new TransactionSender(this.query?.rpcProvider!, unlockedAccountOrError)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return new TransactionSender(this.query!.rpcProvider, unlockedAccountOrError)
     }
   }
 
@@ -226,7 +228,8 @@ export class Pocket {
    */
   public withTxSigner(txSigner: TransactionSigner): ITransactionSender | Error {
     try {
-      return new TransactionSender(this.query?.rpcProvider!, undefined, txSigner)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return new TransactionSender(this.query!.rpcProvider, undefined, txSigner)
     } catch (err) {
       return err
     }

@@ -36,16 +36,16 @@ export interface IPocket {
      * @returns {RPC} - A RPC object.
      * @memberof Pocket
      */
-    Query(rpcProvider?: IRPCProvider): Query | undefined;
+    setQuery(rpcProvider?: IRPCProvider): Query | undefined;
 
     /**
-     * Creates a new instance of the CLient RPC if you set an IRPCProvider or return the previous existing instance
+     * Creates a new instance of the Relayer if you set an IRPCProvider or return the previous existing instance
      *
      * @param {IRPCProvider} rpcProvider - Provider which will be used to reach out to send transactions and relays.
      * @returns {RPC} - A RPC object.
      * @memberof Pocket
      */
-    Client(rpcProvider?: IRPCProvider): Client | undefined
+    setRelayer(rpcProvider?: IRPCProvider): Client | undefined
     
     /**
      *
