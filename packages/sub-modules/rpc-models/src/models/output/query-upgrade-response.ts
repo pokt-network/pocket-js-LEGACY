@@ -1,4 +1,3 @@
-
 /**
  *
  *
@@ -6,8 +5,8 @@
  */
  export class QueryUpgradeResponse {
     /**
-     *
      * Creates a QueryUpgradeResponse object using a JSON string
+     * 
      * @param {String} json - JSON string.
      * @returns {QueryUpgradeResponse} - QueryUpgradeResponse object.
      * @memberof QueryUpgradeResponse
@@ -33,6 +32,7 @@
   
     /**
      * Query all parameters Response.
+     * 
      * @constructor
      * @param {BigInt} height - Application parameter list.
      * @param {string} version - Auth parameter list.
@@ -49,20 +49,20 @@
       }
     }
     /**
-     *
      * Creates a JSON object with the QueryUpgradeResponse properties
-     * @returns {JSON} - JSON Object.
+     * 
+     * @returns {any} - JSON Object.
      * @memberof QueryUpgradeResponse
      */
-    public toJSON() {
+    public toJSON(): any {
       return {
         height: Number(this.height.toString()),
         version: this.version
       }
     }
     /**
-     *
      * Check if the QueryUpgradeResponse object is valid
+     * 
      * @returns {boolean} - True or false.
      * @memberof QueryUpgradeResponse
      */

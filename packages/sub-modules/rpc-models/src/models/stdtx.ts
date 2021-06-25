@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/naming-convention */
 export type Fee = { amount: string, denom: string }
 export type Signature = { pub_key: string, signature: string }
 
@@ -8,8 +10,8 @@ export type Signature = { pub_key: string, signature: string }
  */
  export class StdTxModel {
   /**
-   *
    * Creates a StdTxModel object using a JSON string
+   * 
    * @param {string} json - JSON string.
    * @returns {StdTxModel} - StdTxModel object.
    * @memberof StdTxModel
@@ -42,7 +44,8 @@ export type Signature = { pub_key: string, signature: string }
   public readonly signature: Signature
 
   /**
-   * StdTxModel.
+   * Std Transaction Model
+   * 
    * @constructor
    * @param {number} entropy - Entropy.
    * @param {Fee} fee - Fee.
@@ -61,8 +64,8 @@ export type Signature = { pub_key: string, signature: string }
     }
   }
   /**
-   *
    * Creates a JSON object with the StdTxModel properties
+   * 
    * @returns {JSON} - JSON Object.
    * @memberof StdTxModel
    */
@@ -76,8 +79,8 @@ export type Signature = { pub_key: string, signature: string }
     }
   }
   /**
-   *
    * Check if the StdTxModel object is valid
+   * 
    * @returns {boolean} - True or false.
    * @memberof StdTxModel
    */
