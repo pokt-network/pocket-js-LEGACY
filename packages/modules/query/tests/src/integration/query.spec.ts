@@ -75,7 +75,7 @@ describe("Pocket RPC Query Interface", async () => {
             const query = getDefaultRpcInstance()
             // Nock
             NockUtil.mockGetNodesWithJailedAndStakingStatus()
-            const nodesResponse = await query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(1), "", 1, 10)
+            const nodesResponse = await query.getNodes(StakingStatus.staked, JailedStatus.unjailed, BigInt(1), "", 1, 10)
             expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
@@ -83,7 +83,7 @@ describe("Pocket RPC Query Interface", async () => {
             const query = getDefaultRpcInstance()
             // Nock
             NockUtil.mockGetNodesWithStakingStatus()
-            const nodesResponse = await query.getNodes(StakingStatus.Staked, undefined, BigInt(0), "", 1, 10)
+            const nodesResponse = await query.getNodes(StakingStatus.staked, undefined, BigInt(0), "", 1, 10)
             expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
@@ -91,7 +91,7 @@ describe("Pocket RPC Query Interface", async () => {
             const query = getDefaultRpcInstance()
             // Nock
             NockUtil.mockGetNodesWithJailedStatus()
-            const nodesResponse = await query.getNodes(undefined, JailedStatus.Unjailed, BigInt(0), "", 1, 10)
+            const nodesResponse = await query.getNodes(undefined, JailedStatus.unjailed, BigInt(0), "", 1, 10)
             expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
@@ -99,7 +99,7 @@ describe("Pocket RPC Query Interface", async () => {
             const query = getDefaultRpcInstance()
             // Nock
             NockUtil.mockGetNodesWithJailedAndStakingStatus()
-            const nodesResponse = await query.getNodes(StakingStatus.Staked, JailedStatus.Unjailed, BigInt(0), "", 1, 10)
+            const nodesResponse = await query.getNodes(StakingStatus.staked, JailedStatus.unjailed, BigInt(0), "", 1, 10)
             expect(typeGuard(nodesResponse, QueryNodesResponse)).to.be.true
         }).timeout(0)
 
@@ -131,7 +131,7 @@ describe("Pocket RPC Query Interface", async () => {
             const query = getDefaultRpcInstance()
             // Nock
             NockUtil.mockGetApps()
-            const appsResponse = await query.getApps(StakingStatus.Staked, BigInt(1), undefined, 1, 10)
+            const appsResponse = await query.getApps(StakingStatus.staked, BigInt(1), undefined, 1, 10)
             expect(typeGuard(appsResponse, QueryAppsResponse)).to.be.true
         }).timeout(0)
 

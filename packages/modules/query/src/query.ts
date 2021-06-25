@@ -270,7 +270,7 @@ export class Query implements IQuery {
     public async getNodes(
         stakingStatus: StakingStatus = StakingStatus.na,
         jailedStatus: JailedStatus = JailedStatus.na,
-        blockHeight = BigInt(0),
+        blockHeight: BigInt = BigInt(0),
         blockchain = "",
         page = 1,
         perPage = 30,
@@ -431,7 +431,7 @@ export class Query implements IQuery {
      * @memberof Query
      */
     public async getApps(
-        stakingStatus: StakingStatus = StakingStatus.NA,
+        stakingStatus: StakingStatus = StakingStatus.na,
         blockHeight: BigInt = BigInt(0),
         blockchain = "",
         page = 1,
@@ -990,14 +990,15 @@ export class Query implements IQuery {
 
     /**
      * Returns the network transaction codec upgrade height from amino to protobuf 
+     *
      * @param {nuber} height - Block height.
      * @param {nuber} timeout - (Optional) Request timeout value, default 60000.
      * @param {boolean} rejectSelfSignedCertificates - force certificates to come from CAs
      * @memberof QueryNamespace
      */
      public async getUpgrade(
-        timeout: number = 60000, 
-        rejectSelfSignedCertificates: boolean = true
+        timeout = 60000, 
+        rejectSelfSignedCertificates = true
     ): Promise<QueryUpgradeResponse | RpcError> {
         try {
 
