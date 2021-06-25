@@ -147,6 +147,18 @@ export interface IKeybase {
     ): Account | Error
 
     /**
+     * @description Imports and Unlocks an account by using it's private key
+     * @param {Buffer} privateKey The private key of the account to be imported into this keybase
+     * @param {string} passphrase The passphrase for the account to be imported into the keybase
+     * @returns {Promise<UnlockedAccount | Error>} Unlocked account or an Error
+     * @memberof Keybase
+     */
+    importAndUnlockAccount(
+        privateKey: Buffer,
+        passphrase: string
+    ): UnlockedAccount | Error
+    
+    /**
      * @description Exports an account's private key stored in this keybase
      * @param {string} addressHex The address of the account that will be exported in hex string format
      * @param {string} passphrase The passphrase for the account that will be exported
