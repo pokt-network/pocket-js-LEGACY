@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+
 import { IKeybase } from './i-keybase';
 import { Account } from "./models/account"
 import Sodium from 'libsodium-wrappers'
@@ -86,7 +88,7 @@ export class Keybase implements IKeybase {
      * @memberof Keybase
      */
     public listAccounts(): Account[] | Error {
-        const result = new Array<Account>()
+        const result: Account[] = []
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         let accountIndex = this.store.get(this.ACCOUNT_INDEX_KEY)
         if (typeGuard(accountIndex, Array)) {
@@ -100,9 +102,9 @@ export class Keybase implements IKeybase {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             const accountOrError = this.getAccount(accountIndex[index])
             if (typeGuard(accountOrError, Account)) {
-                result.push(accountOrError )
+                result.push(accountOrError as Account)
             } else {
-                return accountOrError 
+                return accountOrError as Error
             }
         }
         return result
@@ -152,10 +154,9 @@ export class Keybase implements IKeybase {
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, UnlockedAccount)) {
-            const unlockedAccount = unlockedAccountOrError 
-            return this.removeAccountRecord(unlockedAccount)
+            return this.removeAccountRecord(unlockedAccountOrError as UnlockedAccount)
         } else if (typeGuard(unlockedAccountOrError, Error)) {
-            error = unlockedAccountOrError 
+            error = unlockedAccountOrError as Error
         } else {
             error = new Error("Unknown error decrypting Account")
         }
@@ -187,7 +188,7 @@ export class Keybase implements IKeybase {
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, UnlockedAccount)) {
-            const unlockedAccount = unlockedAccountOrError 
+            const unlockedAccount = unlockedAccountOrError as UnlockedAccount
 
             // Remove the account record with the existing passphrase
             const errorOrUndefined = this.removeAccountRecord(
@@ -230,9 +231,9 @@ export class Keybase implements IKeybase {
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return unlockedAccountOrError 
+            return unlockedAccountOrError as Error
         }
-        const unlockedAccount = unlockedAccountOrError 
+        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         try {
             await Sodium.ready
             return Buffer.from(Sodium.crypto_sign_detached(payload, unlockedAccount.privateKey))
@@ -312,7 +313,7 @@ export class Keybase implements IKeybase {
 
         // Return errors if any
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return unlockedAccountOrError 
+            return unlockedAccountOrError as Error
         }
 
         if (unlockPeriod > 0) {
@@ -327,7 +328,7 @@ export class Keybase implements IKeybase {
         }
 
         // Cast to unlocked account
-        const unlockedAccount = unlockedAccountOrError 
+        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         this.unlockedAccounts[unlockedAccount.addressHex] = unlockedAccount
         return undefined
     }
@@ -404,9 +405,9 @@ export class Keybase implements IKeybase {
             const account = new Account(publicKey, encryptedPKHex)
             const errorOrUndefined = this.persistAccount(account)
             if (typeGuard(errorOrUndefined, Error)) {
-                return errorOrUndefined 
+                return errorOrUndefined as Error
             } else {
-                return account
+                return account as Account
             }
         } catch (err) {
             return err
@@ -435,16 +436,16 @@ export class Keybase implements IKeybase {
             const importedAccountOrError = this.importAccount(privateKey, passphrase)
 
             if (typeGuard(importedAccountOrError, Error)) {
-                return importedAccountOrError
+                return importedAccountOrError as Error
             }
-
-            const unlockedAccountOrError = this.getUnlockedAccount(importedAccountOrError.addressHex, passphrase)
+            const importedAccount = importedAccountOrError as Account
+            const unlockedAccountOrError = this.getUnlockedAccount(importedAccount.addressHex, passphrase)
 
             if (typeGuard(unlockedAccountOrError, Error)) {
-                return unlockedAccountOrError
+                return unlockedAccountOrError as Error
             }
 
-            return unlockedAccountOrError
+            return unlockedAccountOrError as UnlockedAccount
         } catch (err) {
             return err
         }
@@ -466,9 +467,9 @@ export class Keybase implements IKeybase {
             passphrase
         )
         if (typeGuard(unlockedAccountOrError, Error)) {
-            return unlockedAccountOrError 
+            return unlockedAccountOrError as Error
         }
-        const unlockedAccount = unlockedAccountOrError 
+        const unlockedAccount = unlockedAccountOrError as UnlockedAccount
         return unlockedAccount.privateKey
     }
     /**
@@ -493,12 +494,13 @@ export class Keybase implements IKeybase {
         // Unlock the account
         const unlockedAccountOrError = this.getUnlockedAccount(addressHex, passphrase)
         if (!typeGuard(unlockedAccountOrError, Error)) {
+            const unlockedAccount = unlockedAccountOrError as UnlockedAccount
             // Get the PPK
-            const ppkStrOrError = this.exportPPK(unlockedAccountOrError.privateKey.toString("hex"), password, hint)
+            const ppkStrOrError = this.exportPPK(unlockedAccount.privateKey.toString("hex"), password, hint)
             // Return the ppk or error
             return ppkStrOrError
         }else {
-            return unlockedAccountOrError
+            return unlockedAccountOrError as Error
         }
     }
     /**
@@ -676,7 +678,7 @@ export class Keybase implements IKeybase {
         let error
         const accountOrError = this.getAccount(addressHex)
         if (typeGuard(accountOrError, Account)) {
-            const account = accountOrError 
+            const account = accountOrError as Account
             try {
                 // Generate decryption key
                 const key = pbkdf2.pbkdf2Sync(
