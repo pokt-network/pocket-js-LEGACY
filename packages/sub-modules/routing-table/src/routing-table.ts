@@ -1,7 +1,5 @@
-import { Node } from "@pokt-network/pocket-js-rpc-models";
 import { Configuration } from "@pokt-network/pocket-js-configuration";
 import { IKVStore } from "@pokt-network/pocket-js-storage";
-import { typeGuard } from "@pokt-network/pocket-js-utils";
 
 /**
  *
@@ -99,29 +97,20 @@ export class RoutingTable {
   }
 
   /**
-   * Returns an specific node from the routing table based on public key
+   * Returns true or false if the dispatcher url exist on the routing table
    * 
    * @param {URL} url - Node's service url.
-   * @returns {Node} Node object.
+   * @returns {boolean} - True or false.
    * @memberof Routing
    */
-  public getDispatcher(url: URL): Node | Error {
-    const dispatchers = this.store.get(
-      this.dispatchersKey.toUpperCase()
-    ) as URL[];
-    let requestedDispatcher;
-    const urlStr = url.toString();
+  public dispatcherExists(url: URL): boolean {
+    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
+    const urlStr = url.toString()
 
-    dispatchers.forEach(function (storedURL: URL) {
-      if (storedURL.toString() === urlStr) {
-        requestedDispatcher = url;
-      }
-    });
-    if (typeGuard(requestedDispatcher, URL)) {
-      return requestedDispatcher;
-    } else {
-      return new Error("Dispatcher not found in routing table.");
-    }
+    // Checking if the dispatcher is already stored
+    const dispatcher = dispatchers.find(element => element.toString() === urlStr)
+
+    return false ? dispatcher === undefined : true
   }
 
   /**

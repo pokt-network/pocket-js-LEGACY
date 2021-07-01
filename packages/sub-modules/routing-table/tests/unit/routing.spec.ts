@@ -25,12 +25,12 @@ describe('Routing Table tests',() => {
             expect(routing).to.be.an.instanceof(RoutingTable)
         }).timeout(0)
 
-        it('should be able to read an specific node from the routing table', () => {
+        it('should be able to check if a dispatcher url is already on the routing table', () => {
             const configuration = getConfig()
             const routing = new RoutingTable([dispatcher], configuration, store)
-            const readDispatcher = routing.getDispatcher(dispatcher)
+            const readDispatcher = routing.dispatcherExists(dispatcher)
             
-            expect(readDispatcher).to.be.an.instanceof(URL)
+            expect(readDispatcher).to.be.(true)
         }).timeout(0)
     
         it('should be able to add a node to the routing table', () => {
@@ -40,7 +40,7 @@ describe('Routing Table tests',() => {
             const secondaryDispatcher: URL = new URL("http://127.0.0.1:80")
             routing.addDispatcher(secondaryDispatcher)
             
-            const readDispatcher = routing.getDispatcher(secondaryDispatcher)
+            const readDispatcher = routing.dispatcherExists(secondaryDispatcher)
             expect(readDispatcher).to.be.an.instanceof(URL)
         }).timeout(0)
     
@@ -48,9 +48,9 @@ describe('Routing Table tests',() => {
             const configuration = getConfig()
     
             const routing = new RoutingTable([dispatcher], configuration, store)
-            routing.deleteDispatcher(dispatcher)
+            const isDeleted = routing.deleteDispatcher(dispatcher)
             
-            expect(routing.getDispatcher(dispatcher)).to.be.an.instanceof(Error)
+            expect(isDeleted).to.be.true
         }).timeout(0)
     
         it('it should not allow to add more than the maxDispatchers configuration variable number of entries into the routing table.', () => {
@@ -111,14 +111,14 @@ describe('Routing Table tests',() => {
             expect(() => new RoutingTable(dispatchers, configuration, store)).to.throw("Routing table cannot contain more than the specified maxDispatcher per blockchain.")
         }).timeout(0)
 
-        it('should fail to read an specific dispatcher from the routing table due to non-existing dispatcher on the list', () => {
+        it('should return false to read an specific dispatcher from the routing table due to non-existing dispatcher on the list', () => {
             const badDispatcher = new URL("http://baddispatcher:8081")
 
             const configuration = getConfig()
             const routing = new RoutingTable([dispatcher], configuration, store)
             
-            const dispatcherOrError = routing.getDispatcher(badDispatcher)
-            expect(dispatcherOrError).to.be.an.instanceof(Error)
+            const dispatcherExist = routing.dispatcherExists(badDispatcher)
+            expect(dispatcherExist).to.be.false
         }).timeout(0)
     
         it('should fail to add a dispatcher to the routing table since it exists already on the list', () => {

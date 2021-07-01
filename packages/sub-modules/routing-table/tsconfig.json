@@ -11,8 +11,10 @@
     "downlevelIteration": true,
     "declaration": true,
     "esModuleInterop": true,
-    "watch": false
+    "watch": false,
+    "noImplicitAny": false
   },
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
