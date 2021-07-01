@@ -2,15 +2,15 @@
   "name": "@pokt-network/pocket-js-rpc-client",
   "version": "0.0.1-rc",
   "description": "Pocket Network RPC client",
-  "main": "index.js",
-  "types": "dist/index.d.ts",
+  "main": "./index",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "generateDocs": "typedoc",
     "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
-    "build": "rm -rf dist && mkdir dist && cti create ./src && npm run lint && tsc && npm run generateDocs",
+    "build": "rm -rf dist && mkdir dist && cti create ./src && tsc && yarn run lint && yarn run generateDocs",
     "prepare": "npm run build",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src",
-    "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && npm install"
+    "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && yarn install"
   },
   "keywords": [
     "pocket",
@@ -25,22 +25,21 @@
   "author": "Pocket Network",
   "license": "MIT",
   "dependencies": {
-    "@pokt-network/pocket-js-http-provider": "../http-provider",
-    "@pokt-network/pocket-js-relay-models": "../relay-models/",
-    "@pokt-network/pocket-js-rpc-models": "../rpc-models/",
-    "@pokt-network/pocket-js-test-utils": "../test-utils/",
-    "@pokt-network/pocket-js-utils": "../utils/"
+    "@pokt-network/pocket-js-http-provider": "file:../http-provider",
+    "@pokt-network/pocket-js-relay-models": "file:../relay-models/",
+    "@pokt-network/pocket-js-rpc-models": "file:../rpc-models/",
+    "@pokt-network/pocket-js-test-utils": "file:../test-utils/",
+    "@pokt-network/pocket-js-utils": "file:../utils/"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
     "@types/chai": "^4.2.7",
-    "@types/dotenv": "^8.2.0",
     "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.32",
     "chai": "^4.2.0",
     "create-ts-index": "^1.13.6",
-    "mocha": "^7.1.1",
+    "mocha": "^9.0.1",
     "ts-node": "^8.6.2",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
