@@ -5,7 +5,7 @@ import { MsgProtoAppUnjail } from './models/msgs/msg-proto-app-unjail';
 import { MsgProtoAppUnstake } from './models/msgs/msg-proto-app-unstake';
 import { MsgProtoAppStake } from './models/msgs/msg-proto-app-stake';
 import { MsgProtoSend } from './models/msgs/msg-proto-send';
-import { TxMsg, CoinDenom, TxSignature, ITransactionSender, TransactionSigner} from "./index"
+import { TxMsg, CoinDenom, TxSignature, ITransactionSender, TransactionSigner, TransactionSignature} from "./index"
 import { UnlockedAccount, Keybase } from "@pokt-network/pocket-js-keybase"
 import { RpcError, typeGuard, addressFromPublickey } from "@pokt-network/pocket-js-utils"
 import { RawTxResponse, RawTxRequest } from "@pokt-network/pocket-js-rpc-models"
@@ -70,7 +70,7 @@ export class TransactionSender implements ITransactionSender {
             let txSignatureOrError
             const bytesToSign = encoder.marshalStdSignDoc()
             if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
-                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount )
+                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, (this.unlockedAccount as UnlockedAccount))
             } else if (this.txSigner !== undefined) {
                 txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner )
             } else {
@@ -283,9 +283,9 @@ export class TransactionSender implements ITransactionSender {
     private async signWithUnlockedAccount(bytesToSign: Buffer, unlockedAccount: UnlockedAccount): Promise<TxSignature | Error> {
         const signatureOrError = await Keybase.signWith(unlockedAccount.privateKey, bytesToSign)
         if (typeGuard(signatureOrError, Error)) {
-            return signatureOrError 
+            return signatureOrError as Error
         }
-        return new TxSignature(unlockedAccount.publicKey, signatureOrError )
+        return new TxSignature(unlockedAccount.publicKey, (signatureOrError as Buffer))
     }
 
     /**
@@ -299,9 +299,9 @@ export class TransactionSender implements ITransactionSender {
     private signWithTrasactionSigner(bytesToSign: Buffer, txSigner: TransactionSigner): TxSignature | Error {
         const transactionSignatureOrError = txSigner(bytesToSign)
         if (typeGuard(transactionSignatureOrError, Error)) {
-            return transactionSignatureOrError 
+            return transactionSignatureOrError as Error
         }
-        const txSignature = transactionSignatureOrError 
+        const txSignature = transactionSignatureOrError as TransactionSignature
         return new TxSignature(txSignature.publicKey, txSignature.signature)
     }
 }
