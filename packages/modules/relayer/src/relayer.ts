@@ -93,11 +93,11 @@ export class Relayer {
       profileResult.save()
       profileResults.push(profileResult)
       if (typeGuard(currentSessionOrError, Error)) {
-        return RpcError.fromError(currentSessionOrError);
+        return RpcError.fromError(currentSessionOrError as Error);
       }
 
       // Set the currentSession; may be refreshed below if the block height is stale
-      let currentSession = currentSessionOrError;
+      let currentSession = currentSessionOrError as Session;
       // Profiler
       profileResult = new ProfileResult("resolve_relay_node")
 
@@ -112,10 +112,10 @@ export class Relayer {
       profileResult.save()
       profileResults.push(profileResult)
       if (typeGuard(serviceNodeOrError, Error)) {
-        return RpcError.fromError(serviceNodeOrError);
+        return RpcError.fromError(serviceNodeOrError as Error);
       }
 
-      const serviceNode = serviceNodeOrError;
+      const serviceNode = serviceNodeOrError as Node;
 
       // Final Service Node check
       if (serviceNode === undefined) {
@@ -145,7 +145,7 @@ export class Relayer {
       profileResult.save()
       profileResults.push(profileResult)
       if (!isUnlocked) {
-        return new RpcError("NA", "Client account " + clientAddressHex + " for this AAT is not unlocked")
+        return new RpcError("NA", `Client account ${clientAddressHex} for this AAT is not unlocked`)
       }
 
       // Produce signature payload
@@ -179,11 +179,10 @@ export class Relayer {
       profileResults.push(profileResult)
       if (typeGuard(signatureOrError, Error)) {
         await this.profiler.flushResults({ requestID, blockchain }, functionName, profileResults)
-        return new RpcError("NA", "Error signing Relay proof: "+signatureOrError.message)
+        return new RpcError("NA", `Error signing Relay proof: ${(signatureOrError as Error).message}`)
       }
 
-      const signature = signatureOrError;
-      const signatureHex = signature.toString("hex");
+      const signatureHex = (signatureOrError as Buffer).toString("hex");
 
       // Produce RelayProof
       const relayProof = new RelayProof(
@@ -411,7 +410,7 @@ export class Relayer {
     const functionName = "send_relay"
     // Check session out of sync error
     if (typeGuard(result, RpcError)) {
-      const rpcError = result;
+      const rpcError = result as RpcError;
       // Refresh the current session if we get this error code
       if (
         rpcError.code === "60" || // InvalidBlockHeightError = errors.New("the block height passed is invalid")
@@ -453,7 +452,7 @@ export class Relayer {
               // If error or same session, don't even retry relay
               continue
             } else if (typeGuard(newSessionOrError, Session)) {
-              const newSession = newSessionOrError
+              const newSession = newSessionOrError as Session
               if (newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight) {
                 // If we get the same session skip this attempt
                 continue
@@ -477,7 +476,7 @@ export class Relayer {
               // If error or same session, don't even retry relay
               continue
             } else if (typeGuard(newSessionOrError, Session)) {
-              const newSession = newSessionOrError;
+              const newSession = newSessionOrError as Session;
               if (
                 newSession.sessionHeader.sessionBlockHeight === relayData.currentSession.sessionHeader.sessionBlockHeight
               ) {
