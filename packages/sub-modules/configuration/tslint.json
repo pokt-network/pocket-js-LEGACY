@@ -20,7 +20,8 @@
         "prefer-const": false
     },
     "linterOptions": {
-        "exclude": [
+        "include": ["src/**/*.ts"],
+  "exclude": [
             "**/index.ts",
             "lib/*"
         ]
