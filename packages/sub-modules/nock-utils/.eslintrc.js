@@ -23,7 +23,7 @@ module.exports = {
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "tsconfig.json",
+        "project": "./tsconfig.json",
         "sourceType": "module"
     },
     "plugins": [
@@ -37,6 +37,7 @@ module.exports = {
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/ban-types": "off",
+        "@typescript-eslint/no-unnecessary-type-assertion": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
         "@typescript-eslint/dot-notation": "error",
         "@typescript-eslint/indent": "off",
