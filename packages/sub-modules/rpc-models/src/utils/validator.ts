@@ -1,6 +1,7 @@
-import {Hex, typeGuard} from "@pokt-network/pocket-js-utils"
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+import { Hex, typeGuard } from "@pokt-network/pocket-js-utils"
 import { RelayProof, RelayResponse } from "@pokt-network/pocket-js-relay-models"
-import {ChallengeRequest, MajorityResponse} from "../models"
+import { ChallengeRequest, MajorityResponse } from "../models"
 
 
 /**
@@ -46,7 +47,7 @@ export function validateRelayResponse(relay: RelayResponse): Error | undefined {
     switch (true) {
         // This should be a better check for validity
         case !Hex.isHex(relay.signature):
-            return new Error("Invalid signature, is not hex: " + relay.signature)
+            return new Error(`Invalid signature, is not hex: ${relay.signature}`)
         case relay.relayRequest.proof.servicerPubKey !== relay.proof.servicerPubKey:
             return new Error("Request servicer public key is different than the response public key.")
         case relay.relayRequest.proof.signature !== relay.proof.signature:

@@ -28,10 +28,13 @@ export class RawTxResponse {
             // Parse the logs if they are available
             if (rawTxResObj.logs && typeGuard(rawTxResObj.logs, Array)) {
                 const logObjs = rawTxResObj.logs as Array<{}>
+
                 for (let i = 0; i < logObjs.length; i++) {
                     const txLogOrError = TxLog.fromJSONObj(logObjs[i])
+
                     if (typeGuard(txLogOrError, TxLog)) {
-                        logs.push(txLogOrError )
+                        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+                        logs.push(txLogOrError as TxLog)
                     }
                 }
             }

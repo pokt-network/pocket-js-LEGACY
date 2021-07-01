@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Hex, validateAddressHex, typeGuard } from "@pokt-network/pocket-js-utils"
+import { Hex, typeGuard } from "@pokt-network/pocket-js-utils"
 
 /**
  * Represents a /v1/rawtx RPC request
@@ -14,9 +14,11 @@ export class RawTxRequest {
      * @memberof RawTxRequest
      */
     public static with(address: Buffer | string, tx: Buffer | string): RawTxRequest {
-        const addrParam: string = typeGuard(address, Buffer) ? (address ).toString('hex') : (address )
-        const txParam: string = typeGuard(tx, Buffer) ? (tx ).toString('hex') : (tx )
-        return new RawTxRequest(addrParam, txParam)
+        const addressParam = typeGuard(address, Buffer) ? address.toString('hex') : address
+        const txParam = typeGuard(tx, Buffer) ? (tx ).toString('hex') : (tx )
+
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        return new RawTxRequest(addressParam as string, txParam as string)
     }
 
     public readonly address: string
@@ -29,15 +31,14 @@ export class RawTxRequest {
      * @param {string} txHex - The transaction bytes in hex format
      */
     public constructor(address: string, txHex: string) {
+        const isValid = Hex.validateAddress(address)
+
+        if (!isValid) {
+            throw new Error("Invalid address hex for the RawTxRequest")
+        }
+
         this.address = address
         this.txHex = txHex
-
-        const errorOrUndefined = validateAddressHex(address)
-        if (typeGuard(errorOrUndefined, Error)) {
-            throw errorOrUndefined 
-        } else if (!Hex.isHex(txHex)) {
-            throw new Error("Invalid transaction hex")
-        }
     }
 
     /**
