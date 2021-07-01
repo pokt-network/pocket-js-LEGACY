@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import {
   SessionHeader,
   Session,
@@ -67,9 +68,9 @@ export class SessionManager {
    */
   public addNewDispatcher(dispatcher: Node | URL): boolean {
     if (typeGuard(dispatcher, Node)) {
-      return this.routingTable.addDispatcher(dispatcher.serviceURL);
+      return this.routingTable.addDispatcher((dispatcher as Node).serviceURL);
     } else {
-      return this.routingTable.addDispatcher(dispatcher);
+      return this.routingTable.addDispatcher(dispatcher as URL);
     }
   }
 
@@ -81,9 +82,9 @@ export class SessionManager {
    */
   public deleteDispatcher(dispatcher: Node | URL): boolean {
     if (typeGuard(dispatcher, Node)) {
-      return this.routingTable.deleteDispatcher(dispatcher.serviceURL);
+      return this.routingTable.deleteDispatcher((dispatcher as Node).serviceURL);
     } else {
-      return this.routingTable.deleteDispatcher(dispatcher);
+      return this.routingTable.deleteDispatcher(dispatcher as URL);
     }
   }
 
@@ -115,11 +116,11 @@ export class SessionManager {
     const dispatcher = this.routingTable.getRandomDispatcher();
 
     if (typeGuard(dispatcher, Error)) {
-      return dispatcher
+      return dispatcher as Error
     }
 
     // Create the Client using the dispatcher
-    const client = new Client(dispatcher);
+    const client = new Client(dispatcher as URL);
 
     // Create the session header
     const header = new SessionHeader(
@@ -154,7 +155,7 @@ export class SessionManager {
       }
     } else if (this.routingTable.dispatchersCount > 0) {
       // Remove the failed dispatcher from the routing table
-      this.routingTable.deleteDispatcher(dispatcher);
+      this.routingTable.deleteDispatcher(dispatcher as URL);
       // Request the session again
       return await this.requestNewSession(pocketAAT, chain, configuration);
     } else {

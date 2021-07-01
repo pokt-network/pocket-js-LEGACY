@@ -221,7 +221,7 @@ export class Queue<T> {
 
   public first(num: number): T[] {
     const iter = this.iterator()
-    const result = []
+    const result: any[] = []
 
     const n = Math.min(num, this.length)
 
