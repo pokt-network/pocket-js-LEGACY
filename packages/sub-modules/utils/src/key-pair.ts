@@ -40,13 +40,13 @@ export function validatePrivateKey(privateKey: Buffer): boolean {
 /**
  * Validates the address for a hex string encoded representing an ed25519 keypair
  *
- * @param {string} addressHex - Address hex.
- * @returns {Error | undefined} - Address buffer.
+ * @param { string } addressHex - Address hex.
+ * @returns { Error | undefined } - Address buffer.
  */
 export function validateAddressHex(addressHex: string): Error | undefined {
 
   if (!Hex.isHex(addressHex)) {
-    return new Error("Invalid string is not hex: " + addressHex)
+    return new Error(`Invalid string is not hex: ${addressHex}`)
   } else if (addressHex.length !== 40) {
     return new Error("Invalid address length (should be 20 bytes)")
   }

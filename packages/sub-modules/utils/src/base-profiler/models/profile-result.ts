@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /**
  *
  *
@@ -28,10 +29,9 @@
      *
      * Saves the current recording
      *
-     * @returns {JSON} - JSON Object.
      * @memberof ProfileResult
      */
-    public save() {
+    public save(): void {
         this.timeElapsed = new Date().valueOf() - this.startTime
     }
 
@@ -42,7 +42,7 @@
      * @returns {JSON} - JSON Object.
      * @memberof ProfileResult
      */
-    public toJSON() {
+    public toJSON(): any {
         return {
             block_key: this.blockKey,
             time_elapsed: this.timeElapsed

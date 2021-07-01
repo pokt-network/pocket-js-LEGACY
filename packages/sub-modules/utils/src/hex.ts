@@ -3,7 +3,6 @@
  *
  *
  * @class Hex
- * @deprecated
  * This class provides a TypeScript implementation of the Hex format
  */
 export class Hex {
@@ -95,7 +94,7 @@ export class Hex {
    * @memberof Hex
    */
   public static byteLength(str: string): number {
-    const a = []
+    const a: string[] = []
     for (let i = 0; i < str.length; i += 2) {
       a.push(str.substr(i, 2))
     }
