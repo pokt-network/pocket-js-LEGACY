@@ -183,7 +183,13 @@ export class Pocket {
    */
   public withPrivateKey(privateKey: Buffer | string): ITransactionSender | Error {
     try {
-      const privKeyBuffer = typeGuard(privateKey, Buffer) ? privateKey  : Buffer.from(privateKey , 'hex')
+      let privKeyBuffer: Buffer | string
+
+      if (typeGuard(privateKey, Buffer)) {
+        privKeyBuffer = privateKey
+      }
+      privKeyBuffer = Buffer.from((privateKey as string), "hex")
+      
       if (!validatePrivateKey(privKeyBuffer)) {
         throw new Error("Invalid private key")
       }
