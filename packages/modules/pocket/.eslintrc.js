@@ -12,6 +12,7 @@ https://github.com/typescript-eslint/tslint-to-eslint-config/blob/master/docs/FA
 Happy linting! 💖
 */
 module.exports = {
+    "root": true,
     "env": {
         "browser": true,
         "node": true
@@ -27,7 +28,6 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "eslint-plugin-import",
         "eslint-plugin-prefer-arrow",
         "eslint-plugin-jsdoc",
         "eslint-plugin-react",

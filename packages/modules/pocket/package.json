@@ -8,10 +8,10 @@
     "generateDocs": "typedoc",
     "browserify": "browserify browserify.js -p [ minifyify --no-map ] --standalone PocketJS > dist/web.js",
     "test:unit": "nyc mocha --require ts-node/register \"tests/src/unit/**/*.ts\" --timeout 0 --exit",
-    "build": "rm -rf dist && mkdir dist && cti create ./src && tsc && yarn run lint && yarn run generateDocs",
-    "prepare": "yarn run build && yarn run browserify",
+    "build": "rm -rf dist && mkdir dist && cti create ./src && tsc && yarn run lint && yarn run generateDocs",     
+    "postinstall": "yarn run build && yarn run browserify",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src",
-    "update": "rm -rf dist && rm -rf node_modules && rm -rf package-lock.json && yarn install"
+    "update": "rm -rf dist && rm -rf node_modules && rm -rf yarn.lock && yarn install"
   },
   "keywords": [
     "pocket-js",
@@ -39,7 +39,6 @@
     "ts-node": "^8.6.2",
     "eslint": "^7.28.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jsdoc": "^35.3.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-react": "^7.24.0",
