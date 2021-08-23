@@ -36,7 +36,7 @@ Official Javascript client for connecting an application to the Pocket Network o
     </a>
 </div>
 
-Pocket-JS is the core client used for sending relays to any network that is [currently supported](https://docs.pokt.network/docs/supported-networks) on the Pocket Network.
+Pocket-JS is the core client used for sending relays to any network that is [currently supported](https://docs.pokt.network/home/resources/references/supported-blockchains) on the Pocket Network.
 
 ## Getting Started
 
@@ -46,8 +46,6 @@ These instructions will outline how to start developing with the Pocket-JS SDK.
 
 You should have a basic knowledge of blockchain technology and JavaScript. You will also need to install the [NPM tool](https://www.npmjs.com/get-npm).
 
-To obtain POKT to stake for bandwidth or to obtain an Application Authentication Token (AAT) for an already staked application, please use the [Pocket Dashboard](https://dashboard.pokt.network/). Once you have a signed AAT or the private keys for a staked application, you can get started using Pocket-JS.
-
 ### Installation
 
 ```
@@ -56,7 +54,7 @@ npm install --save @pokt-network/pocket-js
 
 ## Documentation
 
-[Visit our developer portal](https://docs.pokt.network/docs/developers-overview) for tutorials and information about the Pocket Network or get started with the examples below:
+[Visit our docs site](https://docs.pokt.network) for tutorials and information about the Pocket Network or get started with the examples below:
 
 ### For all of the following examples, start with this initialization code:
 ```javascript
@@ -71,13 +69,13 @@ const rpcProvider = new HttpRpcProvider(dispatchURL)
 const configuration = new Configuration(5, 1000, 0, 40000)
 const pocketInstance = new Pocket([dispatchURL], rpcProvider, configuration)
 
-// See https://docs.pokt.network/docs/supported-networks-on-mainnet for blockchain choices
+// See https://docs.pokt.network/home/resources/references/supported-blockchains for blockchain choices
 const blockchain = "0021" // Ethereum mainnet
 ```
 ---
 ### Use an AAT to connect to any blockchain:
 
-An Application Authentication Token is a token signed by an account that has staked for bandwidth as an App on the Pocket blockchain. You can create an Application Authentication Token (AAT) for multiple clients using the [Pocket Core CLI](https://github.com/pokt-network/pocket-core) or the retrieve your App's AAT from the [Pocket Dashboard](https://dashboard.pokt.network/) App Detail page.
+An Application Authentication Token is a token signed by an account that has staked for bandwidth as an App on the Pocket blockchain. You can create an Application Authentication Token (AAT) for multiple clients using the [Pocket Core CLI](https://github.com/pokt-network/pocket-core).
 
 An example of a properly-formed AAT:
 ```json
@@ -94,7 +92,7 @@ Once you have your AAT, include it with your project as a JSON file.
 const aat = require('./aat.json')
 ```
 
-To unlock the AAT for use in your application, you must first import and unlock the AAT's client account indicated by the ```clientPublicKey``` field. The PPK file is obtained from the [Pocket Dashboard](https://dashboard.pokt.network/) when creating an App or through the [Pocket Core CLI](https://github.com/pokt-network/pocket-core) with ```pocket accounts export```.
+To unlock the AAT for use in your application, you must first import and unlock the AAT's client account indicated by the ```clientPublicKey``` field. The PPK file is obtained through the [Pocket Core CLI](https://github.com/pokt-network/pocket-core) with ```pocket accounts export```.
 
 A properly-formed ppk.json file will start with ```{"kdf":"scrypt"```. Include it with your project as a JSON file along with the passphrase used when creating it:
 ```javascript
@@ -203,13 +201,13 @@ Please read [CONTRIBUTING.md](https://github.com/pokt-network/pocket-js/blob/mas
 
 ## Support & Contact
 
-[Join us on Discord](https://bit.ly/PocketDiscordInvite) for immediate assistance directly from the Pocket Team.
+[Join us on Discord](https://discord.gg/pokt) for immediate assistance directly from the Pocket Team.
 
 <div>
-  <a href="https://bit.ly/PocketDiscordInvite"><img alt="Discord" src="https://img.shields.io/discord/553741558869131266?label=discord"></a>
+  <a href="https://discord.gg/pokt"><img alt="Discord" src="https://img.shields.io/discord/553741558869131266?label=discord"></a>
   <a href="https://t.me/POKTnetwork"><img src="https://img.shields.io/badge/Telegram-blue.svg"></a>
   <a href="https://www.facebook.com/POKTnetwork" ><img src="https://img.shields.io/badge/Facebook-red.svg"></a>
-  <a href="https://research.pokt.network"><img src="https://img.shields.io/discourse/https/research.pokt.network/posts.svg"></a>
+  <a href="https://forum.pokt.network"><img src="https://img.shields.io/discourse/https/research.pokt.network/posts.svg"></a>
   <a  href="https://twitter.com/poktnetwork" ><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/poktnetwork?style=social"></a>
 </div>
 
