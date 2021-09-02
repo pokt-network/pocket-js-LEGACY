@@ -30,7 +30,7 @@ export class SessionManager {
    * @param {IKVStore} store - KVStore implementation.
    * @memberof SessionManager
    */
-  constructor(dispatchers: URL[], configuration: Configuration , store: IKVStore) {
+  constructor(dispatchers: URL[], configuration: Configuration, store: IKVStore) {
     this.routingTable = new RoutingTable(dispatchers, configuration, store)
     this.sessionMap = new Map()
 
@@ -84,15 +84,17 @@ export class SessionManager {
    * @param {PocketAAT} pocketAAT - Pocket Authentication Token.
    * @param {string} chain - Name of the Blockchain.
    * @param {Configuration} configuration - Configuration object.
+   * @param {Configuration} configuration - Configuration object.
+   * @param {Configuration} retryCount - Amount of retries performed 
    * @returns {Promise}
    * @memberof SessionManager
    */
   public async requestNewSession(
     pocketAAT: PocketAAT,
     chain: string,
-    configuration: Configuration
+    configuration: Configuration,
+    retryCount: number = 0
   ): Promise<Session | Error> {
-
     // Retrieve a dispatcher from the routing table
     const dispatcher = this.routingTable.getRandomDispatcher()
 
@@ -119,19 +121,17 @@ export class SessionManager {
 
       if (session !== undefined) {
         const key = this.getSessionKey(pocketAAT, chain)
-        
+
         return this.saveSession(key, session, configuration)
       } else {
         // Remove node from dispatcher if it failed 3 times
         return new Error("Error decoding session from Dispatch response")
       }
-    } else if(this.routingTable.dispatchersCount > 0) {
-      // Remove the failed dispatcher from the routing table
-      this.routingTable.deleteDispatcher(dispatcher)
+    } else if (retryCount < (this.getDispatchersCount() * 2)) {
       // Request the session again
-      return await this.requestNewSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration, retryCount + 1)
     } else {
-      return new Error("Unable to create a new session due to empty dispatcher's list.")
+      return new Error("Unable to create a new session due to dispatchers failure.")
     }
   }
 
@@ -148,9 +148,9 @@ export class SessionManager {
     chain: string,
     configuration: Configuration
   ): Promise<Session | Error> {
-    
+
     const key = this.getSessionKey(pocketAAT, chain)
-    
+
     if (!this.sessionMap.has(key)) {
       return await this.requestNewSession(pocketAAT, chain, configuration)
     }
