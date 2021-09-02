@@ -135,26 +135,4 @@ export class RoutingTable {
     this.store.add(this.dispatchersKey, dispatchers)
     return true
   }
-
-  /**
-   * Deletes a dispatcher url from the routing table
-   * @param {URL} url - url object to be deleted
-   * @returns {boolean} True or false if the node was deleted.
-   * @memberof Routing
-   */
-  public deleteDispatcher(url: URL): boolean {
-    // Cycle through the list of nodes, find a match, splice it off
-    const dispatchers = this.store.get(this.dispatchersKey) as URL[]
-
-    for (let i = 0; i < dispatchers.length; i++) {
-      if (dispatchers[i].host === url.host) {
-        dispatchers.splice(i, 1)
-
-        // Update the store
-        this.store.add(this.dispatchersKey, dispatchers)
-        return true
-      }
-    }
-    return false
-  }
 }
