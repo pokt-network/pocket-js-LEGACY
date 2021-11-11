@@ -93,12 +93,12 @@ export class SessionManager {
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration,
-    retryCount: number = 1,
-    maxRetries?: number
+    attemptCount: number = 1,
+    maxAttempts?: number
   ): Promise<Session | Error> {
     // Retrieve a dispatcher from the routing table
     const dispatcher = this.routingTable.getRandomDispatcher()
-    const maxRetriesAllowed = maxRetries ? maxRetries : this.getDispatchersCount() * 2
+    const maxAttemptsAllowed = maxAttempts ? maxAttempts : this.getDispatchersCount() * 2
 
     if (typeGuard(dispatcher, Error)) {
       return dispatcher
@@ -129,9 +129,9 @@ export class SessionManager {
         // Remove node from dispatcher if it failed 3 times
         return new Error("Error decoding session from Dispatch response")
       }
-    } else if (retryCount < maxRetriesAllowed) {
+    } else if (attemptCount < maxAttemptsAllowed) {
       // Request the session again
-      return await this.requestNewSession(pocketAAT, chain, configuration, retryCount + 1, maxRetriesAllowed)
+      return await this.requestNewSession(pocketAAT, chain, configuration, attemptCount + 1, maxAttemptsAllowed)
     } else {
       return new Error("Unable to create a new session due to dispatchers failure.")
     }
@@ -149,12 +149,12 @@ export class SessionManager {
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration,
-    maxRetries?: number
+    maxAttempts?: number
   ): Promise<Session | Error> {
     const key = this.getSessionKey(pocketAAT, chain)
 
     if (!this.sessionMap.has(key)) {
-      return await this.requestNewSession(pocketAAT, chain, configuration, 1, maxRetries)
+      return await this.requestNewSession(pocketAAT, chain, configuration, 1, maxAttempts)
     }
 
     const currentSession = (this.sessionMap.get(key) as Queue<Session>).front
@@ -162,7 +162,7 @@ export class SessionManager {
     if (currentSession !== undefined) {
       return currentSession
     } else {
-      return await this.requestNewSession(pocketAAT, chain, configuration, 1, maxRetries)
+      return await this.requestNewSession(pocketAAT, chain, configuration, 1, maxAttempts)
     }
   }
 
