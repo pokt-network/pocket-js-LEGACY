@@ -93,10 +93,12 @@ export class SessionManager {
     pocketAAT: PocketAAT,
     chain: string,
     configuration: Configuration,
-    retryCount: number = 0
+    retryCount: number = 1,
+    maxRetries?: number
   ): Promise<Session | Error> {
     // Retrieve a dispatcher from the routing table
     const dispatcher = this.routingTable.getRandomDispatcher()
+    const maxRetriesAllowed = maxRetries ? maxRetries : this.getDispatchersCount() * 2
 
     if (typeGuard(dispatcher, Error)) {
       return dispatcher
@@ -127,9 +129,9 @@ export class SessionManager {
         // Remove node from dispatcher if it failed 3 times
         return new Error("Error decoding session from Dispatch response")
       }
-    } else if (retryCount < (this.getDispatchersCount() * 2)) {
+    } else if (retryCount < maxRetriesAllowed) {
       // Request the session again
-      return await this.requestNewSession(pocketAAT, chain, configuration, retryCount + 1)
+      return await this.requestNewSession(pocketAAT, chain, configuration, retryCount + 1, maxRetriesAllowed)
     } else {
       return new Error("Unable to create a new session due to dispatchers failure.")
     }
@@ -146,13 +148,13 @@ export class SessionManager {
   public async getCurrentSession(
     pocketAAT: PocketAAT,
     chain: string,
-    configuration: Configuration
+    configuration: Configuration,
+    maxRetries?: number
   ): Promise<Session | Error> {
-
     const key = this.getSessionKey(pocketAAT, chain)
 
     if (!this.sessionMap.has(key)) {
-      return await this.requestNewSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration, 1, maxRetries)
     }
 
     const currentSession = (this.sessionMap.get(key) as Queue<Session>).front
@@ -160,7 +162,7 @@ export class SessionManager {
     if (currentSession !== undefined) {
       return currentSession
     } else {
-      return await this.requestNewSession(pocketAAT, chain, configuration)
+      return await this.requestNewSession(pocketAAT, chain, configuration, 1, maxRetries)
     }
   }
 
