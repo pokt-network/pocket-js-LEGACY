@@ -1,8 +1,8 @@
 {
     "name": "@pokt-network/pocket-js",
-    "version": "0.6.17-rc",
+    "version": "1.0.0-rc",
     "engine": {
-        "node": ">=10.19.0 <=12.15.0"
+        "node": ">=12.16.0"
     },
     "description": "Pocket-js core package with the main functionalities to interact with the Pocket Network.",
     "license": "MIT",
