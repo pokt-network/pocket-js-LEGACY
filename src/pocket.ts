@@ -16,6 +16,7 @@ import { RelayMeta } from "./rpc/models/input/relay-meta"
 import { BaseProfiler } from "./utils/base-profiler"
 import { ProfileResult } from "./utils/models/profile-result"
 import { NoOpProfiler } from "./utils/no-op-profiler"
+import { ProtoTxDecoder } from "./transactions/factory/proto-tx-decoder"
 
 /**
  *
@@ -167,7 +168,7 @@ export class Pocket {
         return new RpcError("NA", "Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
       }
     } catch (err) {
-      return RpcError.fromError(err)
+      return RpcError.fromError(err as Error)
     }
   }
   /**
@@ -279,7 +280,7 @@ export class Pocket {
       }
 
       // Produce signature payload
-      const relayMeta = new RelayMeta(BigInt(currentSession.sessionHeader.sessionBlockHeight))
+      const relayMeta = new RelayMeta(currentSession.sessionHeader.sessionBlockHeight)
       const requestHash = new RequestHash(relayPayload, relayMeta)
       const entropy = BigInt(Math.floor(Math.random() * 99999999999999999))
       // Profiler
@@ -450,7 +451,7 @@ export class Pocket {
         return result
       }
     } catch (error) {
-      return RpcError.fromError(error)
+      return RpcError.fromError(error as Error)
     }
   }
 
@@ -470,7 +471,7 @@ export class Pocket {
       const unlockedAccount = new UnlockedAccount(new Account(pubKey, ''), privKeyBuffer)
       return new TransactionSender(this, unlockedAccount)
     } catch (err) {
-      return err
+      return err as Error
     }
   }
 
@@ -503,9 +504,19 @@ export class Pocket {
     try {
       return new TransactionSender(this, undefined, txSigner)
     } catch (err) {
-      return err
+      return err as Error
     }
   }
+
+  public withProtoTxDecoder(): ProtoTxDecoder | Error {
+    try {
+      return new ProtoTxDecoder()
+    } catch (err) {
+      return err as Error
+    }
+  }
+
+  
 }
 
 export * from "@pokt-network/aat-js"
