@@ -165,7 +165,7 @@ export class Pocket {
         }
         return challengeResponseOrError
       } else {
-        return new RpcError("NA", "Failed to send a consensus relay due to false consensus result, not acepting disputed responses without proper majority and minority responses.")
+        return new RpcError("NA", "Failed to send a consensus relay due to false consensus result, not accepting disputed responses without proper majority and minority responses.")
       }
     } catch (err) {
       return RpcError.fromError(err as Error)
