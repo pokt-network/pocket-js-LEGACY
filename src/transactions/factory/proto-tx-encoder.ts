@@ -1,10 +1,7 @@
-import { typeGuard } from '../../utils'
-import { RpcError } from '../../rpc'
 import { TxSignature } from '../models/tx-signature'
 import { CoinDenom } from '../models/coin-denom'
-import { TxMsg } from '../models'
 import { BaseTxEncoder } from './base-tx-encoder'
-import { Coin, ProtoStdSignature, ProtoStdTx } from '../models/proto/generated/tx-signer'
+import { ProtoStdSignature, ProtoStdTx } from '../models/proto/generated/tx-signer'
 import * as varint from "varint"
 
 export class ProtoTxEncoder extends BaseTxEncoder {

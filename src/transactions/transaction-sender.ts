@@ -86,7 +86,7 @@ export class TransactionSender implements ITransactionSender {
             const txRequest = new RawTxRequest(addressHex.toString("hex"), encodedTxBytes.toString("hex"))
             return txRequest
         } catch (error) {
-            return RpcError.fromError(error)
+            return RpcError.fromError(error as Error)
         }
     }
 
@@ -122,7 +122,7 @@ export class TransactionSender implements ITransactionSender {
 
             return response
         } catch (error) {
-            return RpcError.fromError(error)
+            return RpcError.fromError(error as Error)
         }
     }
 
@@ -145,7 +145,7 @@ export class TransactionSender implements ITransactionSender {
             else
                 this.txMsg = new MsgProtoSend(fromAddress, toAddress, amount)
         } catch (error) {
-            this.txMsgError = error
+            this.txMsgError = error as Error
         }
         return this
     }
@@ -169,7 +169,7 @@ export class TransactionSender implements ITransactionSender {
             else
                 this.txMsg = new MsgProtoAppStake(Buffer.from(appPubKey, "hex"), chains, amount)
         } catch (error) {
-            this.txMsgError = error
+            this.txMsgError = error as Error
         }
         return this
     }
@@ -189,7 +189,7 @@ export class TransactionSender implements ITransactionSender {
             else
                 this.txMsg = new MsgProtoAppUnstake(address)
         } catch (error) {
-            this.txMsgError = error
+            this.txMsgError = error as Error
         }
         return this
     }
@@ -209,7 +209,7 @@ export class TransactionSender implements ITransactionSender {
             else
                 this.txMsg = new MsgProtoAppUnjail(address)
         } catch (error) {
-            this.txMsgError = error
+            this.txMsgError = error as Error
         }
         return this
     }
@@ -236,7 +236,7 @@ export class TransactionSender implements ITransactionSender {
             else
                 this.txMsg = new MsgProtoNodeStakeTx(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
         } catch (error) {
-            this.txMsgError = error
+            this.txMsgError = error as Error
         }
         return this
     }
@@ -256,7 +256,7 @@ export class TransactionSender implements ITransactionSender {
             else
                 this.txMsg = new MsgProtoNodeUnstake(address)
         } catch (error) {
-            this.txMsgError = error
+            this.txMsgError = error as Error
         }
         return this
     }
@@ -277,7 +277,7 @@ export class TransactionSender implements ITransactionSender {
             else
                 this.txMsg = new MsgProtoNodeUnjail(address)
         } catch (error) {
-            this.txMsgError = error
+            this.txMsgError = error as Error
         }
         return this
     }
