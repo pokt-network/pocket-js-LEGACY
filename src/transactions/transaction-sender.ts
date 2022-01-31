@@ -97,6 +97,47 @@ export class TransactionSender implements ITransactionSender {
     }
 
     /**
+     * Creates an unsigned transaction hex that can be signed with a valid ed25519 private key
+     * @param {string} chainID - The chainID of the network to be sent to
+     * @param {string} fee - The amount to pay as a fee for executing this transaction
+     * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
+     * @param {string | undefined} memo - The memo field for this account
+     * @returns {Promise<string | RpcError>} - A string with unsigned tx hex or Rpc error.
+     * @memberof TransactionSender
+     */
+     public async createUnsignedTransaction(
+        chainID: string,
+        fee: string,
+        feeDenom?: CoinDenom,
+        memo?: string
+    ): Promise<string | RpcError> {
+        try {
+            if (this.txMsgError !== undefined) {
+                const rpcError = RpcError.fromError(this.txMsgError)
+                this.txMsg = undefined
+                this.txMsgError = undefined
+                return rpcError
+            }
+
+            if (this.txMsg === undefined) {
+                return new RpcError("0", "No messages configured for this transaction")
+            }
+
+            const entropy = Number(BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()).toString()
+            const signer = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
+            const unsignedTxBytes = signer.marshalStdSignDoc()
+
+            // Clean message and error
+            this.txMsg = undefined
+            this.txMsgError = undefined
+
+            return unsignedTxBytes.toString('hex')
+        } catch (error) {
+            return RpcError.fromError(error as Error)
+        }
+    }
+
+    /**
      * Signs and submits a transaction to the network given the parameters for each Msg in the Msg list. Will empty the msg list after submission attempt
      * @param {string} chainID - The chainID of the network to be sent to
      * @param {string} fee - The amount to pay as a fee for executing this transaction
