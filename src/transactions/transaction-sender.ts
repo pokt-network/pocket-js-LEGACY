@@ -75,13 +75,13 @@ export class TransactionSender implements ITransactionSender {
                 } else {
                     return new RpcError("0", "No account or TransactionSigner specified")
                 }
-    
-                if (!typeGuard(txSignature, TxSignature)) {
-                    return new RpcError("0", "Error generating signature for transaction")
-                }
             }
 
             txSignature = signature as TxSignature
+
+            if (!typeGuard(txSignature, TxSignature)) {
+                return new RpcError("0", "Error generating signature for transaction")
+            }
 
             const addressHex = addressFromPublickey(txSignature.pubKey)
             const encodedTxBytes = signer.marshalStdTx(txSignature)
