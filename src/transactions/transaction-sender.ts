@@ -10,11 +10,12 @@ import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keyba
 import { TxEncoderFactory } from "./factory/tx-encoder-factory"
 
 export class TransactionSender implements ITransactionSender {
-    private txMsg?: TxMsg
+    public txMsg?: TxMsg
     private unlockedAccount?: UnlockedAccount
     private pocket: Pocket
     private txSigner?: TransactionSigner
     private txMsgError?: Error
+    public offlineMode?: boolean
 
     /**
      * Constructor for this class. Requires either an unlockedAccount or txSigner
@@ -22,12 +23,13 @@ export class TransactionSender implements ITransactionSender {
      * @param {UnlockedAccount} unlockedAccount - Unlocked account 
      * @param {TransactionSigner} txSigner - Transaction signer
      */
-    public constructor(pocket: Pocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner) {
+    public constructor(pocket: Pocket, unlockedAccount?: UnlockedAccount, txSigner?: TransactionSigner, offlineMode?: boolean) {
         this.unlockedAccount = unlockedAccount
         this.txSigner = txSigner
         this.pocket = pocket
+        this.offlineMode = offlineMode
 
-        if (this.unlockedAccount === undefined && this.txSigner === undefined) {
+        if (!this.offlineMode && this.unlockedAccount === undefined && this.txSigner === undefined) {
             throw new Error("Need to define unlockedAccount or txSigner")
         }
     }
@@ -42,12 +44,11 @@ export class TransactionSender implements ITransactionSender {
      * @returns {Promise<RawTxResponse | RpcError>} - A Raw transaction Response object or Rpc error.
      * @memberof TransactionSender
      */
-    public async createTransaction(
+     public async createTransaction(
         chainID: string,
         fee: string,
         feeDenom?: CoinDenom,
-        memo?: string,
-        signature?: TxSignature
+        memo?: string
     ): Promise<RawTxRequest | RpcError> {
         try {
             if (this.txMsgError !== undefined) {
@@ -63,26 +64,21 @@ export class TransactionSender implements ITransactionSender {
 
             const entropy = Number(BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()).toString()
             const signer = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
-            
-            let txSignature
-
-            if (!signature) {
-                const bytesToSign = signer.marshalStdSignDoc()
-                if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
-                    txSignature = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
-                } else if (this.txSigner !== undefined) {
-                    txSignature = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
-                } else {
-                    return new RpcError("0", "No account or TransactionSigner specified")
-                }
+            let txSignatureOrError
+            const bytesToSign = signer.marshalStdSignDoc()
+            if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
+                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
+            } else if (this.txSigner !== undefined) {
+                txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
+            } else {
+                return new RpcError("0", "No account or TransactionSigner specified")
             }
 
-            txSignature = signature as TxSignature
-
-            if (!typeGuard(txSignature, TxSignature)) {
+            if (!typeGuard(txSignatureOrError, TxSignature)) {
                 return new RpcError("0", "Error generating signature for transaction")
             }
 
+            const txSignature = txSignatureOrError as TxSignature
             const addressHex = addressFromPublickey(txSignature.pubKey)
             const encodedTxBytes = signer.marshalStdTx(txSignature)
             // Clean message and error
