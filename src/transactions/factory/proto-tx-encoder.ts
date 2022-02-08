@@ -3,6 +3,8 @@ import { CoinDenom } from '../models/coin-denom'
 import { BaseTxEncoder } from './base-tx-encoder'
 import { ProtoStdSignature, ProtoStdTx } from '../models/proto/generated/tx-signer'
 import * as varint from "varint"
+import { Any } from '../models/proto'
+import { StdSignDoc } from '..'
 
 export class ProtoTxEncoder extends BaseTxEncoder {
 
@@ -26,7 +28,7 @@ export class ProtoTxEncoder extends BaseTxEncoder {
         return Buffer.from(JSON.stringify(stdSignDoc), "utf-8")
     }
 
-    // Returns the encoded transaction
+    // Returns the signed encoded transaction
     public marshalStdTx(signature: TxSignature): Buffer {
         const txSig: ProtoStdSignature = {
             publicKey: signature.pubKey, 
@@ -50,4 +52,33 @@ export class ProtoTxEncoder extends BaseTxEncoder {
         // Concatenate for the result
         return Buffer.concat([prefix, protoStdTxBytes])
     }
+    
+    // Returns the signed encoded transaction,
+    // The key difference from the above is that this can be called with an external stdTxMsg object
+    static marshalStdSignDoc(stdTxMsgObj: Any, stdSignDoc: StdSignDoc, signature: TxSignature) : Buffer {
+        const txSig: ProtoStdSignature = {
+            publicKey: signature.pubKey, 
+            Signature: signature.signature
+        }
+        
+        const stdTx: ProtoStdTx = {
+            msg: stdTxMsgObj, 
+            fee: [{ amount: stdSignDoc.fee, denom: stdSignDoc.feeDenom}],
+            signature: txSig, 
+            memo: stdSignDoc.memo, 
+            entropy: parseInt(stdSignDoc.entropy, 10)
+        }
+
+        // Create the Proto Std Tx bytes
+        const protoStdTxBytes: Buffer = Buffer.from(ProtoStdTx.encode(stdTx).finish())
+
+        // Create the prefix
+        const prefixBytes = varint.encode(protoStdTxBytes.length)
+        const prefix = Buffer.from(prefixBytes)
+
+        // Concatenate for the result
+        return Buffer.concat([prefix, protoStdTxBytes])
+    }
+
+
 }

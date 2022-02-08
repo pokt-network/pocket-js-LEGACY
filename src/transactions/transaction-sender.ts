@@ -8,6 +8,7 @@ import { ITransactionSender, TransactionSigner } from "./index"
 import { UnlockedAccount } from "../keybase/models"
 import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase, RawTxRequest } from ".."
 import { TxEncoderFactory } from "./factory/tx-encoder-factory"
+import { Any } from './models/proto';
 
 export class TransactionSender implements ITransactionSender {
     public txMsg?: TxMsg
@@ -98,7 +99,7 @@ export class TransactionSender implements ITransactionSender {
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
      * @param {string | undefined} memo - The memo field for this account
-     * @returns {Promise<string | RpcError>} - A string with unsigned tx hex or Rpc error.
+     * @returns {Promise<{ bytesToSign: string, encodedMsg: string } | RpcError>} - bytes to sign and the stringified stxTxMsgObj
      * @memberof TransactionSender
      */
      public async createUnsignedTransaction(
@@ -106,7 +107,7 @@ export class TransactionSender implements ITransactionSender {
         fee: string,
         feeDenom?: CoinDenom,
         memo?: string
-    ): Promise<string | RpcError> {
+    ): Promise<{ bytesToSign: string, stdTxMsgObj: string } | RpcError> {
         try {
             if (this.txMsgError !== undefined) {
                 const rpcError = RpcError.fromError(this.txMsgError)
@@ -123,11 +124,14 @@ export class TransactionSender implements ITransactionSender {
             const signer = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
             const unsignedTxBytes = signer.marshalStdSignDoc()
 
+            // This needs to be strinfigied so it can be stored offline,
+            // since it's required to sign the transaction.
+            const stdTxMsgObj = Any.toJSON(this.txMsg.toStdTxMsgObj())
             // Clean message and error
             this.txMsg = undefined
             this.txMsgError = undefined
 
-            return unsignedTxBytes.toString('hex')
+            return { bytesToSign: unsignedTxBytes.toString('hex'), stdTxMsgObj: JSON.stringify(stdTxMsgObj) }
         } catch (error) {
             return RpcError.fromError(error as Error)
         }
