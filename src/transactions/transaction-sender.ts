@@ -99,15 +99,15 @@ export class TransactionSender implements ITransactionSender {
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
      * @param {string | undefined} memo - The memo field for this account
-     * @returns {Promise<{ bytesToSign: string, encodedMsg: string } | RpcError>} - bytes to sign and the stringified stxTxMsgObj
+     * @returns {Promise<{ bytesToSign: string, stdTxMsgObj: string } | RpcError>} - bytes to sign and the stringified stxTxMsgObj
      * @memberof TransactionSender
      */
-     public async createUnsignedTransaction(
+     public createUnsignedTransaction(
         chainID: string,
         fee: string,
         feeDenom?: CoinDenom,
         memo?: string
-    ): Promise<{ bytesToSign: string, stdTxMsgObj: string } | RpcError> {
+    ): { bytesToSign: string, stdTxMsgObj: string } | RpcError {
         try {
             if (this.txMsgError !== undefined) {
                 const rpcError = RpcError.fromError(this.txMsgError)

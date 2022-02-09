@@ -16,13 +16,13 @@ export class ProtoTransactionSigner {
      * @returns {Promise<RawTxRequest | RpcError>} - A Raw transaction Response object or Rpc error.
      * @memberof ProtoTransactionSigner
      */
-     public signTransaction(
+     public static signTransaction(
         encodedMsg: string,
         bytesToSign: string,
         txSignature: TxSignature
     ):  RawTxRequest | RpcError {
         try {
-            const stdSignDoc = this.decodeUnsignedTxBytes(bytesToSign)
+            const stdSignDoc = JSON.parse(Buffer.from(bytesToSign, 'hex').toString('utf-8'))
             const stdTxMsgObj = Any.fromJSON(JSON.parse(encodedMsg))
     
             const addressHex = addressFromPublickey(txSignature.pubKey)
@@ -32,10 +32,5 @@ export class ProtoTransactionSigner {
         } catch (error) {
             return RpcError.fromError(error as Error)
         }
-    }
-    
-    // Converts unsigned transaction bytes (so called bytesToSign) into it's raw representation.
-    decodeUnsignedTxBytes(unsignedTxBytes: string): StdSignDoc {
-        return JSON.parse(Buffer.from(unsignedTxBytes, 'hex').toString('utf-8'))
     }
 }
