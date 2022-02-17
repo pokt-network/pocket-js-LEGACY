@@ -1,14 +1,4 @@
-# Quickstart Guide
-
-### Pocket-JS 0.6.8-rc highlight
-
-On the latest version we introduce the new ProtoBuf transaction codec, this functionality is activated on the ```Configuration``` class for Pocket by default, to use the legacy AminoJS transaction codec the ```useLegacyTxCodec``` flag should be set to ```true```.
-
-```
-const useLegacyTxCodec = true;
-const configuration = new Configuration(5, 2000, undefined, 100000, undefined, undefined, undefined, undefined, undefined, undefined, useLegacyTxCodec)
-```
-
+# Quickstart Guide (PocketJS >= 0.7.1-rc)
 
 ### How to Instantiate a Pocket Instance
 For a basic Configuration file we just nee to set the three properties (maxDispatchers, maxSessions and requestTimeOut)
