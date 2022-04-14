@@ -226,6 +226,7 @@ export class TransactionSender implements ITransactionSender {
      */
     public nodeStake(
         nodePubKey: string,
+        outputAddress: string,
         chains: string[],
         amount: string,
         serviceURL: URL
@@ -234,7 +235,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.pocket.configuration.useLegacyTxCodec)
                 this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
             else
-                this.txMsg = new MsgProtoNodeStakeTx(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
+                this.txMsg = new MsgProtoNodeStakeTx(nodePubKey, outputAddress, chains, amount, serviceURL)
         } catch (error) {
             this.txMsgError = error as Error
         }
@@ -248,13 +249,14 @@ export class TransactionSender implements ITransactionSender {
      * @memberof TransactionSender
      */
     public nodeUnstake(
-        address: string
+        nodeAddress: string, 
+        signerAddress: string
     ): ITransactionSender {
         try {
             if (this.pocket.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgNodeUnstake(address)
+                this.txMsg = new MsgNodeUnstake(nodeAddress)
             else
-                this.txMsg = new MsgProtoNodeUnstake(address)
+                this.txMsg = new MsgProtoNodeUnstake(nodeAddress, signerAddress)
         } catch (error) {
             this.txMsgError = error as Error
         }
@@ -264,18 +266,19 @@ export class TransactionSender implements ITransactionSender {
 
     /**
      * Adds a MsgUnjail TxMsg for this transaction
-     * @param {string} address - Address of the Node to unjail
+     * @param {string} nodeAddress - Address of the Node to unjail
      * @returns {ITransactionSender} - A transaction sender.
      * @memberof TransactionSender
      */
     public nodeUnjail(
-        address: string
+        nodeAddress: string,
+        signerAddress: string
     ): ITransactionSender {
         try {
             if (this.pocket.configuration.useLegacyTxCodec)
-                this.txMsg = new MsgNodeUnjailTx(address)
+                this.txMsg = new MsgNodeUnjailTx(nodeAddress)
             else
-                this.txMsg = new MsgProtoNodeUnjail(address)
+                this.txMsg = new MsgProtoNodeUnjail(nodeAddress, signerAddress)
         } catch (error) {
             this.txMsgError = error as Error
         }

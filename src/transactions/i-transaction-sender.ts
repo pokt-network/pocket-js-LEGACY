@@ -92,6 +92,7 @@ export interface ITransactionSender {
     /**
      * Adds a MsgAppStake TxMsg for this transaction
      * @param nodePubKey {string}
+     * @param {string} outputAddress - Output address when unstaking
      * @param {string[]} chains - Network identifier list to be serviced by this node
      * @param {string} amount - The amount to stake, must be greater than 0
      * @param {URL} serviceURL - Service Url
@@ -100,6 +101,7 @@ export interface ITransactionSender {
      */
     nodeStake(
         nodePubKey: string,
+        outputAddress: string,
         chains: string[],
         amount: string,
         serviceURL: URL
@@ -107,21 +109,25 @@ export interface ITransactionSender {
 
     /**
      * Adds a MsgBeginUnstake TxMsg for this transaction
-     * @param {string} address - Address of the Node to unstake for
+     * @param {string} nodeAddress - Address of the Node to unstake for
+     * @param {string} signerAddress - Signer address (who triggered the unstake)
      * @returns {ITransactionSender} - Transaction signer
      * @memberof ITransactionSender
      */
     nodeUnstake(
-        address: string
+        nodeAddress: string,
+        signerAddress: string
     ): ITransactionSender
 
     /**
      * Adds a MsgUnjail TxMsg for this transaction
-     * @param {string} address - Address of the Node to unjail
+     * @param {string} nodeAddress - Address of the Node to unjail
+     * @param {string} signerAddress - Signer address (who triggered the unjail)
      * @returns {ITransactionSender} - Transaction signer
      * @memberof ITransactionSender
      */
     nodeUnjail(
-        address: string
+        nodeAddress: string,
+        signerAddress: string
     ): ITransactionSender
 }
