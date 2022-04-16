@@ -18,7 +18,7 @@ export type Signature = { pub_key: string, signature: string }
     try {
       const jsonObject = JSON.parse(json)
       
-      const fee = { amount: jsonObject.fee[0].amount, denom: jsonObject.fee[0].denom }
+      const fee = { amount: jsonObject.fee[0]?.amount, denom: jsonObject.fee[0]?.denom }
       const msg = jsonObject.msg || {}
 
       const signature = { pub_key: jsonObject.signature.pub_key, signature: jsonObject.signature.signature }
