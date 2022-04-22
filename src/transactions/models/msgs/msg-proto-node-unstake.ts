@@ -40,8 +40,8 @@ export class MsgProtoNodeUnstake extends TxMsg {
         return {
             type: this.AMINO_KEY,
             value: {
-                validator_address: this.nodeAddress,
-                signer_address: this.signerAddress
+                signer_address: this.signerAddress,
+                validator_address: this.nodeAddress
             }
         }
     }
