@@ -1,4 +1,4 @@
-import { MsgNodeUnjail } from '../proto/generated/tx-signer';
+import { MsgNodeUnjail8 } from '../proto/generated/tx-signer';
 
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
@@ -60,7 +60,7 @@ export class MsgProtoNodeUnjail extends TxMsg {
 
         return Any.fromJSON({
             "typeUrl": this.KEY,
-            "value": Buffer.from(MsgNodeUnjail.encode(data).finish()).toString("base64"),
+            "value": Buffer.from(MsgNodeUnjail8.encode(data).finish()).toString("base64"),
         });
     }
 }

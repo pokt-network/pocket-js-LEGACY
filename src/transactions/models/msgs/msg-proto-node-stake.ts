@@ -1,6 +1,5 @@
-import { MsgProtoNodeStake } from './../proto/generated/tx-signer';
+import { MsgProtoNodeStake8 } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
-import { bytesToBase64 } from "@tendermint/belt"
 import { TxMsg } from "./tx-msg"
 import { validateServiceURL, validatePublicKey, validateAddressHex, typeGuard } from './../../../utils'
 
@@ -102,7 +101,7 @@ export class MsgProtoNodeStakeTx extends TxMsg {
 
         return Any.fromJSON({
             "typeUrl": this.KEY,
-            "value": MsgProtoNodeStake.encode(data).finish()
+            "value": MsgProtoNodeStake8.encode(data).finish()
         });
     }
 }

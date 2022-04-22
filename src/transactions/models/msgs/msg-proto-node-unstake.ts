@@ -1,4 +1,4 @@
-import { MsgBeginNodeUnstake } from './../proto/generated/tx-signer';
+import { MsgBeginNodeUnstake8 } from './../proto/generated/tx-signer';
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
 import { typeGuard, validateAddressHex } from './../../../utils'
@@ -56,7 +56,7 @@ export class MsgProtoNodeUnstake extends TxMsg {
 
         return Any.fromJSON({
             "typeUrl": this.KEY,
-            "value": Buffer.from(MsgBeginNodeUnstake.encode(data).finish()).toString("base64"),
+            "value": Buffer.from(MsgBeginNodeUnstake8.encode(data).finish()).toString("base64"),
         });
     }
 }
