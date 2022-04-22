@@ -235,7 +235,7 @@ export class TransactionSender implements ITransactionSender {
             if (this.pocket.configuration.useLegacyTxCodec)
                 this.txMsg = new MsgNodeStake(Buffer.from(nodePubKey, "hex"), chains, amount, serviceURL)
             else
-                this.txMsg = new MsgProtoNodeStakeTx(nodePubKey, outputAddress, chains, amount, serviceURL)
+                this.txMsg = new MsgProtoNodeStakeTx(Buffer.from(nodePubKey, "hex"), Buffer.from(outputAddress, "hex"), chains, amount, serviceURL)
         } catch (error) {
             this.txMsgError = error as Error
         }

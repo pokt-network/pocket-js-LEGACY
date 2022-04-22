@@ -11,20 +11,20 @@ export class MsgProtoNodeStakeTx extends TxMsg {
     public readonly AMINO_KEY: string = "pos/8.0MsgStake"
     public readonly DEFAULT_PORT: string = "443"
     public readonly DEFAULT_PROTOCOL: string = "https:"
-    public readonly pubKey: string
-    public readonly outputAddress: string
+    public readonly pubKey: Buffer
+    public readonly outputAddress: Buffer
     public readonly chains: string[]
     public readonly amount: string
     public readonly serviceURL: URL
 
     /**
-     * @param {string} pubKey - Public key
-     * @param {string} outputAddress - Output address when unstaking
+     * @param {Buffer} pubKey - Public key
+     * @param {Buffer} outputAddress - Output address when unstaking
      * @param {string[]} chains - String array containing a list of blockchain hashes
      * @param {string} amount - Amount to be sent, has to be a valid number and cannot be lesser than 0
      * @param {URL} serviceURL - Service node URL, needs to be https://
      */
-    constructor(pubKey: string, outputAddress: string, chains: string[], amount: string, serviceURL: URL) {
+    constructor(pubKey: Buffer, outputAddress: Buffer, chains: string[], amount: string, serviceURL: URL) {
         super()
         this.pubKey = pubKey
         this.chains = chains
@@ -36,7 +36,7 @@ export class MsgProtoNodeStakeTx extends TxMsg {
             this.serviceURL.port = "443"
         }
 
-        const outputErrorOrUndefined = validateAddressHex(this.outputAddress)
+        const outputErrorOrUndefined = validateAddressHex(this.outputAddress.toString("hex"))
         if (typeGuard(outputErrorOrUndefined, Error)) {
             throw outputErrorOrUndefined as Error
         }
@@ -74,10 +74,10 @@ export class MsgProtoNodeStakeTx extends TxMsg {
             type: this.AMINO_KEY,
             value: {
                 chains: this.chains,
-                output_address: this.outputAddress,
+                output_address: this.outputAddress.toString("hex"),
                 public_key: {
                     type: "crypto/ed25519_public_key",
-                    value: this.pubKey
+                    value: this.pubKey.toString("hex")
                 },
                 service_url: this.getParsedServiceURL(),
                 value: this.amount,
@@ -92,11 +92,11 @@ export class MsgProtoNodeStakeTx extends TxMsg {
      */
     public toStdTxMsgObj(): any {
         let data = {
-            Publickey: Buffer.from(this.pubKey, "hex"),
+            Publickey: this.pubKey,
             Chains: this.chains,
             value: this.amount,
             ServiceUrl: this.getParsedServiceURL(),
-            OutAddress: Buffer.from(this.outputAddress, "hex")
+            OutAddress: this.outputAddress
         }
 
         return Any.fromJSON({
