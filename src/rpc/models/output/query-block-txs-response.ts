@@ -28,7 +28,8 @@ export class QueryBlockTxsResponse {
 
       return new QueryBlockTxsResponse(
         transactions,
-        rawObjValue.total_count
+        rawObjValue.total_txs,
+        rawObjValue.page_count
       )
     } catch (error) {
       throw error
@@ -37,6 +38,7 @@ export class QueryBlockTxsResponse {
 
   public readonly transactions: Transaction[]
   public readonly totalCount: number
+  public readonly pageCount: number
 
   /**
    * Query block transactions Response.
@@ -46,10 +48,12 @@ export class QueryBlockTxsResponse {
    */
   constructor(
     transactions: Transaction[],
-    totalCount: number
+    totalCount: number,
+    pageCount: number
   ) {
     this.transactions = transactions
     this.totalCount = totalCount
+    this.pageCount = pageCount
 
     if (!this.isValid()) {
       throw new TypeError("Invalid QueryBlockTxsResponse properties.")
@@ -71,7 +75,8 @@ export class QueryBlockTxsResponse {
 
     return {
       txs: transactions,
-      total_count: this.totalCount
+      total_count: this.totalCount,
+      page_count: this.pageCount
     }
   }
   /**
