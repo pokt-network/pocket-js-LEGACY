@@ -437,8 +437,8 @@ export class Pocket {
         }
       } else if (consensusEnabled && typeGuard(result, RelayResponse)) {
         // Handle consensus
-        if (currentSession.sessionNodes.indexOf(serviceNode)) {
-          currentSession.sessionNodes[currentSession.sessionNodes.indexOf(serviceNode)].alreadyInConsensus = true
+        if (currentSession.sessionNodes.indexOf(serviceNode) >= 0) {
+          serviceNode.alreadyInConsensus = true;
         }
         return new ConsensusNode(serviceNode, false, result)
       } else {
