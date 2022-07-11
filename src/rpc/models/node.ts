@@ -14,6 +14,7 @@ export class Node {
       return new Node(
         rawObjValue.address,
         rawObjValue.public_key,
+        rawObjValue.output_address,
         rawObjValue.jailed,
         status,
         BigInt(rawObjValue.tokens),
@@ -28,6 +29,7 @@ export class Node {
 
   public readonly address: string
   public readonly publicKey: string
+  public readonly outputAddress: string
   public readonly jailed: boolean
   public readonly status: StakingStatus
   public readonly stakedTokens: BigInt
@@ -41,6 +43,7 @@ export class Node {
    * @constructor
    * @param {string} address - Node address hex.
    * @param {string} publicKey - Node public key hex.
+   * @param {string} outputAddress - Output address hex.
    * @param {boolean} jailed - True or false if the validator been jailed.
    * @param {StakingStatus} status - Validator staking status
    * @param {BigInt} stakedTokens - How many tokens are staked
@@ -51,15 +54,17 @@ export class Node {
   constructor(
     address: string,
     publicKey: string,
+    outputAddress: string,
     jailed: boolean,
     status: StakingStatus,
     stakedTokens: BigInt,
     serviceURL: string,
     chains: string[] = [],
-    unstakingCompletionTimestamp: string = ""
+    unstakingCompletionTimestamp: string = "",
   ) {
     this.address = address
     this.publicKey = publicKey
+    this.outputAddress = outputAddress
     this.jailed = jailed
     this.status = status
     this.stakedTokens = stakedTokens
@@ -98,6 +103,7 @@ export class Node {
   public isValid() {
     let validAddress = true
     let validPubKey = true
+    let validOutputAddress = true
     let validServiceUrl = true
 
     if (this.address) {
@@ -107,12 +113,18 @@ export class Node {
     if (this.publicKey) {
       validPubKey = Hex.isHex(this.publicKey)
     }
+
+    if (this.outputAddress) {
+      validOutputAddress = Hex.isHex(this.outputAddress)
+    }
+
     if (this.serviceURL && this.serviceURL.pathname) {
       validServiceUrl = this.serviceURL.pathname.length !== 0
     }
 
     return validAddress &&
     validPubKey &&
+    validOutputAddress &&
     this.jailed !== undefined &&
     validServiceUrl &&
     this.status !== undefined &&

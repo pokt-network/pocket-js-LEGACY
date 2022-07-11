@@ -1,5 +1,6 @@
-/* eslint-disable */
-import { Writer, Reader } from "protobufjs/minimal";
+/* tslint:disable */
+import Long from "long";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "google.protobuf";
 
@@ -42,13 +43,10 @@ export const protobufPackage = "google.protobuf";
  *  Example 4: Pack and unpack a message in Go
  *
  *      foo := &pb.Foo{...}
- *      any, err := anypb.New(foo)
- *      if err != nil {
- *        ...
- *      }
+ *      any, err := ptypes.MarshalAny(foo)
  *      ...
  *      foo := &pb.Foo{}
- *      if err := any.UnmarshalTo(foo); err != nil {
+ *      if err := ptypes.UnmarshalAny(any, foo); err != nil {
  *        ...
  *      }
  *
@@ -125,16 +123,21 @@ export interface Any {
 const baseAny: object = { typeUrl: "" };
 
 export const Any = {
-  encode(message: Any, writer: Writer = Writer.create()): Writer {
-    writer.uint32(10).string(message.typeUrl);
-    writer.uint32(18).bytes(message.value);
+  encode(message: Any, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.typeUrl !== "") {
+      writer.uint32(10).string(message.typeUrl);
+    }
+    if (message.value.length !== 0) {
+      writer.uint32(18).bytes(message.value);
+    }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Any {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Any {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseAny } as Any;
+    message.value = new Uint8Array();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -154,6 +157,7 @@ export const Any = {
 
   fromJSON(object: any): Any {
     const message = { ...baseAny } as Any;
+    message.value = new Uint8Array();
     if (object.typeUrl !== undefined && object.typeUrl !== null) {
       message.typeUrl = String(object.typeUrl);
     } else {
@@ -163,6 +167,16 @@ export const Any = {
       message.value = bytesFromBase64(object.value);
     }
     return message;
+  },
+
+  toJSON(message: Any): unknown {
+    const obj: any = {};
+    message.typeUrl !== undefined && (obj.typeUrl = message.typeUrl);
+    message.value !== undefined &&
+      (obj.value = base64FromBytes(
+        message.value !== undefined ? message.value : new Uint8Array()
+      ));
+    return obj;
   },
 
   fromPartial(object: DeepPartial<Any>): Any {
@@ -179,16 +193,6 @@ export const Any = {
     }
     return message;
   },
-
-  toJSON(message: Any): unknown {
-    const obj: any = {};
-    message.typeUrl !== undefined && (obj.typeUrl = message.typeUrl);
-    message.value !== undefined &&
-      (obj.value = base64FromBytes(
-        message.value !== undefined ? message.value : new Uint8Array()
-      ));
-    return obj;
-  },
 };
 
 declare var self: any | undefined;
@@ -198,7 +202,7 @@ var globalThis: any = (() => {
   if (typeof self !== "undefined") return self;
   if (typeof window !== "undefined") return window;
   if (typeof global !== "undefined") return global;
-  throw new Error("Unable to locate global object");
+  throw "Unable to locate global object";
 })();
 
 const atob: (b64: string) => string =
@@ -224,7 +228,14 @@ function base64FromBytes(arr: Uint8Array): string {
   return btoa(bin.join(""));
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
   : T extends Array<infer U>
@@ -234,3 +245,8 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}

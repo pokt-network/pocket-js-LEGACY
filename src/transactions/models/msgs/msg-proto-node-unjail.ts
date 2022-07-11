@@ -1,4 +1,4 @@
-import { MsgNodeUnjail } from '../proto/generated/tx-signer';
+import { MsgNodeUnjail8 } from '../proto/generated/tx-signer';
 
 import { Any } from '../proto/generated/google/protobuf/any';
 import { TxMsg } from "./tx-msg"
@@ -8,20 +8,28 @@ import { typeGuard, validateAddressHex } from './../../../utils'
  * Model representing a MsgNodeUnjail to unjail as an Node in the Pocket Network
  */
 export class MsgProtoNodeUnjail extends TxMsg {
-    public readonly KEY: string = "/x.nodes.MsgUnjail"
-    public readonly AMINO_KEY: string = "pos/MsgUnjail"
-    public readonly address: string
+    public readonly KEY: string = "/x.nodes.MsgUnjail8"
+    public readonly AMINO_KEY: string = "pos/8.0MsgUnjail"
+    public readonly nodeAddress: string
+    public readonly signerAddress: string
 
     /**
-     * @param {string} address - Address value
+     * @param {string} nodeAddress - Node address to be unjail
+     * @param {string} signerAddress - Signer address (who triggered the unjail)
      */
-    public constructor(address: string) {
+    public constructor(nodeAddress: string, signerAddress: string) {
         super()
-        this.address = address
+        this.nodeAddress = nodeAddress
+        this.signerAddress = signerAddress
 
-        const errorOrUndefined = validateAddressHex(this.address)
-        if (typeGuard(errorOrUndefined, Error)) {
-            throw errorOrUndefined as Error
+        const nodeErrorOrUndefined = validateAddressHex(this.nodeAddress)
+        if (typeGuard(nodeErrorOrUndefined, Error)) {
+            throw nodeErrorOrUndefined as Error
+        }
+
+        const signerErrorOrUndefined = validateAddressHex(this.signerAddress)
+        if (typeGuard(signerErrorOrUndefined, Error)) {
+            throw signerErrorOrUndefined as Error
         }
     }
     /**
@@ -33,7 +41,8 @@ export class MsgProtoNodeUnjail extends TxMsg {
         return {
             type: this.AMINO_KEY,
             value: {
-                address: this.address
+                address: this.nodeAddress,
+                signer_address: this.signerAddress
             }
         }
     }
@@ -44,11 +53,14 @@ export class MsgProtoNodeUnjail extends TxMsg {
      * @memberof MsgNodeUnjail
      */
     public toStdTxMsgObj(): any {
-        let data = { ValidatorAddr: Buffer.from(this.address, "hex") }
+        let data = {
+            ValidatorAddr: Buffer.from(this.nodeAddress, "hex"),
+            Signer: Buffer.from(this.signerAddress, "hex")
+        }
 
         return Any.fromJSON({
             "typeUrl": this.KEY,
-            "value": Buffer.from(MsgNodeUnjail.encode(data).finish()).toString("base64"),
+            "value": Buffer.from(MsgNodeUnjail8.encode(data).finish()).toString("base64"),
         });
     }
 }

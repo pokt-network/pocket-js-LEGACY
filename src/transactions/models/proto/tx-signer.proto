@@ -4,29 +4,29 @@ package pocketjs;
 import "google/protobuf/any.proto";
 
 message ProtoStdTx {
-	google.protobuf.Any msg = 1;
-	repeated Coin fee = 2;
-	ProtoStdSignature signature = 3;
-	string memo = 4;
-	int64 entropy = 5;
+    google.protobuf.Any msg = 1;
+    repeated Coin fee = 2;
+    ProtoStdSignature signature = 3;
+    string memo = 4;
+    int64 entropy = 5;
 }
 
 message ProtoStdSignature {
-	bytes publicKey = 1;
-	bytes Signature = 2;
+    bytes publicKey = 1;
+    bytes Signature = 2;
 }
 
 message StdSignDoc {
-	string ChainID = 1;
-	bytes fee = 2;
-	string memo = 3;
-	bytes msg = 4;
-	int64 entropy = 5;
+    string ChainID = 1;
+    bytes fee = 2;
+    string memo = 3;
+    bytes msg = 4;
+    int64 entropy = 5;
 }
 
 message Coin {
-	string denom = 1;
-	string amount = 2;
+    string denom = 1;
+    string amount = 2;
 }
 
 // DecCoin defines a token with a denomination and a decimal amount.
@@ -34,43 +34,48 @@ message Coin {
 // NOTE: The amount field is an Dec which implements the custom method
 // signatures required by gogoproto.
 message DecCoin {
-	string denom = 1;
-	string amount = 2;
+    string denom = 1;
+    string amount = 2;
 }
 
 message MsgProtoStake {
-	bytes pub_key = 1;
-	repeated string chains = 2;
-	string value = 3;
+    bytes pub_key = 1;
+    repeated string chains = 2;
+    string value = 3;
 }
 
 message MsgBeginUnstake {
-	bytes Address = 1;
+    bytes Address = 1;
 }
 
 message MsgUnjail {
-	bytes AppAddr = 1;
+    bytes AppAddr = 1;
 }
 
-message MsgProtoNodeStake {
-	bytes Publickey = 1;
-	repeated string Chains = 2;
-	string value = 3;
-	string ServiceUrl = 4;
+message MsgProtoNodeStake8 {
+    bytes Publickey = 1;
+    repeated string Chains = 2;
+    string value = 3;
+    string ServiceUrl = 4;
+    bytes OutAddress = 5;
 }
 
-message MsgBeginNodeUnstake {
-	bytes Address = 1;
+message MsgBeginNodeUnstake8 {
+    bytes Address = 1;
+    bytes Signer = 2;
 }
 
 message MsgNodeUnjail {
-	bytes ValidatorAddr = 1;
+    bytes ValidatorAddr = 1;
+}
+
+message MsgNodeUnjail8 {
+    bytes ValidatorAddr = 1;
+    bytes Signer = 2;
 }
 
 message MsgSend {
-	bytes FromAddress = 1;
-	bytes ToAddress = 2;
-	string amount = 3;
+    bytes FromAddress = 1;
+    bytes ToAddress = 2;
+    string amount = 3;
 }
-
-
