@@ -1,12 +1,15 @@
 
 <div align="center">
+  <h1>IMPORTANT</h1>
+  <h3>This SDK is deprecated in favor of the 
+  <a href="https://github.com/pokt-foundation/pocket-js">newer PocketJS library</a></h3>
+</div>
+
+<div align="center">
   <a href="https://www.pokt.network">
     <img src="https://user-images.githubusercontent.com/2219004/119198290-15776780-ba57-11eb-847c-ce4d68f1f018.png" alt="Pocket Network logo" width="340"/>
   </a>
 </div>
-
-# IMPORTANT:
-### This SDK is deprecated in favor of the [newer PocketJS library](https://github.com/pokt-foundation/pocket-js).
 
 # Pocket-JS
 Official Javascript client for connecting an application to the Pocket Network of decentralized nodes.
