@@ -5,6 +5,9 @@
   </a>
 </div>
 
+# IMPORTANT:
+### This SDK is deprecated in favor of the [newer PocketJS library](https://github.com/pokt-foundation/pocket-js).
+
 # Pocket-JS
 Official Javascript client for connecting an application to the Pocket Network of decentralized nodes.
 <div align="lef">
