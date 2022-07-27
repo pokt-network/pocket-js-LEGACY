@@ -62,4 +62,8 @@ export class MsgProtoSend extends TxMsg {
 
         return result;
     }
+
+    static decodeStdTxMsgValue(value: string): any {
+        return MsgSend.decode(Buffer.from(value, 'base64'))
+    }
 }

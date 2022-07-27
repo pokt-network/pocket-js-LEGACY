@@ -42,6 +42,24 @@ export interface ITransactionSender {
     ): Promise<RawTxRequest | RpcError>
 
     /**
+     * Creates an unsigned transaction hex that can be signed with a valid ed25519 private key
+     * @param {string} chainID - The chainID of the network to be sent to
+     * @param {string} fee - The amount to pay as a fee for executing this transaction
+     * @param {string} entropy - The entropy for this tx
+     * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
+     * @param {string | undefined} memo - The memo field for this account
+     * @returns {{ bytesToSign: string, encodedMsg: string } | RpcError} - bytes to sign and the stringified stxTxMsgObj
+     * @memberof TransactionSender
+     */
+     createUnsignedTransaction(
+        chainID: string,
+        fee: string,
+        entropy: string,
+        feeDenom?: CoinDenom,
+        memo?: string,
+    ): { bytesToSign: string, stdTxMsgObj: string } | RpcError
+
+    /**
      * Adds a MsgSend TxMsg for this transaction
      * @param {string} fromAddress - Origin address
      * @param {string} toAddress - Destination address

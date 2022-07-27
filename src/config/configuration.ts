@@ -14,7 +14,7 @@ export class Configuration {
   public readonly maxSessionRefreshRetries: number = 1
   public readonly validateRelayResponses: boolean = true
   public readonly rejectSelfSignedCertificates: boolean = true
-  public readonly useLegacyTxCodec: boolean = true
+  public readonly useLegacyTxCodec: boolean = false
 
   /**
    * Stores multiple properties used to interact with the Pocket Network.
@@ -43,7 +43,7 @@ export class Configuration {
     maxSessionRefreshRetries: number = 1,
     validateRelayResponses: boolean = true,
     rejectSelfSignedCertificates: boolean = true,
-    useLegacyTxCodec: boolean = true
+    useLegacyTxCodec: boolean = false
   ) {
     this.maxDispatchers = maxDispatchers
     this.maxSessions = maxSessions
