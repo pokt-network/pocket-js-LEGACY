@@ -46,7 +46,8 @@ export class TransactionSender implements ITransactionSender {
         chainID: string,
         fee: string,
         feeDenom?: CoinDenom,
-        memo?: string
+        memo?: string,
+        signature?: TxSignature
     ): Promise<RawTxRequest | RpcError> {
         try {
             if (this.txMsgError !== undefined) {
@@ -62,21 +63,26 @@ export class TransactionSender implements ITransactionSender {
 
             const entropy = Number(BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()).toString()
             const signer = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
-            let txSignatureOrError
-            const bytesToSign = signer.marshalStdSignDoc()
-            if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
-                txSignatureOrError = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
-            } else if (this.txSigner !== undefined) {
-                txSignatureOrError = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
+            
+            let txSignature
+
+            if (!signature) {
+                const bytesToSign = signer.marshalStdSignDoc()
+                if (typeGuard(this.unlockedAccount, UnlockedAccount)) {
+                    txSignature = await this.signWithUnlockedAccount(bytesToSign, this.unlockedAccount as UnlockedAccount)
+                } else if (this.txSigner !== undefined) {
+                    txSignature = this.signWithTrasactionSigner(bytesToSign, this.txSigner as TransactionSigner)
+                } else {
+                    return new RpcError("0", "No account or TransactionSigner specified")
+                }
             } else {
-                return new RpcError("0", "No account or TransactionSigner specified")
+                txSignature = signature as TxSignature
             }
 
-            if (!typeGuard(txSignatureOrError, TxSignature)) {
+            if (!typeGuard(txSignature, TxSignature)) {
                 return new RpcError("0", "Error generating signature for transaction")
             }
 
-            const txSignature = txSignatureOrError as TxSignature
             const addressHex = addressFromPublickey(txSignature.pubKey)
             const encodedTxBytes = signer.marshalStdTx(txSignature)
             // Clean message and error
