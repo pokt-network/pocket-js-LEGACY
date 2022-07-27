@@ -9,6 +9,7 @@ import { UnlockedAccount } from "../keybase/models"
 import { Pocket, RawTxResponse, RpcError, typeGuard, addressFromPublickey, Keybase, RawTxRequest } from ".."
 import { TxEncoderFactory } from "./factory/tx-encoder-factory"
 import { Any } from './models/proto';
+import { ProtoTxEncoder } from './factory';
 
 export class TransactionSender implements ITransactionSender {
     public txMsg?: TxMsg
@@ -99,14 +100,16 @@ export class TransactionSender implements ITransactionSender {
      * @param {string} fee - The amount to pay as a fee for executing this transaction
      * @param {CoinDenom | undefined} feeDenom - The denomination of the fee amount 
      * @param {string | undefined} memo - The memo field for this account
+     * @param {string} entropy - The entropy for this tx
      * @returns {Promise<{ bytesToSign: string, stdTxMsgObj: string } | RpcError>} - bytes to sign and the stringified stxTxMsgObj
      * @memberof TransactionSender
      */
      public createUnsignedTransaction(
         chainID: string,
         fee: string,
+        entropy: string,
         feeDenom?: CoinDenom,
-        memo?: string
+        memo?: string,
     ): { bytesToSign: string, stdTxMsgObj: string } | RpcError {
         try {
             if (this.txMsgError !== undefined) {
@@ -120,13 +123,10 @@ export class TransactionSender implements ITransactionSender {
                 return new RpcError("0", "No messages configured for this transaction")
             }
 
-            const entropy = Number(BigInt(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)).toString()).toString()
-            const signer = TxEncoderFactory.createEncoder(entropy, chainID, this.txMsg, fee, feeDenom, memo, this.pocket.configuration.useLegacyTxCodec)
-            const unsignedTxBytes = signer.marshalStdSignDoc()
-
-            // This needs to be strinfigied so it can be stored offline,
-            // since it's required to sign the transaction.
+             // This needs to be strinfigied so it can be stored offline,
+            // since it's required to sign the transaction.            
             const stdTxMsgObj = Any.toJSON(this.txMsg.toStdTxMsgObj())
+            const unsignedTxBytes = ProtoTxEncoder.marshalStdSignDoc(chainID, entropy, fee, stdTxMsgObj, memo, feeDenom)
             // Clean message and error
             this.txMsg = undefined
             this.txMsgError = undefined

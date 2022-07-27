@@ -24,9 +24,8 @@ export class ProtoTransactionSigner {
         try {
             const stdSignDoc = JSON.parse(Buffer.from(bytesToSign, 'hex').toString('utf-8'))
             const stdTxMsgObj = Any.fromJSON(JSON.parse(encodedMsg))
-    
             const addressHex = addressFromPublickey(txSignature.pubKey)
-            const encodedTxBytes = ProtoTxEncoder.marshalStdSignDoc(stdTxMsgObj, stdSignDoc, txSignature)
+            const encodedTxBytes = ProtoTxEncoder.marshalStdTx(stdTxMsgObj, stdSignDoc, txSignature)
             
             return new RawTxRequest(addressHex.toString('hex'), encodedTxBytes.toString('hex'))
         } catch (error) {
